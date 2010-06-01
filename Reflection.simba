@@ -1,0 +1,40 @@
+{$define smart}
+
+{$i Constants.simba}
+{$i Hooks.simba}
+{$i Core.simba}
+{$i MMWalk.simba}
+{$i Characters.simba}
+{$i Login.simba}
+{$i Objects.simba}
+{$i Interfaces.simba}
+{$i Inventory.simba}
+{$i Equipment.simba}
+{$i Bank.simba}
+{$i Chat.simba}
+
+{$i Antirandoms\Molly.simba}
+{$i Antirandoms\Antirandoms.simba}
+
+{*******************************************************************************
+procedure SetupReflectionEx(World: Integer; Signed, Members, Term: Boolean);
+By: Drags111
+Description: Sets up reflection. If Term is true and the hooks are
+            outdated, it will terminate the script. If term is false then
+            the script will continue to run, which means you will need backups
+            for your reflection functions.
+*******************************************************************************}
+function SetupReflectionEx(Terminate: Boolean): boolean;
+begin
+  Result := true;
+  if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
+  begin
+    Result := False;
+    if(Terminate)then
+    begin
+      Writeln('*****Hooks are outdated. Terminating script.*****');
+      TerminateScript;
+    end else
+      Writeln('*************HOOKS ARE OUTDATED.*************');
+  end;
+end;

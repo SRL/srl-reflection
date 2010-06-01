@@ -1,0 +1,200 @@
+{*******************************************************************************
+Function R_BankScreen: Boolean;
+By:
+Description: Checks to see if the bank is open.
+*******************************************************************************}
+function R_BankScreen: Boolean;
+begin
+  Result := ValidInterface(INTERFACE_BANK);
+end;
+
+{*******************************************************************************
+Function R_PinScreen: Boolean;
+By: Drags111
+Description: Checks to see if the pin screen is up.
+*******************************************************************************}
+function R_PinScreen: Boolean;
+begin
+  Result := ValidInterface(INTERFACE_BANK_PIN);
+end;
+
+{*******************************************************************************
+Function R_DepositAll: Boolean;
+By: Camero
+Description: Deposits the whole inventory either by
+  -Fast clicks the button
+  -Fast = false deposits each item
+*******************************************************************************}
+procedure R_DepositAll(Fast: Boolean);
+var
+  I, Fs, MT: Integer;
+begin
+  if not R_BankScreen then
+    Exit;
+  if(fast)then
+  begin
+    DepositAll;
+  end else
+  begin
+    for I := 1 to 28 do
+    begin
+      MarkTime(MT);
+      while (R_ItemExists(I) and (TimeFromMark(mt) < 6000)) do
+      begin
+        MouseItem(I, False);
+        Wait(40 + random(40));
+        R_ChooseOption('All');
+        MarkTime(FS);
+        while (R_ItemExists(I) and (TimeFromMark(FS) < 2500)) do
+          Wait(44 + random(44));
+      end;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_DepositAllID(ID : Integer): Boolean;
+By: Zyt3x
+Description: Deposits all the items with the specified ID
+*******************************************************************************}
+function R_DepositAllID(ID : Integer): Boolean;
+begin
+  Result := R_ClickItemID(ID, false, 'All');
+end;
+
+{*******************************************************************************
+procedure R_DepositAllButIDEx(IDs : TIntegerArray);
+By: Zyt3x
+Description: Deposits all items but the items with one of the specified IDs to the bank.
+*******************************************************************************}
+procedure R_DepositAllButIDEx(IDs : TIntegerArray);
+var
+  I : Integer;
+  Item : TInvItem;
+begin
+  for I := 1 to 28 do
+  begin
+    Item := GetInvItemAt(I);
+    if(InIntArray(IDs, Item.ID))then Continue;
+    R_ClickItem(I, False, 'Deposit-All');
+  end;
+end;
+
+{*******************************************************************************
+procedure R_DepositAllButID(ID : Integer);
+By: Zyt3x
+Description: Deposits all items but the items with the specified ID to the bank.
+*******************************************************************************}
+procedure R_DepositAllButID(ID : Integer);
+begin
+  R_DepositAllButIDEx([ID]);
+end;
+
+{*******************************************************************************
+Function R_OpenBankBooth(Bank : String): Boolean;
+By: ss23 & TheGuyWhoGotOn
+Description: Opens the bank using Bank Booth.
+*******************************************************************************}
+function R_OpenBankBooth(Bank : String) : Boolean;
+var
+  Tiles: TPointArray;
+  P: TPoint;
+  Tries: Integer;
+begin
+  Result := R_BankScreen or R_PinScreen;
+  if Result then Exit;
+
+  case LowerCase(Bank) of
+    'veb', 'varrock east':
+        Tiles := [Point(3251,3419), Point(3252,3419), Point(3253,3419),
+                  Point(3254,3419), Point(3255,3419), Point(3256,3419)];
+    'vwb', 'varrock west':
+        Tiles := [Point(3190,3435), Point(3190,3437), Point(3190,3439),
+                  Point(3190,3441), Point(3190,3443), Point(3181,3444),
+                  Point(3181,3442), Point(3181,3440), Point(3181,3438),
+                  Point(3181,3436)];
+    'falador west', 'fwb':
+        Tiles := [Point(2945,3367), Point(2946,3367), Point(2947,3367),
+                  Point(2948,3367)];
+    'falador east', 'feb':
+        Tiles := [Point(3010,3354), Point(3011,3354), Point(3012,3354),
+                  Point(3013,3354), Point(3014,3354), Point(3015,3354)];
+    'lumbridge', 'lb':
+        Tiles := [Point(3208,3221)];
+    'draynor', 'db':
+        Tiles := [Point(3091,3419), Point(3091,3245), Point(3091,3244),
+                  Point(3091,3243), Point(3091,3242)];
+    'al kharid', 'akb':
+        Tiles := [Point(3268,3168), Point(3268,3167), Point(3268,3166),
+                  Point(3268,3165), Point(3268,3164)];
+    'seb', 'seers':
+        Tiles := [Point(2729,3494), Point(2728,3494), Point(2727,3494),
+                  Point(2724,3494), Point(2722,3494)];
+    'eb', 'edgeville':
+        Tiles := [Point(3095,3489), Point(3095,3491), Point(3095,3493),
+                  Point(3097,3495)];
+    'cb', 'catherby':
+        Tiles := [Point(2807, 3442), Point(2809, 3442), Point(2810, 3442), Point(2811, 3442)];
+    'fgb', 'fishing guild':
+        Tiles := [Point(2585, 3422), Point(2585, 3421), Point(2585, 3419), Point(2585, 3418)];
+    'mc', 'moonclan':
+        Tiles := [Point(2098, 3920), Point(2097, 3920), Point(2098, 3920)];
+    'yb', 'yanille':
+        Tiles := [Point(2614, 3094), Point(2614, 3092), Point(2614, 3091)];
+    'da', 'duel arena': Tiles := [Point(3381, 3269), Point(3382, 3270)];
+    'asb', 'ardougne south': Tiles := [Point(2656, 3286), Point(2656, 3283)];
+    'pc', 'pest control':
+        Tiles := [Point(2667, 2652), Point(2666, 2652), Point(2665, 2652),
+                  Point(2668, 2652)];
+  else
+    begin
+      SRL_Warn('R_OpenBankBooth', 'Unsupported bank name.', -1);
+      Exit;
+    end;
+  end;
+  SortTPAFrom(Tiles, GetMyPos);
+  if (DistanceFrom(Tiles[0]) > 3) or not TileOnMS(Tiles[0], 10) then
+  begin
+    if not(TileOnMM(Tiles[0])) then
+    begin
+      SRL_Warn('R_OpenBankBooth', 'Could not find Bank Booth.', Warn_AllVersions);
+      Exit;
+    end;
+    WalkToTile(Tiles[0], 0, 0);
+    Wait(50);
+    R_Flag;
+    Wait(RandomRange(100, 200));
+  end;
+  if not(TileOnMS(Tiles[0], 10)) then
+  begin
+    SetAngle(True);
+    MakeCompass('n');
+    Wait(RandomRange(200, 400));
+    if not(TileOnMS(Tiles[0], 10)) then
+    begin
+      SRL_Warn('R_OpenBankBooth', 'Could get MS Point.', Warn_AllVersions);
+      Exit;
+    end;
+  end;
+
+  P := TileToMS(Tiles[0], 10);
+  MMouse(p.x - 5, p.y - 5, 11, 11);
+  Wait(RandomRange(200, 300));
+  if IsUpTextMultiCustom(['ank', 'ooth']) then
+  begin
+    GetMousePos(P.x, P.y);
+    Mouse(P.x, P.y, 0, 0, false);
+    Wait(RandomRange(80, 110));
+    P.x := 0;
+    if R_ChooseOptionMulti(['Use-quickly']) then
+      repeat
+        R_Flag;
+        Wait(RandomRange(50, 90));
+        Inc(Tries);
+        if (Length(Players) > 0) then
+          if Players[CurrentPlayer].Pin <> '' then
+            Result := InPin(Players[CurrentPlayer].Pin);
+        Result := R_BankScreen or R_PinScreen;
+      until Result or (Tries > 40);
+  end;
+end;

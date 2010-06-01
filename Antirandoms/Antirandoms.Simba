@@ -1,0 +1,34 @@
+{*******************************************************************************
+function R_SolveNonTalkingRandoms: Boolean;
+By: Nava2
+Description: Solves Non Talking Randoms.
+*******************************************************************************}
+function R_SolveNonTalkingRandoms: Boolean;
+var
+  I : Integer;
+begin
+  for I := 1 to RandomCount do
+  begin
+    case I of
+      1 : Result := R_SolveMolly;
+    end;
+    if (Result) then
+      Break;
+  end;
+end;
+
+{*******************************************************************************
+function R_FindRandoms: Boolean;
+By: Nava2
+Description: Calls the random checks.
+*******************************************************************************}
+
+function R_FindRandoms: Boolean;
+begin
+  Result := R_SolveNonTalkingRandoms;
+  if (Result) then
+  begin
+    if (SRL_Procs[srl_OnFindRandom] <> nil) then
+      SRL_Procs[srl_OnFindRandom]();
+  end;
+end;

@@ -1,0 +1,344 @@
+
+
+{*******************************************************************************
+function NewObject(ID, objType, Tile): TRSObject;
+By: Drags111
+Description: Returns a new TRSObject with the specified values.
+*******************************************************************************}
+function NewObject(ID, objType: integer; T: TTile): TRSObject;
+begin
+  Result.ID := ID;
+  Result.objType := objType;
+  Result.Tile := T;
+end;
+
+{*******************************************************************************
+function RSObjectInArray(theArray: TRSObjectArray; obj: TRSObject): boolean;
+By: Drags111
+Description: Returns true if an object obj is in a TRSObjectArray theArray.
+              (like IntInArray).
+*******************************************************************************}
+function RSObjectInArray(theArray: TRSObjectArray; obj: TRSObject): boolean;
+var
+  i: integer;
+begin
+  Result := false;
+  for i := 0 to High(theArray) do
+    if(theArray[i] = obj)then
+    begin
+      Result := true;
+      Exit;
+    end;
+end;
+
+{*******************************************************************************
+function GetInteractableAt(T: TTile): TRSObject;
+By: Drags111
+Description: Returns the objType Interactable ID at the given tile. Interactable
+          objects include anything clickable that isnt a WallObject.
+*******************************************************************************}
+function GetInteractableAt(T: TTile): TRSObject;
+var
+  Plane, Ground, Node, Obj, ID, LX, LY: integer;
+begin
+  Result := NULL_RSOBJECT;
+
+  try
+    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
+    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+    Node := SmartGetFieldObject(Ground, hook_ground_AnimableList);
+
+    while(node <> 0)do
+    begin
+      Obj := SmartGetFieldObject(Node, hook_AnimableNode_GetAnimable);
+      if(Obj <> 0)then
+      begin
+        ID := SmartGetFieldShort(Obj, hook_InteractiveObject_GetID);
+        if((ID = -1) or ((ID and $FFFF) = 65535))then   // 65535 is an unsigned -1....
+          Exit;
+        Result := NewObject(ID and $FFFF, OBJECT_TYPE_INTERACTABLE, T);
+        Exit;
+      end;
+      SmartFreeObject(obj);
+      SmartFreeObject(Node);
+      Node := SmartGetFieldObject(Node, hook_AnimableNode_GetNext);
+    end;
+
+  finally
+    SmartFreeObject(Ground);
+    SmartFreeObject(Obj);
+    SmartFreeObject(Node);
+  end;
+end;
+
+{*******************************************************************************
+function GetWallObjectAt(T: TTile): TRSObject;
+By: Drags111
+Description: Returns the objType WallObject ID at the given tile. Wall objects
+            include anything on walls that are clickable.
+*******************************************************************************}
+function GetWallObjectAt(T: TTile): TRSObject;
+var
+  Plane, Ground, Obj, ID, LX, LY: integer;
+begin
+  Result := NULL_RSOBJECT;
+
+  try
+    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
+    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+
+    Obj := SmartGetFieldObject(Ground, hook_ground_WallObject1);
+    if(Obj = 0)then
+    begin
+      SmartFreeObject(Obj);
+      Obj := SmartGetFieldObject(Ground, hook_ground_WallObject2);
+    end;
+    if(Obj <> 0)then
+    begin
+      ID := SmartGetFieldShort(Obj, hook_wallobjectdata_GetID);
+      if((ID = -1) or ((ID and $FFFF) = 65535))then
+        Exit;
+      Result := NewObject(ID and $FFFF, OBJECT_TYPE_WALLOBJECT, T);
+    end;
+
+  finally
+    SmartFreeObject(Obj);
+    SmartFreeObject(Ground);
+  end;
+end;
+
+{*******************************************************************************
+function GetWallDecorAt(T: TTile): TRSObject;
+By: Drags111
+Description: Returns the objType WallDecor ID at the given tile.
+*******************************************************************************}
+function GetWallDecorAt(T: TTile): TRSObject;
+var
+  Plane, Ground, Obj, ID, LX, LY: integer;
+begin
+  Result := NULL_RSOBJECT;
+
+  try
+    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
+    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+
+    Obj := SmartGetFieldObject(Ground, hook_ground_WallDecoration1);
+    if(Obj = 0)then
+    begin
+      SmartFreeObject(Obj);
+      Obj := SmartGetFieldObject(Ground, hook_ground_WallDecoration2);
+    end;
+    if(Obj <> 0)then
+    begin
+      ID := SmartGetFieldShort(Obj, hook_WallDecorationData_GetID);
+      if((ID = -1) or ((ID and $FFFF) = 65535))then
+        Exit;
+      Result := NewObject(ID and $FFFF, OBJECT_TYPE_WALLDECOR, T);
+    end;
+
+  finally
+    SmartFreeObject(Obj);
+    SmartFreeObject(Ground);
+  end;
+end;
+
+{*******************************************************************************
+function GetFloorDecorAt(T: TTile): TRSObject;
+By: Drags111
+Description: Returns the objType FloorDecor ID at the given tile.
+*******************************************************************************}
+function GetFloorDecorAt(T: TTile): TRSObject;
+var
+  Plane, Ground, Obj, ID, LX, LY: integer;
+begin
+  Result := NULL_RSOBJECT;
+
+  try
+    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
+    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+
+    Obj := SmartGetFieldObject(Ground, hook_ground_FloorDecoration);
+    if(Obj <> 0)then
+    begin
+      ID := SmartGetFieldShort(Obj, hook_FloorDecorationData_GetID);
+      if((ID = -1) or ((ID and $FFFF) = 65535))then
+        Exit;
+      Result := NewObject(ID and $FFFF, OBJECT_TYPE_FLOORDECOR, T);
+    end;
+
+  finally
+    SmartFreeObject(Obj);
+    SmartFreeObject(Ground);
+  end;
+end;
+
+{*******************************************************************************
+function GetObjectAt(T: TTile; objType: Integer): TRSObject;
+By: Drags111
+Description: Returns the object at the specified tile, with the type of objType.
+*******************************************************************************}
+function GetObjectAt(T: TTile; objType: Integer): TRSObject;
+var
+  objFuncts: array [0..3] of function(T: TTile):TRSObject;
+begin
+  Result := NULL_RSOBJECT;
+
+  objFuncts[0] := @GetInteractableAt; objFuncts[1] := @GetWallObjectAt;
+  objFuncts[2] := @GetWallDecorAt;    objFuncts[3] := @GetFloorDecorAt;
+
+  Result := objFuncts[objType](T);
+end;
+
+{*******************************************************************************
+function GetAllObjects(objType: Integer): TRSObjectArray;
+By: Drags111
+Description: Gets all loaded objects of the type, and stores them in a
+            TRSObjectArray.
+*******************************************************************************}
+function GetAllObjects(objType: Integer): TRSObjectArray;
+var
+  bx, by, x, y, resCount: integer;
+  Temp: TRSObject;
+begin
+  SetLength(Result, 104*104);
+  resCount := 0;
+  bx := SmartGetFieldInt(0, hook_static_BaseX);
+  by := SmartGetFieldInt(0, hook_static_BaseY);
+  for x := bx to (104 + bx) do
+    for y := by to (104 + by) do
+    begin
+      Temp := GetObjectAt(Tile(x, y), objType);
+      if (Temp = NULL_RSOBJECT) then
+        continue;
+      Result[resCount] := Temp;
+      Inc(resCount);
+    end;
+  setLength(Result, resCount);
+end;
+
+{*******************************************************************************
+function GetObjectsByID(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObjectArray;
+By: Drags111
+Description: Returns an array of all objects with the IDs. Sorted from closest
+            to your character to farthest.
+            MaxDist: This is the maximum distance from your player you wish to
+                     search. The smaller the number, the faster the search is
+                     completed. The maximum is 52.
+*******************************************************************************}
+function GetObjectsByID(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObjectArray;
+var
+   Dir, tLength, f, X, Y, resCount: Integer;
+   TP: TTile;
+   TileObject: TRSObject;
+begin
+  SetLength(Result, 104*104);
+  resCount := 0;
+  TP := GetMyPos;
+  X := TP.X;
+  Y := TP.Y;
+  Dir := 0;
+  tLength := 1;
+  while (tLength < MaxDist) do
+  begin
+    for F := 0 to tLength - 1 do
+    begin
+      case Dir of
+        0: Dec(Y);
+        1: Inc(X);
+        2: Inc(Y);
+        3: Dec(X);
+      end;
+      TileObject := GetObjectAt(Tile(x, y), objType);
+      if (not (TileObject = NULL_RSOBJECT) and InIntArray(IDs, TileObject.ID))then
+      begin
+        Result[resCount] := TileObject;
+        Inc(resCount);
+      end;
+    end;
+    Inc(Dir);
+    dir := dir mod 4;
+    if Dir mod 2 = 0 then
+      Inc(tLength);
+  end;
+end;
+
+{*******************************************************************************
+function GetObjectByIDEx(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObject;
+By: Drags111
+Description: Returns the nearest object with one of the IDs. Sorted from closest
+            to your character to farthest.
+            MaxDist: This is the maximum distance from your player you wish to
+                     search. The smaller the number, the faster the search is
+                     completed. The maximum is 52.
+*******************************************************************************}
+function GetObjectByIDEx(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObject;
+var
+   Dir, tLength, f, X, Y: Integer;
+   TP: TTile;
+   TileObject: TRSObject;
+begin
+  SetLength(Result, 0);
+  TP := GetMyPos;
+  X := TP.X;
+  Y := TP.Y;
+  Dir := 0;
+  tLength := 1;
+  while (tLength < MaxDist) do
+  begin
+    for F := 0 to tLength - 1 do
+    begin
+      case Dir of
+        0: Dec(Y);
+        1: Inc(X);
+        2: Inc(Y);
+        3: Dec(X);
+      end;
+      TileObject := GetObjectAt(Tile(x, y), objType);
+      if (not (TileObject = NULL_RSOBJECT) and InIntArray(IDs, TileObject.ID)) then
+      begin
+        Result := TileObject;
+        Exit;
+      end;
+    end;
+    Inc(Dir);
+    dir := dir mod 4;
+    if Dir mod 2 = 0 then
+      Inc(tLength);
+  end;
+end;
+
+{*******************************************************************************
+function GetObjectByID(ID: Integer; objType, MaxDist: Integer): TRSObject;
+By: Drags111
+Description: Returns the nearest object with the ID. Sorted from closest
+            to your character to farthest.
+            MaxDist: This is the maximum distance from your player you wish to
+                     search. The smaller the number, the faster the search is
+                     completed. The maximum is 52.
+*******************************************************************************}
+function GetObjectByID(ID: Integer; objType, MaxDist: Integer): TRSObject;
+begin
+  Result := GetObjectByIDEx([ID], OBJECT_TYPE_INTERACTABLE, MaxDist);
+end;
+
+{*******************************************************************************
+function FindRSObject(Obj: TRSObject): Boolean;
+By: Drags111
+Description: Returns true if the TRSObject is found. All params must line up
+            (Tile, objType, and ID must all be the same).
+*******************************************************************************}
+function FindRSObject(Obj: TRSObject): Boolean;
+var
+  Temp: TRSObject;
+begin
+  Temp := GetObjectAt(Obj.Tile, Obj.objType);
+  Result := (Obj = Temp);
+end;

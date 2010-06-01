@@ -1,0 +1,319 @@
+
+{*******************************************************************************
+Function GetAnimation: Integer;
+By: lordsaturn
+Description: Gets character animation
+*******************************************************************************}
+
+function GetAnimation: Integer;
+var
+  MyPlayer : Integer;
+begin
+  MyPlayer := SmartGetFieldObject(0, hook_static_MyPlayer);
+  Result := SmartGetFieldInt(MyPlayer, hook_character_Animation);
+  SmartFreeObject(MyPlayer);
+end;
+
+{*******************************************************************************
+function CharacterAnimating: boolean;
+By: Drags111
+Description: Returns true if you are animating
+*******************************************************************************}
+function CharacterAnimating: boolean;
+begin
+  result:= (GetAnimation > -1);
+end;
+
+{*******************************************************************************
+Function CharacterMoving: boolean;
+By: BenLand100
+Description: True if you are moving
+*******************************************************************************}
+function CharacterMoving: boolean;
+begin
+  result:= (GetSpeed > 0);
+end;
+
+{*******************************************************************************
+function GetNPCActionArray(NPCDef: integer): TStringArray;
+By: Drags111
+Description: Gets the Action (String) Array from the NPC.
+*******************************************************************************}
+function GetNPCActionArray(NPCDef: integer): TStringArray;
+var
+  i, c, bytes: integer;
+begin
+  SetLength(Result, 11);
+  c := 0;
+  for i := 0 to 10 do
+  begin
+    bytes := SmartGetFieldArrayObject(NPCDef, hook_npcdef_GetActions, i);
+    if(bytes > 0)then
+    begin
+      Result[c] := GetJavaString(bytes, 255);
+      inc(c);
+    end;
+    SmartFreeObject(bytes);
+  end;
+  SetLength(Result, c);
+end;
+
+{*******************************************************************************
+procedure DumpNPCs(NPCs: TNPCArray);
+By: Drags111
+Description: Prints out the array of NPCs. Mainly for debugging purposes.
+*******************************************************************************}
+procedure DumpNPCs(NPCs: TNPCArray);
+var
+  i: integer;
+begin
+  for i := 0 to High(NPCs) do
+  begin
+    Writeln('NPC: '+NPCs[i].Name);
+    Writeln('    '+'Index: '+ ToStr(NPCs[i].Index));
+    Writeln('    '+'ID: '+ToStr(NPCs[i].ID));
+    Writeln('    '+'Actions: '+ ToStr(NPCs[i].Actions));
+    Writeln('    '+'Tile: '+ ToStr(NPCs[i].Tile));
+    Writeln('    '+'Animation: '+ ToStr(NPCs[i].Animation));
+    Writeln('    '+'Height: '+ ToStr(NPCs[i].Height));
+    Writeln('    '+'Fighting: '+ ToStr(NPCs[i].Fighting));
+    Writeln('    '+'IsMoving: '+ ToStr(NPCs[i].Moving));
+    Writeln('    '+'HPRatio: '+ ToStr(NPCs[i].HPRatio));
+    Writeln('    '+'Level: '+ ToStr(NPCs[i].Level));
+    Writeln('    '+'Orientation: '+ ToStr(NPCs[i].Orientation));
+  end;
+end;
+
+{*******************************************************************************
+function GetNPCs: TNPCArray;
+By: Drags111
+Description: Stores all the loaded NPCs into an array of TNPC;
+*******************************************************************************}
+function GetNPCs:array of TNPC;
+var
+  i, c, NumNPCs, Index, TheNPC, TheNPCDef, TheBytes, TheNPCNode: integer;
+begin
+  NumNPCs := SmartGetFieldInt(0,hook_static_NPCCount);
+  if (NumNPCs < 1) then Exit;
+  SetArrayLength(Result,NumNPCs);
+  for i := 0 to (NumNPCs-1) do
+  try
+    Index := SmartGetFieldArrayInt(0, hook_static_NPCIndexArray, i);
+    TheNPCNode := SmartGetFieldArrayObject(0, hook_static_NPCNodes, i);
+    TheNPC := SmartGetFieldObject(TheNPCNode, hook_npcnode_GetNPC);
+    TheNPCDef := SmartGetFieldObject(TheNPC, hook_npc_NPCDef);
+    TheBytes := SmartGetFieldObject(TheNPCDef, hook_npcdef_GetName);
+
+    if(lowercase(trim(GetJavaString(TheBytes, 255))) = 'null')then
+      continue;
+    Result[c].Index := Index;
+    Result[c].ID := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetID);
+    Result[c].Name := GetJavaString(TheBytes, 255);
+    Result[c].Actions := GetNPCActionArray(TheNPCDef);
+    Result[c].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
+    Result[c].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
+    Result[c].Moving := (SmartGetFieldInt(TheNPC, hook_character_Motion)>0);
+    Result[c].Animation := SmartGetFieldInt(TheNPC, hook_character_Animation);
+    Result[c].Height := iabs(SmartGetFieldInt(TheNPC, hook_character_GetHeight));
+    Result[c].HPRatio := SmartGetFieldInt(TheNPC, hook_character_HPRatio) * 100 / $FF;
+    Result[c].Fighting := (SmartGetFieldInt(TheNPC, hook_character_LoopCycleStatus) >
+                              SmartGetFieldInt(0, hook_static_LoopCycle));
+    Result[c].Orientation := (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048;
+    Result[c].Level := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetLevel);
+    Inc(c);
+
+  finally
+    SmartFreeObject(TheNPCNode);
+    SmartFreeObject(TheNPC);
+    SmartFreeObject(TheNPCDef);
+    SmartFreeObject(TheBytes);
+  end;
+  SetLength(Result, c);
+end;
+
+{*******************************************************************************
+function GetNPCsBy(TheVar: Variant): array of TNPC;
+By: Widget, lordsaturn, Narcle and Nava2
+Description: Returns all the currently loaded NPCs using TheVar, which will
+             take either a string or an Integer. The String is a part of the NPC
+             name, and an Integer is the NPCType (ID).
+*******************************************************************************}
+function GetNPCsBy(TheVar: Variant): TNPCArray;
+var
+  vType, i, resCounter: Integer;
+  NPCs: TNPCArray;
+  b: boolean;
+begin
+  {
+    Initialize the result array, setup for looping.
+  }
+  NPCs := GetNPCs;
+  SetLength(Result, Length(NPCs));
+  vType := VarType(TheVar);
+  if (vType = varString) then
+    TheVar := LowerCase(Trim(TheVar));
+
+  for i := High(NPCs) downto 0 do
+  begin
+    case vType of
+      varInteger: B := NPCs[i].ID = TheVar;
+      varString: B := (Pos(TheVar, LowerCase(Trim(NPCs[i].Name))) > 0);
+      else Exit;
+    end;
+    if not B then
+      Continue;
+    Result[resCounter] := NPCs[i];
+    inc(resCounter);
+  end;
+
+  SetLength(Result, resCounter);
+end;
+
+{*******************************************************************************
+function GetNPCByIndex(Idx : integer):TNPC;
+By: Drags111
+Description: Stores all the loaded NPCs into an array of TNPC;
+*******************************************************************************}
+function GetNPC(theVar: Variant):TNPC;
+var
+  NPCs: TNPCArray;
+  i, vType: Integer;
+  B: Boolean;
+begin
+  Result := NULL_NPC;
+  vType := VarType(TheVar);
+  if (vType = varString) then
+    TheVar := LowerCase(TheVar);
+  NPCs := GetNPCs;
+  for i := High(NPCs) downto 0 do
+  begin
+    case (vType) of
+      varInteger: B := NPCs[i].ID = TheVar;
+      varString: B := (Pos(TheVar, LowerCase(NPCs[i].Name)) > 0);
+      else Continue;
+    end;
+    if (B) then
+    begin
+      Result := NPCs[i];
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+Function SortNPCs(NPCs:array of TNPC):array of TNPC;
+By: Widget edited by lordsaturn
+Description: Sorts NPCs by distance from you.
+*******************************************************************************}
+function SortNPCs(NPCs:array of TNPC): TNPCArray;
+var
+  i,i2, L: integer;
+  tpa: TPointArray;
+begin
+  L := GetArrayLength(NPCs);
+  if L < 1 then Exit;
+  SetArrayLength(TPA, L);
+  SetArrayLength(Result, L);
+  for i := 0 to L-1 do
+    TPA[i] := NPCs[i].Tile;
+  SortTPAFrom(TPA, GetMyPos);
+  for i := 0 to L-1 do
+    for i2 := 0 to L-1 do
+      if (TPA[i].x=NPCs[i2].Tile.x) and (TPA[i].y=NPCs[i2].Tile.y) then
+        Result[i] := NPCs[i2];
+end;
+
+{*******************************************************************************
+function FindNPC(TheVar: Variant; var NPC: TNPC):boolean;
+By: Widget
+Description: Finds the tile of the named NPC and puts it in the NPC var.
+             Returns true if found, false if not. (Try walking with the MM if
+             it's not on the main screen. Now uses a Name or NPCType
+*******************************************************************************}
+Function FindNPC(TheVar: Variant; var NPC: TNPC):boolean;
+var
+  NPCs: TNPCArray;
+begin
+  NPC := NULL_NPC;
+  NPCs := SortNPCs(GetNPCsBy(TheVar));
+  result := GetArrayLength(NPCs)<>0;
+  if not result then
+    Exit;
+  NPC := NPCs[0];
+end;
+
+{*******************************************************************************
+function FindFreeNPC(Name: string; var NPC: TNPC): Boolean;
+By: lordsaturn
+Description: Finds the nearest free NPC. (not infight)
+*******************************************************************************}
+function FindFreeNPC(TheVar: Variant; var NPC: TNPC): Boolean;
+var
+  NPCs: TNPCArray;
+  i, Hi: integer;
+begin
+  NPC := NULL_NPC;
+  NPCs := SortNPCs(GetNPCsBy(TheVar));
+  Hi := High(NPCs);
+  if Hi < 0 then Exit;
+  for i := 0 to Hi do
+    if (not NPCs[i].Fighting) then
+    begin
+      Result := True;
+      NPC := NPCs[i];
+      Exit;
+    end;
+end;
+
+{*******************************************************************************
+function ValidNPC(TheVar: Variant): Boolean;
+By: Drags111
+Description: Tells if the NPC is on MiniMap. (Valid)
+*******************************************************************************}
+function ValidNPC(TheVar: Variant): Boolean;
+var
+  NPC: TNPC;
+begin
+  Result := FindNPC(TheVar, NPC);
+end;
+
+{*******************************************************************************
+function IsIdle: Boolean;
+By: lordsaturn
+Description: Returns true if the your player is idle. (no movement or animation)
+*******************************************************************************}
+function IsIdle: Boolean;
+begin
+  Result := not(CharacterMoving or (GetAnimation > 0));
+end;
+
+{*******************************************************************************
+function GetMe: TMe;
+By: Widget, lordsaturn, Drags111
+Description: Returns you
+*******************************************************************************}
+function GetMe: TMe; // Sounds funny =P
+var
+  Player, theName, pdef: integer;
+begin
+  try
+    Player := SmartGetFieldObject(0, hook_static_MyPlayer);
+    pdef := SmartGetFieldObject(Player, hook_player_PlayerDef);
+    theName := SmartGetFieldObject(Player, hook_player_GetName);
+    Result.Name := GetJavaString(theName, 255);
+    Result.Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) / 512));
+    Result.Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) / 512));
+    Result.Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight)) / 4;
+    Result.Animation := SmartGetFieldInt(Player, hook_character_Animation);
+    Result.Speed := SmartGetFieldInt(Player, hook_character_Motion);
+    Result.HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
+    Result.Level := SmartGetFieldInt(Player, hook_player_GetLevel);
+    Result.InFight := (SmartGetFieldInt(0,hook_static_LoopCycle) < SmartGetFieldInt(Player,hook_character_LoopCycleStatus));
+    Result.Orientation := (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048;
+  finally
+    SmartFreeObject(theName);
+    SmartFreeObject(Player);
+    SmartFreeObject(pdef);
+  end;
+end;
+

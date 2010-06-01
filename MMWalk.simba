@@ -1,0 +1,282 @@
+{*******************************************************************************
+function GetMinimapAngleDeg: extended;
+By: BenLand100
+Description: Returns the current Map angle in degrees. North: 0 deg, increases
+             in the counter clockwise direction
+*******************************************************************************}
+function GetMinimapAngleDeg: extended;
+begin
+  result:= SmartGetFieldFloat(0, hook_static_MapAngle) * 45.0 / 2048.0;
+end;
+
+{*******************************************************************************
+function GetMinimapAngleRad: extended;
+By: BenLand100
+Description: Returns the current map angle in radians. North: 0 rad, increases
+             in the counter clockwise direction
+*******************************************************************************}
+function GetMinimapAngleRad: extended;
+begin
+  result:= SmartGetFieldFloat(0, hook_static_MapAngle) * pi / 8192.0;
+end;
+
+{*******************************************************************************
+function TileToMM(tile: TTile): TPoint;
+By: BenLand100
+Description: Converts the global tile position to a screen location on the
+             minimap, taking map rotation into account.
+*******************************************************************************}
+function TileToMM(tile: TTile): TPoint;
+var
+  angle, x, y: extended;
+  temp: TPoint;
+begin
+   angle:= -GetMinimapAngleRad;
+   temp := GetMyPos();
+   x:= (tile.x - temp.x) * 4 - 2;
+   y:= (temp.y - tile.y) * 4 - 2;
+   result.x:= round(x*cos(angle) + y*sin(angle)) + 628;
+   result.y:= round(y*cos(angle) - x*sin(angle)) + 87;
+end;
+
+{*******************************************************************************
+function TileOnMM(Tile: TTile): boolean;
+By: Drags111
+Description: Checks if the Tile is on the MM.
+*******************************************************************************}
+function TileOnMM(Tile: TTile): boolean;
+var
+  P: TPoint;
+begin
+  P := TileToMM(Tile);
+  Result := rs_OnMinimap(P.x, P.y);
+end;
+
+
+{*******************************************************************************
+function R_MakeCompass(Dir: string): Boolean;
+By: Timer
+Description: MakesCompass to degress set (Degress or n, e, s, w).
+Uses reflection.
+*******************************************************************************}
+function R_MakeCompass(setAngle: Variant): Boolean;
+var
+  StartAngle, Angle, DirectionDeg, i: Extended;
+  Bool : Boolean;
+  Mark : Integer;
+begin
+  StartAngle := (GetMinimapAngleDeg);
+  Writeln(StartAngle);
+  Writeln(R_LoggedIn);
+  if(StartAngle < 0)Or(Not R_LoggedIn)then
+    Exit;
+  case varType(setAngle) of
+    varString:
+    begin
+      case (LowerCase(setAngle)) of
+        'n': DirectionDeg := -1;
+        'w': DirectionDeg := 90;
+        's': DirectionDeg := 180;
+        'e': DirectionDeg := 270;
+      end;
+    end;
+    varDouble, varSingle:
+      DirectionDeg := setAngle;
+  end;
+  if((MinE(Abs(StartAngle - DirectionDeg), MinE(Abs(StartAngle - (DirectionDeg + 360)), Abs((StartAngle + 360) - DirectionDeg)))) <= 8.0)then
+  begin
+    Result := True;
+    Exit;
+  end;
+  Bool := (Round((360 - StartAngle) + DirectionDeg) mod 360 > Round((StartAngle + 360) - DirectionDeg) mod 360);
+  if(Bool)then
+    KeyDown(VK_LEFT)
+  else
+    KeyDown(VK_RIGHT);
+  Wait(Random(40));
+  MarkTime(Mark);
+  repeat
+    Wait(16);
+    Angle := GetMinimapAngleDeg;
+    If ((TimeFromMark(Mark) > 6000)  and (i < 1.0)) or
+       ((TimeFromMark(Mark) > 10000) and (i < 2.0)) or
+       ((TimeFromMark(Mark) > 14000) and (i < 3.0)) then
+      i := i + 1.0;
+  until ((MinE(Abs(Angle - DirectionDeg), MinE(Abs(Angle - (DirectionDeg + 360)), Abs((Angle + 360) - DirectionDeg)))) <= (7.0 + i))
+    or (TimeFromMark(Mark) > 14000)
+    or (Angle < 0);
+  if(Bool)then
+    KeyUp(VK_Left)
+  else
+    KeyUp(VK_Right);
+  Wait(Random(100) + 40);
+  Result := ((MinE(Abs(Angle - DirectionDeg), MinE(Abs(Angle - (DirectionDeg + 360)), Abs((Angle + 360) - DirectionDeg)))) <= (7.0 + i));
+end;
+
+{*******************************************************************************
+Function DistanceFrom(Tile: TPoint): Integer;
+By: Widget
+Description: Returns the distance between your player and the tile.  (Tiles)
+*******************************************************************************}
+function DistanceFrom(TheTile: TPoint): Integer;
+var
+  MyPos: TPoint;
+begin
+  MyPos := GetMyPos;
+  Result := Distance(MyPos.x, MyPos.y, TheTile.X, TheTile.Y);
+end;
+
+{*******************************************************************************
+function WaitToMove(Timeout: integer): Boolean;
+By: lordsaturn
+Description: Waits for the local player to move with a timeout. Returns true if
+moved, false if timed out.
+*******************************************************************************}
+function WaitToMove(Timeout: integer): Boolean;
+var
+  a, Speed: integer;
+begin
+  a := GetSystemTime;
+  Speed := GetSpeed;
+  while Speed < 1 do
+  begin
+    Speed := GetSpeed;
+    if GetSystemTime - a > Timeout then Exit;
+    Wait(100 + Random(50));
+  end;
+  Result := True;
+end;
+
+{*******************************************************************************
+function GetDest: TTile;
+By: Drags111
+Description: Results the tile of the Flag destination.
+*******************************************************************************}
+function GetDest: TTile;
+var
+  xDest, yDest: integer;
+begin
+  xDest := SmartGetFieldInt(0, hook_static_DestX);
+  yDest := SmartGetFieldInt(0, hook_static_DestY);
+  Result := Tile(xDest, yDest);
+end;
+
+{*******************************************************************************
+function R_FlagExists: Boolean;
+By: Drags111
+Description: Results true if there is a flag.
+*******************************************************************************}
+function R_FlagExists: Boolean;
+var
+  xFlag: LongInt;
+begin
+  xFlag := SmartGetFieldInt(0, hook_static_DestX);
+  Result := (xFlag) > -1;
+end;
+
+{*******************************************************************************
+function DistanceFromFlag: Integer;
+By: Drags111
+Description: Results the distance your char is from the flag.
+*******************************************************************************}
+function DistanceFromFlag: Integer;
+var
+  MyPos, FlagPos: TTile;
+  Me: integer;
+begin
+  if not R_FlagExists then Exit;
+  Me := SmartGetFieldObject(0, hook_static_MyPlayer);
+  MyPos.x := SmartGetFieldArrayInt(Me, hook_character_WalkQueueX, 0);
+  MyPos.y := SmartGetFieldArrayInt(Me, hook_character_WalkQueueY, 0);
+  FlagPos := GetDest;
+  Result := Distance(MyPos.x, MyPos.y, FlagPos.x, FlagPos.y);
+  SmartFreeObject(me);
+end;
+
+{*******************************************************************************
+procedure R_FFlag(Distance: Integer);
+By: ZephyrsFury
+Description: Similar to the original except it uses Reflection.
+*******************************************************************************}
+procedure R_FFlag(Dist: Integer);
+
+var
+  Tx, Ty, m, d1, d2: Integer;
+  D: TTile;
+
+begin
+  if not WaitToMove(1500) then Exit;
+  while (R_FlagExists) do
+  begin
+    D := GetDest;
+    d1 := DistanceFromFlag;
+    if (d1 >= Dist) then
+    begin
+      if not (GetSpeed > 0) then Exit;
+      Inc(m);
+      Wait(100 + Random(30));
+      if SRL_Procs[SRL_AntiBan] <> nil then
+        SRL_Procs[SRL_AntiBan]();
+      if (Random(100) = 0) then IdleTime(500, 1000, 0.01);
+      if (m mod 100 = 0) then
+        if (d1 = d2) then
+        begin
+          if (FindColor(Tx, Ty, 255, MMX1, MMY1, MMX2, MMY2)) then
+            Mouse(Tx, Ty + 14, 0, 0, True)
+          else
+            Mouse(MMCX, MMCY, 0, 0, True);
+        end else d2 := d1;
+    end else Break;
+  end;
+end;
+
+{*******************************************************************************
+Procedure R_Flag;
+By: ??
+Description: Waits Till A COMPLETE Stop. (Not dependant on Flag hooks)
+*******************************************************************************}
+procedure R_Flag;
+
+var
+  Ticker: Integer;
+
+begin
+  Ticker := (GetSystemTime + 30000);
+  if not WaitToMove(1500) then Exit;
+  while (GetSpeed > 0) do
+  begin
+    Wait(10 + Random(10));
+    if SRL_Procs[SRL_AntiBan] <> nil then
+      SRL_Procs[SRL_AntiBan]();
+    if (GetSystemTime > Ticker) then
+      Exit;
+  end;
+  Wait(500 + Random(50));
+end;
+
+{*******************************************************************************
+Function WalkToTile(Tile: TPoint; Randomness, FlagD: Integer): Boolean;
+By: Wizzup, TheGuyWhoGotOn, and Drags111
+Description: Walks to the tile using minimap.
+*******************************************************************************}
+function WalkToTile(TheTile: TTile; Randomness, FlagD: Integer): Boolean;
+var
+   wTile: TPoint;
+   t: Integer;
+begin
+  Result := False;
+  TheTile := Point(RandomRange(TheTile.X-Randomness, TheTile.X+Randomness),
+                   RandomRange(TheTile.Y-Randomness, TheTile.Y+Randomness));
+  wTile := TileToMM(TheTile);
+  if not rs_OnMiniMap(wTile.X, wTile.Y) then
+    Exit;
+  Mouse(wTile.x, wTile.y, 1, 1, true);
+  Wait(RandomRange(80, 100));
+  t := getsystemtime;
+  if (FlagD = 0)then
+  begin
+    R_Flag;
+  end else
+    R_FFlag(FlagD);
+  Result := (GetSystemTime - t) < 60000;
+end;

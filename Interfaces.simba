@@ -1,0 +1,43 @@
+//------------------------------------------------------------------\\
+//--             Scar Non-Standard Resource Library               --||
+//--                  » Reflection Routines - Interfaces          --||
+//------------------------------------------------------------------//
+// * function GetInterface(Index, ChildIndex: Integer): Integer;    // * by Bobarkinator
+// * function GetInterfaceText(ParentI, ChildI: Integer): String;   // * by Method
+// * function ValidInterface(ParentI: Integer): Boolean;            // * by Method
+
+{*******************************************************************************
+function ValidInterface(idx: Integer): Boolean;
+By:
+Description: Returns true if the interface is valid.
+*******************************************************************************}
+function ValidInterface(idx: Integer): Boolean;
+begin
+  Result := SmartGetFieldArrayBoolean(0, hook_static_ValidInterfaces, idx);
+end;
+
+{*******************************************************************************
+Function GetInterface(Index, ChildIndex: Integer): Integer;
+By: Bobarkinator
+Description: Returns the interface of InterfaceCache[Index][ChildIndex].
+*******************************************************************************}
+function GetInterface(Index, ChildIndex: Integer): Integer;
+begin
+  Result := SmartGetFieldArray2DObject(0, hook_static_GetInterfaces, Index, ChildIndex);
+end;
+
+{*******************************************************************************
+Function GetInterfaceText(ParentI, ChildI: Integer): String;
+By: Method
+Description: Returns the Child's text.
+*******************************************************************************}
+function GetInterfaceText(ParentI, ChildI: Integer): String;
+var
+   Text, Child: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Text := SmartGetFieldObject(Child, hook_interface_GetText);
+  Result := GetJavaString(Text, 255);
+  SmartFreeObject(Text);
+  SmartFreeObject(Child);
+end;

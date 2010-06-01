@@ -1,0 +1,22 @@
+program ReflectionScript;
+{$DEFINE SMART}
+{$i srl\srl.scar}
+{$i reflection\reflection.simba}
+
+const
+
+{---SMART Setup Constants---}
+  WORLD = 32;
+  MEMBERS = false;
+  SIGNED = true;
+{---------------------------}
+
+begin
+  Smart_Members := MEMBERS;
+  Smart_Server := WORLD;
+  Smart_Signed := SIGNED;
+
+  SetupSRL;
+  SetupReflectionEx(true);
+
+end.

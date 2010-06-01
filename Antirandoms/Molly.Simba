@@ -1,0 +1,297 @@
+var
+  Molly, Twin: TNPC;
+  TwinID: integer;
+  MDoorTile, MCraneTile, ClawTile: TPoint;
+
+{*******************************************************************************
+function R_InMolly: boolean;
+By: Drags111
+Description: Results true if we are in the Molly random event!
+*******************************************************************************}
+function R_InMolly: boolean;
+begin
+  Result := FindNPC('Molly', Molly);
+  if (not Result) and (TwinID > 0)then
+    Result := FindNPC(TwinID, Twin);
+end;
+
+{*******************************************************************************
+function WaitToTalkToMolly: boolean;
+By: Drags111
+Description: Waits until we are talking to Molly. If it takes to
+             long then it will right click and talk to her.
+*******************************************************************************}
+function WaitToTalkToMolly: boolean;
+var
+  T: Integer;
+  P: TPoint;
+begin
+  T := GetSystemTime;
+  if not R_InMolly then Exit;
+  While not Result do
+  begin
+    if not R_InMolly then Exit;
+    if ValidInterface(242) or ValidInterface(64) then Exit;
+    if (GetSystemTime-T) > 3000 then
+    begin
+      if not TileOnMS(Molly.Tile, 20) then
+        WalkToTile(Point(Molly.Tile.X, Molly.Tile.Y-2), 0, 0);
+      wait(700+Random(700));
+      P := TileToMS(Molly.Tile, Molly.Height * 2 / 3);
+      Mouse(P.x, P.y, 2, 2, false);
+      wait(100+Random(100));
+      if R_chooseOption('Talk')then
+      begin
+        wait(100+Random(100));
+        While characterMoving do wait(100+Random(100));
+        While (not ValidInterface(242)) and (not ValidInterface(241)) and (not ValidInterface(64)) do wait(100+Random(100));
+        wait(700+Random(700));
+      end;
+    end;
+    Result := ValidInterface(241) or ValidInterface(64) or ValidInterface(242);
+    if (GetInterfaceText(228, 2) = 'No thanks.')then
+      Exit;
+  end;
+end;
+
+{*******************************************************************************
+procedure R_TalkToMolly;
+By: Drags111
+Description: Clicks to continue until we have the option to click.
+*******************************************************************************}
+function R_TalkToMolly: boolean;
+var
+  qx, qy: integer;
+begin
+  While (FindColorTolerance(qx, qy, 8388608, 184, 425, 365, 457, 2) or
+    FindColorTolerance(qx, qy, 16711680, 184, 425, 365, 457, 2)) do
+  begin
+    Result := true;
+    if not R_InMolly then Exit;
+    if (GetInterfaceText(228, 3) = 'No thanks.')then
+      Exit;
+    wait(100+Random(100));
+    Mouse(qx, qy+5, 0, 0, true);
+    MouseBox(19, 362, 393, 427, 3);
+    wait(100+Random(100));
+    ChatWait;
+  end;
+end;
+
+{*******************************************************************************
+procedure Molly_GetTwin;
+by: Drags111
+Description: Gets evil twin ID.
+*******************************************************************************}
+procedure NMolly_GetTwin;
+begin
+  if not R_InMolly then Exit;
+  TwinID :=  Molly.ID - 40;
+  Writeln('Twin ID: '+inttostr(TwinID));
+end;
+
+{*******************************************************************************
+procedure Molly_ClickGo;
+By: Drags111
+Description: Clicks the option: 'No thanks.'
+*******************************************************************************}
+procedure NMolly_ClickGo;
+begin
+  if not R_InMolly then Exit;
+  MouseBox(193, 428, 334, 437, 1);
+  ChatWait;
+  R_TalkToMolly;
+  NMolly_GetTwin;
+  MDoorTile := Point(Molly.Tile.X + 4, Molly.Tile.Y + 2);
+  MCraneTile := Point(Molly.Tile.X + 10, Molly.Tile.Y);
+  ClawTile := Point(Molly.Tile.X + 10, Molly.Tile.Y - 3);
+end;
+
+{*******************************************************************************
+function NMolly_OpenDoor(which: integer): Boolean;
+by: Drags111
+Description: Opens the door (which: integer). 1 = first time, 2 = second.
+*******************************************************************************}
+function Molly_OpenDoor(which: integer): Boolean;
+var
+  P: TPoint;
+  i: integer;
+begin
+  if not R_InMolly then Exit;
+  wait(400+Random(400));
+  while R_InMolly do
+  begin
+    P := TileToMSEx(Tile(MDoorTile.x, MDoorTile.Y), 0.9, 0.5, 15);
+    Mouse(P.x, P.y, 0, 0, false);
+    if R_ChooseOption('Open')then
+    begin
+      WaitToMove(1000);
+      While CharacterMoving do wait(100+Random(100));
+      case which of
+        1: i := MDoorTile.X+1;
+        2: i := MDoorTile.X;
+      end;
+      While (P.X <> i) and (P.Y <> MDoorTile.Y) do
+      begin
+        wait(100+Random(100));
+        if R_TalkToMolly then
+        begin
+          MouseBox(210, 399, 305, 408, 1);
+          wait(500+Random(500));
+          R_TalkToMolly;
+          Continue;
+        end;
+        P := GetMyPos;
+      end;
+      Result := True;
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function Molly_OpenCrane: Boolean;
+by: Drags111
+Description: Opens the crane for use.
+*******************************************************************************}
+function Molly_OpenCrane: Boolean;
+var
+  P: TPoint;
+begin
+  if not R_InMolly then Exit;
+  wait(400+Random(400));
+  while R_InMolly do
+  begin
+    P := TileToMS(MCraneTile, 15);
+    Mouse(P.x, P.y, 0, 0, false);
+    if R_ChooseOption('Use')then
+    begin
+      WaitToMove(1000);
+      While CharacterMoving do wait(100+Random(100));
+      while not ValidInterface(240) do
+      Wait(100);
+      Wait(200+Random(100));
+      Result := Pos('Tries', GetInterfaceText(240, 27)) <> 0;
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function Molly_CatchTwin: Boolean;
+by: lordsaturn / Drags111
+Description: Captures the evil twin.
+*******************************************************************************}
+function Molly_CatchTwin: Boolean;
+var
+  Twin: TNPC;
+  i: integer;
+  B: Boolean;
+  s: string;
+begin
+  while not Result do
+  begin
+    B := False;
+    while not B do
+    begin
+      if FindNPC(TwinID, Twin)then Writeln('Found evil twin!') else
+        Writeln('No evil twin found.');
+      while ClawTile.x <> Twin.Tile.x do
+      begin
+        writeln(inttostr(clawtile.x)+' - '+inttostr(twin.tile.x));
+        if ClawTile.x > Twin.Tile.x then
+        begin
+          Mouse(684, 319, 37, 24, True); //right
+          Dec(ClawTile.x);
+        end else
+        begin
+          Mouse(562, 319, 37, 24, True);
+          Inc(ClawTile.x);
+        end;
+        Wait(200+Random(100));
+        FindNPC(TwinID, Twin);
+      end;
+      FindNPC(TwinID, Twin);
+      while ClawTile.y <> Twin.Tile.y do
+      begin
+        writeln(inttostr(clawtile.y)+' - '+inttostr(twin.tile.y));
+        if ClawTile.y > Twin.Tile.y then
+        begin
+          Mouse(629, 260, 24, 32, True); //up
+          Dec(ClawTile.y);
+        end else
+        begin
+          Mouse(629, 372, 24, 37, True); //down
+          Inc(ClawTile.y);
+        end;
+        Wait(200+Random(100));
+        FindNPC(TwinID, Twin);
+      end;
+      FindNPC(TwinID, Twin);
+      B := (ClawTile.x = Twin.Tile.x) and (ClawTile.y = Twin.Tile.y);
+    end;
+    s := LastChatMessage(CHAT_TYPE_ALL);
+    Mouse(693, 416, 10, 10, True);
+    while s = LastChatMessage(CHAT_TYPE_ALL) do
+      Wait(100);
+    Result := Pos('caught', LastChatMessage(CHAT_TYPE_ALL)) <> 0;
+  end;
+  while not ValidInterface(241) do
+    Wait(100);
+  for i := 0 to 1 do
+  begin
+    Wait(300+Random(200));
+    if not ClickToContinue then
+      Mouse(245, 454, 3, 3, True);
+  end;
+  while ValidInterface(241) do
+    Wait(100);
+end;
+
+{*******************************************************************************
+function R_SolveMolly: boolean;
+by: lordsaturn
+Description: Solves the Molly random event.
+*******************************************************************************}
+function R_SolveMolly: boolean;
+begin
+  if not R_InMolly then Exit;
+  While R_InMolly do
+  begin
+    WaitToTalkToMolly;
+    R_TalkToMolly;
+    wait(1000+Random(1000));
+    NMolly_ClickGo;
+    R_MakeCompass('E');
+    if Molly_OpenDoor(1) then
+    begin
+      Writeln('Opened door!');
+      MakeCompass('N');
+      if not Molly_OpenCrane then
+      begin
+        Writeln('Failed to open molly crane. Terminating.');
+        TerminateScript;
+      end;
+      if not Molly_CatchTwin then
+      begin
+        Writeln('Failed to catch evil twin. Terminating.');
+        TerminateScript;
+      end;
+      if not Molly_OpenDoor(2) then
+      begin
+        Writeln('Failed to get back to Molly. Terminating.');
+        TerminateScript;
+      end;
+      WaitToTalkToMolly;
+      R_TalkToMolly;
+    end;
+    wait(2000+Random(2000));
+  end;
+  if R_LoggedIn then
+  begin
+    Result := True;
+    Inc(RSolved[RMolly]);
+    AddToReport('Solved Molly Random!');
+  end else
+    Inc(RFailed[RMolly]);
+end;

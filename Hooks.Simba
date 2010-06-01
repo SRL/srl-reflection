@@ -1,0 +1,216 @@
+{**
+ *  Copyright 2010 by Benjamin J. Land (a.k.a. BenLand100)
+ *
+ *  This file is part of the SMART Minimizing Autoing Resource Thing (SMART)
+ *
+ *  SMART is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  SMART is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with SMART. If not, see <http://www.gnu.org/licenses/>.
+ *}
+
+const
+	ClientVersion = 610;
+
+{Static Hooks}
+	hook_static_LoginIndex = 'lc.g';
+	hook_static_MyPlayer = 'ci.k';
+	hook_static_BaseX = 'tn.s';
+	hook_static_BaseY = 'wg.y';
+	hook_static_NPCIndexArray = 'rv.J';
+	hook_static_NPCNodes = 'hca.r';
+	hook_static_NPCCount = 'ge.k';
+	hook_static_GroundSettingsArray = 'wca.i';
+	hook_static_LoadedPlane = 'ut.F';
+	hook_static_PlaneArray = 'wu.a';
+	hook_static_Toolkit = 'vl.r';
+	hook_static_MapAngle = 'r.a';
+	hook_static_DestX = 'pda.b';
+	hook_static_DestY = 'pv.f';
+	hook_static_MenuOptionCount = 'ak.F';
+	hook_static_MenuX = 'ag.f';
+	hook_static_MenuY = 'ho.d';
+	hook_static_MenuOpen = 'aj.k';
+	hook_static_MenuNodeList = 'kg.j';
+	hook_static_LoopCycle = 'sda.l';
+	hook_static_PlayerCount = 'hq.J';
+	hook_static_PlayerIndexArray = 'uu.j';
+	hook_static_GetPlayers = 'op.e';
+
+{Class Animable}
+	class_Animable = 'fu';
+	hook_animable_PixelX = 'n';
+	hook_animable_PixelY = 't';
+	hook_animable_Plane = 'j';
+
+{Class Player}
+	class_Player = 'dg';
+	hook_player_GetLevel = 'Mc';
+	hook_player_GetName = 'Zc';
+	hook_player_PlayerDef = 'gd';
+
+{Class Character}
+	class_Character = 'dc';
+	hook_character_GetHitDamges = 'Z';
+	hook_character_Animation = 'tb';
+	hook_character_Motion = 'uc';
+	hook_character_WalkQueueX = 'qc';
+	hook_character_WalkQueueY = 'sc';
+	hook_character_GetHeight = 'Pb';
+	hook_character_LoopCycleStatus = 'X';
+	hook_character_HPRatio = 'Jb';
+	hook_character_GetInteracting = 'Yb';
+  hook_character_Orientation = 'gc';
+
+{Class NPC}
+	class_NPC = 'jc';
+	hook_npc_NPCDef = 'Vc';
+
+{Class NPCDef}
+	class_NPCDef = 'mt';
+	hook_npcdef_GetActions = 'db';
+	hook_npcdef_GetName = 'tb';
+	hook_npcdef_GetLevel = 'y';
+  hook_npcdef_GetID = 'W';
+
+{Class NPCNode}
+	class_NPCNode = 'ff';
+	hook_npcnode_GetNPC = 'l';
+
+{Class GroundTile}
+	class_GroundTile = 'rg';
+
+{Class Plane}
+	class_Plane = 'sa';
+
+{Class RSInteractable}
+	class_RSInteractable = 'lb';
+
+{Class Toolkit}
+	class_Toolkit = 'qa';
+
+{Class Viewport}
+	class_Viewport = 'm';
+
+{Class SDViewport}
+	class_SDViewport = 'jaa';
+	hook_sdviewport_xOff = 'e';
+	hook_sdviewport_xX = 'l';
+	hook_sdviewport_xY = 'k';
+	hook_sdviewport_xZ = 'g';
+	hook_sdviewport_yOff = 'n';
+	hook_sdviewport_yX = 'i';
+	hook_sdviewport_yY = 'h';
+	hook_sdviewport_yZ = 'm';
+	hook_sdviewport_zOff = 'f';
+	hook_sdviewport_zX = 'j';
+	hook_sdviewport_zY = 'o';
+	hook_sdviewport_zZ = 'd';
+
+{Class SDToolkit}
+	class_SDToolkit = 'jba';
+	hook_sdtoolkit_xMin = 'K';
+	hook_sdtoolkit_xMax = 'U';
+	hook_sdtoolkit_yMin = 'eb';
+	hook_sdtoolkit_yMax = 'F';
+	hook_sdtoolkit_zMin = 'Q';
+	hook_sdtoolkit_zMax = 'O';
+	hook_sdtoolkit_xScale = 'L';
+	hook_sdtoolkit_yScale = 'kb';
+	hook_sdtoolkit_Viewport = 'G';
+
+{Class SDPlane}
+	class_SDPlane = 'wp';
+	hook_sdplane_TileHeights = 'E';
+
+{Class NodeList}
+	class_NodeList = 'bv';
+	hook_nodelist_Current = 'l';
+	hook_nodelist_Head = 'a';
+
+{Class Node}
+	class_Node = 'um';
+	hook_node_Next = 'e';
+	hook_node_Previous = 'a';
+
+{Class Menu}
+	class_Menu = 'hda';
+	hook_menu_Option = 'l';
+	hook_menu_Action = 'x';
+
+{Class PlayerDef}
+	class_PlayerDef = 'nl';
+
+//Temp ground hooks.
+  hook_static_GroundTiles = 'kc.n';
+
+//RSGround class rg.
+  hook_ground_AnimableList = 'n'; //getGameObjectNodeHeader in KBOT
+  hook_ground_WallObject1 = 'p'; //getBoundingObject2 in KBOT
+  hook_ground_WallObject2 = 'd'; //getObject5 in KBOT
+  hook_ground_WallDecoration1 = 'e'; //getObject2 in KBOT
+  hook_ground_WallDecoration2 = 'i'; //getBoundingObject1 in KBOT
+  hook_ground_FloorDecoration = 'k'; //getDecorationObject in KBOT
+
+//WallObjectData class dca
+  hook_wallobjectdata_GetID = 'j';
+
+//WallDecorationData class ew
+  hook_WallDecorationData_GetID = 'ab';
+
+//FloorDecorationData class rv
+  hook_FloorDecorationData_GetID = 'N';
+
+//AnimableNode class de
+  hook_AnimableNode_GetAnimable = 'h';
+  hook_AnimableNode_GetNext = 'e';
+
+//InteractiveObject class pba
+  hook_InteractiveObject_GetID = 'B';
+
+  hook_static_GetInterfaces = 'qo.q'; //getIComponentArray in KBOT.
+  hook_static_ValidInterfaces = 'pq.M';
+
+//Interface class jq
+  hook_interface_GetChildren = 'w';
+  hook_interface_GetName = 'P';  //
+  hook_interface_GetID = 'Nb';
+  hook_interface_GetStack = 'Wc';
+  hook_interface_GetActions = 'oc';
+  hook_interface_GetX = 'hd';
+  hook_interface_GetY = 'Ub';
+  hook_interface_GetWidth = 'cd';
+  hook_interface_GetHeight = 'U';
+  hook_interface_GetText = 't';
+  hook_interface_GetTextureID = 'Qb';
+  hook_interface_GetTextColor = 'C';
+  hook_interface_GetUID = 'fb';
+
+//Equipment: PlayerDef:
+  hook_playerdef_Equipment = 't';
+
+
+//InteractiveObject KBOT Path:
+{
+  1) Search for getDataContainer.
+  2) 3 or 4 of them will be immediately followed by a GetID method.
+  3) Only ONE of them will actually return something. Thats the hook.
+}
+
+//
+
+
+
+
+
+
+
+

@@ -1,0 +1,628 @@
+
+{*******************************************************************************
+function getInventoryInterface: Integer;
+By: Drags111
+Description: Gets the correct ID of the Inventory Interface.
+*******************************************************************************}
+function GetInventoryInterface: Integer;
+begin
+  Result := NULL_INT;
+  if not (ValidInterface(INTERFACE_INVENTORY_BANKOPEN) or
+   ValidInterface(INTERFACE_INVENTORY))then
+    Exit;
+  Result := INTERFACE_INVENTORY;
+  if(ValidInterface(INTERFACE_INVENTORY_BANKOPEN))then  //If the bank is open, the inventory interface
+    Result := INTERFACE_INVENTORY_BANKOPEN;             //is 763. Otherwise, it's 149.
+end;
+
+{*******************************************************************************
+function TrimItemName(Name: string): String;
+By: Drags111
+Description: Gets rid of the <col=42c3df> crap from the names of items.
+*******************************************************************************}
+function TrimItemName(Name: string): String;
+begin
+  Result := Trim(Copy(Name, Pos('>', Name)+1, Length(Name) - Pos('>', Name)+1));
+end;
+
+{*******************************************************************************
+function GetActionList(Itm, Actions: integer): TStringArray;
+By: Drags111
+Description: Returns the list of actions you can do with specific items.
+            (Does not return "Use").
+*******************************************************************************}
+function GetActionList(Itm, Actions: integer): TStringArray;
+var
+  i, l, resCounter, temp: integer;
+  str: string;
+begin
+  l := (SmartGetFieldArraySize(Actions, '', 1));
+  SetLength(Result, l);
+
+  for i := 0 to l-1 do
+  begin
+    try
+      temp := SmartGetFieldArrayObject(Itm, hook_interface_GetActions, i);
+      str := GetJavaString(temp, 255);
+      if not(str = NULL_STRING)then
+      begin
+        Result[resCounter] := str;
+        Inc(resCounter);
+      end;
+    finally
+      SmartFreeObject(temp);
+    end;
+  end;
+
+  SetLength(Result, resCounter);
+end;
+
+{*******************************************************************************
+function GetInvItemAt(slot: integer): TInvItem;
+By: Drags111
+Description: Returns a TInvItem from the specific slot [1-25]. If slot is empty,
+it returns NullInvItem;
+*******************************************************************************}
+function GetInvItemAt(slot: integer): TInvItem;
+var
+  Inv, Itm, Name, acts, IFACEINDEX, ID: integer;
+begin
+  Result := NULL_INVITEM;
+
+  if ValidInterface(INTERFACE_INVENTORY) then
+    GameTab(tab_Inv);
+
+  IFACEINDEX := getInventoryInterface;
+
+  try
+    Inv := GetInterface(IFACEINDEX, 0);
+    Itm := SmartGetFieldArrayObject(Inv, hook_interface_GetChildren, slot-1);
+    Name := SmartGetFieldObject(Itm, hook_interface_GetName);
+    acts := SmartGetFieldObject(Itm, hook_interface_GetActions);
+
+    ID := SmartGetFieldInt(Itm, hook_interface_GetID);
+    if(ID > 0)then
+    begin
+      Result.ID := ID;
+      Result.StackSize := SmartGetFieldInt(Itm, hook_interface_GetStack);
+      Result.Slot := slot;
+      Result.Name := TrimItemName(GetJavaString(Name, 255));
+      Result.Actions := GetActionList(Itm, acts);
+    end;
+  finally
+    SmartFreeObject(Inv);
+    SmartFreeObject(Itm);
+    SmartFreeObject(Name);
+    SmartFreeObject(Acts);
+  end;
+end;
+
+{*******************************************************************************
+function GetInventoryItems: TInvItemArray;
+By: Drags111
+Description: Returns an array of all of the inv items in the inventory.
+*******************************************************************************}
+function GetInventoryItems: TInvItemArray;
+var
+  Inv, Itm, Name, acts, IFACEINDEX, ID: integer;
+  i, resCount: integer;
+begin
+  SetLength(Result, 28);
+
+  if ValidInterface(INTERFACE_INVENTORY) then
+    GameTab(tab_Inv);
+
+  IFACEINDEX := getInventoryInterface;
+
+  try
+    Inv := GetInterface(IFACEINDEX, 0);
+
+    for i := 0 to 27 do
+    begin
+      Itm := SmartGetFieldArrayObject(Inv, hook_interface_GetChildren, i);
+      Name := SmartGetFieldObject(Itm, hook_interface_GetName);
+      acts := SmartGetFieldObject(Itm, hook_interface_GetActions);
+
+      ID := SmartGetFieldInt(Itm, hook_interface_GetID);
+      if(ID > 0)then
+      begin
+        Result[resCount].ID := ID;
+        Result[resCount].StackSize := SmartGetFieldInt(Itm, hook_interface_GetStack);
+        Result[resCount].Slot := i+1;
+        Result[resCount].Name := TrimItemName(GetJavaString(Name, 255));
+        Result[resCount].Actions := GetActionList(Itm, acts);
+        Inc(resCount);
+      end;
+
+      SmartFreeObject(Itm);
+      SmartFreeObject(Name);
+      SmartFreeObject(Acts);
+    end;
+  finally
+    SmartFreeObject(Inv);
+    SmartFreeObject(Itm);
+    SmartFreeObject(Name);
+    SmartFreeObject(Acts);
+  end;
+
+  SetLength(Result, resCount);
+end;
+
+{*******************************************************************************
+function GetItemStackSizeAt(slot: integer): integer;
+By: Drags111
+Description: Gets the stack size at the specific slot.
+*******************************************************************************}
+function GetItemStackSizeAt(slot: integer): integer;
+var
+  Temp: TInvItem;
+begin
+  Temp := GetInvItemAt(slot);
+  Result := Temp.StackSize;
+end;
+
+{*******************************************************************************
+function GetItemIDAt(slot: integer): integer;
+By: Drags111
+Description: Gets the ID of an item at a specific slot.
+*******************************************************************************}
+function GetItemIDAt(slot: integer): integer;
+var
+  Temp: TInvItem;
+begin
+  Temp := GetInvItemAt(slot);
+  Result := Temp.ID;
+end;
+
+{*******************************************************************************
+function GetItemNameAt(slot: integer): String;
+By: Drags111
+Description: Gets the name of an item at a specific slot.
+*******************************************************************************}
+function GetItemNameAt(slot: integer): String;
+var
+  Temp: TInvItem;
+begin
+  Temp := GetInvItemAt(slot);
+  Result := Temp.Name;
+end;
+
+{*******************************************************************************
+function R_InvCount: integer;
+By: Nava2
+Description: Counts the number of items in the inventory.
+*******************************************************************************}
+function R_InvCount: integer;
+var
+  Inv, Itm, IFACEINDEX, ID, i: integer;
+begin
+  Result := 0;
+
+  if ValidInterface(INTERFACE_INVENTORY) then
+    GameTab(tab_Inv);
+
+  IFACEINDEX := getInventoryInterface;
+
+  try
+    Inv := GetInterface(IFACEINDEX, 0);
+    for i := 0 to 27 do
+    begin
+      Itm := SmartGetFieldArrayObject(Inv, hook_interface_GetChildren, i);
+
+      ID := SmartGetFieldInt(Itm, hook_interface_GetID);
+      if (ID > 0) then
+        inc(Result);
+
+      SmartFreeObject(Itm);
+    end;
+  finally
+    SmartFreeObject(Inv);
+    SmartFreeObject(Itm);
+  end;
+end;
+
+{*******************************************************************************
+function R_InvEmpty : Boolean;
+By: Zyt3x
+Description: Results true if the inventory is empty
+*******************************************************************************}
+function R_InvEmpty : Boolean;
+begin
+  Result := (R_InvCount = 0);
+end;
+
+{*******************************************************************************
+function R_InvFull : Boolean;
+By: Zyt3x
+Description: Results true if the inventory is full
+*******************************************************************************}
+function R_InvFull : Boolean;
+begin
+  Result := (R_InvCount = 28);
+end;
+
+{*******************************************************************************
+function R_ItemExists(Slot: integer): boolean;
+By: Drags111
+Description: Returns true if an item exists at the specified slot.
+*******************************************************************************}
+function R_ItemExists(Slot: integer): boolean;
+begin
+  Result := (GetItemIDAt(slot) > 0);
+end;
+
+{*******************************************************************************
+function R_ItemIDExistsEx(var Items: TInvItemArray; IDs: TIntegerArray): boolean;
+By: Drags111
+Description: Returns true if one of the IDs is found at least once in the inventory.
+            Also returns all of the items found into the var Items.
+*******************************************************************************}
+function R_ItemIDExistsEx(IDs: TIntegerArray; out Items: TInvItemArray): boolean;
+var
+  i: integer;
+begin
+  SetLength(Items, 0);
+  Result := false;
+  for i := 1 to 28 do
+  begin
+    if(InIntArray(IDs, GetItemIDAt(i)))then
+    begin
+      SetLength(Items, Length(Items)+1);
+      Items[High(Items)] := GetInvItemAt(i);
+      Result := true;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_ItemIDExists(var Item: TInvItem; ID: Integer): Boolean;
+By: Drags111
+Description: Returns true if the ID is found at least once in the inventory.
+            Also returns the first item found into the var Item.
+*******************************************************************************}
+function R_ItemIDExists(var Item: TInvItem; ID: Integer): Boolean;
+var
+  Items: TInvItemArray;
+begin
+  Result := R_ItemIDExistsEx([ID], Items);
+  if Result then
+    Item := Items[0];
+end;
+
+{*******************************************************************************
+function R_ItemNameExistsEx(var Items: TInvItemArray; Names: TStringArray): boolean;
+By: Drags111
+Description: Returns true if one of the names is found at least once in the
+            inventory. It then stores all of the items with the name into the
+            var array Items.
+*******************************************************************************}
+function R_ItemNameExistsEx(var Items: TInvItemArray; Names: TStringArray): boolean;
+var
+  i, z: integer;
+begin
+  SetLength(Items, 0);
+  Result := false;
+  for i := 1 to 28 do
+  begin
+    for z := 0 to High(Names) do
+      if (Pos(Trim(Lowercase(Names[z])), Trim(Lowercase(GetItemNameAt(i)))) > 0)then
+      begin
+        SetLength(Items, Length(Items)+1);
+        Items[High(Items)] := GetInvItemAt(i);
+        Result := true;
+        Break;
+      end;
+  end;
+end;
+
+{*******************************************************************************
+function R_ItemNameExists(var Item: TInvItem; Name: String): Boolean;
+By: Drags111
+Description: Returns true if the name is found at least once in the inventory.
+            Also returns the first item found into the var Item.
+*******************************************************************************}
+function R_ItemNameExists(var Item: TInvItem; Name: String): Boolean;
+var
+  Items: TInvItemArray;
+begin
+  Result := R_ItemNameExistsEx(Items, [Name]);
+  if Result then
+    Item := Items[0];
+end;
+
+{*******************************************************************************
+function R_CountItemIDEx(IDs: TIntegerArray): Integer;
+By: Drags111
+Description: Counts all items with the id(s) from the ID array.
+*******************************************************************************}
+function R_CountItemIDEx(IDs: TIntegerArray): Integer;
+var
+  i: integer;
+begin
+  Result := 0;
+  for i := 1 to 28 do
+    if(InIntArray(IDs, GetItemIDAt(i)))then
+      Inc(Result);
+end;
+
+{*******************************************************************************
+function R_CountItemID(ID: integer): Integer;
+By: Drags111
+Description: Returns the number of items in your inventory with the ID.
+*******************************************************************************}
+function R_CountItemID(ID: integer): Integer;
+begin
+  Result := R_CountItemIDEx([ID]);
+end;
+
+{*******************************************************************************
+function R_CountItemNameEx(Names: TStringArray): Integer;
+By: Drags111
+Description: Counts all items with the name(s) from the ID array.
+*******************************************************************************}
+function R_CountItemNameEx(Names: TStringArray): Integer;
+var
+  i, z: integer;
+begin
+  Result := 0;
+  for i := 1 to 28 do
+    for z := 0 to High(Names) do
+      if (Pos(Lowercase(Names[z]), Lowercase(GetItemNameAt(i))) > 0)then
+      begin
+        Inc(Result);
+        break;
+      end;
+end;
+
+{*******************************************************************************
+function R_CountItemName(Name: String): Integer;
+By: Drags111
+Description: Returns the number of items in your inventory with the Name.
+*******************************************************************************}
+function R_CountItemName(Name: String): Integer;
+begin
+  Result := R_CountItemNameEx([Name]);
+end;
+
+{*******************************************************************************
+function R_ClickItemID(ID: Integer; Left: Boolean; Action: String): boolean;
+By: Drags111
+Description: Clicks the first item in the inventory with the ID, and if left is
+            set to true, Left clicks and performs the action. Otherwise, right
+            clicks. Ex: R_ClickItemID(123, false, 'Wield');
+                                  OR
+                        R_ClickItemID(123, true, ''); //Left clicks (use).
+*******************************************************************************}
+function R_ClickItem(Slot: Integer; Left: Boolean; Action: String): boolean;
+var
+  item: TInvItem;
+begin
+  Result := false;
+  Item := GetInvItemAt(slot);
+  if(Item = NULL_INVITEM)then Exit;
+  if left then
+  begin
+    MouseItem(slot, true);
+    Result := True;
+  end else
+  begin
+    MouseItem(slot, false);
+    Result := R_ChooseOption(Action);
+  end;
+end;
+
+{*******************************************************************************
+function R_ClickItemID(ID: Integer; Left: Boolean; Action: String): boolean;
+By: Drags111
+Description: Clicks the first item in the inventory with the ID, and if left is
+            set to true, Left clicks and performs the action. Otherwise, right
+            clicks. Ex: R_ClickItemID(123, false, 'Wield');
+                                  OR
+                        R_ClickItemID(123, true, ''); //Left clicks (use).
+*******************************************************************************}
+function R_ClickItemID(ID: Integer; Left: Boolean; Action: String): boolean;
+var
+  i: integer;
+begin
+  for i := 1 to 28 do
+    if(GetItemIDAt(i) = ID)then
+    begin
+      Result := R_ClickItem(i, Left, Action);
+      break;
+    end;
+end;
+
+{*******************************************************************************
+function R_ClickItemName(Name: String; Left: boolean; Action: String): boolean;
+By: Drags111
+Description: Clicks the first item in the inventory with the Name, and if left is
+            set to true, Left clicks and performs the action. Otherwise, right
+            clicks. Ex: R_ClickItemName('iron ore', false, 'drop');
+                                  OR
+                        R_ClickItemName(bucket, true, ''); //Left clicks (use).
+*******************************************************************************}
+function R_ClickItemName(Name: String; Left: boolean; Action: String): boolean;
+var
+  i: integer;
+begin
+  for i := 1 to 28 do
+    if (Pos(Trim(Lowercase(Name)), Trim(Lowercase(GetItemNameAt(i)))) > 0)then
+    begin
+      Result := R_ClickItem(i, Left, Action);
+      break;
+    end;
+end;
+
+{*******************************************************************************
+procedure R_DropItem(Slot: integer);
+By: Drags111
+Description: Drops the item at the slot.
+*******************************************************************************}
+procedure R_DropItem(Slot: integer);
+var
+  mt, t: integer;
+begin
+  MarkTime(mt);
+  while(R_ItemExists(slot) and (TimeFromMark(mt) < 5000))do
+  begin
+    MouseItem(slot, false);
+    R_ChooseOption('drop');
+    MarkTime(t);
+    while(R_ItemExists(slot) and (TimeFromMark(t) < 1500))do
+      wait(25+Random(25));
+  end;
+end;
+
+{*******************************************************************************
+procedure R_DropAllItems;
+By: Drags111
+Description: Drops all items in the inventory.
+*******************************************************************************}
+procedure R_DropAllItems;
+var
+  i: integer;
+begin
+  for i := 1 to 28 do
+    R_DropItem(i);
+end;
+
+{*******************************************************************************
+procedure R_DropAllItemsIDEx(IDs: TIntegerArray);
+By: Drags111
+Description: Drops all items in the inventory with any of the specified IDs.
+*******************************************************************************}
+procedure R_DropAllItemsIDEx(IDs: TIntegerArray);
+var
+  i: integer;
+begin
+  for i := 1 to 28 do
+    if(InIntArray(IDs, GetItemIDAt(i)))then
+      R_DropItem(i);
+end;
+
+{*******************************************************************************
+procedure R_DropAllItemsID(id: integer);
+By: Drags111
+Description: Drops all items in the inventory with the specified ID.
+*******************************************************************************}
+procedure R_DropAllItemsID(ID: integer);
+begin
+  R_DropAllItemsIDEx([ID]);
+end;
+
+{*******************************************************************************
+procedure R_DropAllItemsNameEx(Names: TStringArray);
+By: Drags111
+Description: Drops all items with any of the names.
+*******************************************************************************}
+procedure R_DropAllItemsNameEx(Names: TStringArray);
+var
+  i, z: integer;
+begin
+  for i := 1 to 28 do
+    for z := 0 to High(Names) do
+      if (Pos(Trim(Lowercase(Names[z])), Trim(Lowercase(GetItemNameAt(i)))) > 0)then
+        R_DropItem(i);
+end;
+
+{*******************************************************************************
+procedure R_DropAllItemsName(Name: String);
+By: Drags111
+Description: Drops all items in the inventory with the specified name.
+*******************************************************************************}
+procedure R_DropAllItemsName(Name: String);
+begin
+  R_DropAllItemsNameEx([Name]);
+end;
+
+{*******************************************************************************
+procedure R_DropItemsButSlotEx(slots: TIntegerArray);
+By: Drags111
+Description: Drops all items in the inventory except those in the specified slots.
+*******************************************************************************}
+procedure R_DropItemsButSlotEx(slots: TIntegerArray);
+var
+  i: integer;
+begin
+  for i := 1 to 28 do
+    if not(InIntArray(slots, i))then
+      R_DropItem(i);
+end;
+
+{*******************************************************************************
+procedure R_DropItemsButSlot(slot: integer);
+By: Drags111
+Description: Drops all items in the inventory except the one in the specified slot.
+*******************************************************************************}
+procedure R_DropItemsButSlot(slot: integer);
+begin
+  R_DropItemsButSlotEx([slot]);
+end;
+
+{*******************************************************************************
+procedure R_DropItemsButIDEx(ids: TIntegerArray);
+By: Drags111
+Description: Drops all items in the inventory except those w/ the specified IDs.
+*******************************************************************************}
+procedure R_DropItemsButIDEx(ids: TIntegerArray);
+var
+  i: integer;
+begin
+  for i := 1 to 28 do
+    if not(InIntArray(IDs, GetItemIDAt(i)))then
+      R_DropItem(i);
+end;
+
+{*******************************************************************************
+procedure R_DropItemsButID(id: integer);
+By: Drags111
+Description: Drops all items in the inventory except those w/ the specified ID.
+*******************************************************************************}
+procedure R_DropItemsButID(id: integer);
+begin
+  R_DropItemsButIDEx([id]);
+end;
+
+{*******************************************************************************
+procedure R_DropItemsButNameEx(Names: TStringArray);
+By: Drags111
+Description: Drops all items in the inventory except those w/ the specified Names.
+*******************************************************************************}
+procedure R_DropItemsButNameEx(Names: TStringArray);
+var
+  i, z: integer;
+begin
+  for i := 1 to 28 do
+    for z := 0 to High(Names) do
+      if (Pos(Trim(Lowercase(Names[z])), Trim(Lowercase(GetItemNameAt(i)))) > 0)then
+        R_DropItem(i);
+end;
+
+{*******************************************************************************
+procedure R_DropItemsButName(Name: String);
+By: Drags111
+Description: Drops all items in the inventory except those w/ the specified Name.
+*******************************************************************************}
+procedure R_DropItemsButName(Name: String);
+begin
+  R_DropItemsButNameEx([Name]);
+end;
+
+{*******************************************************************************
+procedure R_DumpItems(Items: TInvItemArray);
+By: Drags111
+Description: Prints out the TInvItemArray nice and neatly.
+*******************************************************************************}
+procedure R_DumpItems(Items: TInvItemArray);
+var
+  i: integer;
+begin
+  for i := 0 to High(Items)do
+  begin
+    Writeln('Slot: '+ToStr(Items[i].Slot));
+    Writeln('   Name: '+Items[i].Name);
+    Writeln('   ID: '+ToStr(Items[i].ID));
+    Writeln('   Stack Size: '+ToStr(Items[i].ID));
+    Writeln('   Actions: '+ToStr(Items[i].Actions));
+  end;
+end;

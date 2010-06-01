@@ -1,0 +1,208 @@
+
+
+{*******************************************************************************
+function GetEquippedItemAt(Slot: Integer): TInvItem;
+By: Drags111
+Description: Returns a TInvItem of the item in the specified equipment slot.
+            (see chart at top of page.)
+*******************************************************************************}
+function GetEquippedItemAt(Slot: Integer): TEquipment;
+var
+  Inter, child, textbytes, ID, acts: integer;
+begin
+  Result := NULL_EQUIPMENT;
+
+  if not ValidInterface(INTERFACE_EQUIPMENT)then exit;
+  GameTab(TAB_EQUIP);
+
+  try
+    inter := SmartGetFieldArrayObject(0, hook_static_GetInterfaces, INTERFACE_EQUIPMENT);
+    child := SmartGetFieldArrayObject(inter, '', (slot*3)+8);
+
+    ID := SmartGetFieldInt(child, hook_interface_GetID);
+    textbytes := SmartGetFieldObject(child, hook_interface_GetName);
+    acts := SmartGetFieldObject(child, hook_interface_GetActions);
+
+    if(ID >0)then
+    begin
+      Result.Id := ID;
+      Result.Name := TrimItemName(GetJavaString(textbytes, 255));
+      Result.Count := SmartGetFieldInt(child, hook_interface_GetStack);
+      Result.Actions := GetActionList(child, acts);
+      Result.IsAmmo := (Result.Count > 1);
+    end;
+
+  finally
+    SmartFreeObject(acts);
+    SmartFreeObject(textbytes);
+    SmartFreeObject(child);
+    SmartFreeObject(inter);
+  end;
+end;
+
+{*******************************************************************************
+function GetEquipment: TEquipmentSet;
+By: Drags111
+Description: Returns a TEquipmentSet of your char.
+*******************************************************************************}
+function GetEquipment: TEquipmentSet;
+var
+  Inter, child, textbytes, i: integer;
+begin
+  if not ValidInterface(INTERFACE_EQUIPMENT)then exit;     // const..
+  GameTab(TAB_EQUIP);
+  try
+    inter := SmartGetFieldArrayObject(0,
+                                      hook_static_GetInterfaces,
+                                      INTERFACE_EQUIPMENT);
+    for i := 0 to 10 do
+    begin
+      Result.Items[i] := NULL_EQUIPMENT;
+
+      child := SmartGetFieldArrayObject(inter, '', (i*3)+8);
+      textbytes := SmartGetFieldObject(child, hook_interface_GetName);
+
+      Result.Items[i].ID  := SmartGetFieldInt(child, hook_interface_GetID);
+      Result.Items[i].Name := TrimItemName(GetJavaString(textbytes, 255));
+      Result.Items[i].Count := SmartGetFieldInt(child, hook_interface_GetStack);
+      Result.Items[i].isAmmo := (Result.Items[i].Count > 1);
+
+      if (Result.Items[i].isAmmo) then
+        Result.AmmoCount := Result.AmmoCount + Result.Items[i].Count;
+
+      SmartFreeObject(textbytes);
+      SmartFreeObject(child);
+    end;
+  finally
+    SmartFreeObject(textbytes);
+    SmartFreeObject(child);
+    SmartFreeObject(inter);
+  end;
+end;
+
+{*******************************************************************************
+function GetEquppedIDAt(spot: integer): Integer;
+By: Drags111
+Description: Returns a the ID of the item in the slot.
+*******************************************************************************}
+function GetEquippedIDAt(spot: integer): Integer;
+var
+  inter, child: Integer;
+begin
+  if not ValidInterface(INTERFACE_EQUIPMENT)then exit;     // const..
+  GameTab(TAB_EQUIP);
+  try
+    inter := SmartGetFieldArrayObject(0,
+                                      hook_static_GetInterfaces,
+                                      INTERFACE_EQUIPMENT);
+    child := SmartGetFieldArrayObject(inter, '', (spot*3)+8);
+
+    Result := SmartGetFieldInt(child, hook_interface_GetID);
+  finally
+    SmartFreeObject(child);
+    SmartFreeObject(inter);
+  end;
+end;
+
+{*******************************************************************************
+function GetEquippedNameAt(spot: integer): String;
+By: Drags111
+Description: Returns a the Name of the item in the slot.
+*******************************************************************************}
+function GetEquippedNameAt(spot: integer): String;
+var
+  Equipmnt: TEquipmentSet;
+begin
+  Equipmnt := GetEquipment;
+  if(Equipmnt.Items[spot] = NULL_EQUIPMENT)then
+      Exit;
+  Result := Equipmnt.Items[spot].name;
+end;
+
+{*******************************************************************************
+function HasItemEquipped(spot: integer): boolean;
+By: Drags111
+Description: Returns true if there is an item equipped at the slot.
+*******************************************************************************}
+function HasItemEquipped(spot: integer): boolean;          // rename..
+var
+  Equipmnt: TEquipmentSet;
+begin
+  Equipmnt := GetEquipment;
+  Result := (Equipmnt.Items[spot].ID <> NULL_INT);
+end;
+
+{*******************************************************************************
+function IsEquippedIDEx(IDs: TIntegerArray): boolean;
+By: Drags111
+Description: Returns true if there is an item equipped with one of the IDs.
+*******************************************************************************}
+function IsEquippedIDEx(IDs: TIntegerArray): boolean;
+var
+  Equipment: TEquipmentSet;
+  i, ii: integer;
+begin
+  Result := False;
+  Equipment := GetEquipment;
+  for i := High(IDs) downto 0 do
+    for ii := 10 downto 0 do
+      if (IDs[i] = Equipment.Items[i].ID) then
+      begin
+        Result := True;
+        Exit;
+      end;
+end;
+
+{*******************************************************************************
+function IsEquippedID(ID: Integer): boolean;
+By: Drags111
+Description: Returns true if there is an item equipped with the ID.
+*******************************************************************************}
+function IsEquippedID(ID: Integer): boolean;
+begin
+  Result := IsEquippedIDEx([ID]);
+end;
+
+{*******************************************************************************
+function IsEquippedNameEx(Names: TStringArray): boolean;
+By: Drags111
+Description: Returns true if there is an item equipped with one of the Names.
+*******************************************************************************}
+function IsEquippedNameEx(Names: TStringArray): boolean;
+var
+  Equipment: TEquipmentSet;
+  i, z: integer;
+begin
+  Result := False;
+  Equipment := GetEquipment;
+  for i := 0 to 10 do
+    for z := High(Names) downto 0 do
+      if (Pos(Names[z], Equipment.Items[i].Name) > 0) then
+      begin
+        Result := True;
+        Exit;
+      end;
+end;
+
+{*******************************************************************************
+function IsEquippedName(Name: String): boolean;
+By: Drags111
+Description: Returns true if there is an item equipped with the name.
+*******************************************************************************}
+function IsEquippedName(Name: String): boolean;
+begin
+  Result := IsEquippedNameEx([Name]);
+end;
+
+{*******************************************************************************
+function R_GetAmmoCount: integer;
+By: Drags111
+Description: Returns the number of arrows or bolts etc, you have equipped.
+*******************************************************************************}
+function R_GetAmmoCount: integer;
+var
+  Slot: TEquipment;
+begin
+  Slot := GetEquippedItemAt(EQUIPMENT_AMMO);
+  Result := Slot.Count;
+end;
