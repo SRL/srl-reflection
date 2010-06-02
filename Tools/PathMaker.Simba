@@ -9,7 +9,17 @@
   errors!
 }
 program PathMaker;
-{$i srl/srl/reflection/Reflection.simba}
+{$DEFINE SMART}
+{$i srl\srl.scar}
+{$i reflection\reflection.simba}
+
+const
+
+{---SMART Setup Constants---}
+  WORLD = 32;
+  MEMBERS = false;
+  SIGNED = true;
+{---------------------------}
 
 var
   pathMakerForm : TForm;
@@ -188,7 +198,12 @@ var
   v : TVariantArray;
 
 begin
-  SetupReflection;
+  Smart_Members := MEMBERS;
+  Smart_Server := WORLD;
+  Smart_Signed := SIGNED;
+
+  SetupSRL;
+  SetupReflectionEx(true);
   Writeln(GetMyPos);
   ThreadSafeCall('OpenForm',v);
 end.
