@@ -9,8 +9,13 @@ var
 begin
   for I := 1 to RandomCount do
   begin
+    if (i = 4)then
+      Writeln('lamp');
     case I of
       1 : Result := R_SolveMolly;
+      2 : Result := R_SolveMime;
+      3 : Result := R_FindRewardBox;
+      4 : Result := FindLamp(LampSkill);
     end;
     if (Result) then
       Break;

@@ -10,11 +10,12 @@ const
 const
 { const RandomCount;
   Description: Number of Anti-Randoms. }
-  RandomCount = 1;
+  RandomCount = 4;
 
 { const RMimes, RBoxes, RFrogs, RDemon, RMolly, RPinball, RTalks, RForests, RPillory;
   Description: Random event constants to be used with Random Reporting. }
   RMolly   = 1;
+  RMimes   = 2;
 
 {Global Variables for Random Reporting}
 var
