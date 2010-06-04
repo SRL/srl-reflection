@@ -79,12 +79,12 @@ var
 begin
   for I := 1 to RandomCount do
   begin
-    if (i = 4)then
     case I of
       1 : Result := R_SolveMolly;
       2 : Result := R_SolveMime;
-      3 : Result := R_FindRewardBox;
-      4 : Result := R_FindLamp(LampSkill);
+      3 : Result := R_SolveDemon;
+      4 : Result := R_FindRewardBox;
+      5 : Result := R_FindLamp(LampSkill);
     end;
     if (Result) then
       Break;

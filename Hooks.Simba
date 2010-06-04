@@ -198,6 +198,16 @@ const
   hook_playerdef_Equipment = 't';
 
 
+//GroundItem crap.
+  hook_static_GroundItemCache = 'ko.g';
+  hook_nodecache_GetNodes = 'b';
+  hook_node_GetPrev = 'e';
+  hook_node_getID = 'c';
+
+//Settings Array
+  hook_static_GetSettings = 'kj.f';
+  hook_settingarray_GetData = 'g';
+
 //InteractiveObject KBOT Path:
 {
   1) Search for getDataContainer.

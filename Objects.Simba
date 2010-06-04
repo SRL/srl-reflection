@@ -268,6 +268,7 @@ begin
     if Dir mod 2 = 0 then
       Inc(tLength);
   end;
+  SetLength(Result, resCount);
 end;
 
 {*******************************************************************************
@@ -285,12 +286,12 @@ var
    TP: TTile;
    TileObject: TRSObject;
 begin
-  SetLength(Result, 0);
   TP := GetMyPos;
   X := TP.X;
   Y := TP.Y;
   Dir := 0;
   tLength := 1;
+  Writeln('Here...');
   while (tLength < MaxDist) do
   begin
     for F := 0 to tLength - 1 do

@@ -573,3 +573,31 @@ function R_IsUpText(UpText: string): Boolean;
 begin
   Result := R_IsUpTextMulti([UpText]);
 end;
+
+function GetSettingArray: TIntegerArray;
+var
+  SettingArray, Data, DL, i, c: Integer;
+begin
+  try
+    SettingArray := SmartGetFieldObject(0, hook_static_GetSettings);
+    Data := SmartGetFieldObject(SettingArray, hook_settingarray_GetData);
+
+    DL := SmartGetFieldArraySize(Data, '', 1);
+    SetLength(Result, DL);
+    for i := 0 to DL-1 do
+      Result[i] := SmartGetFieldArrayInt(data, '', i); // Never change this. EVER.
+      //If you don't like it, talk to Drags111 and he will change your mind.
+  finally
+    SmartFreeObject(Data);
+    SmartFreeOBject(SettingArray);
+  end;
+end;
+
+function GetSetting(Setting: Integer): Integer;
+var
+  SA: TIntegerArray;
+begin
+  SA := GetSettingArray;
+  if(Setting < Length(SA))then
+    Result := SA[Setting];
+end;

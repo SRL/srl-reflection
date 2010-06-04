@@ -10,12 +10,13 @@ const
 const
 { const RandomCount;
   Description: Number of Anti-Randoms. }
-  RandomCount = 4;
+  RandomCount = 5;
 
 { const RMimes, RBoxes, RFrogs, RDemon, RMolly, RPinball, RTalks, RForests, RPillory;
   Description: Random event constants to be used with Random Reporting. }
   RMolly   = 1;
   RMimes   = 2;
+  RDemon   = 3;
 
 {Global Variables for Random Reporting}
 var
@@ -52,6 +53,11 @@ const
 {
   Chat Constants:
 }
+
+var
+  INTERFACE_TALKS: TIntegerArray; // All of the interfaces for NPCChat.
+  INTERFACE_SELFTALKS: TIntegerArray; // "  "    "         for us chatting to NPCs.
+
 const
   CHAT_TYPE_NORMAL  = 0;
   CHAT_TYPE_CHATTER = 1;
@@ -262,3 +268,13 @@ type
   Description: Container for TRSObjects. }
 type
   TRSObjectArray = array of TRSObject;
+
+procedure SetupConstants;
+begin
+  SetLength(INTERFACE_TALKS, 19);
+  INTERFACE_TALKS := [211, 241, 251, 101, 242, 102, 161, 249, 243,
+                      64, 65, 244, 255, 249, 230, 372, 421, 66, 64];
+
+  SetLength(INTERFACE_SELFTALKS, 2);
+  INTERFACE_SELFTALKS := [66, 64];
+end;

@@ -15,6 +15,7 @@
 
 {$i Antirandoms\Molly.simba}
 {$i Antirandoms\Mime.simba}
+{$i Antirandoms\Demon.simba}
 {$i Antirandoms\Rewards.simba}
 {$i Antirandoms\Antirandoms.simba}
 
@@ -28,6 +29,7 @@ Description: Sets up reflection. If Term is true and the hooks are
 *******************************************************************************}
 function SetupReflectionEx(Terminate: Boolean): boolean;
 begin
+  SetupConstants;
   Result := true;
   if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
   begin
