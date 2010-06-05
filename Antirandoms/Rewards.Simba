@@ -13,7 +13,7 @@ Description: Finds the reward box, and opens it getting the reward.
 
 function R_UseRewardBox: Boolean;
 var
-  I, Time, Height, fx, fy, Index, bDTM: Integer;
+  Time, Height, Index: Integer;
   Text, TPA: TPointArray;
   B: TBox;
   Item: TInvItem;

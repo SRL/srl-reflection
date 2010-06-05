@@ -368,7 +368,7 @@ Description: Solves the Drill Demon Random.
 
 function R_SolveDemon : Boolean;
 var
-  a, t: integer;
+  t: integer;
   order, neworder: String;
 begin
   Result := False;

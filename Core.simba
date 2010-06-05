@@ -581,7 +581,7 @@ Description: Returns an int array for the runescape Settings Array.
 *******************************************************************************}
 function GetSettingArray: TIntegerArray;
 var
-  SettingArray, Data, DL, i, c: Integer;
+  SettingArray, Data, DL, i: Integer;
 begin
   try
     SettingArray := SmartGetFieldObject(0, hook_static_GetSettings);

@@ -40,8 +40,6 @@ end;
 
 function R_HandleArnav: boolean;
 var
-  inter, i, L, t: integer;
-  name: string;
   Arnav: TNPC;
 begin
   if not R_LoggedIn then Exit;
@@ -68,7 +66,7 @@ begin
   Result := trim(lowercase(GetInterfaceText(185, 31)));
 end;
 
-function R_SetToCoins: boolean;
+procedure R_SetToCoins;
 var
   sValue, nValue, i: integer;
   rowDone: Boolean;
@@ -95,7 +93,7 @@ begin
   end;
 end;
 
-function R_ChangeSelection(Dir: String; Count: Integer): boolean;
+procedure R_ChangeSelection(Dir: String; Count: Integer);
 var
   x, y, i, z: integer;
 begin
@@ -118,7 +116,7 @@ end;
 function R_SolveArnav: boolean;
 var
   Goal: String;
-  i, t: integer;
+  t: integer;
   NPC: TNPC;
   PT: TTile;
   P: TPoint;

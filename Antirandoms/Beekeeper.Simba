@@ -39,14 +39,11 @@ end;
 
 function HandleKeeper: boolean;
 var
-  inter, i, L, t: integer;
-  name: string;
   Keeper: TNPC;
 begin
   if not R_LoggedIn then Exit;
   Result := BuildInterfaceUp;
   if Result then Exit;
-  Writeln('HandleKeeper');
   While not BuildInterfaceUp do
   begin
     if not FindNPC('Bee keeper', Keeper)then Exit;
@@ -82,7 +79,7 @@ begin
   Result := GetModelID(420, GetSlotChild(Slot));
 end;
 
-function MovePiece(From, toSlot: Integer): Boolean;
+procedure MovePiece(From, toSlot: Integer);
 var
   IFace, Child, EndChild, x, y: Integer;
   TL, BR, P: TPoint; //Top left, Bottom right
