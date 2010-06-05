@@ -521,7 +521,7 @@ var
 begin
   for i := 1 to 28 do
     for z := 0 to High(Names) do
-      if (Pos(Trim(Lowercase(Names[z])), Trim(Lowercase(GetItemNameAt(i)))) > 0)then
+      if not(Pos(Trim(Lowercase(Names[z])), Trim(Lowercase(GetItemNameAt(i)))) > 0)then
         R_DropItem(i);
 end;
 
