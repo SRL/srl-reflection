@@ -16,6 +16,9 @@
 {$i Antirandoms\Molly.simba}
 {$i Antirandoms\Mime.simba}
 {$i Antirandoms\Demon.simba}
+{$i Antirandoms\Arnav.simba}
+{$i Antirandoms\Beekeeper.simba}
+{$i Antirandoms\Pinball.simba}
 {$i Antirandoms\Rewards.simba}
 {$i Antirandoms\Antirandoms.simba}
 

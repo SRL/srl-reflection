@@ -10,13 +10,17 @@ const
 const
 { const RandomCount;
   Description: Number of Anti-Randoms. }
-  RandomCount = 5;
+  RandomCount = 8;
 
 { const RMimes, RBoxes, RFrogs, RDemon, RMolly, RPinball, RTalks, RForests, RPillory;
   Description: Random event constants to be used with Random Reporting. }
-  RMolly   = 1;
-  RMimes   = 2;
-  RDemon   = 3;
+  RMolly    = 1;
+  RMimes    = 2;
+  RDemon    = 3;
+  RArnav    = 4;
+  RBees     = 5;
+  RPinballs = 6;
+
 
 {Global Variables for Random Reporting}
 var
@@ -139,13 +143,38 @@ type
     Result.Interacting := NULL_INT;
   end;
 
+type
+{ type TPlayer;
+  Description: Holds information related to a player. }
+  TPlayer = record
+    Index, Level, Animation, Height, HPRatio, Interacting,
+    Orientation: integer;// SOUTH = 0; NORTH = 180; CLOCKWISE.
+    Tile: TTile;
+    Name: String;
+    Moving: boolean;
+  end;
+
+  function NULL_PLAYER: TPlayer;
+  begin
+    Result.Index := NULL_INT;
+    Result.Name := NULL_STRING;
+    Result.Tile := NULL_TILE;
+    Result.Moving := False;
+    Result.Animation := NULL_INT;
+    Result.Height := NULL_INT;
+    Result.HPRatio := NULL_INT;
+    Result.Orientation := NULL_INT;
+    Result.Level := NULL_INT;
+    Result.Interacting := NULL_INT;
+  end;
+
 { type TMe;
   Description: Holds information related to your character. }
 type
   TMe = record
     Tile: TTile;
     MS: TPoint;
-    Animation, Speed, LoginIndex: Integer;
+    Animation, Speed, LoginIndex, Interacting: Integer;
     HPRatio, Height, Level, Combat, TurnDirection: Integer;
     Name: string;
     InFight: boolean;
@@ -158,6 +187,7 @@ type
   Description: Container for NPC array. }
 type
   TNPCArray = array of TNPC;
+  TPlayerArray = array of TPlayer;
 
 
 {
@@ -272,9 +302,9 @@ type
 
 procedure SetupConstants;
 begin
-  SetLength(INTERFACE_TALKS, 20);
+  SetLength(INTERFACE_TALKS, 21);
   INTERFACE_TALKS := [211, 241, 251, 101, 242, 102, 161, 249, 243,
-                      64, 65, 244, 255, 249, 230, 372, 421, 66, 64, 236];
+                      64, 65, 244, 255, 249, 230, 372, 421, 66, 64, 236, 228];
 
   SetLength(INTERFACE_SELFTALKS, 2);
   INTERFACE_SELFTALKS := [66, 64];

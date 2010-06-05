@@ -1,0 +1,73 @@
+program ReflectionScript;
+{$DEFINE SMART}
+{$i srl\srl.scar}
+{$i reflection\reflection.simba}
+
+const
+
+{---SMART Setup Constants---}
+  WORLD = 32;
+  MEMBERS = false;
+  SIGNED = true;
+{---------------------------}
+
+function GetItemsAt(Tile: TTile): TIntegerArray;
+var
+  x, y, plane, id, ItemCache, NodeArray, NL, Node: integer;
+  nodeID: integer;
+  idFound: boolean;
+begin
+  x := Tile.x;
+  y := Tile.y;
+  plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
+
+  id := x or (y shl 14) or (plane shl 28);
+
+  Writeln(id);
+
+  ItemCache := SmartGetFieldObject(0, hook_static_GroundItemCache);
+
+  NodeArray := SmartGetFieldObject(ItemCache, hook_nodecache_GetNodes);
+
+  NL := SmartGetFieldArraySize(NodeArray, '', 1);
+
+  Node := SmartGetFieldArrayObject(NodeArray, '', id and (NL-1));
+
+  while(not idFound)do
+  begin
+    Node := SmartGetFieldObject(Node, hook_node_GetPrev);
+    NodeID := SmartGetFieldLongH(Node, hook_node_GetID);
+    if not(nodeid = 0)then
+    begin
+      Writeln('OMGOMGOMGOMG '+ToStr(nodeid));
+      TerminateScript;
+    end;
+    Writeln('New Node: '+ToStr(Node));
+    Writeln('New Node ID: '+ToStr(nodeID));
+  end;
+
+  Writeln('ItemCache: '+ToStr(ItemCache));
+  Writeln('NodeArray: '+ToStr(NodeArray));
+  Writeln('NL: '+ToStr(NL));
+  Writeln('id and (NL-1): '+ToStr(id and (NL-1)));
+  Writeln('Node: '+ToStr(Node));
+
+  SmartFreeObject(Node);
+  SmartFreeObject(NodeArray);
+  SmartFreeObject(ItemCache);
+end;
+
+var
+  T: TTile;
+
+begin
+  Smart_Members := MEMBERS;
+  Smart_Server := WORLD;
+  Smart_Signed := SIGNED;
+
+  SetupSRL;
+  SetupReflectionEx(true);
+
+  T := (GetMyPos);
+  GetItemsAt(t);
+end.

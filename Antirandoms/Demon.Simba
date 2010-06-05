@@ -399,7 +399,7 @@ begin
       wait(100+Random(100));
     end;
   end;
-  ClickToContinue;
+  R_ClickToContinue;
   Result := not R_InDemon;
   if Result then
     Inc(RSolved[RDemon])

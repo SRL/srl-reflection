@@ -131,3 +131,72 @@ begin
   if P <> 0 then
     Delete(Result, P, Length(Result) - P + 1);
 end;
+
+{*******************************************************************************
+function FindNPCText(text: string): boolean;
+By: Drags111
+Description: Searches through the known talking interfaces to search for the
+            inputed text.
+*******************************************************************************}
+function FindNPCText(text: string): boolean;
+var
+  inter, i, z, L: integer;
+  str: String;
+begin
+  Result := False;
+  for i := 0 to High(INTERFACE_TALKS) do
+  begin
+    inter := SmartGetFieldArrayObject(0, hook_static_GetInterfaces, INTERFACE_TALKS[i]);
+    L := SmartGetFieldArraySize(inter, '', 1);
+    SmartFreeObject(inter);
+
+    for z := 0 to L-1 do
+    begin
+      str := GetInterfaceText(INTERFACE_TALKS[i], z);
+      //Writeln(str);
+      if(pos(lowercase(trim(text)), lowercase(trim(str))) > 0)then
+      begin
+        Writeln('Found text at interface '+ToStr(INTERFACE_TALKS[i])+', '+ToStr(z));
+        Result := True;
+        Exit;
+      end;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_ClickToContinue: boolean;
+By: Drags111
+Description: Does as the name suggests. Clicks the 'click here to continue' crap
+*******************************************************************************}
+function R_ClickToContinue: boolean;
+var
+  inter, i, z, L, x, y, w, h: integer;
+  str: String;
+begin
+  Result := False;
+  for i := 0 to High(INTERFACE_TALKS) do
+  begin
+    inter := SmartGetFieldArrayObject(0, hook_static_GetInterfaces, INTERFACE_TALKS[i]);
+    L := SmartGetFieldArraySize(inter, '', 1);
+    SmartFreeObject(inter);
+
+    for z := 0 to L-1 do
+    begin
+      str := GetInterfaceText(INTERFACE_TALKS[i], z);
+      if(pos(lowercase(trim('click here to conti')), lowercase(trim(str))) > 0)then
+      begin
+        //Writeln('Found CTC at interface '+ToStr(INTERFACE_TALKS[i])+', '+ToStr(z));
+        inter := GetInterface(INTERFACE_TALKS[i], z);
+        x := SmartGetFieldInt(inter, hook_interface_GetX) + 7;
+        y := SmartGetFieldInt(inter, hook_interface_GetY) + 347;
+        w := SmartGetFieldInt(inter, hook_interface_GetWidth);
+        h := SmartGetFieldInt(inter, hook_interface_GetHeight);
+        MouseBox(x, y, x+w, y+h, 1);
+        SmartFreeObject(inter);
+        Result := true;
+        Exit;
+      end;
+    end;
+  end;
+end;

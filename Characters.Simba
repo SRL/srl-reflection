@@ -172,9 +172,9 @@ begin
 end;
 
 {*******************************************************************************
-function GetNPCByIndex(Idx : integer):TNPC;
+function GetNPC(theVar: Variant):TNPC;
 By: Drags111
-Description: Stores all the loaded NPCs into an array of TNPC;
+Description: Returns the npc by the varient (name or ID).
 *******************************************************************************}
 function GetNPC(theVar: Variant):TNPC;
 var
@@ -280,6 +280,106 @@ begin
 end;
 
 {*******************************************************************************
+function GetPlayers: array of TPlayer;
+By: Widget edited by lordsaturn and drags111
+Description: Returns all the players on the minimap
+*******************************************************************************}
+function GetPlayers: array of TPlayer;
+var
+  i, IndexPos, Count, Player, theName, L: integer;
+begin
+  Count := SmartGetFieldInt(0, hook_static_PlayerCount);
+  SetArrayLength(result, Count);
+  if Count < 1 then Exit;
+  for i := 0 to Count-1 do
+  try
+    IndexPos := SmartGetFieldArrayInt(0, hook_static_PlayerIndexArray, i);
+    Player := SmartGetFieldArrayObject(0, hook_static_GetPlayers, IndexPos);
+    theName := SmartGetFieldObject(Player, hook_player_GetName);
+    Result[L].Index := IndexPos;
+    Result[L].Name := GetJavaString(theName, 255);
+    Result[L].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) shr 7));
+    Result[L].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) shr 7));
+    Result[L].Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight));
+    Result[L].Animation := SmartGetFieldInt(Player, hook_character_Animation);
+    Result[L].Moving := (SmartGetFieldInt(Player, hook_character_Motion)>0);
+    Result[L].HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
+    Result[L].Level := SmartGetFieldInt(Player, hook_player_GetLevel);
+    Result[L].Orientation := (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048;
+    Result[L].Interacting := SmartGetFieldInt(Player, hook_character_GetInteracting);
+    Inc(L);
+  finally
+    SmartFreeObject(Player);
+    SmartFreeObject(theName);
+  end;
+  SetArrayLength(Result, L);
+end;
+
+{*******************************************************************************
+function GetPlayersBy(TheVar: Variant): TPlayerArray;
+By: Drags111
+Description: Returns all the players by the variant. (Name or Index);
+*******************************************************************************}
+function GetPlayersBy(TheVar: Variant): TPlayerArray;
+var
+  vType, i, resCounter: Integer;
+  Players: TPlayerArray;
+  b: boolean;
+begin
+  Players := GetPlayers;
+  SetLength(Result, Length(Players));
+  vType := VarType(TheVar);
+  if (vType = varString) then
+    TheVar := LowerCase(Trim(TheVar));
+
+  for i := High(Players) downto 0 do
+  begin
+    case vType of
+      varInteger: B := Players[i].Index = TheVar;
+      varString: B := (Pos(TheVar, LowerCase(Trim(Players[i].Name))) > 0);
+      else Exit;
+    end;
+    if not B then
+      Continue;
+    Result[resCounter] := Players[i];
+    inc(resCounter);
+  end;
+
+  SetLength(Result, resCounter);
+end;
+
+{*******************************************************************************
+function GetNPCByIndex(Idx : integer):TNPC;
+By: Drags111
+Description: Stores all the loaded NPCs into an array of TNPC;
+*******************************************************************************}
+function GetPlayer(theVar: Variant):TPlayer;
+var
+  Players: TPlayerArray;
+  i, vType: Integer;
+  B: Boolean;
+begin
+  Result := NULL_PLAYER;
+  vType := VarType(TheVar);
+  if (vType = varString) then
+    TheVar := LowerCase(TheVar);
+  Players := GetPlayers;
+  for i := High(Players) downto 0 do
+  begin
+    case (vType) of
+      varInteger: B := Players[i].Index = TheVar;
+      varString: B := (Pos(TheVar, LowerCase(Players[i].Name)) > 0);
+      else Continue;
+    end;
+    if (B) then
+    begin
+      Result := Players[i];
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
 function IsIdle: Boolean;
 By: lordsaturn
 Description: Returns true if the your player is idle. (no movement or animation)
@@ -312,10 +412,29 @@ begin
     Result.Level := SmartGetFieldInt(Player, hook_player_GetLevel);
     Result.InFight := (SmartGetFieldInt(0,hook_static_LoopCycle) < SmartGetFieldInt(Player,hook_character_LoopCycleStatus));
     Result.Orientation := (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048;
+    Result.Interacting := SmartGetFieldInt(0, 'tn.s');
   finally
     SmartFreeObject(theName);
     SmartFreeObject(Player);
     SmartFreeObject(pdef);
   end;
+end;
+
+{*******************************************************************************
+function InteractingWithMe(NPC: TNPC): Boolean;
+By: Drags111
+Description: Checks if the NPC is currently interacting with your character.
+*******************************************************************************}
+function InteractingWithMe(NPC: TNPC): Boolean;
+var
+  Me: TMe;
+  Player: TPlayer;
+  PIdx: integer;
+begin
+  NPC := GetNPC(NPC.ID);
+  Me := GetMe;
+  PIdx := (NPC.Interacting - 32768);
+  Player := GetPlayer(PIdx);
+  Result := (Player.Name = Me.Name);
 end;
 

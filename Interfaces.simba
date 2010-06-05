@@ -41,3 +41,17 @@ begin
   SmartFreeObject(Text);
   SmartFreeObject(Child);
 end;
+
+{*******************************************************************************
+Function GetModelID(ParentI, ChildI: Integer): Integer;
+By: Drags111
+Description: Returns the model ID of the interface.
+*******************************************************************************}
+function GetModelID(ParentI, ChildI: Integer): Integer;
+var
+  Child: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Result := SmartGetFieldInt(Child, hook_interface_GetModelID);
+  SmartFreeObject(Child);
+end;

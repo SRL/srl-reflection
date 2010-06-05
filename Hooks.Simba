@@ -175,6 +175,7 @@ const
 
 //InteractiveObject class pba
   hook_InteractiveObject_GetID = 'B';
+  hook_InteractiveObject_GetID2 = 'M.r';
 
   hook_static_GetInterfaces = 'qo.q'; //getIComponentArray in KBOT.
   hook_static_ValidInterfaces = 'pq.M';

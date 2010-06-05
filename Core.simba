@@ -574,6 +574,11 @@ begin
   Result := R_IsUpTextMulti([UpText]);
 end;
 
+{*******************************************************************************
+function GetSettingArray: TIntegerArray;
+By: Drags111
+Description: Returns an int array for the runescape Settings Array.
+*******************************************************************************}
 function GetSettingArray: TIntegerArray;
 var
   SettingArray, Data, DL, i, c: Integer;
@@ -593,6 +598,12 @@ begin
   end;
 end;
 
+{*******************************************************************************
+function GetSetting(Setting: Integer): Integer;
+By: Drags111
+Description: Gets the int setting value at the specified index. Used in some
+            antirandoms. (demon).
+*******************************************************************************}
 function GetSetting(Setting: Integer): Integer;
 var
   SA: TIntegerArray;
