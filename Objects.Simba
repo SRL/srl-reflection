@@ -57,7 +57,12 @@ begin
       begin
         ID := SmartGetFieldShort(Obj, hook_InteractiveObject_GetID);
         if((ID = -1) or ((ID and $FFFF) = 65535))then   // 65535 is an unsigned -1....
-          Exit;
+        begin
+          ID := SmartGetFieldInt(Obj, hook_InteractiveObject_GetID2);
+          if((ID = -1) or ((ID and $FFFF) = 65535))then
+            Exit;
+        end;
+
         Result := NewObject(ID and $FFFF, OBJECT_TYPE_INTERACTABLE, T);
         Exit;
       end;
@@ -327,7 +332,7 @@ Description: Returns the nearest object with the ID. Sorted from closest
 *******************************************************************************}
 function GetObjectByID(ID: Integer; objType, MaxDist: Integer): TRSObject;
 begin
-  Result := GetObjectByIDEx([ID], OBJECT_TYPE_INTERACTABLE, MaxDist);
+  Result := GetObjectByIDEx([ID], objType, MaxDist);
 end;
 
 {*******************************************************************************
