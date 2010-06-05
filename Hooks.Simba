@@ -193,6 +193,7 @@ const
   hook_interface_GetTextureID = 'Qb';
   hook_interface_GetTextColor = 'C';
   hook_interface_GetUID = 'fb';
+  hook_interface_GetModelID = 'v';
 
 //Equipment: PlayerDef:
   hook_playerdef_Equipment = 't';

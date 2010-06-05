@@ -81,6 +81,7 @@ begin
     Writeln('    '+'HPRatio: '+ ToStr(NPCs[i].HPRatio));
     Writeln('    '+'Level: '+ ToStr(NPCs[i].Level));
     Writeln('    '+'Orientation: '+ ToStr(NPCs[i].Orientation));
+    Writeln('    '+'Interacting: '+ ToStr(NPCs[i].Interacting));
   end;
 end;
 
@@ -120,6 +121,7 @@ begin
                               SmartGetFieldInt(0, hook_static_LoopCycle));
     Result[c].Orientation := (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048;
     Result[c].Level := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetLevel);
+    Result[c].Interacting := SmartGetFieldInt(TheNPC, hook_character_GetInteracting);
     Inc(c);
 
   finally

@@ -114,7 +114,7 @@ type
 { type TNPC;
   Description: Holds information related to an NPC. }
   TNPC = record
-    Index, ID, Level, Animation, Height, HPRatio,
+    Index, ID, Level, Animation, Height, HPRatio, Interacting,
     Orientation: integer;// SOUTH = 0; NORTH = 180; CLOCKWISE.
     Tile: TTile;
     Name: String;
@@ -136,6 +136,7 @@ type
     Result.Fighting := False;
     Result.Orientation := NULL_INT;
     Result.Level := NULL_INT;
+    Result.Interacting := NULL_INT;
   end;
 
 { type TMe;
@@ -271,9 +272,9 @@ type
 
 procedure SetupConstants;
 begin
-  SetLength(INTERFACE_TALKS, 19);
+  SetLength(INTERFACE_TALKS, 20);
   INTERFACE_TALKS := [211, 241, 251, 101, 242, 102, 161, 249, 243,
-                      64, 65, 244, 255, 249, 230, 372, 421, 66, 64];
+                      64, 65, 244, 255, 249, 230, 372, 421, 66, 64, 236];
 
   SetLength(INTERFACE_SELFTALKS, 2);
   INTERFACE_SELFTALKS := [66, 64];
