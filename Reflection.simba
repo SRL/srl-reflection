@@ -12,6 +12,7 @@
 {$i Equipment.simba}
 {$i Bank.simba}
 {$i Chat.simba}
+{$i GroundItems.simba}
 
 {$i Antirandoms\Molly.simba}
 {$i Antirandoms\Mime.simba}
@@ -19,6 +20,7 @@
 {$i Antirandoms\Arnav.simba}
 {$i Antirandoms\Beekeeper.simba}
 {$i Antirandoms\Pinball.simba}
+{$i Antirandoms\Quiz.simba}
 {$i Antirandoms\Rewards.simba}
 {$i Antirandoms\Antirandoms.simba}
 

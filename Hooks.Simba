@@ -159,6 +159,7 @@ const
   hook_ground_WallDecoration1 = 'e'; //getObject2 in KBOT
   hook_ground_WallDecoration2 = 'i'; //getBoundingObject1 in KBOT
   hook_ground_FloorDecoration = 'k'; //getDecorationObject in KBOT
+  hook_ground_GroundObject = 'o'; //getDecorationObject in KBOT
 
 //WallObjectData class dca
   hook_wallobjectdata_GetID = 'j';
@@ -195,6 +196,7 @@ const
   hook_interface_GetTextColor = 'C';
   hook_interface_GetUID = 'fb';
   hook_interface_GetModelID = 'v';
+  hook_interface_GetModelZoom = 'c';
 
 //Equipment: PlayerDef:
   hook_playerdef_Equipment = 't';
@@ -203,8 +205,10 @@ const
 //GroundItem crap.
   hook_static_GroundItemCache = 'ko.g';
   hook_nodecache_GetNodes = 'b';
-  hook_node_GetPrev = 'e';
-  hook_node_getID = 'c';
+  hook_nodelistcache_GetNodeList = 'n';
+  hook_node_getID = 'c'; //LongL.
+  hook_item_GetID = 'o';
+  hook_item_GetStack = 'r';
 
 //Settings Array
   hook_static_GetSettings = 'kj.f';

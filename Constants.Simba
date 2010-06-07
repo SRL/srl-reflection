@@ -10,7 +10,7 @@ const
 const
 { const RandomCount;
   Description: Number of Anti-Randoms. }
-  RandomCount = 8;
+  RandomCount = 9;
 
 { const RMimes, RBoxes, RFrogs, RDemon, RMolly, RPinball, RTalks, RForests, RPillory;
   Description: Random event constants to be used with Random Reporting. }
@@ -20,6 +20,7 @@ const
   RArnav    = 4;
   RBees     = 5;
   RPinballs = 6;
+  RQuiz     = 7;
 
 
 {Global Variables for Random Reporting}
@@ -267,6 +268,31 @@ type
 type
   TInvItemArray = array of TInvItem;
 
+{
+  GroundItem Constants:
+}
+{ type TGroundItem;
+  Description: Holds information pertaining to a ground item. }
+type
+  TGroundItem = record
+    ID: Integer;
+    Stack: Integer;
+    Tile: TTile;
+  end;
+
+{ type TGroundItemArray;
+  Description: Container for TGroundItem. }
+  TGroundItemArray = array of TGroundItem;
+
+  function NULL_GROUNDITEM: TGroundItem;
+  begin
+    with result do
+    begin
+      ID := NULL_INT;
+      Tile := NULL_TILE;
+      Stack := NULL_INT;
+    end;
+  end;
 {
   Objects
 }

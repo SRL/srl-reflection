@@ -17,6 +17,35 @@ begin
 end;
 
 {*******************************************************************************
+function GetValidInterfaces: TIntegerArray;
+By: Drags111
+Description: Returns an array of all the valid interfaces.
+*******************************************************************************}
+function GetValidInterfaces: TIntegerArray;
+var
+  Interfaces, IL, i, c: integer;
+begin
+  try
+    Interfaces := SmartGetFieldObject(0, hook_static_GetInterfaces);
+    IL := SmartGetFieldArraySize(Interfaces, '', 1);
+    SetLength(Result, IL);
+
+    for i := 0 to IL-1 do
+    begin
+      if(ValidInterface(i))then
+      begin
+        Result[c] :=i;
+        Inc(c);
+      end;
+    end;
+
+    SetLength(Result, c);
+  finally
+    SmartFreeObject(Interfaces);
+  end;
+end;
+
+{*******************************************************************************
 Function GetInterface(Index, ChildIndex: Integer): Integer;
 By: Bobarkinator
 Description: Returns the interface of InterfaceCache[Index][ChildIndex].
@@ -53,5 +82,19 @@ var
 begin
   Child := GetInterface(ParentI, ChildI);
   Result := SmartGetFieldInt(Child, hook_interface_GetModelID);
+  SmartFreeObject(Child);
+end;
+
+{*******************************************************************************
+Function GetModelZoom(ParentI, ChildI: Integer): Integer;
+By: Drags111
+Description: Returns the model zoom of the interface.
+*******************************************************************************}
+function GetModelZoom(ParentI, ChildI: Integer): Integer;
+var
+  Child: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Result := SmartGetFieldInt(Child, hook_interface_GetModelZoom);
   SmartFreeObject(Child);
 end;

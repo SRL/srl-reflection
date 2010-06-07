@@ -71,6 +71,7 @@ var
   P: TPoint;
   t, lastscore, currscore: integer;
 begin
+  if not R_InPinball then Exit;
   while R_InPinball do
   begin
     lastscore := Pinball_GetScore;
