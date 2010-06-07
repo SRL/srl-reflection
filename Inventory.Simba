@@ -628,25 +628,36 @@ begin
 end;
 
 {*******************************************************************************
-procedure DumpInv;
+procedure DumpInvEx(all: Boolean);
 By: 3Garrett3
-Description: Prints out the inventory.
+Description: Prints out the inventory, `all' specifies whether or not to dump
+	     empty inventory spaces.
 *******************************************************************************}
-procedure DumpInv;
+procedure DumpInvEx(all: Boolean);
 var
   i : Integer;
   Inv : TInvItem;
 begin
 for i := 1 to 28 do
   begin
-    if R_ItemExists(i) then
+    if (all or R_ItemExists(i)) then
     begin
       Inv := GetInvItemAt(i);
       Writeln('Slot: '+ ToStr(i));
-      Writeln('    '+'Name: '+Inv.Name);
-      Writeln('    '+'ID: '+ToStr(Inv.ID));
-      Writeln('    '+'Actions: '+ ToStr(Inv.Actions));
-      Writeln('    '+'StackSize: '+ ToStr(Inv.StackSize));
+      Writeln('    Name: '+Inv.Name);
+      Writeln('    ID: '+ToStr(Inv.ID));
+      Writeln('    Actions: '+ ToStr(Inv.Actions));
+      Writeln('    StackSize: '+ ToStr(Inv.StackSize));
     end;
   end;
+end;
+
+{*******************************************************************************
+procedure DumpInv;
+By: 3Garrett3
+Description: Prints out all inventory items, including empty slots.
+*******************************************************************************}
+procedure DumpInv;
+begin
+  DumpInvEx(True);
 end;
