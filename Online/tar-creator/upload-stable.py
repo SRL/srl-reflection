@@ -26,25 +26,39 @@ def get_rev():
     rev_string = p.stdout.readlines()[4]
     return rev_string.strip(' Revison:\n');
         
+def regex_match_arr(pattern, array, flags=0):
+    print pattern
+    for a in array:
+        if match(pattern, a, flags=flags):
+            return True
+    else:
+        return False
 
 def tar_repos(use_temp=None,exclude_files=None):
     # TODO: MAKE THIS USE TEMP FILES.
     if not use_temp or use_temp == True:
         file = tempfile.NamedTemporaryFile()
     else:
-        file = open(os.getcwd()+'tmpArchive'+get_rev()+'.tar.bz2','w+b')
-    print 'created file', file
-    tar_obj = tarfile.open(fileobj=file, mode='w:bz2')
+        file = open(os.getcwd()+'/tmpArchive'+get_rev()+'.tar.bz2','w+b')
+    print 'created file', file.name
+    tar_obj = tarfile.open(name=file.name, mode='w:bz2')
     print 'Created archive:',tar_obj
     
     os.chdir('../../')
     print 'In directory:', os.getcwd()
     
+    if not exclude_files:
+        exclude_files = '*\.svn/*'
+    else:
+        exclude_files.append('*\.svn/*')
+    
     dir = get_rev()
-    is_ex = lambda p: match(str(exclude_files), p) 
-    tar_obj.add('../Reflection', exclude=is_ex)
+    os.chdir('../')
+    tar_obj.add('Reflection/', exclude=(lambda p: for x in exclude_files (find(p, x) ? True :))
+    os.chdir('./Reflection')
     
     tar_obj.close()
+    file.close()
 
 def main():
     '''
