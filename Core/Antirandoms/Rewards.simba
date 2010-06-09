@@ -1,0 +1,105 @@
+//-----------------------------------------------------------------//
+//--               Reflection Resource Library                   --//
+//--               » Rewards Routines                            --//
+//-----------------------------------------------------------------//
+// * function R_FindRewardBox: Boolean;                            // * by mormonman
+//to be done: R_SolveExpBook, R_SolveLamp, R_SolveRewardsBox       //
+
+{*******************************************************************************
+procedure UseRewardBox: Boolean;
+by: Nava2, Timer, Drags111
+Description: Finds the reward box, and opens it getting the reward.
+*******************************************************************************}
+
+function R_UseRewardBox: Boolean;
+var
+  Time, Height, Index: Integer;
+  Text, TPA: TPointArray;
+  B: TBox;
+  Item: TInvItem;
+
+begin
+  Writeln('Using box.');
+  Result := False;
+  if (not LoggedIn) then exit;
+  GameTab(tab_Inv);
+  Writeln('Logged In.');
+  if (not(R_ItemIDExists(Item, 14664)))then Exit;
+  Writeln('Found color.');
+
+  if (Length(Trim(srl_Implode(Players[CurrentPlayer].BoxRewards, ''))) = 0) then
+    Players[CurrentPlayer].BoxRewards := ['XP'];
+
+  MouseItem(Item.Slot, True);
+
+  Result := False;
+  Text := LoadTextTPA('hoose', UpChars, Height);
+  Time := GetTimeRunning + 10000;
+  FindColorsTolerance(TPA, 2070783, 185, 34, 327, 50, 3);
+  while (not Result and (GetTimeRunning < Time)) do
+  begin
+    Wait(RandomRange(80, 100));
+    FindColorsTolerance(TPA, 2070783, 185, 34, 327, 50, 3);
+    if (Length(TPA) > 10) then
+      Result := FindTextTPAinTPA(Height, Text, TPA, TPA);
+  end;
+
+  if (not Result) then
+  begin
+    SRL_Warn('UseRewardBox', 'Could not open Reward Screen', Warn_AllVersions);
+    Exit;
+  end;
+  Wait(Random(100));
+  if (not FindBoxOption(B, Index)) then
+  begin
+    SRL_Warn('UseRewardBox', 'Could not find a usable option.', Warn_AllVersions);
+    Exit;
+  end;
+
+  Mouse(B.X1, B.Y1, 0, 0, True);
+  Time := GetTimeRunning + 2000;
+  Result := False;
+  while (not Result) and (GetTimeRunning < Time) do
+  begin
+    FindColorsTolerance(TPA, 1317148, 35, 70, 362, 311, 3);
+    Result := Length(TPA) > 50;
+    Wait(50 + Random(50));
+  end;
+  if (not Result) then
+  begin
+    CloseWindow;
+    Exit;
+  end;
+  MouseBox(413, 171, 469, 200, 1);
+  Time := GetSystemTime;
+  while (CountColorTolerance(1317148, B.x1 - 10, B.y1 - 10, B.x1 + 10, B.y1 + 10, 3) > 50) and (GetSystemTime - Time < 5000) do
+  begin
+    if (Pos('thing else', GetChatBoxText(8, clBlack)) > 0) then
+    begin
+      CloseWindow;
+      Wait(500 + Random(500));
+      SetLength(RB_SkipArray, Length(RB_SkipArray) + 1);
+      RB_SkipArray[High(RB_SkipArray)] := Index;
+      Result := UseRewardBox;
+      Break;
+    end;
+    Wait(100 + Random(200));
+  end;
+  RB_SkipArray := [];
+  if (CloseWindow) then
+    Result := False;
+end;
+
+{*******************************************************************************
+function R_FindRewardBox: Boolean;
+By: mormonman
+Description: If it finds the reward box in the inventory then it solves it with
+SRL's solver(I might make a reflection one).
+*******************************************************************************}
+function R_FindRewardBox: Boolean;
+var
+  Item: TInvItem;
+begin
+  Result:= R_ItemIDExists(Item, 14664);
+  if Result then R_UseRewardBox;
+end;

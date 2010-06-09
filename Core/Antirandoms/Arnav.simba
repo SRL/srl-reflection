@@ -1,0 +1,162 @@
+
+function R_InArnav: boolean;
+begin
+  Result := ValidNPC('Arnav');
+end;
+
+function R_ChestOpen: boolean;
+begin
+  Result := ValidInterface(185);
+end;
+
+function R_TalkToArnav: boolean;
+var
+  NPC: TNPC;
+  P: TPoint;
+  t: integer;
+begin
+  if not FindNPC('Arnav', NPC)then Exit;
+  if not TileOnMS(NPC.Tile, NPC.Height * 2 / 3)then
+  begin
+    SetAngle(true);
+    if not TileOnMS(NPC.Tile, NPC.Height * 2 / 3)then
+      if not WalkToTile(NPC.Tile, 0, 0)then
+        Exit;
+  end;
+  P := TileToMS(NPC.Tile, NPC.Height * 2 / 3);
+  Mouse(P.x, P.y, 3, 3, false);
+  Result := R_ChooseOption('Talk-to');
+  if Result then
+  begin
+    MarkTime(t);
+    While ((not FindNPCText('click here to')) and (TimeFromMArk(t) < 5000))do
+    begin
+      if charactermoving then
+        MarkTime(t);
+      wait(100+Random(100));
+    end;
+  end;
+end;
+
+function R_HandleArnav: boolean;
+var
+  Arnav: TNPC;
+begin
+  if not R_LoggedIn then Exit;
+  Result := R_ChestOpen;
+  if Result then Exit;
+  While not R_ChestOpen do
+  begin
+    if not FindNPC('Arnav', Arnav)then Exit;
+    if (( not InteractingWithMe(Arnav)) and (not FindNPCText('ready to try'))
+      and (not R_ClickToContinue))then
+      R_TalkToArnav;
+    R_ClickToContinue;
+    if(FindNPCText('ready to try'))then
+    begin
+      Mouse(247, 436, 15, 3, true);
+      wait(800+Random(2000));
+    end;
+  end;
+end;
+
+function R_GetGoal: String;
+begin
+  if not R_ChestOpen then Exit;
+  Result := trim(lowercase(GetInterfaceText(185, 31)));
+end;
+
+procedure R_SetToCoins;
+var
+  sValue, nValue, i: integer;
+  rowDone: Boolean;
+  P: TPoint;
+begin
+  if not R_ChestOpen then Exit;
+  for i := 1 to 3 do
+  begin
+    case i of
+      1: P := Point(123, 25);
+      2: P := Point(210, 25);
+      3: P := Point(303, 25);
+    end;
+    while not rowDone do
+    begin
+      sValue := GetSetting(809);
+      wait(500+Random(200));
+      Mouse(P.x, P.y, 10, 10, true);
+      wait(800+Random(200));
+      nValue := GetSetting(809);
+      rowDone := (nValue < sValue);
+    end;
+    rowDone := false;
+  end;
+end;
+
+procedure R_ChangeSelection(Dir: String; Count: Integer);
+var
+  x, y, i, z: integer;
+begin
+  if not R_ChestOpen then Exit;
+  case lowercase(dir) of
+    'up': y := 25;
+    'down': y := 305;
+  end;
+  for i := 0 to 2 do
+  begin
+    x := 125 + (i * 88);
+    for z := 1 to Count do
+    begin
+      Mouse(x, y, 10, 10, true);
+      wait(800+Random(200));
+    end;
+  end;
+end;
+
+function R_SolveArnav: boolean;
+var
+  Goal: String;
+  t: integer;
+  NPC: TNPC;
+  PT: TTile;
+  P: TPoint;
+begin
+  if not R_InArnav then Exit;
+  while(R_InArnav)do
+  begin
+    R_HandleArnav;
+    R_SetToCoins;
+    Goal := R_GetGoal;
+    while(R_ChestOpen)do
+    begin
+      case Goal of
+        'ring': R_ChangeSelection('down', 1);
+        'bowl': R_ChangeSelection('up', 1);
+        'bar': R_ChangeSelection('up', 2);
+      end;
+      Mouse(440, 251, 20, 10, true);
+      MarkTime(t);
+      While(R_ChestOpen and (TimeFromMark(t) < 4000))do
+        wait(100+Random(100));
+      wait(500+Random(500));
+      Result := FindNPCText('done it!');
+      if Result then
+      begin
+        R_ClickToContinue;
+        if not FindNPC('Arnav', NPC)then Exit;
+        PT := Tile(NPC.Tile.x-1, NPC.Tile.y+2);
+        P := TileToMS(PT, 30);
+        Mouse(p.x, p.y, 3, 3, false);
+        Result := R_ChooseOption('Enter');
+        while(R_InArnav and (TimeFromMark(t) < 8000))do
+          wait(100+Random(100));
+      end;
+    end;
+  end;
+  R_ClickToContinue;
+  Result := not R_InArnav;
+  if Result then
+    Inc(RSolved[RArnav])
+  else
+    Inc(RFailed[RArnav]);
+end;

@@ -1,0 +1,112 @@
+{*******************************************************************************
+function FindLamp(skill: String): Boolean;
+by: Pups, Starblaster100,PriSoner, Lee Lok Hin, Timer
+Description: handles Genie. Results True if lamp found and handled.
+skill: Skill to use with lamp eg. 'strength', 'attack', etc.
+*******************************************************************************}
+
+function R_FindLamp(skill: string): Boolean;
+var
+  LampTime, X, Y, I: Integer;
+  lamp: TInvItem;
+begin
+  GameTab(tab_Inv);
+  if(R_ItemIDExists(lamp, 2528))then
+  begin
+    Result := True;
+    Inc(RandSolved[rand_Lamp]);
+    AddToSRLLog('******** SOLVED LAMP RANDOM ********');
+    WriteLn('******** SOLVED LAMP RANDOM ********');
+    MouseItem(lamp.slot, true);
+    Wait(1500 + Random(500));
+    MarkTime(LampTime);
+    for I := 1 to 4 do
+    begin
+      case (LowerCase(Skill)) of
+        'attack': Mouse(81, 109, 12, 12, True);
+        'strength': Mouse(139, 110, 12, 12, True);
+        'ranged': Mouse(196, 113, 12, 12, True);
+        'magic': Mouse(257, 117, 12, 12, True);
+        'defence': Mouse(319, 109, 12, 12, True);
+        'crafting', 'craft': Mouse(376, 111, 12, 12, True);
+        'hitpoints', 'hp': Mouse(436, 112, 12, 12, True);
+        'prayer', 'pray': Mouse(79, 166, 12, 12, True);
+        'agility': Mouse(141, 166, 12, 12, True);
+        'herblore': Mouse(199, 171, 12, 12, True);
+        'thieving', 'thief': Mouse(258, 167, 12, 12, True);
+        'fishing', 'fish': Mouse(325, 164, 12, 12, True);
+        'runecraft', 'runecrafting': Mouse(375, 167, 12, 12, True);
+        'slayer', 'slay': Mouse(436, 173, 12, 12, True);
+        'farming', 'farm': Mouse(83, 224, 12, 12, True);
+        'mining', 'mine': Mouse(137, 222, 12, 12, True);
+        'smithing', 'smith': Mouse(197, 220, 12, 12, True);
+        'hunting', 'hunt', 'hunter': Mouse(257, 222, 12, 12, True);
+        'cooking', 'cook': Mouse(318, 227, 12, 12, True);
+        'firemaking', 'fire': Mouse(378, 226, 12, 12, True);
+        'woodcutting', 'wc': Mouse(439, 222, 12, 12, True);
+        'fletching', 'fletch': Mouse(199, 275, 12, 12, True);
+        'construction': Mouse(255, 277, 12, 12, True);
+        'summoning': Mouse(323, 276, 12, 12, True);
+      else
+        Mouse(438, 113, 12, 12, True);
+      end;
+      Wait(750 + Random(200) + Random(100));
+      if FindColorTolerance(X, Y, 5602449, 41, 75, 470, 302, 30) then Break;
+      if (TimeFromMark(LampTime) > 10000) then
+      begin
+        Result := False;
+        Logout;
+        Players[CurrentPlayer].Rand := 'Lamp';
+        Exit;
+      end;
+      ClickToContinue;
+    end;
+    Mouse(416, 281, 7, 1, True);
+    Wait(1111 + Random(150) + Random(150));
+    while ClickContinue(true,true) do
+      wait(500+random(100));
+  end;
+end;
+
+{*******************************************************************************
+function R_SolveNonTalkingRandoms: Boolean;
+By: Nava2
+Description: Solves Non Talking Randoms.
+*******************************************************************************}
+function R_SolveNonTalkingRandoms: Boolean;
+var
+  I : Integer;
+begin
+  for I := 1 to RandomCount do
+  begin
+    case I of
+      1 : Result := R_SolveMolly;
+      2 : Result := R_SolveMime;
+      3 : Result := R_SolveDemon;
+      4 : Result := R_SolveArnav;
+      5 : Result := R_SolveBeekeeper;
+      6 : Result := R_SolvePinball;
+      7 : Result := R_SolveQuizMaster;
+      8 : Result := R_FindRewardBox;
+      9 : Result := R_FindLamp(LampSkill);
+    end;
+    if (Result) then
+      Break;
+  end;
+end;
+
+{*******************************************************************************
+function R_FindRandoms: Boolean;
+By: Nava2
+Description: Calls the random checks.
+*******************************************************************************}
+
+function R_FindRandoms: Boolean;
+begin
+  Result := R_SolveNonTalkingRandoms;
+  if (Result) then
+  begin
+    if (SRL_Procs[srl_OnFindRandom] <> nil) then
+      SRL_Procs[srl_OnFindRandom]();
+  end;
+end;
