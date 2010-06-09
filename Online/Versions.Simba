@@ -1,8 +1,0 @@
-//Don't change this if you don't know WHAT YOUR DOING!
-Const
-  HooksVer = 610;//same as ClientVersion
-  RefVer = 17;
-
-begin
-end.
-
