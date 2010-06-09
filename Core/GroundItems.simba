@@ -213,7 +213,7 @@ All info is stored the the Item variable.
 *******************************************************************************}
 function FindGroundItemEx(var Item: TGroundItem; IDs: TIntegerArray; maxDist: Integer): Boolean;
 var
-  dir, L, x, y, i, n, dist, turns, h: integer;
+  dir, L, x, y, i, n, dist, turns: integer;
   T: TTile;
 
   plane, id, ItemCache: integer;

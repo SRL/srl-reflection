@@ -1,28 +1,28 @@
 {$define smart}
 
-{$i Constants.simba}
-{$i Hooks.simba}
-{$i Core.simba}
-{$i MMWalk.simba}
-{$i Characters.simba}
-{$i Login.simba}
-{$i Objects.simba}
-{$i Interfaces.simba}
-{$i Inventory.simba}
-{$i Equipment.simba}
-{$i Bank.simba}
-{$i Chat.simba}
-{$i GroundItems.simba}
+{$i ./Core/Constants.simba}
+{$i ./Core/Hooks.simba}
+{$i ./Core/Core.simba}
+{$i ./Core/MMWalk.simba}
+{$i ./Core/Characters.simba}
+{$i ./Core/Login.simba}
+{$i ./Core/Objects.simba}
+{$i ./Core/Interfaces.simba}
+{$i ./Core/Inventory.simba}
+{$i ./Core/Equipment.simba}
+{$i ./Core/Bank.simba}
+{$i ./Core/Chat.simba}
+{$i ./Core/GroundItems.simba}
 
-{$i Antirandoms\Molly.simba}
-{$i Antirandoms\Mime.simba}
-{$i Antirandoms\Demon.simba}
-{$i Antirandoms\Arnav.simba}
-{$i Antirandoms\Beekeeper.simba}
-{$i Antirandoms\Pinball.simba}
-{$i Antirandoms\Quiz.simba}
-{$i Antirandoms\Rewards.simba}
-{$i Antirandoms\Antirandoms.simba}
+{$i ./Core/Antirandoms\Molly.simba}
+{$i ./Core/Antirandoms\Mime.simba}
+{$i ./Core/Antirandoms\Demon.simba}
+{$i ./Core/Antirandoms\Arnav.simba}
+{$i ./Core/Antirandoms\Beekeeper.simba}
+{$i ./Core/Antirandoms\Pinball.simba}
+{$i ./Core/Antirandoms\Quiz.simba}
+{$i ./Core/Antirandoms\Rewards.simba}
+{$i ./Core/Antirandoms\Antirandoms.simba}
 
 {*******************************************************************************
 procedure SetupReflectionEx(World: Integer; Signed, Members, Term: Boolean);
