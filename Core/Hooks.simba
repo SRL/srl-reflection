@@ -195,21 +195,21 @@ const
   hook_FloorDecorationData_GetID2 = 'r.o'; //instance of ej. is an int.
 
 //Interface class jq
-  hook_interface_GetChildren = 'w';
-  hook_interface_GetName = 'P';
-  hook_interface_GetID = 'Nb';
-  hook_interface_GetStack = 'Wc';
-  hook_interface_GetActions = 'oc';
-  hook_interface_GetX = 'hd';
-  hook_interface_GetY = 'Ub';
-  hook_interface_GetWidth = 'cd';
-  hook_interface_GetHeight = 'U';
-  hook_interface_GetText = 't';
-  hook_interface_GetTextureID = 'Qb';
-  hook_interface_GetTextColor = 'C';
-  hook_interface_GetUID = 'fb';
-  hook_interface_GetModelID = 'v';
-  hook_interface_GetModelZoom = 'c';
+  hook_interface_GetChildren = 'i'; //getComponents in RSBot
+  hook_interface_GetName = 'hb'; //getComponentName in RSBot
+  hook_interface_GetID = 'Tb'; //getComponentID in RSBot
+  hook_interface_GetStack = 'qc'; //getComponentStackSize in RSBot
+  hook_interface_GetActions = 'm';
+  hook_interface_GetX = 'Eb';
+  hook_interface_GetY = 'Dc';
+  hook_interface_GetWidth = 'Gb';
+  hook_interface_GetHeight = 'F';
+  hook_interface_GetText = 'S';
+  hook_interface_GetTextureID = 'fd';
+  hook_interface_GetTextColor = 'jc';
+  hook_interface_GetUID = 'xb';
+  hook_interface_GetModelID = 'Z';
+  hook_interface_GetModelZoom = 'kb';
 
 //GroundItem crap.
   hook_nodecache_GetNodes = 'b'; //getCache in RSBot
