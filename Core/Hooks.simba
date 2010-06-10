@@ -36,8 +36,8 @@ const
 	hook_static_DestX = 'qu.q';
 	hook_static_DestY = 'mk.f';
 	hook_static_MenuOptionCount = 'hh.g';
-	hook_static_MenuX = 'bp.g';
-	hook_static_MenuY = 'gg.m';
+	hook_static_MenuX = 'dj.x';
+	hook_static_MenuY = 'pw.a';
 	hook_static_MenuOpen = 'jm.g';
 	hook_static_MenuNodeList = 'ko.n';
 	hook_static_LoopCycle = 'jg.t';
