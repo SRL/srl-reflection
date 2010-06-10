@@ -18,172 +18,185 @@
  *}
 
 const
-	ClientVersion = 610;
+	ClientVersion = 611;
 
 {Static Hooks}
-	hook_static_LoginIndex = 'lc.g';
-	hook_static_MyPlayer = 'ci.k';
-	hook_static_BaseX = 'tn.s';
-	hook_static_BaseY = 'wg.y';
-	hook_static_NPCIndexArray = 'rv.J';
-	hook_static_NPCNodes = 'hca.r';
-	hook_static_NPCCount = 'ge.k';
-	hook_static_GroundSettingsArray = 'wca.i';
-	hook_static_LoadedPlane = 'ut.F';
-	hook_static_PlaneArray = 'wu.a';
-	hook_static_Toolkit = 'vl.r';
-	hook_static_MapAngle = 'r.a';
-	hook_static_DestX = 'pda.b';
-	hook_static_DestY = 'pv.f';
-	hook_static_MenuOptionCount = 'ak.F';
-	hook_static_MenuX = 'ag.f';
-	hook_static_MenuY = 'ho.d';
-	hook_static_MenuOpen = 'aj.k';
-	hook_static_MenuNodeList = 'kg.j';
-	hook_static_LoopCycle = 'sda.l';
-	hook_static_PlayerCount = 'hq.J';
-	hook_static_PlayerIndexArray = 'uu.j';
-	hook_static_GetPlayers = 'op.e';
+	hook_static_LoginIndex = 'vf.r';
+	hook_static_MyPlayer = 'ek.O';
+	hook_static_BaseX = 'jg.r';
+	hook_static_BaseY = 'gaa.H';
+	hook_static_NPCIndexArray = 'ad.p';
+	hook_static_NPCNodes = 'bw.q';
+	hook_static_NPCCount = 'jea.a';
+	hook_static_GroundSettingsArray = 'jq.j';
+	hook_static_LoadedPlane = 'rh.b';
+	hook_static_PlaneArray = 've.b';
+	hook_static_Toolkit = 'eu.x';
+	hook_static_MapAngle = 'uda.l';
+	hook_static_DestX = 'qu.q';
+	hook_static_DestY = 'mk.f';
+	hook_static_MenuOptionCount = 'hh.g';
+	hook_static_MenuX = 'bp.g';
+	hook_static_MenuY = 'gg.m';
+	hook_static_MenuOpen = 'jm.g';
+	hook_static_MenuNodeList = 'ko.n';
+	hook_static_LoopCycle = 'jg.t';
+	hook_static_PlayerCount = 'jt.x';
+	hook_static_PlayerIndexArray = 'fd.e';
+	hook_static_GetPlayers = 'uq.c';
 
 {Class Animable}
-	class_Animable = 'fu';
+	class_Animable = 'ada';
 	hook_animable_PixelX = 'n';
-	hook_animable_PixelY = 't';
-	hook_animable_Plane = 'j';
+	hook_animable_PixelY = 'r';
+	hook_animable_Plane = 'g';
 
 {Class Player}
-	class_Player = 'dg';
-	hook_player_GetLevel = 'Mc';
-	hook_player_GetName = 'Zc';
-	hook_player_PlayerDef = 'gd';
+	class_Player = 'eca';
+	hook_player_GetLevel = 'id';
+	hook_player_GetName = 'pd';
+	hook_player_PlayerDef = 'qd';
 
 {Class Character}
-	class_Character = 'dc';
-	hook_character_GetHitDamges = 'Z';
-	hook_character_Animation = 'tb';
-	hook_character_Motion = 'uc';
-	hook_character_WalkQueueX = 'qc';
-	hook_character_WalkQueueY = 'sc';
-	hook_character_GetHeight = 'Pb';
-	hook_character_LoopCycleStatus = 'X';
-	hook_character_HPRatio = 'Jb';
-	hook_character_GetInteracting = 'Yb';
-  hook_character_Orientation = 'gc';
+	class_Character = 'qb';
+	hook_character_GetHitDamges = 'eb';
+	hook_character_Animation = 'gc';
+	hook_character_Motion = 'vc';
+	hook_character_WalkQueueX = 'Cc';
+	hook_character_WalkQueueY = 'tc';
+	hook_character_GetHeight = 'H';
+	hook_character_LoopCycleStatus = 'nb';
+	hook_character_HPRatio = 'Xb';
+	hook_character_GetInteracting = 'zb';
 
 {Class NPC}
-	class_NPC = 'jc';
-	hook_npc_NPCDef = 'Vc';
+	class_NPC = 'tt';
+	hook_npc_NPCDef = 'ad';
 
 {Class NPCDef}
-	class_NPCDef = 'mt';
-	hook_npcdef_GetActions = 'db';
-	hook_npcdef_GetName = 'tb';
-	hook_npcdef_GetLevel = 'y';
-  hook_npcdef_GetID = 'W';
+	class_NPCDef = 'pl';
+	hook_npcdef_GetActions = 'W';
+	hook_npcdef_GetName = 'cb';
+	hook_npcdef_GetLevel = 'l';
 
 {Class NPCNode}
-	class_NPCNode = 'ff';
-	hook_npcnode_GetNPC = 'l';
+	class_NPCNode = 'ap';
+	hook_npcnode_GetNPC = 'n';
 
 {Class GroundTile}
-	class_GroundTile = 'rg';
+	class_GroundTile = 'uaa';
 
 {Class Plane}
-	class_Plane = 'sa';
+	class_Plane = 'd';
 
 {Class RSInteractable}
-	class_RSInteractable = 'lb';
+	class_RSInteractable = 'va';
 
 {Class Toolkit}
-	class_Toolkit = 'qa';
+	class_Toolkit = 'oa';
 
 {Class Viewport}
-	class_Viewport = 'm';
+	class_Viewport = 'q';
 
 {Class SDViewport}
-	class_SDViewport = 'jaa';
-	hook_sdviewport_xOff = 'e';
-	hook_sdviewport_xX = 'l';
-	hook_sdviewport_xY = 'k';
-	hook_sdviewport_xZ = 'g';
-	hook_sdviewport_yOff = 'n';
-	hook_sdviewport_yX = 'i';
-	hook_sdviewport_yY = 'h';
-	hook_sdviewport_yZ = 'm';
-	hook_sdviewport_zOff = 'f';
+	class_SDViewport = 'vm';
+	hook_sdviewport_xOff = 'f';
+	hook_sdviewport_xX = 'd';
+	hook_sdviewport_xY = 'o';
+	hook_sdviewport_xZ = 'l';
+	hook_sdviewport_yOff = 'e';
+	hook_sdviewport_yX = 'g';
+	hook_sdviewport_yY = 'm';
+	hook_sdviewport_yZ = 'h';
+	hook_sdviewport_zOff = 'k';
 	hook_sdviewport_zX = 'j';
-	hook_sdviewport_zY = 'o';
-	hook_sdviewport_zZ = 'd';
+	hook_sdviewport_zY = 'i';
+	hook_sdviewport_zZ = 'n';
 
 {Class SDToolkit}
-	class_SDToolkit = 'jba';
-	hook_sdtoolkit_xMin = 'K';
-	hook_sdtoolkit_xMax = 'U';
-	hook_sdtoolkit_yMin = 'eb';
-	hook_sdtoolkit_yMax = 'F';
-	hook_sdtoolkit_zMin = 'Q';
-	hook_sdtoolkit_zMax = 'O';
-	hook_sdtoolkit_xScale = 'L';
-	hook_sdtoolkit_yScale = 'kb';
-	hook_sdtoolkit_Viewport = 'G';
+	class_SDToolkit = 'fk';
+	hook_sdtoolkit_xMin = 'H';
+	hook_sdtoolkit_xMax = 'V';
+	hook_sdtoolkit_yMin = 'K';
+	hook_sdtoolkit_yMax = 'eb';
+	hook_sdtoolkit_zMin = 'hb';
+	hook_sdtoolkit_zMax = 'db';
+	hook_sdtoolkit_xScale = 'G';
+	hook_sdtoolkit_yScale = 'B';
+	hook_sdtoolkit_Viewport = 'P';
 
 {Class SDPlane}
-	class_SDPlane = 'wp';
-	hook_sdplane_TileHeights = 'E';
+	class_SDPlane = 'gw';
+	hook_sdplane_TileHeights = 'n';
 
 {Class NodeList}
-	class_NodeList = 'bv';
-	hook_nodelist_Current = 'l';
-	hook_nodelist_Head = 'a';
+	class_NodeList = 'eea';
+	hook_nodelist_Current = 'o';
+	hook_nodelist_Head = 'c';
 
 {Class Node}
-	class_Node = 'um';
-	hook_node_Next = 'e';
-	hook_node_Previous = 'a';
+	class_Node = 'uj';
+	hook_node_Next = 'g';
+	hook_node_GetID = 'b';
+	hook_node_Previous = 'c';
 
 {Class Menu}
-	class_Menu = 'hda';
-	hook_menu_Option = 'l';
-	hook_menu_Action = 'x';
+	class_Menu = 'cm';
+	hook_menu_Action = 'o';
+	hook_menu_Option = 'u';
 
 {Class PlayerDef}
-	class_PlayerDef = 'nl';
+	class_PlayerDef = 'vv';
+	hook_playerdef_GetEquipment = 's';
 
-//Temp ground hooks.
-  hook_static_GroundTiles = 'kc.n';
+{
+  These hooks all need to be added to the updater.
+}
 
-//RSGround class rg.
-  hook_ground_AnimableList = 'n'; //getGameObjectNodeHeader in KBOT
-  hook_ground_WallObject1 = 'p'; //getBoundingObject2 in KBOT
-  hook_ground_WallObject2 = 'd'; //getObject5 in KBOT
-  hook_ground_WallDecoration1 = 'e'; //getObject2 in KBOT
-  hook_ground_WallDecoration2 = 'i'; //getBoundingObject1 in KBOT
-  hook_ground_FloorDecoration = 'k'; //getDecorationObject in KBOT
-  hook_ground_GroundObject = 'o'; //getDecorationObject in KBOT
+//Character
+  hook_character_Orientation = 'ab';
 
-//WallObjectData class dca
-  hook_wallobjectdata_GetID = 'j';
+//NPCDef
+  hook_npcdef_GetID = 'z';
 
-//WallDecorationData class ew
-  hook_WallDecorationData_GetID = 'ab';
+//Client
+  hook_static_GroundTiles = 'lm.w'; //getRSGroundArray in RSBot
+  hook_static_GetInterfaces = 'tc.r'; //getRSInterfaceCache in RSBot
+  hook_static_ValidInterfaces = 'cg.n'; //getValidRSInterfaceArray in RSBot
+  hook_static_GetSettings = 'fba.M'; //getSettingArray in RSBot
+  hook_static_GroundItemCache = 'tu.Md'; //getRSItemNodeCache in RSBot
 
-//FloorDecorationData class rv
-  hook_FloorDecorationData_GetID = 'N';
+//RSGround class uaa.
+  hook_ground_AnimableList = 'k'; //getRSAnimableList in RSBot
+  hook_ground_WallObject1 = 't'; //getRSObject2_1 in RSBot
+  hook_ground_WallObject2 = 'l'; //getRSObject2_0 in RSBot
+  hook_ground_WallDecoration1 = 'e'; //getRSObject3_0 in RSBot
+  hook_ground_WallDecoration2 = 's'; //getRSObject3_1 in RSBot
+  hook_ground_FloorDecoration = 'r'; //getRSObject1 in RSBot
 
 //AnimableNode class de
-  hook_AnimableNode_GetAnimable = 'h';
-  hook_AnimableNode_GetNext = 'e';
+  hook_AnimableNode_GetAnimable = 'j';
+  hook_AnimableNode_GetNext = 'h';
 
 //InteractiveObject class pba
-  hook_InteractiveObject_GetID = 'B';
-  hook_InteractiveObject_GetID2 = 'M.r';
+  hook_InteractiveObject_GetID = 'z';
+  hook_InteractiveObject_GetID2 = 'H.o'; //instance of ej. is an int.
 
-  hook_static_GetInterfaces = 'qo.q'; //getIComponentArray in KBOT.
-  hook_static_ValidInterfaces = 'pq.M';
+//WallObjectData class dca
+  hook_wallobjectdata_GetID = 'N';
+  hook_wallobjectdata_GetID2 = 'y.o'; //instance of ej. is an int.
+
+//WallDecorationData class ew
+  hook_WallDecorationData_GetID = 'C';
+  hook_WallDecorationData_GetID2 = 'z.o'; //instance of ej. is an int.
+
+//FloorDecorationData class rv
+  hook_FloorDecorationData_GetID = 'O';
+  hook_FloorDecorationData_GetID2 = 'r.o'; //instance of ej. is an int.
 
 //Interface class jq
   hook_interface_GetChildren = 'w';
-  hook_interface_GetName = 'P';  //
+  hook_interface_GetName = 'P';
   hook_interface_GetID = 'Nb';
   hook_interface_GetStack = 'Wc';
   hook_interface_GetActions = 'oc';
@@ -198,31 +211,15 @@ const
   hook_interface_GetModelID = 'v';
   hook_interface_GetModelZoom = 'c';
 
-//Equipment: PlayerDef:
-  hook_playerdef_Equipment = 't';
-
-
 //GroundItem crap.
-  hook_static_GroundItemCache = 'ko.g';
-  hook_nodecache_GetNodes = 'b';
-  hook_nodelistcache_GetNodeList = 'n';
-  hook_node_getID = 'c'; //LongL.
-  hook_item_GetID = 'o';
-  hook_item_GetStack = 'r';
+  hook_nodecache_GetNodes = 'b'; //getCache in RSBot
+  hook_nodelistcache_GetNodeList = 'm';
+
+  hook_item_GetID = 'q';
+  hook_item_GetStack = 'k';
 
 //Settings Array
-  hook_static_GetSettings = 'kj.f';
-  hook_settingarray_GetData = 'g';
-
-//InteractiveObject KBOT Path:
-{
-  1) Search for getDataContainer.
-  2) 3 or 4 of them will be immediately followed by a GetID method.
-  3) Only ONE of them will actually return something. Thats the hook.
-}
-
-//
-
+  hook_settingarray_GetData = 'k';
 
 
 
