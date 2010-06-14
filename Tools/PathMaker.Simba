@@ -39,8 +39,6 @@ var
 begin
   Writeln('Creating path....');
   writeln('function LoadPath : TTileArray;');
-  writeln('var');
-  writeln('  i: integer;');
   Writeln('begin');
   writeln('  SetLength(Result, '+ToStr(TileCount)+');');
   writeln('  Result := [');
