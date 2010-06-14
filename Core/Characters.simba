@@ -35,6 +35,26 @@ begin
 end;
 
 {*******************************************************************************
+function WaitForAnimation(timeout: integer): boolean;
+By: Drags111
+Description: Waits until your character animates, or the timeout is reached.
+*******************************************************************************}
+function WaitForAnimation(timeout: integer): boolean;
+var
+  t: integer;
+begin
+  Result := false;
+  MarkTime(t);
+  while not(CharacterAnimating)do
+  begin
+    if(TimeFromMark(t) >= timeout)then
+      Exit;
+    wait(50);
+  end;
+  Result := true;
+end;
+
+{*******************************************************************************
 function GetNPCActionArray(NPCDef: integer): TStringArray;
 By: Drags111
 Description: Gets the Action (String) Array from the NPC.
@@ -242,6 +262,54 @@ begin
   if not result then
     Exit;
   NPC := NPCs[0];
+end;
+
+function GetNPCsAt(T: TTile): TNPCArray;
+var
+  NPCs: TNPCArray;
+  i, h, c: Integer;
+  Index, TheNPCNode, TheNPC, TheNPCDef, TheBytes: Integer;
+  tmp_tile : TTile;
+begin
+  h := SmartGetFieldInt(0, hook_static_NPCCount) - 1;
+  SetLength(Result, h+1);
+  for i := 0 to h do
+  try
+    Index := SmartGetFieldArrayInt(0, hook_static_NPCIndexArray, i);
+    TheNPCNode := SmartGetFieldArrayObject(0, hook_static_NPCNodes, i);
+    TheNPC := SmartGetFieldObject(TheNPCNode, hook_npcnode_GetNPC);
+    tmp_tile := Tile(
+		   SmartGetFieldInt(0,hook_static_BaseX) +
+			SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512,
+		   SmartGetFieldInt(0,hook_static_BaseY) +
+			SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512);
+
+    if (tmp_tile = t) then
+    begin
+      TheNPCDef := SmartGetFieldObject(TheNPC, hook_npc_NPCDef);
+      TheBytes := SmartGetFieldObject(TheNPCDef, hook_npcdef_GetName);
+      Result[c].Index := Index;
+      Result[c].ID := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetID);
+      Result[c].Name := GetJavaString(TheBytes, 255);
+      Result[c].Actions := GetNPCActionArray(TheNPCDef);
+      Result[c].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
+      Result[c].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
+      Result[c].Moving := (SmartGetFieldInt(TheNPC, hook_character_Motion)>0);
+      Result[c].Animation := SmartGetFieldInt(TheNPC, hook_character_Animation);
+      Result[c].Height := iabs(SmartGetFieldInt(TheNPC, hook_character_GetHeight));
+      Result[c].HPRatio := SmartGetFieldInt(TheNPC, hook_character_HPRatio) * 100 / $FF;
+      Result[c].Fighting := (SmartGetFieldInt(TheNPC, hook_character_LoopCycleStatus) >
+                              SmartGetFieldInt(0, hook_static_LoopCycle));
+      Result[c].Orientation := (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048;
+      Result[c].Level := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetLevel);
+      Result[c].Interacting := SmartGetFieldInt(TheNPC, hook_character_GetInteracting);
+      Inc(c);
+    end;
+  finally
+    SmartFreeObject(TheNPCNode);
+    SmartFreeObject(TheNPC);
+  end;
+  SetLength(Result, c);
 end;
 
 {*******************************************************************************

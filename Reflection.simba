@@ -13,6 +13,7 @@
 {$i ./Core/Bank.simba}
 {$i ./Core/Chat.simba}
 {$i ./Core/GroundItems.simba}
+{$i ./Core/GameTab.simba}
 
 {$i ./Core/Antirandoms\Molly.simba}
 {$i ./Core/Antirandoms\Mime.simba}

@@ -23,9 +23,9 @@ begin
   Result := False;
   if (not LoggedIn) then exit;
   GameTab(tab_Inv);
-  Writeln('Logged In.');
-  if (not(R_ItemIDExists(Item, 14664)))then Exit;
-  Writeln('Found color.');
+  if (not(R_ItemIDExists(Item, 14664)))then
+    if (not(R_ItemIDExists(Item, 6199)))then
+      Exit;
 
   if (Length(Trim(srl_Implode(Players[CurrentPlayer].BoxRewards, ''))) = 0) then
     Players[CurrentPlayer].BoxRewards := ['XP'];
@@ -101,5 +101,7 @@ var
   Item: TInvItem;
 begin
   Result:= R_ItemIDExists(Item, 14664);
+  if not Result then
+    Result := R_ItemIDExists(Item, 6199);
   if Result then R_UseRewardBox;
 end;

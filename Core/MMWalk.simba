@@ -280,3 +280,91 @@ begin
     R_FFlag(FlagD);
   Result := (GetSystemTime - t) < 60000;
 end;
+
+{*******************************************************************************
+function WalkPath(Tiles: TTileArray): boolean;
+By: Drags111
+Description: Walks the tile path. Looks like an ugly function, but it works
+             Beautifully.
+*******************************************************************************}
+function WalkPath(Tiles: TTileArray): boolean;
+var
+  i, t, fails, d, attempts: integer;
+  P: TPoint;
+  next: boolean;
+label
+  ProcStart;
+begin
+  Inc(attempts);
+  ProcStart:
+  i := -1;
+  Result := false;
+  if(DistanceFrom(Tiles[High(Tiles)]) < 6)then
+  begin
+    Result := true;
+    Exit;
+  end;
+
+  //Getting the starting index.
+  for i := High(Tiles) downto 0 do
+    if(TileOnMM(Tiles[i]))then
+    begin
+      i := i;
+      Break;
+    end;
+  if(i = -1)then
+    Exit;
+
+  //Walk remainder of the path.
+  for i := i to High(Tiles) do
+  begin
+    next := false;
+    if not(TileOnMM(Tiles[i]))then
+    begin
+      Writeln('Tile not on MM.');
+      break;
+    end;
+    P := TileToMM(Tiles[i]);
+    Mouse(P.x, P.y, 1, 1, true);
+    while(DistanceFromFlag <> 0)do
+    begin
+      if not WaitToMove(3000)then
+      begin
+        MarkTime(t);
+        while(TimeFromMark(t) < 7000)do
+          if(WaitToMove(1000))then break;
+        if(TimeFromMark(t) >= 7000)then
+        begin
+          Writeln('***Didn''t move for 10 seconds. Exiting***');
+          next := false;
+          break;
+        end;
+      end;
+      if(i < High(Tiles))then
+      begin
+        if(TileOnMM(Tiles[i+1]))then
+        begin
+          next := true;
+          break;
+        end;
+      end;
+    end;
+    if(i < High(Tiles))then
+      if(TileOnMM(Tiles[i+1]))then
+        next := true;
+    if not next then
+      break;
+  end;
+  Result := DistanceFrom(Tiles[High(Tiles)]) <= 5;
+  if not Result then
+  begin
+    if(attempts > 7)then
+    begin
+      Writeln('Failed more than ten attempts.');
+      Exit;
+    end;
+    While(GetSpeed > 0)do wait(100+Random(100));
+    goto ProcStart;
+  end;
+  While(GetSpeed > 0)do wait(100+Random(100));
+end;

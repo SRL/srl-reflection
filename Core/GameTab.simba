@@ -1,0 +1,76 @@
+{*******************************************************************************
+function R_GetMMLevels(Which: string): Integer;
+By: lordsaturn and Drags111
+Description: Returns the current value at the designated MM spot.
+*******************************************************************************}
+function R_GetMMLevels(Which: string): Integer;
+begin
+  Result := -1;
+  case LowerCase(Which) of
+    'hitpoints', 'hp': Result := StrToInt(GetInterfaceText(748, 8));
+    'prayer', 'pp'   : Result := StrToInt(GetInterfaceText(749, 4));
+    'run', 'energy'  : Result := StrToInt(GetInterfaceText(750, 5));
+    else SRL_Warn('R_GetMMLevels', 'Invaild string.', -3);
+  end;
+end;
+
+{*******************************************************************************
+function R_IsRunning: boolean;
+By: Drags111
+Description: Returns true if the run option is set to true.
+*******************************************************************************}
+function R_IsRunning: boolean;
+begin
+  Result := GetSetting(173) = 1;
+end;
+
+{*******************************************************************************
+function R_IsResting: boolean;
+By: Drags111
+Description: Returns true if your player is performing the resting animation.
+*******************************************************************************}
+function R_IsResting: boolean;
+var
+  Animations: TIntegerArray;
+begin
+  SetLength(Animations, 5);
+  Animations := [12108, 2033, 2716, 11786, 5713];
+  Result := InIntArray(Animations, GetAnimation);
+end;
+
+{*******************************************************************************
+procedure R_Rest(MaxEnergy: integer);
+By: Drags111
+Description: Uses the rest ability until the desired energy is reached.
+*******************************************************************************}
+function R_Rest(MaxEnergy: integer): boolean;
+var
+  t, mt, energy: integer;
+begin
+  MarkTime(mt);
+  if(energy >= MaxEnergy)then Exit;
+  Result := R_IsResting;
+  while(not Result)do
+  begin
+    if not R_LoggedIn then Exit;
+    if (TimeFromMark(mt) > 9000)then Exit;
+    Mouse(725, 109, 5, 5, false);
+    Result := R_ChooseOption('Rest');
+    if(Result)then
+    begin
+      MarkTime(t);
+      While((not R_IsResting) and (TimeFromMark(t) < 3000))do
+        wait(100+Random(100));
+      Result := (R_IsResting);
+    end;
+  end;
+  energy := R_GetMMLevels('run');
+  while(energy < MaxEnergy)do
+  begin
+    case Random(50) of
+      0..5: SleepAndMoveMouse(Random(1000));
+      else wait(100+Random(400));
+    end;
+    energy := R_GetMMLevels('run');
+  end;
+end;

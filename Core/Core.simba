@@ -360,6 +360,24 @@ begin
 end;
 
 {*******************************************************************************
+procedure InvertPath(var Path: TTileArray);
+By: Drags111
+Description: Reverses the path(array of tiles).
+*******************************************************************************}
+procedure InvertPath(var Path: TTileArray);
+var
+  Temp: TTileArray;
+  i: integer;
+begin
+  for i := High(Path) downto 0 do
+  begin
+    SetLength(Temp, Length(Temp)+1);
+    Temp[High(Temp)] := Path[i];
+  end;
+  Path := Temp;
+end;
+
+{*******************************************************************************
 function TrimHTML(s: string): string;
 By: lordsaturn
 Description: Removes the HTML junk from a string.

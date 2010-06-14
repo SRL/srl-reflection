@@ -1,3 +1,104 @@
+type
+  TCacheInfo = record
+    Cache, Nodes, NLength: integer;
+  end;
+
+function LoadCacheInfo(CachePath: String):TCacheInfo;
+begin
+  with Result do
+  begin
+    Cache := SmartGetFieldObject(0, CachePath);
+    Nodes := SmartGetFieldObject(Cache, hook_nodecache_GetNodes);
+    NLength := SmartGetFieldArraySize(Nodes, '', 1);
+  end;
+end;
+
+procedure FreeCacheInfo(var Info: TCacheInfo);
+begin
+  SmartFreeObject(Info.Nodes);
+  SmartFreeObject(Info.Cache);
+  Info.Nodes := 0;
+  Info.Cache := 0;
+  Info.NLength := 0;
+end;
+
+function GetItemNodeList(ID: Integer; Info: TCacheInfo): integer;
+var
+  Node, NextNode, D2NextNode, NodeID, i, index: integer;
+  F: Boolean;
+begin
+  F := true;
+  Result := 0;
+  try
+    Index := ID and (Info.NLength - 1);
+    Node := SmartGetFieldArrayObject(Info.Nodes, '', Index);
+
+    for i := Index downto Index-10 do
+    begin
+      if not F then
+      begin
+        Node := SmartGetFieldObject(D2NextNode, hook_node_next);
+        SmartFreeObject(D2NextNode);
+      end else
+        F := false;
+      NodeID := SmartGetFieldLongL(Node, hook_node_GetID);
+
+      if(NodeID = ID)then
+      begin
+        Result := SmartGetFieldObject(Node, hook_nodelistcache_GetNodeList);
+        Break;
+      end;
+
+      NextNode := SmartGetFieldObject(Node, hook_node_Previous);
+      SmartFreeObject(Node);
+      D2NextNode := SmartGetFieldObject(NextNode, hook_node_Previous);
+      SmartFreeObject(NextNode);
+    end;
+  finally
+    SmartFreeObject(Node);
+    SmartFreeObject(NextNode);
+    SmartFreeObject(D2NextNode);
+  end;
+end;
+
+function GetAllItemsFromTile(NodeList: Integer; T: TTile): TGroundItemArray;
+var
+  Head, Node, ID, NextNode, D2NextNode, H: Integer;
+  F: Boolean;
+begin
+  try
+    Head := SmartGetFieldObject(NodeList, hook_nodelist_Head);
+    Node := SmartGetFieldObject(Head, hook_node_Next);
+    F := True;
+
+    while(ID <> -1)do
+    begin
+      if (not F)then
+      begin
+        Node := SmartGetFieldObject(D2NextNode, hook_node_Previous);
+        SmartFreeObject(D2NextNode);
+      end else
+        F := false;
+      ID := SmartGetFieldInt(Node, hook_item_GetID);
+      if(ID <> -1)then
+      begin
+        SetLength(Result, Length(Result)+1);
+        H := High(Result);
+        Result[H].Tile := T;
+        Result[H].Stack := SmartGetFieldInt(Node, hook_item_GetStack);
+        Result[H].ID := ID;
+      end;
+      NextNode := SmartGetFieldObject(Node, hook_node_Next);
+      SmartFreeObject(Node);
+      D2NextNode := SmartGetFieldObject(NextNode, hook_node_Next);
+      SmartFreeObject(NextNode);
+    end;
+    SmartFreeObject(Head);
+    SmartFreeObject(D2NextNode);
+  finally
+  end;
+end;
+
 {*******************************************************************************
 function NewGroundItem(id, stack: integer; T: TTile): TGroundItem;
 By: Drags111
@@ -10,6 +111,8 @@ begin
   Result.Tile := T;
 end;
 
+
+
 {*******************************************************************************
 function GetItemsAt(T: TTile): TGroundItemArray;
 By: Drags111
@@ -17,318 +120,30 @@ Description: Gets all the items on the tile.
 *******************************************************************************}
 function GetItemsAt(T: TTile): TGroundItemArray;
 var
-  x, y, plane, id, ItemCache, i: integer;
-  NodeList, head, next, ItemID: integer;
-  nodeID, c, NodeArray, Node, ArrLength: integer;
+  plane, ID, NodeList: integer;
+  Info: TCacheInfo;
 begin
-  SetLength(Result, 20);
-  x := T.x;
-  y := T.y;
-  plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-  ID := x or (y shl 14) or (plane shl 28);
-
   try
-    ItemCache := SmartGetFieldObject(0, hook_static_GroundItemCache);
-    NodeArray := SmartGetFieldObject(ItemCache, hook_nodecache_GetNodes);
-    ArrLength := SmartGetFieldArraySize(NodeArray, '', 1);
-    if(ArrLength < 1)then Exit;
+    Info := LoadCacheInfo(hook_static_GroundItemCache);
+    plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
+    ID := T.x or (T.y shl 14) or (plane shl 28);
 
-    Node := SmartGetFieldArrayObject(NodeArray, '', id and (ArrLength - 1));
-    for i:= (id and (ArrLength - 1)) downto (id and (ArrLength - 1)) - 10 do
+    NodeList := GetItemNodeList(ID, Info);
+    Writeln(ID);
+    Writeln(NodeList);
+    FreeCacheInfo(Info);
+
+    if (NodeList = 0)then
     begin
-      NodeID := SmartGetFieldLongL(Node, hook_node_GetID);
-      if(nodeid = id)then
-      begin
-        NodeList := SmartGetFieldObject(node, hook_nodelistcache_GetNodeList);
-        Break;
-      end;
-      Node := SmartGetFieldObject(Node, hook_node_Previous);
-    end;
-
-    if (NodeList = 0)then Exit;
-
-    head := SmartGetFieldObject(NodeList, hook_nodelist_Head);
-    next := SmartGetFieldObject(head, hook_node_Next);
-
-    while(ItemID <> -1)do
-    begin
-      ItemID := SmartGetFieldInt(next, hook_item_GetID);
-      if(ItemID <> -1)then
-      begin
-        SetLength(Result, Length(Result)+1);
-        Result[c].Tile := T;
-        Result[c].Stack := SmartGetFieldInt(next, hook_item_GetStack);
-        Result[c].ID := ItemID;
-        Inc(c);
-      end;
-      next := SmartGetFieldObject(next, hook_node_Next);
-    end;
-  finally
-    SetLength(Result, c);
-    SmartFreeObject(ItemCache);
-    SmartFreeObject(head);
-    SmartFreeObject(next);
-    SmartFreeObject(NodeList);
-    SmartFreeObject(Node);
-    SmartFreeObject(NodeArray);
-  end;
-end;
-
-{*******************************************************************************
-Function FindGroundItems(Var Items: TGroundItemArray; IDs: TIntegerArray;
- maxDist: Integer): Boolean;
-By: Drags111
-Description: Finds the ground items with the ID(s).
-maxDist = max distance from character to search
-All info is stored the the Items variable.
-<3 Ben & Drags111 for spiral algorithm
-*******************************************************************************}
-function FindGroundItemsEx(var Items: TGroundItemArray; IDs: TIntegerArray; maxDist: Integer): Boolean;
-var
-  dir, L, x, y, i, n, dist, turns, h: integer;
-  T: TTile;
-
-  plane, id, ItemCache: integer;
-  NodeList, head, next, ItemID: integer;
-  nodeID: integer;
-
-  NodeArray, ArrLength, Node: integer;
-
-  Temps: TGroundItemArray;
-begin
-  Result := False;
-  SetLength(Items, 0);
-
-  T := GetMyPos;
-  X := T.X;
-  Y := T.Y;
-  L := 0;
-  dist := 0;
-  turns := 0;
-
-  //-----------------------------------------------------------------------//
-  //Loading all of the Ground Items stuff. (None of it changes with tile.)
-  Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-  ItemCache := SmartGetFieldObject(0, hook_static_GroundItemCache);
-  NodeArray := SmartGetFieldObject(ItemCache, hook_nodecache_GetNodes);
-  ArrLength := SmartGetFieldArraySize(NodeArray, '', 1);
-  if(ArrLength < 1)then Exit;
-  //-----------------------------------------------------------------------//
-
-  Temps := GetItemsAt(Tile(x, y));
-  for i := 0 to High(temps)do
-    if(InIntArray(IDs, Temps[i].ID))then
-    begin
-      Result := true;
-      SetLength(Items, Length(Items)+1);
-      Items[High(Items)] := Temps[i];
-    end;
-
-  while(L <= maxDist)do
-  begin
-    for n := dist downto 0 do
-    begin
-      case dir of
-        0: Inc(y);
-        1: Inc(x);
-        2: Dec(y);
-        3: Dec(x);
-      end;
-
-      //Getting the NodeList.
-      NodeList := 0;
-      ID := x or (y shl 14) or (plane shl 28);
-      Node := SmartGetFieldArrayObject(NodeArray, '', id and (ArrLength - 1));
-      for i:= (id and (ArrLength - 1)) downto (id and (ArrLength - 1)) - 5 do
-      begin
-        NodeID := SmartGetFieldLongL(Node, hook_node_GetID);
-        if(nodeid = id)then
-        begin
-          NodeList := SmartGetFieldObject(node, hook_nodelistcache_GetNodeList);
-          Break;
-        end;
-        Node := SmartGetFieldObject(Node, hook_node_Previous);
-      end;
-      SmartFreeObject(Node);
-      if (NodeList <= 0) then
-      begin
-        SmartFreeObject(NodeList);
-        continue;
-      end;
-
-      //Searching through Node.
-      head := SmartGetFieldObject(NodeList, hook_nodelist_Head);
-      next := SmartGetFieldObject(head, hook_node_Next);
-      ItemID := 0;
-      while(ItemID <> -1)do
-      begin
-        ItemID := SmartGetFieldInt(next, hook_item_GetID);
-        if(InIntArray(IDs, ItemID))then
-        begin
-          Result := true;
-          SetLength(Items, Length(Items)+1);
-          H := High(Items);
-          Items[H].Tile := Tile(X, Y);
-          Items[H].Stack := SmartGetFieldInt(next, hook_item_GetStack);
-          Items[H].ID := ItemID;
-        end;
-        next := SmartGetFieldObject(next, hook_node_Next);
-      end;
       SmartFreeObject(NodeList);
-      SmartFreeObject(head);
-      SmartFreeObject(next);
+      Exit;
     end;
-    Inc(turns);
-    if ((turns mod 2) = 0) then
-      Inc(dist);
-    if ((turns mod 4) = 1) then
-      Inc(L);
-    dir:= (dir + 1) mod 4;
-  end;
-  SmartFreeObject(ItemCache);
-  SmartFreeObject(NodeArray);
-end;
 
-{*******************************************************************************
-function FindGroundItems(var Items: TGroundItemArray; ID: Integer; maxDist: Integer): Boolean;
-By: Drags111
-Description: Finds the ground items with the ID.
-maxDist = max distance from character to search
-All info is stored the the Items variable.
-<3 Ben & Drags111 for spiral algorithm
-*******************************************************************************}
-function FindGroundItems(var Items: TGroundItemArray; ID: Integer; maxDist: Integer): Boolean;
-begin
-  Result := FindGroundItemsEx(Items, [ID], maxDist);
-end;
-
-{*******************************************************************************
-function FindGroundItemEx(var Item: TGroundItem; IDs: TIntegerArray; maxDist: Integer): Boolean;
- maxDist: Integer): Boolean;
-By: Drags111
-Description: Finds the nearest ground item with the ID(s).
-maxDist = max distance from character to search
-All info is stored the the Item variable.
-<3 Ben & Drags111 for spiral algorithm
-*******************************************************************************}
-function FindGroundItemEx(var Item: TGroundItem; IDs: TIntegerArray; maxDist: Integer): Boolean;
-var
-  dir, L, x, y, i, n, dist, turns: integer;
-  T: TTile;
-
-  plane, id, ItemCache: integer;
-  NodeList, head, next, ItemID: integer;
-  nodeID: integer;
-
-  NodeArray, ArrLength, Node: integer;
-
-  Temps: TGroundItemArray;
-begin
-  Result := False;
-  Item := NULL_GROUNDITEM;
-
-  T := GetMyPos;
-  X := T.X;
-  Y := T.Y;
-  L := 0;
-  dist := 0;
-  turns := 0;
-  try
-    //-----------------------------------------------------------------------//
-    //Loading all of the Ground Items stuff. (None of it changes with tile.)
-    Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-    ItemCache := SmartGetFieldObject(0, hook_static_GroundItemCache);
-    NodeArray := SmartGetFieldObject(ItemCache, hook_nodecache_GetNodes);
-    ArrLength := SmartGetFieldArraySize(NodeArray, '', 1);
-    if(ArrLength < 1)then Exit;
-    //-----------------------------------------------------------------------//
-
-    Temps := GetItemsAt(Tile(x, y));
-    for i := 0 to High(temps)do
-      if(InIntArray(IDs, Temps[i].ID))then
-      begin
-        Result := true;
-        Item := Temps[i];
-        Exit;
-      end;
-
-    while(L <= maxDist)do
-    begin
-      for n := dist downto 0 do
-      begin
-        case dir of
-          0: Inc(y);
-          1: Inc(x);
-          2: Dec(y);
-          3: Dec(x);
-        end;
-
-        //Getting the NodeList.
-        NodeList := 0;
-        ID := x or (y shl 14) or (plane shl 28);
-        Node := SmartGetFieldArrayObject(NodeArray, '', id and (ArrLength - 1));
-        for i:= (id and (ArrLength - 1)) downto (id and (ArrLength - 1)) - 5 do
-        begin
-          NodeID := SmartGetFieldLongL(Node, hook_node_GetID);
-          if(nodeid = id)then
-          begin
-            NodeList := SmartGetFieldObject(node, hook_nodelistcache_GetNodeList);
-            Break;
-          end;
-          Node := SmartGetFieldObject(Node, hook_node_Previous);
-        end;
-        SmartFreeObject(Node);
-        if (NodeList <= 0) then
-        begin
-          SmartFreeObject(NodeList);
-          continue;
-        end;
-
-        //Searching through Node.
-        head := SmartGetFieldObject(NodeList, hook_nodelist_Head);
-        next := SmartGetFieldObject(head, hook_node_Next);
-        ItemID := 0;
-        while(ItemID <> -1)do
-        begin
-          ItemID := SmartGetFieldInt(next, hook_item_GetID);
-          if(InIntArray(IDs, ItemID))then
-          begin
-            Result := true;
-            Item := NewGroundItem(ItemID, SmartGetFieldInt(next, hook_item_GetStack),
-                    Tile(x, y));
-            Exit;
-          end;
-          next := SmartGetFieldObject(next, hook_node_Next);
-        end;
-        SmartFreeObject(NodeList);
-        SmartFreeObject(head);
-        SmartFreeObject(next);
-      end;
-      Inc(turns);
-      if ((turns mod 2) = 0) then
-        Inc(dist);
-      if ((turns mod 4) = 1) then
-        Inc(L);
-      dir:= (dir + 1) mod 4;
-    end;
-  finally
-    SmartFreeObject(ItemCache);
-    SmartFreeObject(NodeArray);
+    Result := GetAllItemsFromTile(NodeList, T);
     SmartFreeObject(NodeList);
-    SmartFreeObject(head);
-    SmartFreeObject(next);
-  end;
-end;
 
-{*******************************************************************************
-function FindGroundItem(var Item: TGroundItem; ID: Integer; maxDist: Integer): Boolean;
-By: Drags111
-Description: Finds the nearest ground item with the ID.
-maxDist = max distance from character to search
-All info is stored the the Item variable.
-<3 Ben & Drags111 for spiral algorithm
-*******************************************************************************}
-function FindGroundItem(var Item: TGroundItem; ID: Integer; maxDist: Integer): Boolean;
-begin
-  Result := FindGroundItemEx(Item, [ID], maxDist);
+  finally
+    SmartFreeObject(NodeList);
+    FreeCacheInfo(Info);
+  end;
 end;

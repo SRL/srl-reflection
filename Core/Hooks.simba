@@ -212,7 +212,7 @@ const
   hook_interface_GetModelZoom = 'kb';
 
 //GroundItem crap.
-  hook_nodecache_GetNodes = 'b'; //getCache in RSBot
+  hook_nodecache_GetNodes = 'l'; //getCache in RSBot
   hook_nodelistcache_GetNodeList = 'm';
 
   hook_item_GetID = 'q';
