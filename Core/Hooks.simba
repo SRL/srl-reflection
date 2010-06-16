@@ -62,8 +62,8 @@ const
 	hook_character_GetHitDamges = 'eb';
 	hook_character_Animation = 'gc';
 	hook_character_Motion = 'vc';
-	hook_character_WalkQueueX = 'Cc';
-	hook_character_WalkQueueY = 'tc';
+	hook_character_WalkQueueX = 'tc';
+	hook_character_WalkQueueY = 'Cc';
 	hook_character_GetHeight = 'H';
 	hook_character_LoopCycleStatus = 'nb';
 	hook_character_HPRatio = 'Xb';
