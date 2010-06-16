@@ -110,3 +110,14 @@ begin
       SRL_Procs[srl_OnFindRandom]();
   end;
 end;
+
+{*******************************************************************************
+function R_OnFindRandomCall(var Cont : boolean) : boolean;
+Description: This event is called when SRL calls the FindNormalRandoms procedure.
+Thus it will always try to solve the randoms by using reflection first!
+*******************************************************************************}
+function R_OnFindRandomCall(var Cont : boolean) : boolean;
+begin
+  Result := R_FindRandoms;
+  Cont := not Result;
+end;

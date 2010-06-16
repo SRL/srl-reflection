@@ -37,6 +37,7 @@ function SetupReflectionEx(Terminate: Boolean): boolean;
 begin
   SetupConstants;
   Result := true;
+  SRL_OnFindRandomCall := @R_OnFindRandomCall;
   if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
   begin
     Result := False;
