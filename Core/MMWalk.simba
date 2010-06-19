@@ -114,13 +114,13 @@ begin
 end;
 
 {*******************************************************************************
-Function DistanceFrom(Tile: TPoint): Integer;
+function DistanceFrom(TheTile: TTile): Integer;
 By: Widget
 Description: Returns the distance between your player and the tile.  (Tiles)
 *******************************************************************************}
-function DistanceFrom(TheTile: TPoint): Integer;
+function DistanceFrom(TheTile: TTile): Integer;
 var
-  MyPos: TPoint;
+  MyPos: TTile;
 begin
   MyPos := GetMyPos;
   Result := Distance(MyPos.x, MyPos.y, TheTile.X, TheTile.Y);

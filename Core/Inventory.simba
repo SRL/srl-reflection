@@ -28,8 +28,8 @@ end;
 {*******************************************************************************
 function GetActionList(Itm, Actions: integer): TStringArray;
 By: Drags111
-Description: Returns the list of actions you can do with specific items.
-            (Does not return "Use").
+Description: Returns the list of actions you can do with specific items
+according to the given menu item. (Does not return "Use").
 *******************************************************************************}
 function GetActionList(Itm, Actions: integer): TStringArray;
 var
@@ -257,21 +257,23 @@ By: Drags111
 Description: Returns true if one of the IDs is found at least once in the inventory.
             Also returns all of the items found into the var Items.
 *******************************************************************************}
-function R_ItemIDExistsEx(IDs: TIntegerArray; out Items: TInvItemArray): boolean;
+function R_ItemIDExistsEx(IDs: TIntegerArray; var Items: TInvItemArray): boolean;
 var
-  i: integer;
+  i, Index: integer;
 begin
-  SetLength(Items, 0);
+  SetLength(Items, 28);
   Result := false;
+  Index := 0;
   for i := 1 to 28 do
   begin
     if(InIntArray(IDs, GetItemIDAt(i)))then
     begin
-      SetLength(Items, Length(Items)+1);
-      Items[High(Items)] := GetInvItemAt(i);
+      Items[Index] := GetInvItemAt(i);
+      Inc(Index);
       Result := true;
     end;
   end;
+  SetLength(Items, Index);
 end;
 
 {*******************************************************************************

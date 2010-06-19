@@ -481,7 +481,7 @@ begin
   if not IsMenuOpen then
   begin
     MarkTime(t);
-    while(TimeFromMark(t) < 1000)do wait(100+Random(100));
+    while(TimeFromMark(t) < 1000)do ;
     if not IsMenuOpen then Exit;
   end;
 
@@ -621,6 +621,7 @@ function GetSetting(Setting: Integer): Integer;
 By: Drags111
 Description: Gets the int setting value at the specified index. Used in some
             antirandoms. (demon).
+Returns -1 and warns if failed
 *******************************************************************************}
 function GetSetting(Setting: Integer): Integer;
 var
@@ -628,5 +629,10 @@ var
 begin
   SA := GetSettingArray;
   if(Setting < Length(SA))then
-    Result := SA[Setting];
+    Result := SA[Setting]
+  else
+  begin
+    srl_Warn('GetSetting', 'Incorrect setting index passed to GetSetting', warn_AllVersions);
+    Result := -1;
+  end;
 end;
