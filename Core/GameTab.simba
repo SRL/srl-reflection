@@ -76,82 +76,67 @@ begin
 end;
 
 {*******************************************************************************
-function R_GetSkillLevel(Skill: string; TopNumber: Boolean): Integer;
-By: lordsaturn
-Description: Grabs the current skill level of any skill
-e.g.
-Skill = 'hp' when hp is 40/61 and TopNumber = True will return 40
-Skill = 'hp' when hp is 40/61 and TopNumber = False will return 61
-Returns -1 if failed
+function _SkillStringToInt(skill: string): Integer;
+By: Nava2
+Description: Gets the integer index of a skill string name.
 *******************************************************************************}
-function R_GetSkillLevel(Skill: string; TopNumber: Boolean): Integer;
+function _SkillStringToInt(skill: string): Integer;
 var
-  str: string;
-  SkillArr: TStringArray;
-  skNo, child: Integer;
+  i, h: Integer;
 begin
   Result := -1;
-  str := Lowercase(Skill);
-  case str of
-    'hp', 'constitution': str := 'hitpoints';
-    'ranged': str := 'range';
-    'hunter': str := 'hunting';
-    'dung'  : str := 'dungeoneering';
-  end;
-
-  SkillArr := ['attack', 'strength', 'defence', 'range', 'prayer', 'magic',
-    'runecrafting', 'hitpoints', 'agility', 'herblore', 'thieving', 'crafting',
-    'fletching', 'slayer', 'mining', 'smithing', 'fishing', 'cooking',
-    'firemaking', 'woodcutting', 'farming', 'construction', 'hunting', 'summoning' ,'dungeoneering'];
-  if (not InStrArrEx(str, SkillArr, skNo)) then
-  begin
-    srl_Warn('R_GetSkillLevel', 'Invalid Skill Name/Number: ''' + string(Skill) + '''', warn_AllVersions);
-    Exit;
-  end;
-  inc(skNo);
-
-  case skNo of
-    Skill_Attack        : child := 196;
-    Skill_Strength      : child := 7;
-    Skill_Defense       : child := 24;
-    Skill_Range         : child := 48;
-    Skill_Prayer        : child := 72;
-    Skill_Mage          : child := 89;
-    Skill_RuneCrafting  : child := 106;
-    Skill_Construction  : child := 130;
-    Skill_Dungenoeering : child := 154;
-    Skill_HP            : child := 189;
-    Skill_Agility       : child := 15;
-    Skill_Herblore      : child := 32;
-    Skill_Thieving      : child := 56;
-    Skill_Crafting      : child := 80;
-    Skill_Fletching     : child := 97;
-    Skill_Slayer        : child := 114;
-    Skill_Hunter        : child := 138;
-    Skill_Mining        : child := 182;
-    Skill_Smithing      : child := 31;
-    Skill_Fishing       : child := 40;
-    Skill_Cooking       : child := 64;
-    Skill_FireMaking    : child := 168;
-    Skill_WoodCutting   : child := 161;
-    Skill_Farming       : child := 122;
-    Skill_Summoning     : child := 146;
-  else
+  skill := LowerCase(skill);
+  h := High(SKILL_STRINGS);
+  for i := 0 to h do
+    if (skill = SKILL_STRINGS[i]) then
     begin
-      srl_Warn('R_GetSkillLevel', 'Invalid Skill Number: ''' + inttostr(skNo) + '''', warn_AllVersions);
-      exit;
+      Result := i;
+      Exit;
     end;
+
+  SRL_Warn('_SkillStringToInt',
+           'skill: ' + skill + ' was not valid.',
+           warn_AllVersions);
+end;
+
+{*******************************************************************************
+function R_GetSkillLevel(skill: variant): Integer;
+By: Nava2
+Description: Gets the Level stored at skill. Skill can be the string or const.
+             The const is significantly faster.
+*******************************************************************************}
+function R_GetSkillLevel(skill: variant): Integer;
+var
+  Index: Integer;
+begin
+  case VarType(skill) of
+    varString: Index := _SkillStringToInt(skill);
+    varInteger: Index := skill;
+    else
+      SRL_Warn('GetSkillLevel', 'Invalid var type passed.', warn_AllVersions);
   end;
 
-  if not ValidInterface(230) then
-  begin
-    srl_Warn('R_GetSkillLevel', 'Could not find the skill interface', warn_AllVersions);
-    Exit;
-  end;
-  if not TopNumber then
-    Inc(child);
-  Result := StrToIntDef(GetInterfaceText(230, child), -1);
+  Result := SmartGetFieldArrayInt(0, hook_static_GetSkillLevels, Index);
+end;
 
+{*******************************************************************************
+function R_GetSkillExperience(skill: variant): Integer;
+By: Nava2
+Description: Gets the Experience stored at skill. Skill can be the string or
+             const. The const is significantly faster.
+*******************************************************************************}
+function R_GetSkillExperience(skill: variant): Integer;
+var
+  Index: Integer;
+begin
+  case VarType(skill) of
+    varString: Index := _SkillStringToInt(skill);
+    varInteger: Index := skill;
+    else
+      SRL_Warn('GetSkillLevel', 'Invalid var type passed.', warn_AllVersions);
+  end;
+
+  Result := SmartGetFieldArrayInt(0, hook_static_GetSkillExperiences, Index);
 end;
 
 {*******************************************************************************

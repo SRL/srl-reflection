@@ -62,68 +62,6 @@ begin
   Result := true;
 end;
 
-{
-  Private method to convert between the skill strings and integer consts.
-}
-function _SkillStringToInt(skill: string): Integer;
-var
-  i, h: Integer;
-begin
-  Result := -1;
-  skill := LowerCase(skill);
-  h := High(SKILL_STRINGS);
-  for i := 0 to h do
-    if (skill = SKILL_STRINGS[i]) then
-    begin
-      Result := i;
-      Exit;
-    end;
-
-  SRL_Warn('_SkillStringToInt',
-           'skill: ' + skill + ' was not valid.',
-           warn_AllVersions);
-end;
-
-{*******************************************************************************
-function getSkillLevel(skill: variant): Integer;
-By: Nava2
-Description: Gets the Level stored at skill. Skill can be the string or const.
-             The const is significantly faster.
-*******************************************************************************}
-function R_GetSkillLevel(skill: variant): Integer;
-var
-  Index: Integer;
-begin
-  case VarType(skill) of
-    varString: Index := _SkillStringToInt(skill);
-    varInteger: Index := skill;
-    else:
-      SRL_Warn('GetSkillLevel', 'Invalid var type passed.', warn_AllVersions);
-  end;
-
-  Result := SmartGetFieldArrayInt(0, hook_static_GetSkillLevels, Index);
-end;
-
-{*******************************************************************************
-function getSkillExperience(skill: variant): Integer;
-By: Nava2
-Description: Gets the Experience stored at skill. Skill can be the string or
-             const. The const is significantly faster.
-*******************************************************************************}
-function R_GetSkillExperience(skill: variant): Integer;
-var
-  Index: Integer;
-begin
-  case VarType(skill) of
-    varString: Index := _SkillStringToInt(skill);
-    varInteger: Index := skill;
-    else:
-      SRL_Warn('GetSkillLevel', 'Invalid var type passed.', warn_AllVersions);
-  end;
-
-  Result := SmartGetFieldArrayInt(0, hook_static_GetSkillExperiences, Index);
-end;
-
 {*******************************************************************************
 function GetNPCActionArray(NPCDef: integer): TStringArray;
 By: Drags111
@@ -206,7 +144,7 @@ begin
     Result[c].HPRatio := SmartGetFieldInt(TheNPC, hook_character_HPRatio) * 100 / $FF;
     Result[c].Fighting := (SmartGetFieldInt(TheNPC, hook_character_LoopCycleStatus) >
                               SmartGetFieldInt(0, hook_static_LoopCycle));
-    Result[c].Orientation := (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048;
+    Result[c].Orientation := Round(FixD(180 + (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048));
     Result[c].Level := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetLevel);
     Result[c].Interacting := SmartGetFieldInt(TheNPC, hook_character_GetInteracting);
     Inc(c);
@@ -297,7 +235,6 @@ Description: Returns an array of the NPCs at the given tile
 *******************************************************************************}
 function GetNPCsAt(T: TTile): TNPCArray;
 var
-  NPCs: TNPCArray;
   i, h, c: Integer;
   Index, TheNPCNode, TheNPC, TheNPCDef, TheBytes: Integer;
   tmp_tile : TTile;
@@ -332,7 +269,7 @@ begin
       Result[c].HPRatio := SmartGetFieldInt(TheNPC, hook_character_HPRatio) * 100 / $FF;
       Result[c].Fighting := (SmartGetFieldInt(TheNPC, hook_character_LoopCycleStatus) >
                               SmartGetFieldInt(0, hook_static_LoopCycle));
-      Result[c].Orientation := (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048;
+      Result[c].Orientation := Round(FixD(180 + (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048));
       Result[c].Level := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetLevel);
       Result[c].Interacting := SmartGetFieldInt(TheNPC, hook_character_GetInteracting);
       Inc(c);
@@ -415,14 +352,14 @@ begin
     theName := SmartGetFieldObject(Player, hook_player_GetName);
     Result[L].Index := IndexPos;
     Result[L].Name := GetJavaString(theName, 255);
-    Result[L].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) shr 7));
-    Result[L].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) shr 7));
+    Result[L].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) / 512));
+    Result[L].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) / 512));
     Result[L].Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight));
     Result[L].Animation := SmartGetFieldInt(Player, hook_character_Animation);
     Result[L].Moving := (SmartGetFieldInt(Player, hook_character_Motion)>0);
     Result[L].HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
     Result[L].Level := SmartGetFieldInt(Player, hook_player_GetLevel);
-    Result[L].Orientation := (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048;
+    Result[L].Orientation := Round(FixD(180 + (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048));
     Result[L].Interacting := SmartGetFieldInt(Player, hook_character_GetInteracting);
     Inc(L);
   finally
@@ -542,7 +479,7 @@ begin
     Result.HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
     Result.Level := SmartGetFieldInt(Player, hook_player_GetLevel);
     Result.InFight := (SmartGetFieldInt(0,hook_static_LoopCycle) < SmartGetFieldInt(Player,hook_character_LoopCycleStatus));
-    Result.Orientation := (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048;
+    Result.Orientation := Round(FixD(180 + (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048));
     Result.Interacting := SmartGetFieldInt(0, hook_character_GetInteracting);
   finally
     SmartFreeObject(theName);

@@ -289,7 +289,7 @@ Description: Walks the tile path. Looks like an ugly function, but it works
 *******************************************************************************}
 function WalkPath(Tiles: TTileArray): boolean;
 var
-  i, t, fails, d, attempts: integer;
+  i, t, attempts: integer;
   P: TPoint;
   next: boolean;
 label
