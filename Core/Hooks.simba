@@ -44,6 +44,8 @@ const
 	hook_static_PlayerCount = 'jt.x';
 	hook_static_PlayerIndexArray = 'fd.e';
 	hook_static_GetPlayers = 'uq.c';
+  hook_static_GetSkillLevels = 'sb.d';
+  hook_static_GetSkillExperiences = 'qq.u';
 
 {Class Animable}
 	class_Animable = 'ada';

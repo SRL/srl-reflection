@@ -62,6 +62,68 @@ begin
   Result := true;
 end;
 
+{
+  Private method to convert between the skill strings and integer consts.
+}
+function _SkillStringToInt(skill: string): Integer;
+var
+  i, h: Integer;
+begin
+  Result := -1;
+  skill := LowerCase(skill);
+  h := High(SKILL_STRINGS);
+  for i := 0 to h do
+    if (skill = SKILL_STRINGS[i]) then
+    begin
+      Result := i;
+      Exit;
+    end;
+
+  SRL_Warn('_SkillStringToInt',
+           'skill: ' + skill + ' was not valid.',
+           warn_AllVersions);
+end;
+
+{*******************************************************************************
+function getSkillLevel(skill: variant): Integer;
+By: Nava2
+Description: Gets the Level stored at skill. Skill can be the string or const.
+             The const is significantly faster.
+*******************************************************************************}
+function R_GetSkillLevel(skill: variant): Integer;
+var
+  Index: Integer;
+begin
+  case VarType(skill) of
+    varString: Index := _SkillStringToInt(skill);
+    varInteger: Index := skill;
+    else:
+      SRL_Warn('GetSkillLevel', 'Invalid var type passed.', warn_AllVersions);
+  end;
+
+  Result := SmartGetFieldArrayInt(0, hook_static_GetSkillLevels, Index);
+end;
+
+{*******************************************************************************
+function getSkillExperience(skill: variant): Integer;
+By: Nava2
+Description: Gets the Experience stored at skill. Skill can be the string or
+             const. The const is significantly faster.
+*******************************************************************************}
+function R_GetSkillExperience(skill: variant): Integer;
+var
+  Index: Integer;
+begin
+  case VarType(skill) of
+    varString: Index := _SkillStringToInt(skill);
+    varInteger: Index := skill;
+    else:
+      SRL_Warn('GetSkillLevel', 'Invalid var type passed.', warn_AllVersions);
+  end;
+
+  Result := SmartGetFieldArrayInt(0, hook_static_GetSkillExperiences, Index);
+end;
+
 {*******************************************************************************
 function GetNPCActionArray(NPCDef: integer): TStringArray;
 By: Drags111

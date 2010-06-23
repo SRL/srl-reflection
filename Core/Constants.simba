@@ -61,7 +61,7 @@ const
 
 var
   INTERFACE_TALKS: TIntegerArray; // All of the interfaces for NPCChat.
-  INTERFACE_SELFTALKS: TIntegerArray; // "  "    "         for us chatting to NPCs.
+  INTERFACE_SELFTALKS: TIntegerArray; // "  '    '         for us chatting to NPCs.
 
 const
   CHAT_TYPE_NORMAL  = 0;
@@ -143,6 +143,14 @@ type
     Result.Level := NULL_INT;
     Result.Interacting := NULL_INT;
   end;
+
+{
+  Skill related constants and variables.
+}
+{ var SKILL_STRINGS;
+    Strings which correspond to the Skill consts. }
+var
+  SKILL_STRINGS: TStringArray;
 
 type
 { type TPlayer;
@@ -334,4 +342,10 @@ begin
 
   SetLength(INTERFACE_SELFTALKS, 2);
   INTERFACE_SELFTALKS := [66, 64];
+  SKILL_STRINGS := ['attack', 'defence', 'strength', 'hitpoints', 'range',
+                    'prayer', 'magic', 'cooking', 'woodcutting', 'fletching',
+                    'fishing', 'firemaking', 'crafting', 'smithing', 'mining',
+                    'herblore', 'agility', 'thieving', 'slayer', 'farming',
+                    'runecrafting', 'hunter', 'construction', 'summoning',
+                    'dungeoneering'];
 end;
