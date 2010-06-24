@@ -18,81 +18,79 @@
  *}
 
 const
-	ClientVersion = 611;
+	ClientVersion = 612;
 
 {Static Hooks}
-	hook_static_LoginIndex = 'vf.r';
-	hook_static_MyPlayer = 'ek.O';
-	hook_static_BaseX = 'jg.r';
-	hook_static_BaseY = 'gaa.H';
-	hook_static_NPCIndexArray = 'ad.p';
-	hook_static_NPCNodes = 'bw.q';
-	hook_static_NPCCount = 'jea.a';
-	hook_static_GroundSettingsArray = 'jq.j';
-	hook_static_LoadedPlane = 'rh.b';
-	hook_static_PlaneArray = 've.b';
-	hook_static_Toolkit = 'eu.x';
-	hook_static_MapAngle = 'uda.l';
-	hook_static_DestX = 'qu.q';
-	hook_static_DestY = 'mk.f';
-	hook_static_MenuOptionCount = 'hh.g';
-	hook_static_MenuX = 'dj.x';
-	hook_static_MenuY = 'pw.a';
-	hook_static_MenuOpen = 'jm.g';
-	hook_static_MenuNodeList = 'ko.n';
-	hook_static_LoopCycle = 'jg.t';
-	hook_static_PlayerCount = 'jt.x';
-	hook_static_PlayerIndexArray = 'fd.e';
-	hook_static_GetPlayers = 'uq.c';
-  hook_static_GetSkillLevels = 'sb.d';
-  hook_static_GetSkillExperiences = 'qq.u';
+	hook_static_LoginIndex = 'ml.i';
+	hook_static_MyPlayer = 'nn.O';
+	hook_static_BaseX = 'hda.L';
+	hook_static_BaseY = 'jh.Lb';
+	hook_static_NPCIndexArray = 'cm.p';
+	hook_static_NPCNodes = 'aga.c';
+	hook_static_NPCCount = 'hu.d';
+	hook_static_GroundSettingsArray = 'nv.z';
+	hook_static_LoadedPlane = 'tm.q';
+	hook_static_PlaneArray = 'bs.g';
+	hook_static_Toolkit = 'mi.r';
+	hook_static_MapAngle = 'qda.fb';
+	hook_static_DestX = 'nn.x';
+	hook_static_DestY = 'tc.x';
+	hook_static_MenuOptionCount = 'hq.c';
+	hook_static_MenuX = 'daa.f';
+	hook_static_MenuY = 'in.B';
+	hook_static_MenuOpen = 'ida.i';
+	hook_static_MenuNodeList = 'ht.D';
+	hook_static_LoopCycle = 'uca.r';
+	hook_static_PlayerCount = 'daa.f';
+	hook_static_PlayerIndexArray = 'in.B';
+	hook_static_GetPlayers = 'jba.r';
 
 {Class Animable}
-	class_Animable = 'ada';
-	hook_animable_PixelX = 'n';
+	class_Animable = 'fu';
+	hook_animable_PixelX = 'l';
 	hook_animable_PixelY = 'r';
-	hook_animable_Plane = 'g';
+	hook_animable_Plane = 'i';
 
 {Class Player}
-	class_Player = 'eca';
-	hook_player_GetLevel = 'id';
-	hook_player_GetName = 'pd';
-	hook_player_PlayerDef = 'qd';
+	class_Player = 'pi';
+	hook_player_GetLevel = 'bd';
+	hook_player_GetName = 'ud';
+	hook_player_PlayerDef = 'Oc';
 
 {Class Character}
-	class_Character = 'qb';
-	hook_character_GetHitDamges = 'eb';
-	hook_character_Animation = 'gc';
-	hook_character_Motion = 'vc';
-	hook_character_WalkQueueX = 'tc';
-	hook_character_WalkQueueY = 'Cc';
-	hook_character_GetHeight = 'H';
-	hook_character_LoopCycleStatus = 'nb';
-	hook_character_HPRatio = 'Xb';
-	hook_character_GetInteracting = 'zb';
+	class_Character = 'fp';
+	hook_character_GetHitDamges = 'A';
+	hook_character_Animation = 'sb';
+	hook_character_Motion = 'xc';
+	hook_character_WalkQueueX = 'Dc';
+	hook_character_WalkQueueY = 'Bc';
+	hook_character_GetHeight = 'jb';
+	hook_character_LoopCycleStatus = 'cb';
+	hook_character_HPRatio = 'ub';
+	hook_character_GetInteracting = 'Rb';
 
 {Class NPC}
-	class_NPC = 'tt';
-	hook_npc_NPCDef = 'ad';
+	class_NPC = 'ag';
+	hook_npc_NPCDef = 'Qc';
 
 {Class NPCDef}
-	class_NPCDef = 'pl';
-	hook_npcdef_GetActions = 'W';
-	hook_npcdef_GetName = 'cb';
-	hook_npcdef_GetLevel = 'l';
+	class_NPCDef = 'nc';
+	hook_npcdef_GetName = 'y';
+	hook_npcdef_GetActions = 'S';
+	hook_npcdef_GetLevel = 'c';
 
 {Class NPCNode}
-	class_NPCNode = 'ap';
-	hook_npcnode_GetNPC = 'n';
+	class_NPCNode = 'lda';
+	hook_npcnode_GetNPC = 'm';
 
 {Class GroundTile}
-	class_GroundTile = 'uaa';
+	class_GroundTile = 'ne';
 
 {Class Plane}
 	class_Plane = 'd';
 
 {Class RSInteractable}
-	class_RSInteractable = 'va';
+	class_RSInteractable = 'fl';
 
 {Class Toolkit}
 	class_Toolkit = 'oa';
@@ -101,57 +99,57 @@ const
 	class_Viewport = 'q';
 
 {Class SDViewport}
-	class_SDViewport = 'vm';
-	hook_sdviewport_xOff = 'f';
-	hook_sdviewport_xX = 'd';
-	hook_sdviewport_xY = 'o';
-	hook_sdviewport_xZ = 'l';
-	hook_sdviewport_yOff = 'e';
-	hook_sdviewport_yX = 'g';
+	class_SDViewport = 'aea';
+	hook_sdviewport_xOff = 'j';
+	hook_sdviewport_xX = 'r';
+	hook_sdviewport_xY = 'l';
+	hook_sdviewport_xZ = 'q';
+	hook_sdviewport_yOff = 's';
+	hook_sdviewport_yX = 'i';
 	hook_sdviewport_yY = 'm';
-	hook_sdviewport_yZ = 'h';
+	hook_sdviewport_yZ = 'n';
 	hook_sdviewport_zOff = 'k';
-	hook_sdviewport_zX = 'j';
-	hook_sdviewport_zY = 'i';
-	hook_sdviewport_zZ = 'n';
+	hook_sdviewport_zX = 'p';
+	hook_sdviewport_zY = 't';
+	hook_sdviewport_zZ = 'o';
 
 {Class SDToolkit}
-	class_SDToolkit = 'fk';
-	hook_sdtoolkit_xMin = 'H';
-	hook_sdtoolkit_xMax = 'V';
-	hook_sdtoolkit_yMin = 'K';
-	hook_sdtoolkit_yMax = 'eb';
-	hook_sdtoolkit_zMin = 'hb';
-	hook_sdtoolkit_zMax = 'db';
-	hook_sdtoolkit_xScale = 'G';
-	hook_sdtoolkit_yScale = 'B';
-	hook_sdtoolkit_Viewport = 'P';
+	class_SDToolkit = 'uq';
+	hook_sdtoolkit_xMin = 'db';
+	hook_sdtoolkit_xMax = 'y';
+	hook_sdtoolkit_yMin = 'A';
+	hook_sdtoolkit_yMax = 'gb';
+	hook_sdtoolkit_zMin = 'E';
+	hook_sdtoolkit_zMax = 'jb';
+	hook_sdtoolkit_xScale = 'K';
+	hook_sdtoolkit_yScale = 'bb';
+	hook_sdtoolkit_Viewport = 'S';
 
 {Class SDPlane}
-	class_SDPlane = 'gw';
-	hook_sdplane_TileHeights = 'n';
+	class_SDPlane = 'jj';
+	hook_sdplane_TileHeights = 'm';
 
 {Class NodeList}
-	class_NodeList = 'eea';
-	hook_nodelist_Current = 'o';
-	hook_nodelist_Head = 'c';
+	class_NodeList = 'mfa';
+	hook_nodelist_Current = 'p';
+	hook_nodelist_Head = 'k';
 
 {Class Node}
-	class_Node = 'uj';
-	hook_node_Next = 'g';
-	hook_node_GetID = 'b';
-	hook_node_Previous = 'c';
+	class_Node = 'mu';
+	hook_node_Next = 'a';
+	hook_node_Previous = 'k';
 
 {Class Menu}
-	class_Menu = 'cm';
-	hook_menu_Action = 'o';
-	hook_menu_Option = 'u';
+	class_Menu = 'rt';
+	hook_menu_Option = 'q';
+	hook_menu_Action = 'u';
 
 {Class PlayerDef}
-	class_PlayerDef = 'vv';
-	hook_playerdef_GetEquipment = 's';
+	class_PlayerDef = 'dea';
 
 {
+  /////////////// HOOKS BELOW HERE ARE OUTDATED AS OF 24 JUNE 2010 (Client 612) ////////////////////////
+
   These hooks all need to be added to the updater.
 }
 
