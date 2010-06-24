@@ -96,6 +96,10 @@ begin
     SmartFreeObject(Head);
     SmartFreeObject(D2NextNode);
   finally
+    SmartFreeObject(Node);
+    SmartFreeObject(NextNode);
+    SmartFreeObject(Head);
+    SmartFreeObject(D2NextNode);
   end;
 end;
 
