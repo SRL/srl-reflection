@@ -122,6 +122,7 @@ type
     Index, ID, Level, Animation, Height, HPRatio, Interacting,
     Orientation: integer;// SOUTH = 0; NORTH = 180; CLOCKWISE.
     Tile: TTile;
+    Pixel: TPoint;//Pixel position on tile
     Name: String;
     Actions: TStringArray;
     Moving, Fighting: boolean;

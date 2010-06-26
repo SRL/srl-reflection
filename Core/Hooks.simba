@@ -21,31 +21,36 @@ const
 	ClientVersion = 612;
 
 {Static Hooks}
-	hook_static_LoginIndex = 'vf.r';
-	hook_static_MyPlayer = 'ek.O';
-	hook_static_BaseX = 'jg.r';
-	hook_static_BaseY = 'gaa.H';
-	hook_static_NPCIndexArray = 'ad.p';
-	hook_static_NPCNodes = 'bw.q';
-	hook_static_NPCCount = 'jea.a';
-	hook_static_GroundSettingsArray = 'jq.j';
-	hook_static_LoadedPlane = 'rh.b';
-	hook_static_PlaneArray = 've.b';
-	hook_static_Toolkit = 'eu.x';
-	hook_static_MapAngle = 'uda.l';
-	hook_static_DestX = 'qu.q';
-	hook_static_DestY = 'mk.f';
-	hook_static_MenuOptionCount = 'hh.g';
-	hook_static_MenuX = 'dj.x';
-	hook_static_MenuY = 'pw.a';
-	hook_static_MenuOpen = 'jm.g';
-	hook_static_MenuNodeList = 'ko.n';
-	hook_static_LoopCycle = 'jg.t';
-	hook_static_PlayerCount = 'jt.x';
-	hook_static_PlayerIndexArray = 'fd.e';
-	hook_static_GetPlayers = 'uq.c';
-  hook_static_GetSkillLevels = 'sb.d';//
-  hook_static_GetSkillExperiences = 'qq.u';//
+	hook_static_LoginIndex = 'ml.i';
+	hook_static_MyPlayer = 'nn.O';
+	hook_static_BaseX = 'hda.L';
+	hook_static_BaseY = 'jh.Lb';
+	hook_static_NPCIndexArray = 'cm.p';
+	hook_static_NPCNodes = 'aga.c';
+	hook_static_NPCCount = 'hu.d';
+	hook_static_GroundSettingsArray = 'nv.z';
+	hook_static_LoadedPlane = 'tm.q';
+	hook_static_PlaneArray = 'bs.g';
+	hook_static_Toolkit = 'mi.r';
+  hook_static_MapAngle = 'qda.fb';
+  hook_static_DestX = 'nn.x';
+  hook_static_DestY = 'tc.x';
+	hook_static_MenuOptionCount = 'hq.c';
+  hook_static_MenuX = 'daa.f';
+  hook_static_MenuY = 'in.B';
+  hook_static_MenuOpen = 'ida.i';
+  hook_static_MenuNodeList = 'ht.D';
+  hook_static_LoopCycle = 'uca.r';
+  hook_static_PlayerCount = 'daa.f';
+  hook_static_PlayerIndexArray = 'in.B';
+  hook_static_GetPlayers = 'jba.r';
+  hook_static_GetSkillLevels = 'tt.v';
+  hook_static_GetSkillExperiences = 'mb.a';
+  hook_static_GroundTiles = 'jr.b'; //getRSGroundArray in RSBot
+  hook_static_GetInterfaces = 'nb.k'; //getRSInterfaceCache in RSBot
+  hook_static_ValidInterfaces = 'de.M'; //getValidRSInterfaceArray in RSBot
+  hook_static_GetSettings = 'rc.G'; //getSettingArray in RSBot
+  hook_static_GroundItemCache = 'tu.Md'; //getRSItemNodeCache in RSBot
 
 {Class Animable}
 	class_Animable = 'fu';
@@ -151,6 +156,30 @@ const
 	class_PlayerDef = 'dea';
 	hook_playerdef_GetEquipment = 's';//
 
+{Class Interface}
+  hook_interface_GetActions = 'Wb';
+  hook_interface_GetX = 'yb';
+  hook_interface_GetY = 'Rc';
+  hook_interface_GetWidth = 'Sc';
+  hook_interface_GetHeight = 'od';
+  hook_interface_GetText = 'kc';
+  hook_interface_GetTextureID = 'hb';
+  hook_interface_GetTextColor = 'Zc';
+  hook_interface_GetModelID = 'oc';
+  hook_interface_GetModelZoom = 'ic';
+  hook_interface_GetName = 'bb'; //getComponentName in RSBot
+  hook_interface_GetChildren = 'I'; //getComponents in RSBot
+  hook_interface_GetID = 'ad'; //getComponentID in RSBot
+  hook_interface_GetStack = 'i'; //getComponentStackSize in RSBot
+
+//RSGround class ne
+  hook_ground_AnimableList = 'i';
+  hook_ground_WallObject1 = 'z';
+  hook_ground_WallObject2 = 's';
+  hook_ground_WallDecoration1 = 'f';
+  hook_ground_WallDecoration2 = 'g';
+  hook_ground_FloorDecoration = 'o';
+
 {
   /////////////// HOOKS BELOW HERE ARE OUTDATED AS OF 24 JUNE 2010 (Client 612) ////////////////////////
 
@@ -161,22 +190,7 @@ const
   hook_character_Orientation = 'ab';
 
 //NPCDef
-  hook_npcdef_GetID = 'z';
-
-//Client
-  hook_static_GroundTiles = 'lm.w'; //getRSGroundArray in RSBot
-  hook_static_GetInterfaces = 'tc.r'; //getRSInterfaceCache in RSBot
-  hook_static_ValidInterfaces = 'cg.n'; //getValidRSInterfaceArray in RSBot
-  hook_static_GetSettings = 'fba.M'; //getSettingArray in RSBot
-  hook_static_GroundItemCache = 'tu.Md'; //getRSItemNodeCache in RSBot
-
-//RSGround class uaa.
-  hook_ground_AnimableList = 'k'; //getRSAnimableList in RSBot
-  hook_ground_WallObject1 = 't'; //getRSObject2_1 in RSBot
-  hook_ground_WallObject2 = 'l'; //getRSObject2_0 in RSBot
-  hook_ground_WallDecoration1 = 'e'; //getRSObject3_0 in RSBot
-  hook_ground_WallDecoration2 = 's'; //getRSObject3_1 in RSBot
-  hook_ground_FloorDecoration = 'r'; //getRSObject1 in RSBot
+  hook_npcdef_GetID = 'nc.o';
 
 //AnimableNode class de
   hook_AnimableNode_GetAnimable = 'j';
@@ -198,22 +212,8 @@ const
   hook_FloorDecorationData_GetID = 'O';
   hook_FloorDecorationData_GetID2 = 'r.o'; //instance of ej. is an int.
 
-//Interface class jq
-  hook_interface_GetChildren = 'i'; //getComponents in RSBot
-  hook_interface_GetName = 'hb'; //getComponentName in RSBot
-  hook_interface_GetID = 'Tb'; //getComponentID in RSBot
-  hook_interface_GetStack = 'qc'; //getComponentStackSize in RSBot
-  hook_interface_GetActions = 'm';
-  hook_interface_GetX = 'Eb';
-  hook_interface_GetY = 'Dc';
-  hook_interface_GetWidth = 'Gb';
-  hook_interface_GetHeight = 'F';
-  hook_interface_GetText = 'S';
-  hook_interface_GetTextureID = 'fd';
-  hook_interface_GetTextColor = 'jc';
+//Interface class ep
   hook_interface_GetUID = 'xb';
-  hook_interface_GetModelID = 'Z';
-  hook_interface_GetModelZoom = 'kb';
 
 //GroundItem crap.
   hook_nodecache_GetNodes = 'l'; //getCache in RSBot
@@ -224,10 +224,3 @@ const
 
 //Settings Array
   hook_settingarray_GetData = 'k';
-
-
-
-
-
-
-
