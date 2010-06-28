@@ -75,6 +75,7 @@ const
 	hook_character_LoopCycleStatus = 'cb';
 	hook_character_HPRatio = 'ub';
 	hook_character_GetInteracting = 'Rb';
+  hook_character_Orientation = 'O';
 
 {Class NPC}
 	class_NPC = 'ag';
@@ -85,6 +86,7 @@ const
 	hook_npcdef_GetName = 'y';
 	hook_npcdef_GetActions = 'S';
 	hook_npcdef_GetLevel = 'c';
+  hook_npcdef_GetID = 'f';
 
 {Class NPCNode}
 	class_NPCNode = 'lda';
@@ -171,6 +173,7 @@ const
   hook_interface_GetChildren = 'I'; //getComponents in RSBot
   hook_interface_GetID = 'ad'; //getComponentID in RSBot
   hook_interface_GetStack = 'i'; //getComponentStackSize in RSBot
+  hook_interface_GetUID = 'Xb';
 
 //RSGround class ne
   hook_ground_AnimableList = 'i';
@@ -180,21 +183,15 @@ const
   hook_ground_WallDecoration2 = 'g';
   hook_ground_FloorDecoration = 'o';
 
+//AnimableNode class qr
+  hook_AnimableNode_GetAnimable = 'e';
+  hook_AnimableNode_GetNext = 'c';
+
 {
   /////////////// HOOKS BELOW HERE ARE OUTDATED AS OF 24 JUNE 2010 (Client 612) ////////////////////////
 
   These hooks all need to be added to the updater.
 }
-
-//Character
-  hook_character_Orientation = 'ab';
-
-//NPCDef
-  hook_npcdef_GetID = 'nc.o';
-
-//AnimableNode class de
-  hook_AnimableNode_GetAnimable = 'j';
-  hook_AnimableNode_GetNext = 'h';
 
 //InteractiveObject class pba
   hook_InteractiveObject_GetID = 'z';
@@ -211,9 +208,6 @@ const
 //FloorDecorationData class rv
   hook_FloorDecorationData_GetID = 'O';
   hook_FloorDecorationData_GetID2 = 'r.o'; //instance of ej. is an int.
-
-//Interface class ep
-  hook_interface_GetUID = 'xb';
 
 //GroundItem crap.
   hook_nodecache_GetNodes = 'l'; //getCache in RSBot
