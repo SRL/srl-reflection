@@ -1,4 +1,5 @@
 {$define smart}
+{$DEFINE REFLECTION}
 
 {$i ./Core/Constants.simba}
 {$i ./Core/Hooks.simba}
