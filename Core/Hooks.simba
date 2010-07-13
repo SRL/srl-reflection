@@ -32,49 +32,51 @@ const
 	hook_static_LoadedPlane = 'lf.b';
 	hook_static_PlaneArray = 'lh.l';
 	hook_static_Toolkit = 'ha.N';
-  hook_static_MapAngle = 'wq.l';
-  hook_static_DestX = 'nj.n';
-  hook_static_DestY = 'an.I';
+	hook_static_MapAngle = 'pt.r';
+	hook_static_DestX = 'nj.n';
+	hook_static_DestY = 'an.I';
 	hook_static_MenuOptionCount = 'ov.p';
-  hook_static_MenuX = 'tm.m';
-  hook_static_MenuY = 'df.b';
-  hook_static_MenuOpen = 'ida.i';
-  hook_static_MenuNodeList = 'ht.D';
-  hook_static_LoopCycle = 'of.L';
-  hook_static_PlayerCount = 'hw.c';
-  hook_static_PlayerIndexArray = 'ku.s';
-  hook_static_GetPlayers = 'nv.p';
+	hook_static_MenuX = 'df.b';
+	hook_static_MenuY = 'pb.d';
+	hook_static_MenuOpen = 'nea.ib';
+	hook_static_MenuNodeList = 'rj.i';
+	hook_static_LoopCycle = 'of.L';
+	hook_static_PlayerCount = 'hw.c';
+	hook_static_PlayerIndexArray = 'ku.s';
+	hook_static_GetPlayers = 'nv.p';
+  //not in updater.
   hook_static_GetSkillLevels = 'ffa.o';
   hook_static_GetSkillExperiences = 'tt.d';
   hook_static_GroundTiles = 'iea.b'; //getRSGroundArray in RSBot
   hook_static_GetInterfaces = 'p.h'; //getRSInterfaceCache in RSBot
   hook_static_ValidInterfaces = 'w.y'; //getValidRSInterfaceArray in RSBot
   hook_static_GetSettings = 'uba.B'; //getSettingArray in RSBot
-  hook_static_GroundItemCache = 'mba.g';//getRSItemNodeCache in RSBot
+  hook_static_GroundItemCache = 'mba.g'; //getRSItemNodeCache in RSBot
 
 {Class Animable}
 	class_Animable = 'hc';
-  hook_animable_PixelX = 'r';
-  hook_animable_PixelY = 'f';
+	hook_animable_PixelX = 'r';
+	hook_animable_PixelY = 'f';
 	hook_animable_Plane = 'n';
 
 {Class Player}
 	class_Player = 'ud';
+	hook_player_GetLevel = 'sd';
 	hook_player_GetName = 'Ec';
 	hook_player_PlayerDef = 'od';
-	hook_player_GetLevel = 'eb';
 
 {Class Character}
 	class_Character = 'rq';
-	hook_character_GetHitDamges = 'bb';
+	hook_character_GetHitDamges = 'Hb';
 	hook_character_Animation = 'fb';
 	hook_character_Motion = 'oc';
-	hook_character_WalkQueueX = 'uc';
-	hook_character_WalkQueueY = 'kc';
+	hook_character_WalkQueueX = 'kc';
+	hook_character_WalkQueueY = 'uc';
 	hook_character_GetHeight = 'Db';
-	hook_character_LoopCycleStatus = 'D';
 	hook_character_HPRatio = 'Nb';
 	hook_character_GetInteracting = 'C';
+  //broken
+	hook_character_LoopCycleStatus = 'D';
   hook_character_Orientation = 'Ib';
 
 {Class NPC}
@@ -83,9 +85,10 @@ const
 
 {Class NPCDef}
 	class_NPCDef = 'qba';
-	hook_npcdef_GetName = 'db';
 	hook_npcdef_GetActions = 's';
-	hook_npcdef_GetLevel = 'W';
+	hook_npcdef_GetName = 'db';
+	hook_npcdef_GetLevel = 'eb';
+  //broken
   hook_npcdef_GetID = 'V';
 
 {Class NPCNode}
@@ -93,10 +96,10 @@ const
 	hook_npcnode_GetNPC = 'q';
 
 {Class GroundTile}
-	class_GroundTile = 'af';//RSGround
+	class_GroundTile = 'af';
 
 {Class Plane}
-	class_Plane = 'd';//TileData
+	class_Plane = 'd';
 
 {Class RSInteractable}
 	class_RSInteractable = 'bo';
@@ -150,71 +153,86 @@ const
 	hook_node_Previous = 'f';
 
 {Class Menu}
-	class_Menu = 'rt';
+	class_Menu = 'u';
+	hook_menu_Action = 'n';
 	hook_menu_Option = 'q';
-	hook_menu_Action = 'u';
 
 {Class PlayerDef}
 	class_PlayerDef = 'ph';
 	hook_playerdef_GetEquipment = 't';
 
-{Class Interface}
-  hook_interface_GetActions = 'Sc';//
-  hook_interface_GetX = 'h';//
-  hook_interface_GetY = 'Ac';//
-  hook_interface_GetWidth = 'Kc';//
-  hook_interface_GetHeight = 'od';//
-  hook_interface_GetText = 'rb';//
-  hook_interface_GetTextureID = 'hb';
-  hook_interface_GetTextColor = 'kd';//
-  hook_interface_GetModelID = 'mc';//
-  hook_interface_GetModelZoom = 'ic';
+{Class ObjectInterface}
+	class_ObjectInterface = 'dda';
+  //broken
+  hook_interface_GetActions = 'Sc';
+  hook_interface_GetX = 'h';
+  hook_interface_GetY = 'Ac';
+  hook_interface_GetWidth = 'z';
+  hook_interface_GetHeight = 'vb';
+  hook_interface_GetText = 'Xb';
+  hook_interface_GetTextureID = 'Tc';
+  hook_interface_GetTextColor = 'kd';
+  hook_interface_GetModelID = 'e';
+  hook_interface_GetModelZoom = 'Nb';
   hook_interface_GetName = 'j'; //getComponentName in RSBot
   hook_interface_GetChildren = 'cb'; //getComponents in RSBot
   hook_interface_GetID = 'A'; //getComponentID in RSBot
   hook_interface_GetStack = 'wc'; //getComponentStackSize in RSBot
-  hook_interface_GetUID = 'Xb';
 
-//RSGround class af 613
-  hook_ground_AnimableList = 'm';
-  hook_ground_WallObject1 = 'i';
-  hook_ground_WallObject2 = 'e';
-  hook_ground_WallDecoration1 = 'w';
-  hook_ground_WallDecoration2 = 's';
+{Class Ground}
+	class_Ground = 'af';
+	hook_ground_AnimableList = 'm';
+  //not in updater
+  hook_ground_WallObject1 = 'e';
+  hook_ground_WallObject2 = 'i';
+  hook_ground_WallDecoration1 = 's';
+  hook_ground_WallDecoration2 = 'v';
   hook_ground_FloorDecoration = 'l';
 
-//AnimableNode class dh 613
-  hook_AnimableNode_GetAnimable = 'i';
-  hook_AnimableNode_GetNext = 'f';
+{Class AnimableNode}
+	class_AnimableNode = 'dh';
+	hook_animablenode_GetNext = 'f';
+	hook_animablenode_GetAnimable = 'i';
+
+{Class InteractiveObject1}
+	class_InteractiveObject1 = 'qt';
+	hook_interactiveobject_GetID = 'R';
+
+{Class InteractiveObject2}
+	class_InteractiveObject2 = 'vq';
+	hook_interactiveobject_GetID2 = 'w.H';
+
+{Class SecondLevelObject}
+	class_SecondLevelObject = 'kd';
 
 {
-  /////////////// HOOKS BELOW HERE ARE OUTDATED AS OF 24 JUNE 2010 (Client 612) ////////////////////////
-
+  /////////////// HOOKS BELOW HERE ARE *UPDATED* AS OF 13 July 2010 (Client 612) ////////////////////////
+        However***** All need to be added to updater.
   These hooks all need to be added to the updater.
 }
 
-//InteractiveObject class pba
-  hook_InteractiveObject_GetID = 'z';
-  hook_InteractiveObject_GetID2 = 'H.o'; //instance of ej. is an int.
-
-//WallObjectData class dca
-  hook_wallobjectdata_GetID = 'N';
-  hook_wallobjectdata_GetID2 = 'y.o'; //instance of ej. is an int.
+//WallObjectData class wda
+  hook_wallobjectdata_GetID = 'x';
+  hook_wallobjectdata_GetID2 = 'D.H'; //instance of kd. is an int.
 
 //WallDecorationData class ew
-  hook_WallDecorationData_GetID = 'C';
-  hook_WallDecorationData_GetID2 = 'z.o'; //instance of ej. is an int.
+  hook_WallDecorationData_GetID = 'w';
+  hook_WallDecorationData_GetID2 = 'y.H'; //instance of kd. is an int.
 
 //FloorDecorationData class rv
-  hook_FloorDecorationData_GetID = 'O';
-  hook_FloorDecorationData_GetID2 = 'r.o'; //instance of ej. is an int.
+  hook_FloorDecorationData_GetID = 'z';
+  hook_FloorDecorationData_GetID2 = 'm.H'; //instance of kd. is an int.
 
 //GroundItem crap.
-  hook_nodecache_GetNodes = 'l'; //getCache in RSBot
-  hook_nodelistcache_GetNodeList = 'm';
+//nodecache class nj
+  hook_nodecache_GetNodes = 'g'; //getCache in RSBot
 
-  hook_item_GetID = 'q';
-  hook_item_GetStack = 'k';
+//nodelistcaceh class lh
+  hook_nodelistcache_GetNodeList = 'k';
+
+//RSItem class ng
+  hook_item_GetID = 'j';
+  hook_item_GetStack = 'q';
 
 //Settings Array
-  hook_settingarray_GetData = 'k';
+  hook_settingarray_GetData = 'h';

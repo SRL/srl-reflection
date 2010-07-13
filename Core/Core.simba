@@ -59,7 +59,7 @@ Description: Returns true if you're logged in.
 ********************************************************************}
 function R_LoggedIn: Boolean;
 begin
-  Result := (LoginIndex = 9);
+  Result := (LoginIndex >= 9);
 end;
 
 {*******************************************************************************
