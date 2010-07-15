@@ -18,33 +18,33 @@
  *}
 
 const
-	ClientVersion = 613;
+	ClientVersion = 614;
 
 {Static Hooks}
-	hook_static_LoginIndex = 'fp.w';
-	hook_static_MyPlayer = 'qs.b';
-	hook_static_BaseX = 'io.d';
-	hook_static_BaseY = 'gn.f';
-	hook_static_NPCIndexArray = 'kw.i';
-	hook_static_NPCNodes = 'od.d';
-	hook_static_NPCCount = 'uj.c';
-	hook_static_GroundSettingsArray = 'mba.f';
-	hook_static_LoadedPlane = 'lf.b';
-	hook_static_PlaneArray = 'lh.l';
-	hook_static_Toolkit = 'ha.N';
-	hook_static_MapAngle = 'pt.r';
-	hook_static_DestX = 'nj.n';
-	hook_static_DestY = 'an.I';
-	hook_static_MenuOptionCount = 'ov.p';
-	hook_static_MenuX = 'df.b';
-	hook_static_MenuY = 'pb.d';
-	hook_static_MenuOpen = 'nea.ib';
-	hook_static_MenuNodeList = 'rj.i';
-	hook_static_LoopCycle = 'of.L';
-	hook_static_PlayerCount = 'hw.c';
-	hook_static_PlayerIndexArray = 'ku.s';
-	hook_static_GetPlayers = 'nv.p';
-  //not in updater.
+	hook_static_LoginIndex = 'om.H';
+	hook_static_MyPlayer = 's.L';
+	hook_static_BaseX = 'fi.a';
+	hook_static_BaseY = 'fn.t';
+	hook_static_NPCIndexArray = 'bl.B';
+	hook_static_NPCNodes = 'mm.c';
+	hook_static_NPCCount = 'qp.x';
+	hook_static_GroundSettingsArray = 'kg.p';
+	hook_static_LoadedPlane = 'pd.o';
+	hook_static_PlaneArray = 'hq.N';
+	hook_static_Toolkit = 'vm.a';
+	hook_static_MapAngle = 'waa.A';
+	hook_static_DestX = 'wd.d';
+	hook_static_DestY = 'vb.o';
+	hook_static_MenuOptionCount = 'ow.ab';
+	hook_static_MenuX = 'naa.d';
+	hook_static_MenuY = 'nr.g';
+	hook_static_MenuOpen = 'kf.e';
+	hook_static_MenuNodeList = 'pt.A';
+	hook_static_LoopCycle = 'oca.c';
+	hook_static_PlayerCount = 'naa.d';
+	hook_static_PlayerIndexArray = 'nr.g';
+	hook_static_GetPlayers = 'vi.E';
+  //broken, not in updater
   hook_static_GetSkillLevels = 'ffa.o';
   hook_static_GetSkillExperiences = 'tt.d';
   hook_static_GroundTiles = 'iea.b'; //getRSGroundArray in RSBot
@@ -52,57 +52,59 @@ const
   hook_static_ValidInterfaces = 'w.y'; //getValidRSInterfaceArray in RSBot
   hook_static_GetSettings = 'uba.B'; //getSettingArray in RSBot
   hook_static_GroundItemCache = 'mba.g'; //getRSItemNodeCache in RSBot
+  hook_static_CamPosX = 'pi.c';
+  hook_static_CamPosY = 'ir.J';
 
 {Class Animable}
-	class_Animable = 'hc';
-	hook_animable_PixelX = 'r';
-	hook_animable_PixelY = 'f';
-	hook_animable_Plane = 'n';
+	class_Animable = 'bt';
+	hook_animable_PixelX = 'i';
+	hook_animable_PixelY = 'n';
+	hook_animable_Plane = 't';
 
 {Class Player}
-	class_Player = 'ud';
-	hook_player_GetLevel = 'sd';
-	hook_player_GetName = 'Ec';
-	hook_player_PlayerDef = 'od';
+	class_Player = 'uea';
+	hook_player_GetLevel = 'Ac';
+	hook_player_GetName = 'md';
+	hook_player_PlayerDef = 'pd';
 
 {Class Character}
-	class_Character = 'rq';
-	hook_character_GetHitDamges = 'Hb';
-	hook_character_Animation = 'fb';
-	hook_character_Motion = 'oc';
-	hook_character_WalkQueueX = 'kc';
+	class_Character = 'va';
+	hook_character_GetHitDamges = 'Yb';
+	hook_character_Animation = 'N';
+	hook_character_Motion = 'wc';
+	hook_character_WalkQueueX = 'oc';
 	hook_character_WalkQueueY = 'uc';
-	hook_character_GetHeight = 'Db';
-	hook_character_HPRatio = 'Nb';
-	hook_character_GetInteracting = 'C';
-  //broken
-	hook_character_LoopCycleStatus = 'D';
+	hook_character_GetHeight = 'sb';
+	hook_character_LoopCycleStatus = 'dc';
+	hook_character_HPRatio = 'W';
+	hook_character_GetInteracting = 'G';
+  //broken, not in updater
   hook_character_Orientation = 'Ib';
 
 {Class NPC}
-	class_NPC = 'dw';
-	hook_npc_NPCDef = 'Tc';
+	class_NPC = 'kw';
+	hook_npc_NPCDef = 'Uc';
 
 {Class NPCDef}
-	class_NPCDef = 'qba';
-	hook_npcdef_GetActions = 's';
-	hook_npcdef_GetName = 'db';
-	hook_npcdef_GetLevel = 'eb';
-  //broken
+	class_NPCDef = 'ei';
+	hook_npcdef_GetActions = 'K';
+	hook_npcdef_GetName = 'ob';
+	hook_npcdef_GetLevel = 'cb';
+  //broken, not in updater
   hook_npcdef_GetID = 'V';
 
 {Class NPCNode}
-	class_NPCNode = 'jw';
-	hook_npcnode_GetNPC = 'q';
+	class_NPCNode = 'vb';
+	hook_npcnode_GetNPC = 'm';
 
 {Class GroundTile}
-	class_GroundTile = 'af';
+	class_GroundTile = 'hl';
 
 {Class Plane}
 	class_Plane = 'd';
 
 {Class RSInteractable}
-	class_RSInteractable = 'bo';
+	class_RSInteractable = 'gfa';
 
 {Class Toolkit}
 	class_Toolkit = 'oa';
@@ -111,64 +113,70 @@ const
 	class_Viewport = 'q';
 
 {Class SDViewport}
-	class_SDViewport = 'bt';
-	hook_sdviewport_xOff = 'm';
-	hook_sdviewport_xX = 'c';
-	hook_sdviewport_xY = 'k';
-	hook_sdviewport_xZ = 'd';
-	hook_sdviewport_yOff = 'i';
-	hook_sdviewport_yX = 'g';
-	hook_sdviewport_yY = 'n';
-	hook_sdviewport_yZ = 'f';
-	hook_sdviewport_zOff = 'j';
-	hook_sdviewport_zX = 'l';
-	hook_sdviewport_zY = 'e';
-	hook_sdviewport_zZ = 'h';
+	class_SDViewport = 'eq';
+	hook_sdviewport_xOff = 'h';
+	hook_sdviewport_xX = 'l';
+	hook_sdviewport_xY = 'n';
+	hook_sdviewport_xZ = 'o';
+	hook_sdviewport_yOff = 'g';
+	hook_sdviewport_yX = 'f';
+	hook_sdviewport_yY = 'i';
+	hook_sdviewport_yZ = 'k';
+	hook_sdviewport_zOff = 'p';
+	hook_sdviewport_zX = 'q';
+	hook_sdviewport_zY = 'm';
+	hook_sdviewport_zZ = 'j';
 
 {Class SDToolkit}
-	class_SDToolkit = 'kb';
-	hook_sdtoolkit_xMin = 'C';
-	hook_sdtoolkit_xMax = 'V';
-	hook_sdtoolkit_yMin = 'eb';
-	hook_sdtoolkit_yMax = 'bb';
-	hook_sdtoolkit_zMin = 'P';
-	hook_sdtoolkit_zMax = 'R';
-	hook_sdtoolkit_xScale = 'T';
-	hook_sdtoolkit_yScale = 'mb';
-	hook_sdtoolkit_Viewport = 'Z';
+	class_SDToolkit = 'fv';
+	hook_sdtoolkit_xMin = 'db';
+	hook_sdtoolkit_xMax = 'J';
+	hook_sdtoolkit_yMin = 'V';
+	hook_sdtoolkit_yMax = 'M';
+	hook_sdtoolkit_zMin = 'Q';
+	hook_sdtoolkit_zMax = 'C';
+	hook_sdtoolkit_xScale = 'eb';
+	hook_sdtoolkit_yScale = 'Z';
+	hook_sdtoolkit_Viewport = 'D';
 
 {Class SDPlane}
-	class_SDPlane = 'ev';
-	hook_sdplane_TileHeights = 'y';
+	class_SDPlane = 'gw';
+	hook_sdplane_TileHeights = 'G';
 
 {Class NodeList}
-	class_NodeList = 'rh';
-	hook_nodelist_Current = 'r';
-	hook_nodelist_Head = 'f';
+	class_NodeList = 'su';
+	hook_nodelist_Current = 'f';
+	hook_nodelist_Head = 'd';
 
 {Class Node}
-	class_Node = 'sf';
-	hook_node_Next = 'g';
+	class_Node = 'ia';
+	hook_node_Next = 'j';
+	hook_node_Previous = 'a';
+  //broken, not in updater
 	hook_node_GetID = 'c';
-	hook_node_Previous = 'f';
 
 {Class Menu}
-	class_Menu = 'u';
-	hook_menu_Action = 'n';
-	hook_menu_Option = 'q';
+	class_Menu = 'ln';
+	hook_menu_Action = 'x';
+	hook_menu_Option = 'u';
 
 {Class PlayerDef}
-	class_PlayerDef = 'ph';
+	class_PlayerDef = 'n';
+  //broken, not in updater
 	hook_playerdef_GetEquipment = 't';
 
+{
+  /////////////// HOOKS BELOW HERE ARE *OUTDATED* AS OF 14 July 2010 (Client 614) ////////////////////////
+  These hooks all need to be added to the updater.
+}
+
 {Class ObjectInterface}
-	class_ObjectInterface = 'dda';
-  //broken
+	class_ObjectInterface = 'fca';
   hook_interface_GetActions = 'Sc';
   hook_interface_GetX = 'h';
   hook_interface_GetY = 'Ac';
   hook_interface_GetWidth = 'z';
-  hook_interface_GetHeight = 'vb';
+  hook_interface_GetHeight = 'bd';
   hook_interface_GetText = 'Xb';
   hook_interface_GetTextureID = 'Tc';
   hook_interface_GetTextColor = 'kd';
@@ -204,12 +212,6 @@ const
 
 {Class SecondLevelObject}
 	class_SecondLevelObject = 'kd';
-
-{
-  /////////////// HOOKS BELOW HERE ARE *UPDATED* AS OF 13 July 2010 (Client 612) ////////////////////////
-        However***** All need to be added to updater.
-  These hooks all need to be added to the updater.
-}
 
 //WallObjectData class wda
   hook_wallobjectdata_GetID = 'x';

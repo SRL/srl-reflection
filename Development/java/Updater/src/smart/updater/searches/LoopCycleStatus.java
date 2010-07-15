@@ -34,7 +34,7 @@ public class LoopCycleStatus extends Search{
 					if(il == null)
 						continue;
 					InstructionSearcher2 iS = new InstructionSearcher2(cg, m, il);
-					if(iS.nextSIPUSH(300) != null){
+					if(iS.nextSIPUSH(-300) != null){
 						FieldInstruction fi = iS.previousGETSTATIC();
 						if(fi != null && (fi.getClassName(cpg)+'.'+fi.getFieldName(cpg)).equals(loopcycle.path)){
 							fi = iS.nextPUTFIELD();

@@ -63,12 +63,12 @@ begin
 end;
 
 {*******************************************************************************
-function GetNPCActionArray(NPCDef: integer): TStringArray;
+function _GetNPCActionArray(NPCDef: integer): TStringArray;
 By: Drags111
 Description: Gets the Action (String) Array according to the NPC Def.
              Used in GetNPC functions
 *******************************************************************************}
-function GetNPCActionArray(NPCDef: integer): TStringArray;
+function _GetNPCActionArray(NPCDef: integer): TStringArray;
 var
   i, c, bytes: integer;
 begin
@@ -135,7 +135,7 @@ begin
     Result[c].Index := Index;
     Result[c].ID := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetID);
     Result[c].Name := GetJavaString(TheBytes, 255);
-    Result[c].Actions := GetNPCActionArray(TheNPCDef);
+    Result[c].Actions := _GetNPCActionArray(TheNPCDef);
     Result[c].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
     Result[c].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
     Result[c].Pixel.X := SmartGetFieldInt(TheNPC, hook_animable_PixelX) mod 512;
@@ -262,7 +262,7 @@ begin
       Result[c].Index := Index;
       Result[c].ID := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetID);
       Result[c].Name := GetJavaString(TheBytes, 255);
-      Result[c].Actions := GetNPCActionArray(TheNPCDef);
+      Result[c].Actions := _GetNPCActionArray(TheNPCDef);
       Result[c].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
       Result[c].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
       Result[c].Moving := (SmartGetFieldInt(TheNPC, hook_character_Motion)>0);

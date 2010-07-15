@@ -92,6 +92,16 @@ begin
 end;
 
 {*******************************************************************************
+function GetPlaneIndex : Integer;
+By: lordsaturn
+Description: Returns loaded plane index
+*******************************************************************************}
+function GetPlaneIndex : Integer;
+begin
+  Result := SmartGetFieldInt(0,hook_static_LoadedPlane);
+end;
+
+{*******************************************************************************
 function GetMyLocPos: TTile;
 By: BenLand100
 Description: Returns the global tile position of your player.

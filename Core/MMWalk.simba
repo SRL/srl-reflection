@@ -21,6 +21,26 @@ begin
 end;
 
 {*******************************************************************************
+function GetCamPosX: integer;
+By: lordsaturn
+Description: Camera Position X
+*******************************************************************************}
+function GetCamPosX: integer;
+begin
+  Result := SmartGetFieldInt(0, hook_static_CamPosX);
+end;
+
+{*******************************************************************************
+function GetCamPosY: integer;
+By: lordsaturn
+Description: Camera Position Y
+*******************************************************************************}
+function GetCamPosY: integer;
+begin
+  Result := SmartGetFieldInt(0, hook_static_CamPosY);
+end;
+
+{*******************************************************************************
 function TileToMM(tile: TTile): TPoint;
 By: BenLand100
 Description: Converts the global tile position to a screen location on the
@@ -142,7 +162,7 @@ begin
   begin
     Speed := GetSpeed;
     if GetSystemTime - a > Timeout then Exit;
-    Wait(100 + Random(50));
+    Wait(100);
   end;
   Result := True;
 end;
@@ -255,6 +275,17 @@ begin
 end;
 
 {*******************************************************************************
+function RandomizeTile(Tile: TTile; rX, rY: Integer): TTile;
+By: lordsaturn
+Description: Randomizes a tile using rX and rY.
+*******************************************************************************}
+function RandomizeTile(Tile: TTile; rX, rY: Integer): TTile;
+begin
+  Result := Point(RandomRange(Tile.X-rX, Tile.X+rX),
+                   RandomRange(Tile.Y-rY, Tile.Y+rY));
+end;
+
+{*******************************************************************************
 Function WalkToTile(Tile: TPoint; Randomness, FlagD: Integer): Boolean;
 By: Wizzup, TheGuyWhoGotOn, and Drags111
 Description: Walks to the tile using minimap.
@@ -265,8 +296,7 @@ var
    t: Integer;
 begin
   Result := False;
-  TheTile := Point(RandomRange(TheTile.X-Randomness, TheTile.X+Randomness),
-                   RandomRange(TheTile.Y-Randomness, TheTile.Y+Randomness));
+  TheTile := RandomizeTile(TheTile, Randomness, Randomness);
   wTile := TileToMM(TheTile);
   if not rs_OnMiniMap(wTile.X, wTile.Y) then
     Exit;

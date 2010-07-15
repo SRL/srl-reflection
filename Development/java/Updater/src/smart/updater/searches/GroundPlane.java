@@ -52,12 +52,12 @@ public class GroundPlane extends Search {
                             	InstructionHandle[] handles = (InstructionHandle[]) e.next();
                                 String gba = ((GETSTATIC)handles[0].getInstruction()).getClassName(cpg) + "." + ((GETSTATIC)handles[0].getInstruction()).getFieldName(cpg);
                                 data.addField("GroundSettingsArray", gba);
-                                e = f.search("GETSTATIC GETSTATIC (ICONST)+ IADD AALOAD");
+                                e = f.search("GETSTATIC (ICONST)+ GETSTATIC IADD AALOAD");
                                 //System.out.println("Found method. Class: "+c.getValue().getClassName() + ", method: "+m.getName());
                                 if (e.hasNext()) {
                                     handles = (InstructionHandle[]) e.next();
                                     String planearray = ((GETSTATIC)handles[0].getInstruction()).getClassName(cpg) + "." + ((GETSTATIC)handles[0].getInstruction()).getFieldName(cpg);
-                                    String curplane = ((GETSTATIC)handles[1].getInstruction()).getClassName(cpg) + "." + ((GETSTATIC)handles[1].getInstruction()).getFieldName(cpg);
+                                    String curplane = ((GETSTATIC)handles[2].getInstruction()).getClassName(cpg) + "." + ((GETSTATIC)handles[2].getInstruction()).getFieldName(cpg);
                                     data.addClass("GroundTile", t.getSignature().replaceAll("\\[|L|;", ""));
                                     data.addClass("Plane", ((GETSTATIC)handles[0].getInstruction()).getType(cpg).getSignature().replaceAll("\\[|L|;", ""));
                                     data.addField("LoadedPlane", curplane);
