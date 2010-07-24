@@ -188,7 +188,7 @@ type
     HPRatio, Height, Level, Combat, TurnDirection: Integer;
     Name: string;
     InFight: boolean;
-    Experience, Levels: array[0..23] of Integer;
+    Experience, Levels: array[0..24] of Integer;
     Equipment: TIntegerArray;
     Orientation: Integer; // SOUTH = 0; NORTH = 180; CLOCKWISE.
   end;
