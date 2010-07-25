@@ -1,0 +1,1 @@
+-- READ ME --\nNew map offsets:\nX:\t2044\tY:\t4168
