@@ -18,221 +18,219 @@
  *}
 
 const
-	ClientVersion = 614;
+    ClientVersion = 616;
 
 {Static Hooks}
-	hook_static_LoginIndex = 'om.H';
-	hook_static_MyPlayer = 's.L';
-	hook_static_BaseX = 'fi.a';
-	hook_static_BaseY = 'fn.t';
-	hook_static_NPCIndexArray = 'bl.B';
-	hook_static_NPCNodes = 'mm.c';
-	hook_static_NPCCount = 'qp.x';
-	hook_static_GroundSettingsArray = 'kg.p';
-	hook_static_LoadedPlane = 'pd.o';
-	hook_static_PlaneArray = 'hq.N';
-	hook_static_Toolkit = 'vm.a';
-	hook_static_MapAngle = 'waa.A';
-	hook_static_DestX = 'wd.d';
-	hook_static_DestY = 'vb.o';
-	hook_static_MenuOptionCount = 'ow.ab';
-	hook_static_MenuX = 'naa.d';
-	hook_static_MenuY = 'nr.g';
-	hook_static_MenuOpen = 'kf.e';
-	hook_static_MenuNodeList = 'pt.A';
-	hook_static_LoopCycle = 'oca.c';
-	hook_static_PlayerCount = 'naa.d';
-	hook_static_PlayerIndexArray = 'nr.g';
-	hook_static_GetPlayers = 'vi.E';
-  hook_static_GetSkillLevels = 'dr.e';
-  hook_static_GetSkillExperiences = 'dw.Q';
-  hook_static_GroundTiles = 'dw.V';//getRSGroundArray in RSBot
-  hook_static_GetInterfaces = 'ob.a';//getRSInterfaceCache in RSBot
-  hook_static_ValidInterfaces = 'qs.W';//getValidRSInterfaceArray in RSBot
-  hook_static_GetSettings = 'cea.h'; //getSettingArray in RSBot
-  hook_static_GroundItemCache = 'tj.C'; //getRSItemNodeCache in RSBot
-  //broken, not in updater
-  hook_static_CamPosX = 'pi.c';
-  hook_static_CamPosY = 'ir.J';
+    hook_static_LoginIndex = 've.i';
+    hook_static_MyPlayer = 'naa.p';
+    hook_static_BaseX = 'bj.x';
+    hook_static_BaseY = 'fi.gb';
+    hook_static_NPCIndexArray = 'ln.v';
+    hook_static_NPCNodes = 'd.e';
+    hook_static_NPCCount = 'rv.m';
+    hook_static_GroundSettingsArray = 'kg.p'; //couldn't find this hook (kg.p) anywhere in #614..
+    hook_static_LoadedPlane = 'dr.f';
+    hook_static_PlaneArray = 'fda.b';
+    hook_static_Toolkit = 'js.j';
+    hook_static_MapAngle = 'ql.wb';
+    hook_static_DestX = 'uea.E';
+    hook_static_DestY = 'im.I';
+    hook_static_MenuOptionCount = 'qf.Nb';
+    hook_static_MenuX = 'vw.c';
+    hook_static_MenuY = 'pi.r';
+    hook_static_MenuOpen = 'wj.R';
+    hook_static_MenuNodeList = 'he.vb';
+    hook_static_LoopCycle = 'mga.b';
+    hook_static_PlayerCount = 'jh.w';
+    hook_static_PlayerIndexArray = 'kba.m';
+    hook_static_GetPlayers = 'wk.k';
+  hook_static_GetSkillLevels = 'dr.e'; //couldn't find this hook (dr.e) anywhere in #614..
+  hook_static_GetSkillExperiences = 'dw.Q'; //couldn't find this hook (dw.Q) anywhere in #614..
+  hook_static_GroundTiles = 'ks.b';
+  hook_static_GetInterfaces = 'ak.K';
+  hook_static_ValidInterfaces = 'lh.e';
+  hook_static_GetSettings = 'tc.m';
+  hook_static_GroundItemCache = 'tj.C'; //couldn't find this hook (tj.C) anywhere in #614..
+  hook_static_CamPosX = 'pi.c'; //couldn't find this hook (pi.c) anywhere in #614..
+  hook_static_CamPosY = 'ir.J'; //couldn't find this hook (ir.J) anywhere in #614..
 
 {Class Animable}
-	class_Animable = 'bt';
-	hook_animable_PixelX = 'i';
-	hook_animable_PixelY = 'n';
-	hook_animable_Plane = 't';
+    class_Animable = 'wda';
+    hook_animable_PixelX = 's';
+    hook_animable_PixelY = 'l';
+    hook_animable_Plane = 'k';
 
 {Class Player}
-	class_Player = 'uea';
-	hook_player_GetLevel = 'Ac';
-	hook_player_GetName = 'md';
-	hook_player_PlayerDef = 'pd';
+    class_Player = 'pp';
+    hook_player_GetLevel = 'kd'; //not updated
+    hook_player_GetName = 'Cc';
+    hook_player_PlayerDef = 'pd'; //not updated
 
 {Class Character}
-	class_Character = 'va';
-	hook_character_GetHitDamges = 'Yb';
-	hook_character_Animation = 'N';
-	hook_character_Motion = 'wc';
-	hook_character_WalkQueueX = 'oc';
-	hook_character_WalkQueueY = 'uc';
-	hook_character_GetHeight = 'sb';
-	hook_character_LoopCycleStatus = 'dc';
-	hook_character_HPRatio = 'W';
-	hook_character_GetInteracting = 'G';
-  //broken, not in updater
-  hook_character_Orientation = 'Ib';
+    class_Character = 'va';
+    hook_character_GetHitDamges = 'Yb'; //not updated
+    hook_character_Animation = 'ib';
+    hook_character_Motion = 'mc';
+    hook_character_WalkQueueX = 'rc'; //in #614 (of Simba's reflection), these were flip-flopped, so I'm not sure if reflection is set up correctly with these hooks..
+    hook_character_WalkQueueY = 'uc';
+    hook_character_GetHeight = 'tb';
+    hook_character_LoopCycleStatus = 'V';
+    hook_character_HPRatio = 'O';
+    hook_character_GetInteracting = 'ac';
+  hook_character_Orientation = 'Ib'; //not updated
 
 {Class NPC}
-	class_NPC = 'kw';
-	hook_npc_NPCDef = 'Uc';
+    class_NPC = 'ac';
+    hook_npc_NPCDef = 'Gc';
 
 {Class NPCDef}
-	class_NPCDef = 'ei';
-	hook_npcdef_GetActions = 'K';
-	hook_npcdef_GetName = 'ob';
-	hook_npcdef_GetLevel = 'cb';
-  hook_npcdef_GetID = 'eb';
+    class_NPCDef = 'ql';
+    hook_npcdef_GetActions = 'Ab';
+    hook_npcdef_GetName = 'ob';
+    hook_npcdef_GetLevel = 'K';
+  hook_npcdef_GetID = 'X';
 
 {Class NPCNode}
-	class_NPCNode = 'vb';
-	hook_npcnode_GetNPC = 'm';
+    class_NPCNode = 'nca';
+    hook_npcnode_GetNPC = 'h';
 
 {Class GroundTile}
-	class_GroundTile = 'hl';
+    class_GroundTile = 'qs';
 
 {Class Plane}
-	class_Plane = 'd';
+    class_Plane = 'd';
 
 {Class RSInteractable}
-	class_RSInteractable = 'gfa';
+    class_RSInteractable = 'gfa'; //not updated
 
 {Class Toolkit}
-	class_Toolkit = 'oa';
+    class_Toolkit = 'oa'; //not updated
 
 {Class Viewport}
-	class_Viewport = 'q';
+    class_Viewport = 'q'; //not updated
 
 {Class SDViewport}
-	class_SDViewport = 'eq';
-	hook_sdviewport_xOff = 'h';
-	hook_sdviewport_xX = 'l';
-	hook_sdviewport_xY = 'n';
-	hook_sdviewport_xZ = 'o';
-	hook_sdviewport_yOff = 'g';
-	hook_sdviewport_yX = 'f';
-	hook_sdviewport_yY = 'i';
-	hook_sdviewport_yZ = 'k';
-	hook_sdviewport_zOff = 'p';
-	hook_sdviewport_zX = 'q';
-	hook_sdviewport_zY = 'm';
-	hook_sdviewport_zZ = 'j';
+    class_SDViewport = 'cr';
+    hook_sdviewport_xOff = 'r';
+    hook_sdviewport_xX = 'h';
+    hook_sdviewport_xY = 'm';
+    hook_sdviewport_xZ = 'n';
+    hook_sdviewport_yOff = 'i';
+    hook_sdviewport_yX = 'k';
+    hook_sdviewport_yY = 's';
+    hook_sdviewport_yZ = 'j';
+    hook_sdviewport_zOff = 'q';
+    hook_sdviewport_zX = 'p';
+    hook_sdviewport_zY = 'l';
+    hook_sdviewport_zZ = 'o';
 
 {Class SDToolkit}
-	class_SDToolkit = 'fv';
-	hook_sdtoolkit_xMin = 'db';
-	hook_sdtoolkit_xMax = 'J';
-	hook_sdtoolkit_yMin = 'V';
-	hook_sdtoolkit_yMax = 'M';
-	hook_sdtoolkit_zMin = 'Q';
-	hook_sdtoolkit_zMax = 'C';
-	hook_sdtoolkit_xScale = 'eb';
-	hook_sdtoolkit_yScale = 'Z';
-	hook_sdtoolkit_Viewport = 'D';
+    class_SDToolkit = 'lea';
+    hook_sdtoolkit_xMin = 'I';
+    hook_sdtoolkit_xMax = 'J';
+    hook_sdtoolkit_yMin = 'z';
+    hook_sdtoolkit_yMax = 'G';
+    hook_sdtoolkit_zMin = 'M';
+    hook_sdtoolkit_zMax = 'R';
+    hook_sdtoolkit_xScale = 'B';
+    hook_sdtoolkit_yScale = 'Y';
+    hook_sdtoolkit_Viewport = 'O';
 
 {Class SDPlane}
-	class_SDPlane = 'gw';
-	hook_sdplane_TileHeights = 'G';
+    class_SDPlane = 'gu';
+    hook_sdplane_TileHeights = 'A';
 
 {Class NodeList}
-	class_NodeList = 'su';
-	hook_nodelist_Current = 'f';
-	hook_nodelist_Head = 'd';
+    class_NodeList = 'ws';
+    hook_nodelist_Current = 'f'; //not updated
+    hook_nodelist_Head = 'e';
 
 {Class Node}
-	class_Node = 'ia';
-	hook_node_Next = 'j';
-	hook_node_Previous = 'a';
-	hook_node_GetID = 'f';
+    class_Node = 'kd';
+    hook_node_Next = 'd';
+    hook_node_Previous = 'c';
+    hook_node_GetID = 'e';
 
 {Class Menu}
-	class_Menu = 'ln';
-	hook_menu_Action = 'x';
-	hook_menu_Option = 'u';
+    class_Menu = 'ts';
+    hook_menu_Action = 'p';
+    hook_menu_Option = 'j';
 
 {Class PlayerDef}
-	class_PlayerDef = 'n';
-  //broken, not in updater
-	hook_playerdef_GetEquipment = 't';
+    class_PlayerDef = 'n'; //couldn't find class
+    hook_playerdef_GetEquipment = 't'; //couldn't find this hook (n.t) anywhere in #614..
 
 {Class AnimableNode}
-	class_AnimableNode = 'ub';
-  hook_AnimableNode_GetAnimable = 'a';
+    class_AnimableNode = 'qe';
+  hook_AnimableNode_GetAnimable = 'e';
   hook_AnimableNode_GetNext = 'd';
 
 {Class ObjectInterface}
-	class_ObjectInterface = 'faa';
-  hook_interface_GetActions = 'K';
-  hook_interface_GetX = 'wb';
-  hook_interface_GetY = 'ub';
-  hook_interface_GetWidth = 'kd';
-  hook_interface_GetHeight = 'xc';
-  hook_interface_GetText = 'r';
-  hook_interface_GetTextureID = '';
-  hook_interface_GetTextColor = 'm';
-  hook_interface_GetModelID = 'ob';
-  hook_interface_GetModelZoom = 'Uc';
-  hook_interface_GetName = 'Bb'; //getComponentName in RSBot
-  hook_interface_GetChildren = 'Kb'; //getComponents in RSBot
-  hook_interface_GetID = 'o'; //getComponentID in RSBot
-  hook_interface_GetStack = 'gc'; //getComponentStackSize in RSBot
+    class_ObjectInterface = 'rr';
+  hook_interface_GetActions = 'Pc';
+  hook_interface_GetX = 'e';
+  hook_interface_GetY = 'Ab';
+  hook_interface_GetWidth = 'ed';
+  hook_interface_GetHeight = 'kb';
+  hook_interface_GetText = 'Z';
+  hook_interface_GetTextureID = 'wc';
+  hook_interface_GetTextColor = 'J';
+  hook_interface_GetModelID = 'ob'; //not updated
+  hook_interface_GetModelZoom = 'Uc'; //not updated
+  hook_interface_GetName = 'tc'; //not updated
+  hook_interface_GetChildren = 'E';
+  hook_interface_GetID = 'Zb';
+  hook_interface_GetStack = 'Cb';
 
 {Class Ground}
-	class_Ground = 'af';
-	hook_ground_AnimableList = 'm';
-  hook_ground_WallObject1 = 'y';
-  hook_ground_WallObject2 = 'p';
-  hook_ground_WallDecoration1 = 'c';
-  hook_ground_WallDecoration2 = 'd';
-  hook_ground_FloorDecoration = 'w';
+    class_Ground = 'qs';
+    hook_ground_AnimableList = 'd';
+  hook_ground_WallObject1 = 'y'; //not updated
+  hook_ground_WallObject2 = 'p'; //not updated
+  hook_ground_WallDecoration1 = 'c'; //not updated
+  hook_ground_WallDecoration2 = 'd'; //not updated
+  hook_ground_FloorDecoration = 'w'; //not updated
 
 //GroundItem crap.
-//nodecache class nj
-  hook_nodecache_GetNodes = 'a'; //getCache in RSBot
+//nodecache class hd
+  hook_nodecache_GetNodes = 'hd.o';
 
-//RSItem class vl
-  hook_item_GetID = 'o';
-  hook_item_GetStack = 'p';
+//RSItem class bt
+  hook_item_GetID = 'bt.j';
+  hook_item_GetStack = 'p'; //not updated
 
-//nodelistcaceh class
-  hook_nodelistcache_GetNodeList = 'q';
+//nodelistcache class wc
+  hook_nodelistcache_GetNodeList = 'wc.g';
 
 //Settings Array
-  hook_settingarray_GetData = 'h';
+  hook_settingarray_GetData = 'h'; //not updated
 
 {
   /////////////// HOOKS BELOW HERE ARE *OUTDATED* AS OF 14 July 2010 (Client 614) ////////////////////////
   These hooks all need to be added to the updater.
 }
 
+ //Some work actually. You're welcome. Updated as much as I could. (Thanks to TRiLeZ.)
 
 {Class InteractiveObject1}
-	class_InteractiveObject1 = 'qt';
-	hook_interactiveobject_GetID = 'R';
+    class_InteractiveObject1 = 'fi';
+    hook_interactiveobject_GetID = 'X';
 
 {Class InteractiveObject2}
-	class_InteractiveObject2 = 'vq';
-	hook_interactiveobject_GetID2 = 'w.H';
+    class_InteractiveObject2 = 'dt';
+    hook_interactiveobject_GetID2 = 'w.H'; //not updated
 
 {Class SecondLevelObject}
-	class_SecondLevelObject = 'kd';
+    class_SecondLevelObject = 'kd'; //not updated
 
 //WallObjectData class wda
-  hook_wallobjectdata_GetID = 'x';
-  hook_wallobjectdata_GetID2 = 'D.H'; //instance of kd. is an int.
+  hook_wallobjectdata_GetID = 'x'; //not updated
+  hook_wallobjectdata_GetID2 = 'D.H'; //not updated
 
 //WallDecorationData class ew
-  hook_WallDecorationData_GetID = 'w';
-  hook_WallDecorationData_GetID2 = 'y.H'; //instance of kd. is an int.
+  hook_WallDecorationData_GetID = 'w'; //not updated
+  hook_WallDecorationData_GetID2 = 'y.H'; //not updated
 
 //FloorDecorationData class rv
-  hook_FloorDecorationData_GetID = 'z';
-  hook_FloorDecorationData_GetID2 = 'm.H'; //instance of kd. is an int.
+  hook_FloorDecorationData_GetID = 'z'; //not updated
+  hook_FloorDecorationData_GetID2 = 'm.H'; //not updated
