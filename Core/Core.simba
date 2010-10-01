@@ -132,18 +132,18 @@ begin
     vp := SmartGetFieldObject(tk, hook_sdtoolkit_Viewport);
     with RenderData do
     begin
-      xOff := SmartGetFieldInt(vp,hook_sdviewport_xOff);
-      xX :=SmartGetFieldInt(vp,hook_sdviewport_xX);
-      xY := SmartGetFieldInt(vp,hook_sdviewport_xY);
-      xZ := SmartGetFieldInt(vp,hook_sdviewport_xZ);
-  	yOff := SmartGetFieldInt(vp,hook_sdviewport_yOff);
-      yX := SmartGetFieldInt(vp,hook_sdviewport_yX);
-      yY := SmartGetFieldInt(vp,hook_sdviewport_yY);
-      yZ := SmartGetFieldInt(vp,hook_sdviewport_yZ);
-  	zOff := SmartGetFieldInt(vp,hook_sdviewport_zoff);
-      zX := SmartGetFieldInt(vp,hook_sdviewport_zX);
-      zY := SmartGetFieldInt(vp,hook_sdviewport_zY);
-      zZ := SmartGetFieldInt(vp,hook_sdviewport_zZ);
+      xOff := SmartGetFieldFloat(vp,hook_sdviewport_xOff);
+      xX := SmartGetFieldFloat(vp,hook_sdviewport_xX);
+      xY := SmartGetFieldFloat(vp,hook_sdviewport_xY);
+      xZ := SmartGetFieldFloat(vp,hook_sdviewport_xZ);
+      yOff := SmartGetFieldFloat(vp,hook_sdviewport_yOff);
+      yX := SmartGetFieldFloat(vp,hook_sdviewport_yX);
+      yY := SmartGetFieldFloat(vp,hook_sdviewport_yY);
+      yZ := SmartGetFieldFloat(vp,hook_sdviewport_yZ);
+      zOff := SmartGetFieldFloat(vp,hook_sdviewport_zoff);
+      zX := SmartGetFieldFloat(vp,hook_sdviewport_zX);
+      zY := SmartGetFieldFloat(vp,hook_sdviewport_zY);
+      zZ := SmartGetFieldFloat(vp,hook_sdviewport_zZ);
     end;
     with Render do
     begin
@@ -280,11 +280,11 @@ begin;
   //Writeln('zX: '+ToStr(rd.zX));
   //Writeln('zY: '+ToStr(rd.zY));
   //Writeln('zZ: '+ToStr(rd.zZ));
-  z:= rd.zOff + ((rd.zX * pixelX + rd.zY * pixelY + rd.zZ * pixelZ) / 16384.0);
+  z:= rd.zOff + (rd.zX * pixelX + rd.zY * pixelY + rd.zZ * pixelZ);
   if ((z < r.zMin) or (z > r.zMax)) then
     exit;
-  x:= r.xScale * (rd.xOff + ((rd.xX * pixelX + rd.xY * pixelY + rd.xZ * pixelZ) / 16384.0)) / z;
-  y:= r.yScale * (rd.yOff + ((rd.yX * pixelX + rd.yY * pixelY + rd.yZ * pixelZ) / 16384.0)) / z;
+  x:= r.xScale * (rd.xOff + (rd.xX * pixelX + rd.xY * pixelY + rd.xZ * pixelZ)) / z;
+  y:= r.yScale * (rd.yOff + (rd.yX * pixelX + rd.yY * pixelY + rd.yZ * pixelZ)) / z;
   if ((x >= r.xMin) and (x <= r.xMax) and (y >= r.yMin) and (y <= r.yMax)) then
   begin
     result.x:= Round(x - r.xMin);
