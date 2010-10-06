@@ -41,8 +41,8 @@ const
     hook_static_MenuOpen = 'fl.e'; //622
     hook_static_MenuNodeList = 'eu.e'; //622
     hook_static_LoopCycle = 'tg.p'; //622
-    hook_static_PlayerCount = 'pda.q'; //622
-    hook_static_PlayerIndexArray = 'qea.a'; //622
+    hook_static_PlayerCount = 'uq.x'; //622
+    hook_static_PlayerIndexArray = 'fu.h'; //622
     hook_static_GetPlayers = 'ida.o'; //622
     hook_static_GetSkillLevels = 'ew.B'; //622
     hook_static_GetSkillExperiences = 'fe.k'; //622
@@ -78,7 +78,7 @@ const
     hook_character_LoopCycleStatus = 'Rb'; //622
     hook_character_HPRatio = 'Y'; //622
     hook_character_GetInteracting = 'ub'; //622
-    hook_character_Orientation = 'Gb'; //622
+    hook_character_Orientation = 'rc'; //622
 
 {Class NPC}
     class_NPC = 'oh'; //622
@@ -88,7 +88,7 @@ const
     class_NPCDef = 'pw'; //622
     hook_npcdef_GetActions = 'H'; //622
     hook_npcdef_GetName = 'eb'; //622
-    hook_npcdef_GetLevel = 'M'; //622
+    hook_npcdef_GetLevel = 'db'; //622
     hook_npcdef_GetID = 'D'; //622
 
 {Class NPCNode}
@@ -143,7 +143,7 @@ const
 
 {Class NodeList}
     class_NodeList = 'gk'; //622
-  hook_nodelist_Current = 'v';
+    hook_nodelist_Current = 'v'; //622
     hook_nodelist_Head = 'h'; //622
 
 {Class Node}
