@@ -18,212 +18,213 @@
  *}
 
 const
-    ClientVersion = 621;
+    ClientVersion = 622;
 
 {Static Hooks}
-    hook_static_LoginIndex = 'hm.h'; //621
-    hook_static_MyPlayer = 'up.L'; //621
-    hook_static_BaseX = 'bfa.B'; //621
-    hook_static_BaseY = 'es.ab'; //621
-    hook_static_NPCIndexArray = 'gfa.k'; //621
-    hook_static_NPCNodes = 'ii.e'; //621
-    hook_static_NPCCount = 'ps.c'; //621
-    hook_static_GroundSettingsArray = 'tu.b'; //621
-    hook_static_LoadedPlane = 'vo.G'; //621
-    hook_static_PlaneArray = 'q.b'; //621
-    hook_static_Toolkit = 'lg.r'; //621
-    hook_static_MapAngle = 'qw.n'; //621
-    hook_static_DestX = 'bca.c'; //621
-    hook_static_DestY = 'uaa.h'; //621
-    hook_static_MenuOptionCount = 'mu.j'; //621
-    hook_static_MenuX = 'mr.a'; //621
-    hook_static_MenuY = 'hn.b'; //621
-    hook_static_MenuOpen = 'gea.n'; //621
-    hook_static_MenuNodeList = 'oba.I'; //621
-    hook_static_LoopCycle = 'pm.B'; //621
-    hook_static_PlayerCount = 'oca.g'; //621
-    hook_static_PlayerIndexArray = 'vd.Y'; //621
-    hook_static_GetPlayers = 'fc.f'; //621
-    hook_static_GetSkillLevels = 'iu.k'; //621
-    hook_static_GetSkillExperiences = 'mfa.j'; //621
-    hook_static_GroundTiles = 'ol.p'; //621
-    hook_static_GetInterfaces = 'aa.o'; //621
-    hook_static_ValidInterfaces = 'pu.p'; //621
-    hook_static_GetSettings = 'cp.e'; //621
-    hook_static_GroundItemCache = 'jt.a'; //621
-    hook_static_CamPosX = 'dg.gb'; //621
-    hook_static_CamPosY = 'ada.N'; //621
+    hook_static_LoginIndex = 'bb.I'; //622
+    hook_static_MyPlayer = 'sd.v'; //622
+    hook_static_BaseX = 'mm.n'; //622
+    hook_static_BaseY = 'jea.m'; //622
+    hook_static_NPCIndexArray = 'qu.T'; //622
+    hook_static_NPCNodes = 'qq.n'; //622
+    hook_static_NPCCount = 'dda.b'; //622
+    hook_static_GroundSettingsArray = 'tda.F'; //622
+    hook_static_LoadedPlane = 'ee.d'; //622
+    hook_static_PlaneArray = 'ci.rb'; //622
+    hook_static_Toolkit = 'tf.a'; //622
+    hook_static_MapAngle = 'bi.K'; //622
+    hook_static_DestX = 've.k'; //622
+    hook_static_DestY = 'el.g'; //622
+    hook_static_MenuOptionCount = 'wa.i'; //622
+    hook_static_MenuX = 'hv.D'; //622
+    hook_static_MenuY = 'up.e'; //622
+    hook_static_MenuOpen = 'fl.e'; //622
+    hook_static_MenuNodeList = 'eu.e'; //622
+    hook_static_LoopCycle = 'tg.p'; //622
+    hook_static_PlayerCount = 'pda.q'; //622
+    hook_static_PlayerIndexArray = 'qea.a'; //622
+    hook_static_GetPlayers = 'ida.o'; //622
+    hook_static_GetSkillLevels = 'ew.B'; //622
+    hook_static_GetSkillExperiences = 'fe.k'; //622
+    hook_static_GroundTiles = 'lo.P'; //622
+    hook_static_GetInterfaces = 'og.P'; //622
+    hook_static_ValidInterfaces = 'pp.i'; //622
+    hook_static_GetSettings = 'sm.t'; //622
+    hook_static_GroundItemCache = 'hv.A'; //622
+    hook_static_CamPosX = 'ii.c'; //622
+    hook_static_CamPosY = 'nd.f'; //622
 
 {Class Animable}
-    class_Animable = 'lo'; //621
-    hook_animable_PixelX = 'm'; //621
-    hook_animable_PixelY = 'p'; //621
-    hook_animable_Plane = 'v'; //621
+    class_Animable = 'rb'; //622
+    hook_animable_PixelX = 'u'; //622
+    hook_animable_PixelY = 'r'; //622
+    hook_animable_Plane = 'h'; //622
 
 {Class Player}
-    class_Player = 'qi'; //621
-    hook_player_GetLevel = 'Yc'; //621
-    hook_player_GetName = 'Id'; //621
-  hook_player_PlayerDef = 'pd'; //not updated
+    class_Player = 'wn'; //622
+    hook_player_GetLevel = 'Md'; //622
+    hook_player_GetName = 'Wc'; //622
+    hook_player_PlayerDef = 'ad'; //622
+    hook_player_GetTeam = 'Pd'; //622
 
 {Class Character}
-    class_Character = 'ni'; //621
-    hook_character_GetHitDamges = 'Vb'; //check?-619
-    hook_character_Animation = 'yb'; //621
-    hook_character_Motion = 'Nc'; //621
-    hook_character_WalkQueueX = 'Pc'; //621
-    hook_character_WalkQueueY = 'Lc'; //621
-    hook_character_GetHeight = 'Ac'; //621
-    hook_character_LoopCycleStatus = 'sc'; //621
-    hook_character_HPRatio = 'Eb'; //621
-    hook_character_GetInteracting = 'L';
-    hook_character_Orientation = 'Gb'; //621
+    class_Character = 'sp'; //622
+    hook_character_GetHitDamges = 'zc'; //check?-622
+    hook_character_Animation = 'Bb'; //622
+    hook_character_Motion = 'Mc'; //622
+    hook_character_WalkQueueX = 'Lc'; //622
+    hook_character_WalkQueueY = 'Hc'; //622
+    hook_character_GetHeight = 'jc'; //622
+    hook_character_LoopCycleStatus = 'Rb'; //622
+    hook_character_HPRatio = 'Y'; //622
+    hook_character_GetInteracting = 'ub'; //622
+    hook_character_Orientation = 'Gb'; //622
 
 {Class NPC}
-    class_NPC = 'ac'; //621
-    hook_npc_NPCDef = 'Uc'; //621
+    class_NPC = 'oh'; //622
+    hook_npc_NPCDef = 'od'; //622
 
 {Class NPCDef}
-    class_NPCDef = 'du'; //621
-    hook_npcdef_GetActions = 'd'; //621
-    hook_npcdef_GetName = 'vb'; //621
-    hook_npcdef_GetLevel = 'M'; //621
-    hook_npcdef_GetID = 'F'; //621
+    class_NPCDef = 'pw'; //622
+    hook_npcdef_GetActions = 'H'; //622
+    hook_npcdef_GetName = 'eb'; //622
+    hook_npcdef_GetLevel = 'M'; //622
+    hook_npcdef_GetID = 'D'; //622
 
 {Class NPCNode}
-    class_NPCNode = 'mi'; //621
-    hook_npcnode_GetNPC = 'l'; //621
+    class_NPCNode = 'kv'; //622
+    hook_npcnode_GetNPC = 'k'; //622
 
 {Class GroundTile}
-    class_GroundTile = 'vf'; //check?-621
+    class_GroundTile = 'ru'; //622
 
 {Class Plane}
-    class_Plane = 'i'; //621
+    class_Plane = 'i';
 
 {Class RSInteractable}
-    class_RSInteractable = 'cv';
+    class_RSInteractable = 'ki'; //622
 
 {Class Toolkit}
-    class_Toolkit = 'r'; //check?-621
+    class_Toolkit = 'r';
 
 {Class Viewport}
-    class_Viewport = 'q'; //not updated
+    class_Viewport = 'q';
 
 {Class SDViewport}
-    class_SDViewport = 'rd'; //621
-    hook_sdviewport_xOff = 'v'; //621
-    hook_sdviewport_xX = 'z'; //621
-    hook_sdviewport_xY = 'm'; //621
-    hook_sdviewport_xZ = 's'; //621
-    hook_sdviewport_yOff = 'o'; //621
-    hook_sdviewport_yX = 'i'; //621
-    hook_sdviewport_yY = 'k'; //621
-    hook_sdviewport_yZ = 'w'; //621
-    hook_sdviewport_zOff = 'B'; //621
-    hook_sdviewport_zX = 'q'; //621
-    hook_sdviewport_zY = 'M'; //621
-    hook_sdviewport_zZ = 'C'; //621
+    class_SDViewport = 'uv'; //622
+    hook_sdviewport_xOff = 'l'; //622
+    hook_sdviewport_xX = 'w'; //622
+    hook_sdviewport_xY = 'E'; //622
+    hook_sdviewport_xZ = 's'; //622
+    hook_sdviewport_yOff = 'z'; //622
+    hook_sdviewport_yX = 'G'; //622
+    hook_sdviewport_yY = 'k'; //622
+    hook_sdviewport_yZ = 't'; //622
+    hook_sdviewport_zOff = 'H'; //622
+    hook_sdviewport_zX = 'n'; //622
+    hook_sdviewport_zY = 'r'; //622
+    hook_sdviewport_zZ = 'g'; //622
 
 {Class SDToolkit}
-    class_SDToolkit = 'nga'; //621
-    hook_sdtoolkit_xMin = 'v'; //621
-    hook_sdtoolkit_xMax = 'E'; //621
-    hook_sdtoolkit_yMin = 'ab'; //621
-    hook_sdtoolkit_yMax = 'P'; //621
-    hook_sdtoolkit_zMin = 'M'; //621
-    hook_sdtoolkit_zMax = 'W'; //621
-    hook_sdtoolkit_xScale = 'O'; //621
-    hook_sdtoolkit_yScale = 'L'; //621
-    hook_sdtoolkit_Viewport = 'bb'; //621
+    class_SDToolkit = 'cc'; //622
+    hook_sdtoolkit_xMin = 'X'; //622
+    hook_sdtoolkit_xMax = 'J'; //622
+    hook_sdtoolkit_yMin = 'T'; //622
+    hook_sdtoolkit_yMax = 'Y'; //622
+    hook_sdtoolkit_zMin = 'S'; //622
+    hook_sdtoolkit_zMax = 'B'; //622
+    hook_sdtoolkit_xScale = 'C'; //622
+    hook_sdtoolkit_yScale = 'L'; //622
+    hook_sdtoolkit_Viewport = 'bb'; //622
 
 {Class SDPlane}
-    class_SDPlane = 'i'; //621
-    hook_sdplane_TileHeights = 'f'; //621
+    class_SDPlane = 'i'; //622
+    hook_sdplane_TileHeights = 'b'; //622
 
 {Class NodeList}
-    class_NodeList = 'ae'; //621
-    hook_nodelist_Current = 'q'; //621
-    hook_nodelist_Head = 'o'; //621
+    class_NodeList = 'gk'; //622
+  hook_nodelist_Current = 'v';
+    hook_nodelist_Head = 'h'; //622
 
 {Class Node}
-    class_Node = 'd'; //621
-    hook_node_Next = 'i'; //621
-    hook_node_Previous = 'd'; //621
-    hook_node_GetID = 'g'; //621
+    class_Node = 'gga'; //622
+    hook_node_Next = 'i'; //622
+    hook_node_Previous = 'b'; //622
+    hook_node_GetID = 'd'; //622
 
 {Class Menu}
-    class_Menu = 'bfa'; //621
-    hook_menu_Action = 'k'; //621
-    hook_menu_Option = 'p'; //621
+    class_Menu = 'rn'; //622
+    hook_menu_Action = 'o'; //622
+    hook_menu_Option = 'k'; //622
 
 {Class PlayerDef}
-    class_PlayerDef = 'n'; //couldn't find class
-    hook_playerdef_GetEquipment = 't'; //couldn't find this hook (n.t) anywhere in #614..
+    class_PlayerDef = 'ea';
+    hook_playerdef_GetEquipment = 'm'; //622
 
 {Class AnimableNode}
-    class_AnimableNode = 'ida'; //621
-    hook_AnimableNode_GetAnimable = 'a'; //621
-    hook_AnimableNode_GetNext = 'd'; //621
+    class_AnimableNode = 'bo'; //622
+    hook_AnimableNode_GetAnimable = 'f'; //622
+    hook_AnimableNode_GetNext = 'd'; //622
 
 {Class ObjectInterface}
-    class_ObjectInterface = 'kp'; //621
-    hook_interface_GetActions = 'Bc'; //621
-    hook_interface_GetX = 'B'; //621
-    hook_interface_GetY = 'z'; //621
-    hook_interface_GetWidth = 'Qb'; //621
-    hook_interface_GetHeight = 'b'; //621
-    hook_interface_GetText = 'Lc'; //621
-    hook_interface_GetTextureID = 'Gb'; //621
-    hook_interface_GetTextColor = 'l'; //621
-  hook_interface_GetModelID = 'ob'; //not updated
-    hook_interface_GetModelZoom = 'md'; //621
-  hook_interface_GetName = 'tc'; //not updated
-    hook_interface_GetChildren = 'i'; //621
-    hook_interface_GetID = 'Dc'; //621
-    hook_interface_GetStack = 'dd'; //621
+    class_ObjectInterface = 'wp'; //622
+    hook_interface_GetActions = 'Bc';
+    hook_interface_GetX = 'Q'; //622
+    hook_interface_GetY = 'Oc'; //622
+    hook_interface_GetWidth = 'Sc'; //622
+    hook_interface_GetHeight = 'P'; //622
+    hook_interface_GetText = 'tc'; //622
+    hook_interface_GetTextureID = 'Zb'; //622
+    hook_interface_GetTextColor = 'w'; //622
+    hook_interface_GetModelID = 'Jb'; //622
+    hook_interface_GetModelZoom = 'hb'; //622
+    hook_interface_GetName = 'jc'; //622
+    hook_interface_GetChildren = 'Gb'; //622
+    hook_interface_GetID = 'pc'; //622
+    hook_interface_GetStack = 'R'; //622
 
 {Class Ground}
-    class_Ground = 'vf'; //621
-    hook_ground_AnimableList = 'f'; //621
-    hook_ground_WallObject1 = 'h'; //621
-    hook_ground_WallObject2 = 'l'; //621
-    hook_ground_WallDecoration1 = 'p'; //621
-    hook_ground_WallDecoration2 = 'd'; //621
-    hook_ground_FloorDecoration = 'm'; //621
+    class_Ground = 'ru'; //622
+    hook_ground_AnimableList = 'f'; //622
+    hook_ground_WallObject1 = 'n'; //622
+    hook_ground_WallObject2 = 'i'; //622
+    hook_ground_WallDecoration1 = 's'; //622
+    hook_ground_WallDecoration2 = 'v'; //622
+    hook_ground_FloorDecoration = 'u'; //622
 
 //GroundItem crap.
 //nodecache class wh
-    hook_nodecache_GetNodes = 'il.l'; //621
+    hook_nodecache_GetNodes = 'wa.p'; //622
 
 //RSItem class ni
-    hook_item_GetID = 'fn.o'; //621
-    hook_item_GetStack = 'fn.n'; //621
+  hook_item_GetID = 'hca.k'; //622
+  hook_item_GetStack = 'hca.m'; //622
 
 //nodelistcache class oc
-    hook_nodelistcache_GetNodeList = 'sba.o'; //621
+    hook_nodelistcache_GetNodeList = 'jfa.m'; //622
 
 //Settings Array
-    hook_settingarray_GetData = 'dj.k'; //621
+    hook_settingarray_GetData = 'taa.f'; //622
 
 {
   /////////////// HOOKS BELOW HERE ARE *OUTDATED* AS OF 14 July 2010 (Client 614) ////////////////////////
   These hooks all need to be added to the updater.
 }
 
- //Some work actually. You're welcome. Updated as much as I could. (Thanks to TRiLeZ.)
+ //Some work actually. You're welcome. Updated as much as I could. (Thanks to TRiLeZ and pyroryan.)
 
 {Class InteractiveObject1}
-    class_InteractiveObject1 = 'mb'; //621
-    hook_interactiveobject_GetID = 'cb'; //621
-    hook_interactiveobject_getModel = 'T'; //621
+    class_InteractiveObject1 = 'ci'; //622
+    hook_interactiveobject_GetID = 'Z'; //622
+    hook_interactiveobject_getModel = 'hb'; //622
 
 {Class InteractiveObject2}
-    class_InteractiveObject2 = 'lq'; //621
-    hook_interactiveobject2_getObjectData = 'X'; //621
+    class_InteractiveObject2 = 'mu'; //622
+    hook_interactiveobject2_getObjectData = 'R'; //622
     hook_interactiveobject_GetID2 = 'w.H'; //not updated
 
 {Class SecondLevelObject}
-    class_SecondLevelObject = 'rea'; //621
+    class_SecondLevelObject = 'rv'; //622
 
 //WallObjectData class wda
   hook_wallobjectdata_GetID = 'x'; //not updated
