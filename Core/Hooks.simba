@@ -41,8 +41,8 @@ const
     hook_static_MenuOpen = 'fl.e'; //622
     hook_static_MenuNodeList = 'eu.e'; //622
     hook_static_LoopCycle = 'tg.p'; //622
-    hook_static_PlayerCount = 'uq.x'; //622
-    hook_static_PlayerIndexArray = 'fu.h'; //622
+    hook_static_PlayerCount = 'pda.q'; //622
+    hook_static_PlayerIndexArray = 'qea.a'; //622
     hook_static_GetPlayers = 'ida.o'; //622
     hook_static_GetSkillLevels = 'ew.B'; //622
     hook_static_GetSkillExperiences = 'fe.k'; //622
@@ -171,8 +171,8 @@ const
     hook_interface_GetActions = 'Bc';
     hook_interface_GetX = 'Q'; //622
     hook_interface_GetY = 'Oc'; //622
-    hook_interface_GetWidth = 'Sc'; //622
-    hook_interface_GetHeight = 'P'; //622
+    hook_interface_GetWidth = 'md'; //622
+    hook_interface_GetHeight = 'yc'; //622
     hook_interface_GetText = 'tc'; //622
     hook_interface_GetTextureID = 'Zb'; //622
     hook_interface_GetTextColor = 'w'; //622
