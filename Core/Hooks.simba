@@ -1,4 +1,4 @@
-{**
+{**	
  *  Copyright 2010 by Benjamin J. Land (a.k.a. BenLand100)
  *
  *  This file is part of the SMART Minimizing Autoing Resource Thing (SMART)
@@ -180,8 +180,11 @@ const
     hook_interface_GetModelZoom = 'sc'; //623
     hook_interface_GetName = 'kc'; //623
     hook_interface_GetChildren = 'bc'; //623
-    hook_interface_GetID = 'Kb'; //623
+    hook_interface_GetID = 'Kb'; //623 //actually GetComponentID/GetItemID we need to change this
     hook_interface_GetStack = 'L'; //623
+    hook_interfaces_GetParentID = 'Pc'; //623
+    hook_interfaces_IsHidden = 'Hc'; //623
+    
 
 {Class Ground}
     class_Ground = 'cq'; //623
@@ -228,19 +231,26 @@ const
 
 {Class SecondLevelObject}
     class_SecondLevelObject = 'lq'; //623
+    hook_SecondLevelObject_GetID = 'B'; //623
 
 //WallObjectData, WallDecorationData, FloorDecorationData updated -pyroryan
 {Class WallObjectData}
     class_WallObjectData = 'rca'; //623
     hook_WallObjectData_GetID = 'Q'; //623
+    hook_WallObjectData_getModel = 'ab'; //623
+    hook_WallObjectData_getOrientation = 'Y'; //623
   hook_WallObjectData_GetID2 = 'D.H'; //not updated
 
 {Class WallDecorationData}
     class_WallDecorationData = 'qj'; //623
     hook_WallDecorationData_GetID = 'ab'; //623
+    hook_WallDecorationData_getModel = 'bb'; //623
+    hook_WallDecorationData_getOrientation = 'M'; //623
   hook_WallDecorationData_GetID2 = 'y.H'; //not updated
 
 {Class FloorDecorationData}
     class_FloorDecorationData = 'kn'; //623
     hook_FloorDecorationData_GetID = 'kb'; //623
+    hook_FloorDecorationData_getModel = 'jb'; //623
+    hook_FloorDecorationData_getOrientation = 'N'; //623
   hook_FloorDecorationData_GetID2 = 'm.H'; //not updated

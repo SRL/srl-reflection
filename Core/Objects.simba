@@ -104,7 +104,7 @@ begin
     end;
     if(Obj <> 0)then
     begin
-      ID := SmartGetFieldShort(Obj, hook_wallobjectdata_GetID);
+      ID := SmartGetFieldShort(Obj, hook_WallObjectData_GetID);
       if((ID = -1) or ((ID and $FFFF) = 65535))then
         Exit;
       Result := NewObject(ID and $FFFF, OBJECT_TYPE_WALLOBJECT, T);
