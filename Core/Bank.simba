@@ -141,7 +141,7 @@ begin
     'cb', 'catherby':
         Tiles := [Point(2807, 3442), Point(2809, 3442), Point(2810, 3442), Point(2811, 3442)];
     'fgb', 'fishing guild':
-        Tiles := [Point(2585, 3422), Point(2585, 3421), Point(2585, 3419), Point(2585, 3418)];
+        Tiles := [Point(2584, 3423), Point(2584, 3422)];
     'mc', 'moonclan':
         Tiles := [Point(2098, 3920), Point(2097, 3920), Point(2098, 3920)];
     'yb', 'yanille':
