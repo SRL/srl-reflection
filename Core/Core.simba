@@ -500,9 +500,9 @@ begin
   //Writeln('MenuY: '+ToStr(SmartGetFieldInt(0, hook_static_MenuY)));
   MenuOptions := GetMenuText;
 
-  for i := High(MenuOptions) downto 0 do
+  for i := 0 to High(MenuOptions) do
   begin
-    for i2 := High(Options) downto 0 do
+    for i2 := 0 to High(Options) do
     begin
       if(Pos(Lowercase(Options[i2]), Lowercase(MenuOptions[i])) <> 0)then
       begin
