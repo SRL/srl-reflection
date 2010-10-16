@@ -185,7 +185,7 @@ Description: Captures the evil twin.
 function Molly_CatchTwin: Boolean;
 var
   Twin: TNPC;
-  i: integer;
+  i, iTime: integer;
   B: Boolean;
   s: string;
 begin
@@ -232,15 +232,23 @@ begin
     end;
     s := LastChatMessage(CHAT_TYPE_ALL);
     Mouse(693, 416, 10, 10, True);
+    iTime := GetSystemTime;
     while s = LastChatMessage(CHAT_TYPE_ALL) do
+    begin
       Wait(100);
+      If (GetSystemTime - iTime > 5000) then
+        Break;
+    end;
+
     Result := Pos('caught', LastChatMessage(CHAT_TYPE_ALL)) <> 0;
   end;
+
   while not ValidInterface(241) do
     Wait(100);
+
   for i := 0 to 1 do
   begin
-    Wait(300+Random(200));
+    Wait(1600+Random(800));
     if not ClickToContinue then
       Mouse(245, 454, 3, 3, True);
   end;
