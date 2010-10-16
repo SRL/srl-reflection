@@ -1,3 +1,6 @@
+Const
+  R_DEMONID = 2790;
+
 var
   Sign1, Sign2, Sign3, Sign4: Integer;
 
@@ -8,7 +11,7 @@ Description: Results true if the Drill Demon is found.
 *******************************************************************************}
 function R_InDemon : Boolean;
 begin
-  Result := ValidNPC(2790);
+  Result := ValidNPCNull(2790);
 end;
 
 procedure R_SetSigns;
@@ -199,7 +202,6 @@ begin
     Result := 'jog';
     Exit;
   end;
-
 end;
 
 function R_Jump: boolean;
@@ -384,6 +386,10 @@ begin
       order := R_GetCommand;
       wait(100+Random(100));
     end;
+    If (Pos('take a reward', GetInterfaceText(243, 6)) > 0)then
+    begin
+      ClickToContinue;
+    end;
     R_SetSigns;
     Writeln('Doing order '+order);
     case order of
@@ -399,10 +405,6 @@ begin
       wait(100+Random(100));
     end;
   end;
-  R_ClickToContinue;
+  ClickToContinue;
   Result := not R_InDemon;
-  if Result then
-    Inc(RSolved[RDemon])
-  else
-    Inc(RFailed[RDemon]);
 end;

@@ -290,8 +290,8 @@ begin
   if R_LoggedIn then
   begin
     Result := True;
-    Inc(RSolved[RMolly]);
+    //Inc(RSolved[RMolly]);
     AddToReport('Solved Molly Random!');
-  end else
-    Inc(RFailed[RMolly]);
+  end; {else
+    Inc(RFailed[RMolly]); }
 end;

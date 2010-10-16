@@ -49,7 +49,7 @@ begin
     if not FindNPC('Bee keeper', Keeper)then Exit;
     if not(InteractingWithMe(keeper))then
       TalkToKeeper;
-    R_ClickToContinue;
+    ClickToContinue;
     if(FindNPCText('yeah, let me'))then
     begin
       Mouse(260, 444, 15, 3, true);
@@ -85,6 +85,8 @@ var
   TL, BR, P: TPoint; //Top left, Bottom right
 begin
   if not ValidInterface(420) then Exit;
+  Writeln('[Reflection] Moving peice!');
+
   case From of
     1: Child := 12;
     2: Child := 13;
@@ -155,15 +157,11 @@ begin
       MarkTime(t);
       while(R_InBeekeeper and (TimeFromMark(t) < 10000))do
       begin
-        R_ClickToContinue;
+        ClickToContinue;
         Wait(300+Random(300));
       end;
     end;
   end;
-  R_ClickToContinue;
+  ClickToContinue;
   Result := not R_InBeekeeper;
-  if Result then
-    Inc(RSolved[RBees])
-  else
-    Inc(RFailed[RBees]);
 end;

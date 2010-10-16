@@ -1,9 +1,5 @@
-//-----------------------------------------------------------------//
-//--               Reflection Resource Library                   --//
-//--               » Mime Solver                                 --//
-//-----------------------------------------------------------------//
-// * function R_InMime: Boolean;                                   // * by Timer
-// * function R_SolveMime : Boolean;                               // * by Seroko/Drags111
+Const
+  R_MIMEID = 1056;
 
 {*******************************************************************************
 function R_InMime: Boolean;
@@ -12,7 +8,7 @@ Description: Checks if in Mime Random.
 *******************************************************************************}
 function R_InMime: Boolean;
 begin
-  Result := ValidNPC('Mime');
+  Result := ValidNPCNull(R_MIMEID);
 end;
 
 {*******************************************************************************
@@ -48,7 +44,7 @@ var
 begin
   if not R_InMime then
     Exit;
-  Writeln('Found Mime.');
+  Writeln('[Reflection] Found Mime!');
   Mime_ClearMessages;
   repeat
     if not R_InMime then Break;
@@ -81,8 +77,4 @@ begin
     Result := R_InMime;
   until not(Result or R_LoggedIn or not R_InMime);
   Result := R_LoggedIn;
-  if Result then
-    Inc(RSolved[RMimes])
-  else
-    Inc(RFailed[RMimes]);
 end;

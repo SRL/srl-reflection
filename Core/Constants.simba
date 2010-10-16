@@ -6,28 +6,6 @@ const
   NULL_INT        = -1;
   NULL_STRING     = '';
 
-{ Constants for Random Reporting }
-const
-{ const RandomCount;
-  Description: Number of Anti-Randoms. }
-  RandomCount = 9;
-
-{ const RMimes, RBoxes, RFrogs, RDemon, RMolly, RPinball, RTalks, RForests, RPillory;
-  Description: Random event constants to be used with Random Reporting. }
-  RMolly    = 1;
-  RMimes    = 2;
-  RDemon    = 3;
-  RArnav    = 4;
-  RBees     = 5;
-  RPinballs = 6;
-  RQuiz     = 7;
-
-
-{Global Variables for Random Reporting}
-var
-  RSolved, RFailed : array [1..RandomCount] of Integer;
- // R_RandomsDetected: integer;
-
 const
 // feel free to explain these better..
 //--------Interface Constants---------\\

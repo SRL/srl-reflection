@@ -1,10 +1,190 @@
+Const
+  r_RandomCount = 18;
+
+  R_RANDOM_ABYSS = 0;
+  R_RANDOM_BEEKEEPER = 1;
+  R_RANDOM_CAPNARRAV = 2;
+  R_RANDOM_CERTER = 3;
+  R_RANDOM_DRILLDEMON = 4;
+  R_RANDOM_EVILBOB = 5;
+  R_RANDOM_EXAM = 6;
+  R_RANDOM_FREAKYFORESTER = 7;
+  R_RANDOM_FROG = 8;
+  R_RANDOM_GRAVEDIGGER = 9;
+  R_RANDOM_MAZE = 10;
+  R_RANDOM_MIME = 11;
+  R_RANDOM_MOLLY = 12;
+  R_RANDOM_PILLORY = 13;
+  R_RANDOM_PINBALL = 14;
+  R_RANDOM_PRISON = 15;
+  R_RANDOM_QUIZ = 16;
+  R_RANDOM_SANDWICHLADY = 17;
+
+type
+  r_Random = Record
+    RandName, Music: String;
+    r_InRandom, r_SolveRandom: function: Boolean;
+  end;
+
+var
+  r_RandomArr: Array [0..17] of r_Random;
+  r_RandomVarSet: Boolean;
+
+Procedure r_SetupRandoms;
+begin
+  With r_RandomArr[R_RANDOM_ABYSS] do
+  begin
+    RandName := 'Abyss';
+    Music := 'into the abyss';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_BEEKEEPER] do
+  begin
+    RandName := 'Beekeeper';
+    Music := '';
+    r_InRandom := @r_InBeekeeper;
+    r_SolveRandom := @R_SolveBeekeeper;
+  end;
+
+  With r_RandomArr[R_RANDOM_CAPNARRAV] do
+  begin
+    RandName := 'Cap n'' Arrav';
+    Music := 'sea shanty';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_CERTER] do
+  begin
+    RandName := 'Certer';
+    Music := '';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_DRILLDEMON] do
+  begin
+    RandName := 'Drill Demon';
+    Music := 'corporal punishment';
+    r_InRandom := @R_InDemon;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_EVILBOB] do
+  begin
+    RandName := 'Evilbob';
+    Music := 'evil bob''s island';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_EXAM] do
+  begin
+    RandName := 'Exam';
+    Music := 'school''s out';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_FREAKYFORESTER] do
+  begin
+    RandName := 'Freaky forester';
+    Music := 'pheasant peasant';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_FROG] do
+  begin
+    RandName := 'Frog';
+    Music := 'frogland';
+    r_InRandom := @R_InFrogCave;
+    r_SolveRandom := @R_SolveFrogCave;
+  end;
+
+  With r_RandomArr[R_RANDOM_GRAVEDIGGER] do
+  begin
+    RandName := 'Gravedigger';
+    Music := 'spooky';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_MAZE] do
+  begin
+    RandName := 'Maze';
+    Music := 'time out';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_MIME] do
+  begin
+    RandName := 'Mime';
+    Music := 'artistry';
+    r_InRandom := @R_InMime;
+    r_SolveRandom := @R_SolveMime;
+  end;
+
+  With r_RandomArr[R_RANDOM_MOLLY] do
+  begin
+    RandName := 'Molly';
+    Music := 'head to head';
+    r_InRandom := @R_InMolly;
+    r_SolveRandom := @R_SolveMolly;
+  end;
+
+  With r_RandomArr[R_RANDOM_PILLORY] do
+  begin
+    RandName := 'Pillory';
+    Music := '';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_PINBALL] do
+  begin
+    RandName := 'Pinball';
+    Music := '';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_PRISON] do
+  begin
+    RandName := 'Prison';
+    Music := 'in the clink';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_QUIZ] do
+  begin
+    RandName := 'Quiz';
+    Music := '';
+    r_InRandom := nil;
+    r_SolveRandom := nil;
+  end;
+
+  With r_RandomArr[R_RANDOM_SANDWICHLADY] do
+  begin
+    RandName := 'Sandwhich lady';
+    Music := 'snack attack';
+    r_InRandom := @r_InSandwichLadyRandom;
+    r_SolveRandom := @r_SolveSandwichRandom;
+  end;
+
+  r_RandomVarSet := True;
+end;
+
 {*******************************************************************************
 function FindLamp(skill: String): Boolean;
 by: Pups, Starblaster100,PriSoner, Lee Lok Hin, Timer
 Description: handles Genie. Results True if lamp found and handled.
 skill: Skill to use with lamp eg. 'strength', 'attack', etc.
 *******************************************************************************}
-
 function R_FindLamp(skill: string): Boolean;
 var
   LampTime, X, Y, I: Integer;
@@ -68,30 +248,77 @@ begin
   end;
 end;
 
-{*******************************************************************************
-function R_SolveNonTalkingRandoms: Boolean;
-By: Nava2
-Description: Solves Non Talking Randoms.
-*******************************************************************************}
+function r_GetMusic: String;
+begin
+  Result := GetInterfaceText(187, 4);
+end;
+
 function R_SolveNonTalkingRandoms: Boolean;
 var
-  I : Integer;
+  I, iTime: Integer;
+  Music: String;
+  InRand: Boolean;
 begin
-  for I := 1 to RandomCount do
+  If Not LoggedIn then
+    Exit;
+
+  If Not r_RandomVarSet then
+    r_SetupRandoms;
+
+  Music := LowerCase(r_GetMusic);
+  for I := 0 to r_RandomCount-1 do
   begin
-    case I of
-      1 : Result := R_SolveMolly;
-      2 : Result := R_SolveMime;
-      3 : Result := R_SolveDemon;
-      4 : Result := R_SolveArnav;
-      5 : Result := R_SolveBeekeeper;
-      6 : Result := R_SolvePinball;
-      7 : Result := R_SolveQuizMaster;
-      8 : Result := R_FindRewardBox;
-      9 : Result := R_FindLamp(LampSkill);
+
+    If (r_RandomArr[I].Music = Music)or(r_RandomArr[I].Music = '')then
+     if (r_RandomArr[I].r_InRandom <> nil) then
+       InRand := r_RandomArr[I].r_InRandom()
+     else
+     begin
+       If (Not(r_RandomArr[I].r_InRandom <> nil)and(r_RandomArr[I].Music = ''))then
+         Continue;
+       Writeln('[Reflection] Might be in a random(missing r_InRandom function), terminating.');
+       Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
+       Logout;
+       Exit;
+     end;
+
+    If InRand then
+    begin
+      //Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
+      Writeln('[Reflection] Trying to solve: ' + r_RandomArr[I].RandName);
+      if (r_RandomArr[I].r_SolveRandom <> nil) then
+        Result := r_RandomArr[I].r_SolveRandom()
+      else
+      begin
+        Writeln('[Reflection] No random solver for this random yet!, terminating');
+        Logout;
+        Exit;
+      end;
+
+      If not Result then
+      begin
+        Writeln('[Reflection] Random solving for ' + r_RandomArr[I].RandName + ' failed, terminating.');
+        Logout;
+        Exit;
+      end else
+        Writeln('[Reflection] Random solved');
+
+      iTime := GetSystemTime;
+      While (Not IsIdle) do
+      begin
+        Wait(100+Random(100));
+        if (GetSystemTime-iTime > 60*1000)then
+        begin
+          Writeln('[Reflection] Took more than a minute to get out of the random, terminating.');
+          LogOut;
+          Exit;
+        end;
+      end;
+
+      UseRewardBox;
+      Exit;
     end;
-    if (Result) then
-      Break;
+
   end;
 end;
 
@@ -100,7 +327,6 @@ function R_FindRandoms: Boolean;
 By: Nava2
 Description: Calls the random checks.
 *******************************************************************************}
-
 function R_FindRandoms: Boolean;
 begin
   Result := R_SolveNonTalkingRandoms;
