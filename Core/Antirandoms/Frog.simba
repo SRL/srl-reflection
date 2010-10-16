@@ -1,0 +1,107 @@
+{*******************************************************************************
+function R_InFrogCave: Boolean;
+by: Cstrike
+Description: Checks if in Frog Random.
+*******************************************************************************}
+function R_InFrogCave: Boolean;
+begin
+  Result := ValidNPC('Frog herald');
+end;
+
+{*******************************************************************************
+function R_FrogFindClickPrincess: Boolean;
+by: Cstrike
+Description: Finds princess and selects her
+*******************************************************************************}
+function R_FrogFindClickPrincess : Boolean;
+var
+  NPCs: TNPCArray;
+  I, iTime, NPCTime : Integer;
+  TP : TPoint;
+begin
+  Result := False;
+  MarkTime(iTime);
+  SetAngle(True);
+  repeat
+    NPCs := GetNPCsNull;
+    for I:=0 to high(NPCs) do
+     if (NPCs[I].Height = 278) then
+     begin
+       Writeln('[Reflection] Found correct frog!');
+       if TileOnMS(NPCs[I].Tile, 0) then
+       begin
+         writeln('[Reflection] Frog tile on mainscreen');
+         TP := TileToMS (NPCs[I].Tile, 0);
+         Mouse(TP.x, TP.y, 0, 0, false);
+         if WaitOption('alk-', 250+Random(100)) then
+         begin
+           Wait(400+Random(200));
+           Flag;
+           repeat
+            wait (100+random(100));
+             if (GetInterfaceText (243,3) = 'Frog Princess')or(GetInterfaceText (243,3) = 'Frog Prince') then
+             begin
+               result := true;
+               writeln ('[Reflection] Interacting with frog..');
+               Exit;
+             end;
+           until (TimeFromMark(NPCTime) > 10000)
+
+           Writeln('[Reflection] Took too long interact with the frog');
+         end;
+       end else
+       begin
+         WalkToTile(NPCs[I].Tile, 0, 0);
+         Continue;
+       end;
+
+     end;
+
+  until (TimeFromMark(iTime) > 120000)
+  writeln ('[Reflection] Error finding frog! Time > 2 mins');
+end;
+
+{*******************************************************************************
+function R_FrogPrincessChat : Boolean;
+by: Cstrike
+Description: Continues chat with frog princess as to exit the random. Call this
+procedure after you know you're interacting with the princess. Needs failsafe.
+*******************************************************************************}
+function R_FrogPrincessChat: Boolean;
+begin
+  Writeln('[Reflection] Finishing off talking..');
+  If (GetInterfaceText(243, 7) = 'Click here to continue')then
+    While Not (Pos('you so much', (GetInterfaceText(243, 4))) > 0) do
+    begin
+      ClickToContinue;
+      Wait(600+Random(300));
+    end;
+  Writeln('[Reflection] Last click!');
+  ClickToContinue;
+  Wait(4000+Random(1500));
+  Result := Not r_InFrogCave;
+end;
+
+{*******************************************************************************
+function R_SolveFrogCave : Boolean;
+by: Cstrike
+Description: Attempts to solve frog random, returns true if successful.
+*******************************************************************************}
+function R_SolveFrogCave : Boolean;
+var TimedCount : Integer;
+begin
+  if Not R_InFrogCave then
+    Exit;
+
+  While (GetInterfaceText(242, 6) = 'Click here to continue')do
+  begin
+    Wait(600+Random(300));
+    ClickToContinue;
+  end;
+
+  MarkTime (TimedCount);
+  repeat
+    if R_FrogFindClickPrincess then
+     Result := R_FrogPrincessChat;
+  until (TimeFromMark(TimedCount) > 120000)or(Result)
+end;
