@@ -33,13 +33,13 @@ end;
 
 {*******************************************************************************
 function GetInteractableAt(T: TTile): TRSObject;
-By: Drags111
+By: Drags111 modified/fixed by pyroryan
 Description: Returns the objType Interactable ID at the given tile. Interactable
           objects include anything clickable that isnt a WallObject.
 *******************************************************************************}
 function GetInteractableAt(T: TTile): TRSObject;
 var
-  Plane, Ground, Node, Obj, ID, LX, LY: integer;
+  Plane, Ground, Node, Obj, ObjTemp, ID, LX, LY: integer;
 begin
   Result := NULL_RSOBJECT;
 
@@ -49,24 +49,28 @@ begin
     Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
     Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
     Node := SmartGetFieldObject(Ground, hook_ground_AnimableList);
-
     while(node <> 0)do
     begin
       Obj := SmartGetFieldObject(Node, hook_AnimableNode_GetAnimable);
       if(Obj <> 0)then
       begin
-        ID := SmartGetFieldShort(Obj, hook_InteractiveObject_GetID);
-        if((ID = -1) or ((ID and $FFFF) = 65535))then   // 65535 is an unsigned -1....
+        ID := SmartGetFieldShort(Obj, hook_InteractiveObject_GetID) and $FFFF;
+        if((ID = -1) or ((ID) = 65535))then   // 65535 is an unsigned -1....
         begin
-          ID := SmartGetFieldInt(Obj, hook_InteractiveObject_GetID2);
-          if((ID = -1) or ((ID and $FFFF) = 65535))then
-            Exit;
+          ObjTemp := SmartGetFieldObject(Obj, hook_interactiveobject2_GetObjectData);
+          if(ObjTemp <> 0) then
+          begin
+            ID := SmartGetFieldInt(ObjTemp, hook_secondlevelobject_GetID);
+            if((ID = -1) or ((ID and $FFFF) = 65535))then
+              Exit;
+          end;
         end;
 
-        Result := NewObject(ID and $FFFF, OBJECT_TYPE_INTERACTABLE, T);
+        Result := NewObject(ID, OBJECT_TYPE_INTERACTABLE, T);
         Exit;
       end;
       SmartFreeObject(obj);
+      SmartFreeObject(ObjTemp);
       SmartFreeObject(Node);
       Node := SmartGetFieldObject(Node, hook_AnimableNode_GetNext);
     end;
@@ -74,6 +78,7 @@ begin
   finally
     SmartFreeObject(Ground);
     SmartFreeObject(Obj);
+    SmartFreeObject(ObjTemp);
     SmartFreeObject(Node);
   end;
 end;

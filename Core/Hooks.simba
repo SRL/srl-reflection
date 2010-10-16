@@ -222,16 +222,16 @@ const
 {Class InteractiveObject}
     class_InteractiveObject = 'ufa'; //623
     hook_interactiveobject_GetID = 'Z'; //623
-    hook_interactiveobject_getModel = 'U'; //623
+    hook_interactiveobject_GetModel = 'U'; //623
 
 {Class InteractiveObject2}
     class_InteractiveObject2 = 'uo'; //623
-    hook_interactiveobject2_getObjectData = 'R'; //623
-    hook_interactiveobject_GetID2 = 'w.H'; //not updated
+    hook_interactiveobject2_GetObjectData = 'R'; //623
+    //hook_interactiveobject_GetID2 = 'w.H'; //not updated
 
 {Class SecondLevelObject}
     class_SecondLevelObject = 'lq'; //623
-    hook_SecondLevelObject_GetID = 'B'; //623
+    hook_secondlevelobject_GetID = 'B'; //623
 
 //WallObjectData, WallDecorationData, FloorDecorationData updated -pyroryan
 {Class WallObjectData}
