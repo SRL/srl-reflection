@@ -1,0 +1,162 @@
+const
+  R_FORESTERID = 2458;
+
+  R_ONETAIL = 2459;
+  R_TWOTAIL = 2460;
+  R_THREETAIL = 2461;
+  R_FOURTAIL = 2462;
+
+  R_MEATID = 6178;
+
+Function r_InForester: Boolean;
+begin
+  Result := ValidNPCNull(R_FORESTERID);
+end;
+
+Function r_ForesterWants: Integer;
+var
+  S: String;
+begin
+  Result := -1;
+
+  S := GetInterfaceText(242, 4);
+  Delete(S, 1, Pos('kill a', S)+6);
+  Delete(S, Pos('-', S), Length(S));
+
+  Case S of
+    'one': Result := R_ONETAIL;
+    'two': Result := R_TWOTAIL;
+    'three': Result := R_THREETAIL;
+    'four': Result := R_FOURTAIL;
+  end;
+
+  ClickToContinue;
+end;
+
+Function r_FindForester: Boolean;
+var
+  NPC: TNPC;
+  C: TPoint;
+  iTime: Integer;
+begin
+  Writeln('[Reflection] Finding Freaky forester..');
+
+  iTime := GetSystemTime;
+  Repeat
+    NPC := GetNPCNull(R_FORESTERID);
+
+    If Not TileOnMS(NPC.Tile, 0)then
+    begin
+      Writeln('[Reflection] Tile not on MS' + ToStr(NPC.Tile) + ', walking there.');
+      WalkToTile(NPC.Tile, 0, 0);
+    end;
+
+    C := TileToMS(NPC.Tile, 0);
+    Mouse(C.X, C.Y, 5, 5, False);
+    Result := WaitOption('alk-', 200+Random(100));
+
+    If Result then
+    begin
+      Writeln('[Reflection] Found Freaky forester!');
+      Wait(2000+Random(1000));
+      Flag;
+      Exit;
+    end;
+  until(GetSystemTime-iTime > 30000);
+  Writeln('[Reflection] Took > 30 secs finding forester, result = false');
+end;
+
+function r_ForesterFight: boolean;
+var
+ T: Integer;
+begin
+  T := GetSystemTime + 4000;
+  repeat
+    wait(66)
+    if (GetAnimation > -1) then
+      Result := true;
+  until Result or (GetSystemTime > T);
+end;
+
+Function r_ForesterKill: Boolean;
+var
+  NPC: TNPC;
+  C: TPoint;
+  iTime, P: Integer;
+begin
+  Writeln('[Reflection] Finding pheasant..');
+
+  P := r_ForesterWants;
+  iTime := GetSystemTime;
+  Repeat
+    NPC := GetNPCNull(P);
+    If Not TileOnMS(NPC.Tile, 0)then
+    begin
+      Writeln('[Reflection] Tile not on MS' + ToStr(NPC.Tile) + ', walking there.');
+      WalkToTile(NPC.Tile, 0, 0);
+      NPC := GetNPCNull(P);
+    end;
+
+    C := TileToMS(NPC.Tile, 0);
+    Mouse(C.X, C.Y, 5, 5, False);
+    Result := WaitOption('tack', 200+Random(100));
+
+    If Result then
+    begin
+      Writeln('[Reflection] Attacked pheasant!');
+      Wait(3000+Random(2000));
+      Flag;
+      While r_ForesterFight do
+        Wait(100+Random(100));
+
+      Wait(1000+Random(500));
+    end;
+  until(Result)or(GetSystemTime-iTime > 60000)
+end;
+
+Function r_ForesterPickup: Boolean;
+var
+  G: TGroundItemArray;
+  I: Integer;
+  C: TPoint;
+begin
+  G := GetItemsNear(2);
+  For I:=0 to High(G)do
+   If (G[I].ID = R_MEATID)then
+   begin
+     Writeln('[Reflection] Found meat' + ToStr(G[I].Tile));
+     C := TileToMS(G[I].Tile, 0);
+     Mouse(C.X, C.Y, 3, 3, False);
+     Result := WaitOption('ake', 200+Random(100));
+     If Result then
+     begin
+       Writeln('[Reflection] Picking up meat..');
+       Wait(1000+Random(500));
+       Flag;
+       Exit;
+     end;
+   end;
+end;
+
+Function r_ForesterLastTalk: Boolean;
+begin
+  Result := False;
+end;
+
+Function r_ForesterPortal: Boolean;
+begin
+  Result := False;
+end;
+
+Function r_SolveForester: Boolean;
+begin
+  Result := False;
+  If not r_InForester then
+    Exit;
+
+  If r_FindForester then
+   If r_ForesterKill then
+   If r_ForesterPickUp then
+     r_FindForester;
+
+end;

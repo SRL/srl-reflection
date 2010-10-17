@@ -92,7 +92,7 @@ begin
   begin
     RandName := 'Freaky forester';
     Music := 'pheasant peasant';
-    r_InRandom := nil;
+    r_InRandom := @r_InForester;
     r_SolveRandom := nil;
   end;
 
