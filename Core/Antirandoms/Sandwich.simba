@@ -70,8 +70,7 @@ begin
   If Not TileOnMS(NPC.Tile, 0) then
    If Not WalkToTile(NPC.Tile, 0, 0)then
    begin
-     Writeln('[Reflection] Failed walking to the portal!, terminating');
-     LogOut;
+     Writeln('[Reflection] Failed walking to the portal!');
      Exit;
    end;
 

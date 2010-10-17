@@ -93,7 +93,7 @@ begin
     RandName := 'Freaky forester';
     Music := 'pheasant peasant';
     r_InRandom := @R_InForester;
-    r_SolveRandom := nil;
+    r_SolveRandom := @R_SolveForester;
   end;
 
   With r_RandomArr[R_RANDOM_FROG] do
@@ -290,15 +290,17 @@ begin
         Result := r_RandomArr[I].r_SolveRandom()
       else
       begin
-        Writeln('[Reflection] No random solver for this random yet!, terminating');
+        Writeln('[Reflection] No random solver for this random yet!');
         Logout;
+        Players[CurrentPlayer].Active := False;
         Exit;
       end;
 
       If not Result then
       begin
-        Writeln('[Reflection] Random solving for ' + r_RandomArr[I].RandName + ' failed, terminating.');
+        Writeln('[Reflection] Random solving for ' + r_RandomArr[I].RandName + ' failed');
         Logout;
+        Players[CurrentPlayer].Active := False;
         Exit;
       end else
         Writeln('[Reflection] Random solved');
@@ -309,8 +311,9 @@ begin
         Wait(100+Random(100));
         if (GetSystemTime-iTime > 60*1000)then
         begin
-          Writeln('[Reflection] Took more than a minute to get out of the random, terminating.');
+          Writeln('[Reflection] Took more than a minute to get out of the random');
           LogOut;
+          Players[CurrentPlayer].Active := False;
           Exit;
         end;
       end;

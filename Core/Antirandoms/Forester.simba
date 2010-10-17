@@ -8,6 +8,8 @@ const
 
   R_MEATID = 6178;
 
+  R_FORESTERPORTALID = 8972;
+
 Function r_InForester: Boolean;
 begin
   Result := ValidNPCNull(R_FORESTERID);
@@ -106,7 +108,7 @@ begin
       Writeln('[Reflection] Attacked pheasant!');
       Wait(3000+Random(2000));
       Flag;
-      While r_ForesterFight do
+      While (r_ForesterFight)or(Not Pos('ollect', GetInterfaceText(241, 4)) > 0) do
         Wait(100+Random(100));
 
       Wait(1000+Random(500));
@@ -144,8 +146,34 @@ begin
 end;
 
 Function r_ForesterPortal: Boolean;
+var
+  Obj: TRSObject;
+  C: TPoint;
 begin
-  Result := False;
+  Obj := GetObjectByIDEx([R_FORESTERPORTALID], OBJECT_TYPE_INTERACTABLE, 40);
+  If Not (Obj.ID = R_FORESTERPORTALID)then
+  begin
+    Writeln('[Reflection] Problem finding leaving portal, result = false');
+    Exit;
+  end;
+
+  If Not TileOnMS(Obj.Tile, 0)then
+    WalkToTile(Obj.Tile, 0, 0);
+
+  C := TileToMS(Obj.Tile, 0);
+  MMouse(C.X, C.Y, 5, 5);
+  Result := WaitUpText('ortal', 200+Random(100));
+
+  GetMousePos(C.X, C.Y);
+  Mouse(C.X, C.Y, 0, 0, Result);
+  If Not Result then
+    Result := WaitOption('nter', 200+Random(100));
+
+  If Result then
+  begin
+    Wait(2000+Random(1000));
+    Flag;
+  end;
 end;
 
 Function r_SolveForester: Boolean;
@@ -154,9 +182,13 @@ begin
   If not r_InForester then
     Exit;
 
-  If r_FindForester then
-   If r_ForesterKill then
-   If r_ForesterPickUp then
-     r_FindForester;
+  If (Not r_FindForester)or
+     (Not r_ForesterKill)or
+     (Not r_ForesterPickUp)or
+     (Not r_FindForester)or
+     (Not r_ForesterPortal)then
+       Exit;
 
+  Wait(1000+Random(2000));
+  Result := (Not r_InForester)and(LoggedIn);
 end;
