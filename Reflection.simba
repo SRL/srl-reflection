@@ -21,6 +21,7 @@
 {$i ./Core/Antirandoms\Molly.simba}
 {$i ./Core/Antirandoms\Beekeeper.simba}
 {$i ./Core/Antirandoms\Demon.simba}
+{$i ./Core/Antirandoms\Forester.simba}
 {$i ./Core/Antirandoms\Sandwich.simba}
 {$i ./Core/Antirandoms\Antirandoms.simba}
 
