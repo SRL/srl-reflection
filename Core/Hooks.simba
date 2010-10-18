@@ -88,7 +88,7 @@ const
     class_NPCDef = 'ce'; //624
     hook_npcdef_GetActions = 'E'; //624
     hook_npcdef_GetName = 'N'; //624
-    hook_npcdef_GetLevel = 'wb';
+    hook_npcdef_GetLevel = 'wb'; //624
     hook_npcdef_GetID = 'h'; //624
 
 {Class NPCNode}
@@ -99,7 +99,7 @@ const
     class_GroundTile = 'ko'; //624
 
 {Class Plane}
-    class_Plane = 'i';
+    class_Plane = 'i'; //624
 
 {Class RSInteractable}
     class_RSInteractable = 'fh'; //624
@@ -229,37 +229,37 @@ const
  //Some work actually. You're welcome. Updated as much as I could. (Thanks to TRiLeZ and pyroryan.)
 
 {Class InteractiveObject}
-    class_InteractiveObject = 'ie'; //624
-    hook_interactiveobject_GetID = 'L'; //624
-    hook_interactiveobject_GetModel = 'N'; //624
+    class_InteractiveObject = 'kh'; //624
+    hook_interactiveobject_GetID = 'W'; //624
+    hook_interactiveobject_GetModel = 'H'; //624
 
 {Class InteractiveObject2}
-    class_InteractiveObject2 = 'jea';
-    hook_interactiveobject2_GetObjectData = 'S';
+    class_InteractiveObject2 = 'jea'; //624
+    hook_interactiveobject2_GetObjectData = 'S'; //624
     //hook_interactiveobject_GetID2 = 'w.H'; //not updated
 
 {Class SecondLevelObject}
     class_SecondLevelObject = 'bba'; //624
-    hook_secondlevelobject_GetID = 'B';
+    hook_secondlevelobject_GetID = 'b'; //624
 
 //WallObjectData, WallDecorationData, FloorDecorationData updated -pyroryan
 {Class WallObjectData}
-    class_WallObjectData = 'rca';
-    hook_WallObjectData_GetID = 'Q';
-    hook_WallObjectData_GetModel = 'ab';
-    hook_WallObjectData_GetOrientation = 'Y';
+    class_WallObjectData = 'ie'; //624
+    hook_WallObjectData_GetID = 'L'; //624
+    hook_WallObjectData_GetModel = 'N'; //624
+    hook_WallObjectData_GetOrientation = 'P'; //624
   hook_WallObjectData_GetID2 = 'D.H'; //not updated
 
 {Class WallDecorationData}
-    class_WallDecorationData = 'qj';
-    hook_WallDecorationData_GetID = 'ab';
-    hook_WallDecorationData_GetModel = 'bb';
-    hook_WallDecorationData_GetOrientation = 'M';
+    class_WallDecorationData = 'gk'; //624
+    hook_WallDecorationData_GetID = 'U'; //624
+    hook_WallDecorationData_GetModel = 'W'; //624
+    hook_WallDecorationData_GetOrientation = 'I'; //624
   hook_WallDecorationData_GetID2 = 'y.H'; //not updated
 
 {Class FloorDecorationData}
-    class_FloorDecorationData = 'kn';
-    hook_FloorDecorationData_GetID = 'kb';
-    hook_FloorDecorationData_GetModel = 'jb';
-    hook_FloorDecorationData_GetOrientation = 'N';
+    class_FloorDecorationData = 'nb'; //624
+    hook_FloorDecorationData_GetID = 'db'; //624
+    hook_FloorDecorationData_GetModel = 'S'; //624
+    hook_FloorDecorationData_GetOrientation = 'G'; //624
   hook_FloorDecorationData_GetID2 = 'm.H'; //not updated
