@@ -18,7 +18,7 @@
  *}
 
 const
-    ClientVersion = 623;
+    ClientVersion = 624;
 
 {Static Hooks}
     hook_static_LoginIndex = 'aea.f'; //624
