@@ -29,15 +29,15 @@ const
     hook_static_NPCNodes = 'wr.Y'; //624
     hook_static_NPCCount = 'fe.b'; //624
     hook_static_GroundSettingsArray = 'kea.O'; //624
-    hook_static_LoadedPlane = 'aga.c';
-    hook_static_PlaneArray = 'tca.w';
+    hook_static_LoadedPlane = 'nj.y'; //624
+    hook_static_PlaneArray = 'jv.b'; //624
     hook_static_Toolkit = 'bg.b'; //624
     hook_static_MapAngle = 'hg.F'; //624
     hook_static_DestX = 'or.t'; //624
     hook_static_DestY = 'iq.Z'; //624
     hook_static_MenuOptionCount = 'or.A'; //624
-    hook_static_MenuX = 'an.c';
-    hook_static_MenuY = 'us.b';
+    hook_static_MenuX = 'wu.p'; //624
+    hook_static_MenuY = 'rw.m'; //624
     hook_static_MenuOpen = 'efa.p'; //624
     hook_static_MenuNodeList = 'wu.o'; //624
     hook_static_LoopCycle = 'ls.i'; //624
@@ -46,13 +46,13 @@ const
     hook_static_GetPlayers = 'rda.f'; //624
     hook_static_GetSkillLevels = 'iw.I'; //624
     hook_static_GetSkillExperiences = 'kq.c'; //624
-    hook_static_GroundTiles = 'ce.l';
-    hook_static_GetInterfaces = 'nda.i';
-    hook_static_ValidInterfaces = 'hp.l';
+    hook_static_GroundTiles = 'vw.q'; //624
+    hook_static_GetInterfaces = 'uk.k'; //624
+    hook_static_ValidInterfaces = 'gn.b'; //624
     hook_static_GetSettings = 'uc.h'; //624
-    hook_static_GroundItemCache = 'jq.u';
-    hook_static_CamPosX = 'at.y';
-    hook_static_CamPosY = 'ee.g';
+    hook_static_GroundItemCache = 'ao.d'; //624
+    hook_static_CamPosX = 'uj.g'; //624
+    hook_static_CamPosY = 'eca.w'; //624
 
 {Class Animable}
     class_Animable = 'vj'; //624
@@ -68,17 +68,17 @@ const
     hook_player_GetTeam = 'dd'; //624
 
 {Class Character}
-    class_Character = 'ufa';
-    hook_character_GetHitDamges = 'tb'; //check?-623
+    class_Character = 'ufa'; //624
+    hook_character_GetHitDamges = 'tb'; //check?-624
     hook_character_Animation = 'bb'; //624
-    hook_character_Motion = 'Qc';
-    hook_character_WalkQueueX = 'Lc'; //624
-    hook_character_WalkQueueY = 'Gc'; //624
+    hook_character_Motion = 'Ec'; //624
+    hook_character_WalkQueueX = 'Gc'; //624
+    hook_character_WalkQueueY = 'Lc'; //624
     hook_character_GetHeight = 'sc'; //624
     hook_character_LoopCycleStatus = 'nc'; //624
     hook_character_HPRatio = 'Bb'; //624
     hook_character_GetInteracting = 'mc'; //624
-    hook_character_Orientation = 'O';
+    hook_character_Orientation = 'zb'; //624
 
 {Class NPC}
     class_NPC = 'd'; //624
@@ -88,21 +88,21 @@ const
     class_NPCDef = 'ce'; //624
     hook_npcdef_GetActions = 'E'; //624
     hook_npcdef_GetName = 'N'; //624
-    hook_npcdef_GetLevel = 'I';
-    hook_npcdef_GetID = 'Ab';
+    hook_npcdef_GetLevel = 'wb';
+    hook_npcdef_GetID = 'h'; //624
 
 {Class NPCNode}
     class_NPCNode = 'lj'; //624
     hook_npcnode_GetNPC = 'r'; //624
 
 {Class GroundTile}
-    class_GroundTile = 'cq';
+    class_GroundTile = 'ko'; //624
 
 {Class Plane}
     class_Plane = 'i';
 
 {Class RSInteractable}
-    class_RSInteractable = 'sj';
+    class_RSInteractable = 'fh'; //624
 
 {Class Toolkit}
     class_Toolkit = 'r'; //624
@@ -135,7 +135,7 @@ const
     hook_sdtoolkit_zMax = 'U'; //624
     hook_sdtoolkit_xScale = 'X'; //624
     hook_sdtoolkit_yScale = 'J'; //624
-    hook_sdtoolkit_Viewport = 'I';
+    hook_sdtoolkit_Viewport = 'Q'; //624
 
 {Class SDModel}
     class_SDModel = 'jba'; //624
@@ -171,13 +171,13 @@ const
     hook_playerdef_GetEquipment = 'm'; //624
 
 {Class AnimableNode}
-    class_AnimableNode = 'rfa';
-    hook_AnimableNode_GetAnimable = 'd';
-    hook_AnimableNode_GetNext = 'c';
+    class_AnimableNode = 'lba'; //624
+    hook_AnimableNode_GetAnimable = 'h'; //624
+    hook_AnimableNode_GetNext = 'a'; //624
 
 {Class ObjectInterface}
     class_ObjectInterface = 'is'; //624
-    hook_interface_GetActions = 'p';
+    hook_interface_GetActions = 'bd'; //624
     hook_interface_GetX = 'Ub'; //624
     hook_interface_GetY = 'ac'; //624
     hook_interface_GetWidth = 'pc'; //624
@@ -186,9 +186,9 @@ const
     hook_interface_GetTextureID = 'Nc'; //624
     hook_interface_GetTextColor = 'Tb'; //624
     hook_interface_GetModelID = 'jc'; //624
-    hook_interface_GetModelZoom = 'sc';
+    hook_interface_GetModelZoom = 'Ec'; //624
     hook_interface_GetName = 'kc'; //624
-    hook_interface_GetChildren = 'bc';
+    hook_interface_GetChildren = 'Pb'; //624
     hook_interface_GetID = 'Cb';  //624 //actually GetComponentID/GetItemID we need to change this
     hook_interface_GetStack = 'e'; //624
     hook_interfaces_GetParentID = 'cb'; //624
@@ -205,8 +205,8 @@ const
     hook_ground_FloorDecoration = 'b'; //624
 
 {Class NodeCache}
-    class_NodeCache_GetNodes = 'waa';
-    hook_nodecache_GetNodes = 'a';
+    class_NodeCache_GetNodes = 'mo'; //624
+    hook_nodecache_GetNodes = 'o'; //624
 
 {Class Item}
     class_Item = 'fn'; //624
@@ -214,8 +214,8 @@ const
     hook_item_GetStack = 'u'; //624
 
 {Class NodeListCache}
-    class_NodeListCache = 'ea';
-    hook_nodelistcache_GetNodeList = 'n';
+    class_NodeListCache = 'mw'; //624
+    hook_nodelistcache_GetNodeList = 'u'; //624
 
 {Class SettingArray}
     class_SettingArray = 'ka'; //624
@@ -240,7 +240,7 @@ const
 
 {Class SecondLevelObject}
     class_SecondLevelObject = 'bba'; //624
-    hook_secondlevelobject_GetID = 'B'; //624
+    hook_secondlevelobject_GetID = 'B';
 
 //WallObjectData, WallDecorationData, FloorDecorationData updated -pyroryan
 {Class WallObjectData}
