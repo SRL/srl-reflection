@@ -1,4 +1,4 @@
-Const
+const
   r_RandomCount = 18;
 
   R_RANDOM_ABYSS = 0;
@@ -23,7 +23,7 @@ Const
 type
   r_Random = Record
     RandName, Music: String;
-    r_InRandom, r_SolveRandom: function: Boolean;
+    InRandom, SolveRandom: function: Boolean;
   end;
 
 var
@@ -36,144 +36,144 @@ begin
   begin
     RandName := 'Abyss';
     Music := 'into the abyss';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_BEEKEEPER] do
   begin
     RandName := 'Beekeeper';
     Music := '';
-    r_InRandom := @r_InBeekeeper;
-    r_SolveRandom := @R_SolveBeekeeper;
+    InRandom := @r_InBeekeeper;
+    SolveRandom := @R_SolveBeekeeper;
   end;
 
   With r_RandomArr[R_RANDOM_CAPNARRAV] do
   begin
     RandName := 'Cap n'' Arrav';
     Music := 'sea shanty';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_CERTER] do
   begin
     RandName := 'Certer';
     Music := '';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_DRILLDEMON] do
   begin
     RandName := 'Drill Demon';
     Music := 'corporal punishment';
-    r_InRandom := @R_InDemon;
-    r_SolveRandom := nil;
+    InRandom := @R_InDemon;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_EVILBOB] do
   begin
     RandName := 'Evilbob';
     Music := 'evil bob''s island';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_EXAM] do
   begin
     RandName := 'Exam';
     Music := 'school''s out';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_FREAKYFORESTER] do
   begin
     RandName := 'Freaky forester';
     Music := 'pheasant peasant';
-    r_InRandom := @R_InForester;
-    r_SolveRandom := @R_SolveForester;
+    InRandom := @R_InForester;
+    SolveRandom := @R_SolveForester;
   end;
 
   With r_RandomArr[R_RANDOM_FROG] do
   begin
     RandName := 'Frog';
     Music := 'frogland';
-    r_InRandom := @R_InFrogCave;
-    r_SolveRandom := @R_SolveFrogCave;
+    InRandom := @R_InFrogCave;
+    SolveRandom := @R_SolveFrogCave;
   end;
 
   With r_RandomArr[R_RANDOM_GRAVEDIGGER] do
   begin
     RandName := 'Gravedigger';
     Music := 'spooky';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_MAZE] do
   begin
     RandName := 'Maze';
     Music := 'time out';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_MIME] do
   begin
     RandName := 'Mime';
     Music := 'artistry';
-    r_InRandom := @R_InMime;
-    r_SolveRandom := @R_SolveMime;
+    InRandom := @R_InMime;
+    SolveRandom := @R_SolveMime;
   end;
 
   With r_RandomArr[R_RANDOM_MOLLY] do
   begin
     RandName := 'Molly';
     Music := 'head to head';
-    r_InRandom := @R_InMolly;
-    r_SolveRandom := @R_SolveMolly;
+    InRandom := @R_InMolly;
+    SolveRandom := @R_SolveMolly;
   end;
 
   With r_RandomArr[R_RANDOM_PILLORY] do
   begin
     RandName := 'Pillory';
     Music := '';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_PINBALL] do
   begin
     RandName := 'Pinball';
     Music := '';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_PRISON] do
   begin
     RandName := 'Prison';
     Music := 'in the clink';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_QUIZ] do
   begin
     RandName := 'Quiz';
     Music := '';
-    r_InRandom := nil;
-    r_SolveRandom := nil;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_SANDWICHLADY] do
   begin
     RandName := 'Sandwhich lady';
     Music := 'snack attack';
-    r_InRandom := @r_InSandwichLadyRandom;
-    r_SolveRandom := @r_SolveSandwichRandom;
+    InRandom := @r_InSandwichLadyRandom;
+    SolveRandom := @r_SolveSandwichRandom;
   end;
 
   r_RandomVarSet := True;
@@ -270,24 +270,24 @@ begin
   begin
 
     If (r_RandomArr[I].Music = Music)or(r_RandomArr[I].Music = '')then
-     if (r_RandomArr[I].r_InRandom <> nil) then
-       InRand := r_RandomArr[I].r_InRandom()
-     else
-     begin
-       If (Not(r_RandomArr[I].r_InRandom <> nil)and(r_RandomArr[I].Music = ''))then
-         Continue;
-       Writeln('[Reflection] Might be in a random(missing r_InRandom function), terminating.');
-       Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
-       Logout;
-       Exit;
-     end;
+      if (r_RandomArr[I].InRandom <> nil) then
+        InRand := r_RandomArr[I].InRandom()
+      else
+      begin
+        if (not(r_RandomArr[I].InRandom <> nil)and(r_RandomArr[I].Music = ''))then
+           Continue;
+        Writeln('[Reflection] Might be in a random(missing InRandom function), terminating.');
+        Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
+        Logout;
+        Exit;
+      end;
 
-    If InRand then
+    if (InRand) then
     begin
       //Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
       Writeln('[Reflection] Trying to solve: ' + r_RandomArr[I].RandName);
-      if (r_RandomArr[I].r_SolveRandom <> nil) then
-        Result := r_RandomArr[I].r_SolveRandom()
+      if (r_RandomArr[I].SolveRandom <> nil) then
+        Result := r_RandomArr[I].SolveRandom()
       else
       begin
         Writeln('[Reflection] No random solver for this random yet!');
@@ -296,7 +296,7 @@ begin
         Exit;
       end;
 
-      If not Result then
+      if (not Result) then
       begin
         Writeln('[Reflection] Random solving for ' + r_RandomArr[I].RandName + ' failed');
         Logout;
@@ -306,7 +306,7 @@ begin
         Writeln('[Reflection] Random solved');
 
       iTime := GetSystemTime;
-      While (Not IsIdle) do
+      while (not IsIdle) do
       begin
         Wait(100+Random(100));
         if (GetSystemTime-iTime > 60*1000)then
