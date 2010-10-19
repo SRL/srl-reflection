@@ -18,7 +18,7 @@
  *}
 
 const
-    ClientVersion = 624;
+    ClientVersion = 625;
 
 {Static Hooks}
     hook_static_LoginIndex = 'pg.e'; //625
