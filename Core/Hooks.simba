@@ -70,12 +70,12 @@ const
     hook_player_GetTeam = 'cd'; //625
 
 {Class Character}
-    class_Character = 'ol';
+    class_Character = 'ol'; //625
     hook_character_GetHitDamges = 'nb'; //check?-625
     hook_character_Animation = 'Wb'; //625
     hook_character_Motion = 'Wc'; //625
-    hook_character_WalkQueueX = 'Uc'; //625
-    hook_character_WalkQueueY = 'Tc'; //625
+    hook_character_WalkQueueX = 'Tc'; //625
+    hook_character_WalkQueueY = 'Uc'; //625
     hook_character_GetHeight = 'qc'; //625
     hook_character_LoopCycleStatus = 'xb'; //625
     hook_character_HPRatio = 'tb'; //625
