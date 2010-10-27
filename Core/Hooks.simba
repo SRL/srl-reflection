@@ -211,7 +211,7 @@ const
     hook_nodecache_GetNodes = 'l'; //625
 
 {Class Item}
-    class_Item = 'gv'; //625
+    class_Item = 'kfa'; //625
     hook_item_GetID = 'u'; //625
     hook_item_GetStack = 't'; //625
 
