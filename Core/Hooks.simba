@@ -212,8 +212,8 @@ const
 
 {Class Item}
     class_Item = 'kfa'; //625
-    hook_item_GetID = 'u'; //625
-    hook_item_GetStack = 't'; //625
+    hook_item_GetID = 't'; //625
+    hook_item_GetStack = 'u'; //625
 
 {Class NodeListCache}
     class_NodeListCache = 'as'; //625
