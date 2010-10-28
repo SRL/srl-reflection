@@ -122,8 +122,7 @@ begin
     'lumbridge', 'lb':
         Tiles := [Point(3208,3221)];
     'draynor', 'db':
-        Tiles := [Point(3091,3419), Point(3091,3245), Point(3091,3244),
-                  Point(3091,3243), Point(3091,3242)];
+        Tiles := [Point(3091,3245), Point(3091,3243), Point(3091,3242)];
     'al kharid', 'akb':
         Tiles := [Point(3268,3168), Point(3268,3167), Point(3268,3166),
                   Point(3268,3165), Point(3268,3164)];
