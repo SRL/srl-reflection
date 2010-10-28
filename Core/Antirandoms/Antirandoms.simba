@@ -108,8 +108,8 @@ begin
   begin
     RandName := 'Gravedigger';
     Music := 'spooky';
-    InRandom := nil;
-    SolveRandom := nil;
+    InRandom := @r_InLeo;
+    SolveRandom := @r_SolveLeo;
   end;
 
   With r_RandomArr[R_RANDOM_MAZE] do

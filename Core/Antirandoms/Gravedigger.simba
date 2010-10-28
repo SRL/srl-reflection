@@ -1,0 +1,604 @@
+//Special thanks to bolshak25.
+const
+  LEO_GRAVESTONE_MIDDLE = 12718;
+  LEO_CASKET1 = 12721;
+  LEO_CASKET2 = 12722;
+  LEO_CASKET3 = 12723;
+  LEO_CASKET4 = 12724;
+  LEO_CASKET5 = 12725;
+  LEO_INVENTORY_CASKET1 = 7587;
+  LEO_INVENTORY_CASKET2 = 7588;
+  LEO_INVENTORY_CASKET3 = 7589;
+  LEO_INVENTORY_CASKET4 = 7590;
+  LEO_INVENTORY_CASKET5 = 7591;
+  LEO_FLOWERPOTID = 7608;
+  LEO_PICKAXEID = 7607;
+  LEO_CHEFHATID = 7601;
+  LEO_HATCHETID = 7603;
+  LEO_SHEARSID = 7610;
+
+{*******************************************************************************
+function R_LeoComponentID (ParentI, ChildI : Integer) : Integer;
+By: Cstrike
+Description: This function wasn't in the core, so I made my own.
+*******************************************************************************}
+function R_LeoComponentID (ParentI, ChildI : Integer): Integer;
+var
+  Child: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Result := SmartGetFieldInt(Child, hook_interface_GetID);
+  SmartFreeObject(Child);
+end;
+
+{*******************************************************************************
+procedure R_LeoInvDecrease (amount, timeout : Integer);
+By: Cstrike
+Description: Function used mainly for seeing when we have put the casket in the
+grave.
+*******************************************************************************}
+procedure R_LeoInvDecrease(Amount, Timeout: Integer);
+var
+  T, Count: Integer;
+begin
+  If not LoggedIn then
+    Exit;
+
+  Count := R_InvCount;
+  MarkTime(T);
+  repeat
+    Wait(50+random(25));
+  until(TimeFromMark(t) > Amount)or(Count < R_InvCount)
+  Wait(4000+random(2500)); // More human?
+end;
+
+{*******************************************************************************
+function R_InLeo : Boolean;
+By: Cstrike
+Description: Returns True if in Gravedigger.
+*******************************************************************************}
+function R_InLeo: Boolean;
+begin
+  Result := ValidNPC('Leo');
+end;
+
+{*******************************************************************************
+procedure R_LeoWalkToCenter;
+By: Cstrike
+Description: Moves us above middle grave so everything is in sight.
+*******************************************************************************}
+procedure R_LeoWalkToCenter;
+var
+  GraveStone: TRSObject;
+  TP: TPoint;
+begin
+  GraveStone := GetObjectByID (LEO_GRAVESTONE_MIDDLE, OBJECT_TYPE_INTERACTABLE, 52);
+  TP := TileToMM(Tile(GraveStone.Tile.X, GraveStone.Tile.Y+1));
+  Mouse (TP.X, TP.X, 1, 1, True);
+  Wait (3000+Random(1200));
+end;
+
+{*******************************************************************************
+function R_TalkToLeoStart : Boolean;
+By: Cstrike
+Description: Talks to Leo at start (if we are already, proceeds normally).
+*******************************************************************************}
+function R_TalkToLeoStart: Boolean;
+var
+  T, X, Y: Integer;
+  NPCs: TNPCArray;
+  TP: TPoint;
+begin
+  Result := False;
+  if not LoggedIn then
+    Exit;
+
+  if (not ValidInterface(242)) and (not ValidInterface(241)) and (not ValidInterface(243)) and (not ValidInterface(64)) then
+  begin
+    NPCs := SortNPCs(GetNPCs);
+    if Not TileOnMS(NPCs[0].Tile, 0)then
+      R_LeoWalkToCenter;
+
+    TP := TileToMS (NPCs[0].Tile, 0);
+    Mouse(TP.X, TP.Y, 3, 3, False);
+
+    Wait(500+Random(500));
+    if ChooseOptionMulti(['Ta','-to'])then
+    begin
+      Wait(1000+Random(1000));
+      Flag;
+      Writeln('[Reflection] Talked to leo');
+    end;
+
+    Wait(2500+random(1500));
+  end else
+   Writeln('[Reflection] Leo is already chatting with us');
+
+  Wait(3000+random(2000)); // Stops lag at start up from screwing us over
+  MarkTime(T);
+  repeat
+    if (GetInterfaceText(242, 6) = 'Click here to continue')then
+      Mouse(303, 452, 72, 7, True);
+
+    if (GetInterfaceText(241, 5) = 'Click here to continue') or (GetInterfaceText(243, 7) = 'Click here to continue') or (GetInterfaceText(64, 5) = 'Click here to continue') then
+    begin
+      GetMousePos(X, Y);
+      Mouse(X, Y, 0, 0, True);
+    end;
+
+    if (ValidInterface(220)) then
+      Mouse(456, 44, 6, 6, True);
+
+    Wait(670+random(600));
+
+    if (not ValidInterface(242)) and (not ValidInterface(241)) and (not ValidInterface(243)) and (not ValidInterface(64)) and (not ValidInterface(220)) then
+    begin
+      Writeln('[Reflection] Successfully done talking to leo');
+      Result := True;
+      Exit;
+    end;
+  until (TimeFromMark(t) > 30000)
+  Writeln('[Reflection] Timeout talking to Leo at start');
+end;
+
+{*******************************************************************************
+function R_LeoDropInv : TIntegerArray;
+By: Cstrike
+Description: Makes space by dropping items farthest down in your inventory.
+result := [tile x dropped, tile y dropped (, item1 (, item2 (, item 3...];
+*******************************************************************************}
+function R_LeoDropInv: TIntegerArray;
+var
+  i, arrPos: Integer;
+  myTile: TTile;
+begin
+  if not LoggedIn then
+    Exit;
+
+  Result := [];
+  if R_InvCount > 23 then
+  begin
+    Writeln ('[Reflection] Making space for random');
+    arrPos := 2; // 0 is Tile.x, 1 is Tile.y, 2 is item1, 3 is item2...etc, we want to start filling at index w/ arrPos
+
+    SetArrayLength (result, (R_InvCount-23)+2); // If count is 25, then we have the first 2 as tile, last two as ID's
+    myTile := GetMyPos;
+    result[0] := myTile.x;
+    result[1] := myTile.y;
+
+    for i:=28 downto 0 do // If there is that 'destroy crap' for whatever, then this will probably skip it... thus downto 0
+    begin
+      if R_InvCount < 24 then
+        Exit;
+
+      if R_ItemExists(i) then
+      begin
+        result[arrPos] := GetItemIDAt(i);
+        R_DropItem(i);
+        Wait (900+random(350));
+        Inc(arrPos);
+      end;
+    end;
+  end else Writeln('[Reflection] We have 5+ inventory spaces for the Leo random, proceeding...');
+end;
+
+{*******************************************************************************
+procedure R_LeoRetrieveInv (TIA : TIntegerArray);
+By: Cstrike
+Description: If you dropped anything, picks it up.
+*******************************************************************************}
+procedure R_LeoRetrieveInv(TIA: TIntegerArray);
+var
+  GIA: TGroundItemArray;
+  t: Integer;
+  TP: TPoint;
+begin
+  if not LoggedIn then
+    Exit;
+
+  if (high(TIA) < 0) then
+    Exit;
+
+  GIA := []; // Failsafe
+  MarkTime(t);
+  Writeln('[Reflection] Picking up items dropped');
+
+  if (high(TIA) < 2) then
+    Exit
+  else // No items to retrieve
+  begin
+    if not TileOnMS(Tile(TIA[0],TIA[1]), 0)then
+      WalkToTile (Tile(TIA[0],TIA[1]), 1, 0);
+
+    repeat
+      GIA := GetItemsAt(Tile(TIA[0],TIA[1]));
+      if high(GIA) > -1 then
+      begin
+        TP := TileToMS(Tile(TIA[0],TIA[1]), 0);
+        Mouse(TP.x, TP.y, 2, 2, True);
+        Wait (500+random(250));
+      end;
+    until (high(GIA) < 0) or (TimeFromMark(t) > 15000)
+
+  end;
+  GIA := []; // Need to blank this for a memory reason
+  TIA := []; // Blank TIA in case we fail and need to start fresh
+end;
+
+{*******************************************************************************
+function R_LeoGraveTiles (i : Integer) : TTile;
+By: Cstrike
+Description: Returns grave tile positions relative to Leo. This can be revamped
+in the future with objects.
+*******************************************************************************}
+function R_LeoGraveTiles (i : Integer): TTile;
+var
+  NPCs : TNPCArray;
+  LeoTile : TTile;
+begin
+  if not LoggedIn then
+    Exit;
+
+  Result := Tile(0,0); // Failsafe
+  NPCs := SortNPCs(GetNPCs);
+  LeoTile := NPCs[0].Tile;
+
+  case i of // TL, TR, BL, BM, Bottom Right [BR]
+    0: result := Tile(LeoTile.x-2,LeoTile.y-4);
+    1: result := Tile(LeoTile.x+2,LeoTile.y-4);
+    2: result := Tile(LeoTile.x-4,LeoTile.y-7);
+    3: result := Tile(LeoTile.x-0,LeoTile.y-7);
+    4: result := Tile(LeoTile.x+4,LeoTile.y-7);
+  end;
+end;
+
+{*******************************************************************************
+function R_LeoGravestoneTiles (i : Integer) : TTile;
+By: Cstrike
+Description: Returns graveSTONE tile positions relative to Leo. This can be
+revamped in the future with objects.
+*******************************************************************************}
+function R_LeoGravestoneTiles (i : Integer): TTile;
+var
+  NPCs : TNPCArray;
+  LeoTile : TTile;
+begin
+  if not LoggedIn then
+    Exit;
+
+  Result := Tile(0,0);
+  NPCs := SortNPCs(GetNPCs);
+  LeoTile := NPCs[0].Tile;
+
+  case i of // TL, TR, BL, BM, Bottom Right [BR]
+    0: result := Tile(LeoTile.x-2,LeoTile.y-2);
+    1: result := Tile(LeoTile.x+2,LeoTile.y-2);
+    2: result := Tile(LeoTile.x-4,LeoTile.y-5);
+    3: result := Tile(LeoTile.x-0,LeoTile.y-5);
+    4: result := Tile(LeoTile.x+4,LeoTile.y-5);
+  end;
+end;
+
+{*******************************************************************************
+function R_GraveObjectCoffinCollect : Boolean;
+By: Cstrike
+Description: Collects all the coffins. Returns True if successful.
+*******************************************************************************}
+// 12718 = middle gravestone
+function R_GraveObjectCoffinCollect: Boolean;
+var
+  ObjCasket, ObjCasketUpdated : TRSObjectArray;
+  t, InviCount : Integer;
+  TP : TPoint;
+begin
+  if not LoggedIn then
+    Exit;
+
+  Result := False;
+  // Failsafe below
+  ObjCasket := GetObjectsByID ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52);
+  if high(ObjCasket) < 0 then
+  begin
+    Writeln('[Reflection] We have all the coffins');
+    Result := True;
+    Exit;
+  end;
+
+  // Main part of script
+  SetAngle(True);
+  Writeln('[Reflection] Grabbing coffins');
+  repeat
+    ObjCasketUpdated := GetObjectsByID ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52); // Allows for dynamic stuff
+
+    if high(ObjCasketUpdated) < 0 then
+      Break;
+
+    if not TileOnMS(ObjCasketUpdated[0].Tile, 0) then
+      R_LeoWalkToCenter;
+
+    TP := TileToMS (ObjCasketUpdated[0].Tile, 0);
+    Mouse (TP.x, TP.y, 2, 3, True);
+    InviCount := R_InvCount;
+    MarkTime(t);
+    repeat
+      Wait(50);
+    until (R_InvCount > InviCount) or (TimeFromMark(t) > 10000)
+
+  until (high(ObjCasketUpdated) < 0)
+  if (R_CountItemID(LEO_INVENTORY_CASKET1) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET2) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET3) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET4) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET5) = 1) then result := True;
+end;
+
+{*******************************************************************************
+function R_LeoFindCasket (name : String) : Integer;
+By: Cstrike
+Description: Searches for the name of what casketID matches the name you give it
+*******************************************************************************}
+function R_LeoFindCasket (name : String): Integer;
+var
+  i, j, IDToFind : Integer;
+begin
+  if not LoggedIn then
+    Exit;
+
+  Result := 0;
+  case name of
+    'flowerpot': IDToFind := LEO_FLOWERPOTID;
+      'pickaxe': IDToFind := LEO_PICKAXEID;
+     'chef hat': IDToFind := LEO_CHEFHATID;
+      'hatchet': IDToFind := LEO_HATCHETID;
+       'shears': IDToFind := LEO_SHEARSID;
+  end;
+
+  for i:=7587 to 7591 do
+  begin
+    R_ClickItemID(i, True, 'open');
+    Wait(2000+random(1500));
+    for j:=3 to 11 do // Search interfaces for ID to find
+    begin
+      Wait(50+random(50)); // More human like waiting
+      if (R_LeoComponentID (141, j) = IDToFind) then // 141 is the ID
+      begin
+        Writeln('[Reflection] Found proper casket for grave');
+        Result := i;
+        Mouse(493, 27, 3, 3, True);
+        Wait(700+random(500));
+        Exit;
+      end;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_LeoSolveGraves : Boolean;
+By: Cstrike
+Description: This is the big procedure that solves the graves. False = failed.
+*******************************************************************************}
+function R_LeoSolveGraves : Boolean;
+var
+  i, j, t, texID, CasketID : Integer;
+  GStoneTile : TTile;
+  TP : TPoint;
+begin
+  Result := False;
+  if not LoggedIn then
+    Exit;
+
+  for i:=4 downto 0 do // START AT BOTTOM RIGHT since thats where you got your last casket
+  begin
+    GStoneTile := R_LeoGravestoneTiles(i);
+    if not TileOnMS(GStoneTile, 0) then
+      R_LeoWalkToCenter;
+
+    TP := TileToMS(GStoneTile, 0);
+    Mouse(TP.x, TP.y, 3, 3, True);
+    MarkTime(t);
+
+    repeat
+      Wait(50);
+    until(ValidInterface(143))or(TimeFromMark(t) > 10000)
+
+    if ValidInterface(143) then
+    begin
+      for j:=0 to 3 do // Search the 3x3 item square
+      begin
+        texID := R_LeoComponentID(143, j);
+        case texID of
+          7614: begin
+                  Writeln('[Reflection] Found hatchet model (ID Found: '+inttostr(texID)+')');
+                  Wait(800+random(2200)); // Seem human I guess?
+                  Mouse(491, 29, 3, 3, True);
+                  Wait(100+random(500)); // Exits the model view
+                  CasketID := R_LeoFindCasket('hatchet');
+                  Writeln('[Reflection] Casket ID found = '+inttostr(casketID));
+                  if R_ClickItemID(CasketID, false, 'use') then
+                  begin
+                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
+                    Mouse (TP.x, TP.y, 3, 3, True);
+                    R_LeoInvDecrease(1, 12000);
+                  end;
+                end;
+          7615: begin
+                  Writeln('[Reflection] Found chef hat model (ID Found: '+inttostr(texID)+')');
+                  Wait(800+random(2200)); // Seem human I guess?
+                  Mouse(491, 29, 3, 3, True);
+                  Wait(100+random(500)); // Exits the model view
+                  CasketID := R_LeoFindCasket('chef hat');
+                  Writeln('[Reflection] Casket ID found = '+inttostr(casketID));
+                  if R_ClickItemID(CasketID, false, 'use') then
+                  begin
+                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
+                    Mouse (TP.x, TP.y, 3, 3, True);
+                    R_LeoInvDecrease(1, 12000);
+                  end;
+                end;
+          7616: begin
+                  Writeln('[Reflection] Found pickaxe model (ID Found: '+inttostr(texID)+')');
+                  Wait(640+random(1800)); // Seem human I guess?
+                  Mouse(491, 29, 3, 3, True);
+                  Wait(100+random(500)); // Exits the model view
+                  CasketID := R_LeoFindCasket('pickaxe');
+                  Writeln('[Reflection] Casket ID found = '+inttostr(casketID));
+                  if R_ClickItemID(CasketID, false, 'use') then
+                  begin
+                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
+                    Mouse (TP.x, TP.y, 3, 3, True);
+                    R_LeoInvDecrease(1, 12000);
+                  end;
+                end;
+          7617: begin
+                  Writeln('[Reflection] Found watertank model (ID Found: '+inttostr(texID)+')');
+                  Wait(11100+random(1100)); // Seem human I guess?
+                  Mouse(491, 29, 3, 3, True);
+                  Wait(100+random(500)); // Exits the model view
+                  CasketID := R_LeoFindCasket('shears');
+                  Writeln('[Reflection] Casket ID found = '+inttostr(casketID));
+                  if R_ClickItemID(CasketID, false, 'use') then
+                  begin
+                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
+                    Mouse (TP.x, TP.y, 3, 3, True);
+                    R_LeoInvDecrease(1, 12000);
+                  end;
+                end;
+          7618: begin
+                  Writeln('[Reflection] Found flowerpot model (ID Found: '+inttostr(texID)+')');
+                  Wait(1100+random(2000)); // Seem human I guess?
+                  Mouse(491, 29, 3, 3, True);
+                  Wait(100+random(500)); // Exits the model view
+                  CasketID := R_LeoFindCasket('flowerpot');
+                  Writeln('[Reflection] Casket ID found = '+inttostr(casketID));
+                  if R_ClickItemID(CasketID, false, 'use') then
+                  begin
+                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
+                    Mouse (TP.x, TP.y, 3, 3, True);
+                    R_LeoInvDecrease(1, 12000);
+                  end;
+                end;
+        end;
+      end;
+    end;
+    Wait(1000+Random(1000)); // More Wait here, must replace thsi later on
+  end;
+  result := True; // Fix me failsafe :(
+end;
+
+{*******************************************************************************
+function R_TalkToLeoEnd : Boolean;
+By: Cstrike
+Description: Talks to Leo to solve the random. If we mess up, returns false.
+*******************************************************************************}
+function R_TalkToLeoEnd : Boolean;
+var
+  t: Integer;
+  NPCs: TNPCArray;
+  TP: TPoint;
+begin
+  Result := False;
+  if not LoggedIn then
+    Exit;
+
+  if (not ValidInterface(241)) and (not ValidInterface(64)) then
+  begin
+    NPCs := SortNPCs(GetNPCs);
+    if not TileOnMS(NPCs[0].Tile, 0) then
+    begin
+      WalkToTile(NPCs[0].Tile, 0, 0);
+      Wait(2000+Random(1000));
+    end;
+
+    TP := TileToMS (NPCs[0].Tile, 0);
+    Mouse(TP.x, TP.y, 3, 3, false);
+    Wait(500+random(500));
+    if ChooseOptionMulti(['Ta','-to']) then
+    begin
+      Writeln ('[Reflection] Talked to leo at end');
+      Wait(1000+Random(1000));
+      Flag;
+    end;
+    Wait(2500+random(1500));
+  end else Writeln ('[Reflection] Leo is already chatting with us');
+
+  Wait (3000+random(2000)); // Stops lag at start up from screwing us over
+  MarkTime(t);
+  repeat
+    if (GetInterfaceText(241, 5) = 'Click here to continue') or (GetInterfaceText(64, 5) = 'Click here to continue') then Mouse (303, 452, 72, 7, True);
+    Wait (670+random(600));
+    if (not ValidInterface(241)) and (not ValidInterface(64)) then
+    begin
+      Writeln('[Reflection] Done chatting with Leo at end');
+      Result := True;
+      Exit;
+    end;
+  until (TimeFromMark(t) > 20000)
+  Writeln ('[Reflection] Timeout talking to Leo at end, result = false');
+end;
+
+{*******************************************************************************
+function R_SolveLeo : Boolean;
+By: Cstrike
+Description: Attempts to solve the random.
+*******************************************************************************}
+function R_SolveLeo : Boolean;
+var failsafe : Integer;
+    ItemDropData : TIntegerArray;
+begin
+  result := false;
+  ItemDropData := []; // Failsafe
+  if R_InLeo then
+  begin
+    failsafe := 0;
+    repeat
+      Writeln ('[Reflection] Leo Phase 1: Talk to Leo at start');
+      if R_TalkToLeoStart then
+      begin
+        if R_InvCount > 23 then
+          ItemDropData := R_LeoDropInv; // Declared it here so it can pick it up later
+
+        Writeln('[Reflection] Leo Phase 2: Collect graves');
+        if R_GraveObjectCoffinCollect then
+        begin
+          Writeln('[Reflection] Leo Phase 3: Solve the graves');
+          if R_LeoSolveGraves then
+          begin
+            if (high(ItemDropData) < 0) then
+              R_LeoRetrieveInv (ItemDropData); // If we dropped something, now is the time to pick it up
+
+            Writeln('[Reflection] Leo Phase 4: Talk to Leo at end');
+            if R_TalkToLeoEnd then
+            begin
+              Writeln('[Reflection] Leo solved!');
+              Wait(3000+Random(2000));
+              result := True;
+              Exit;
+            end;
+
+          end else
+          begin
+            Writeln('[Reflection] Failed solving graves');
+            if (high(ItemDropData) < 0) then
+              R_LeoRetrieveInv (ItemDropData); // If we dropped something, now is the time to pick it up
+            Inc(failsafe);
+          end;
+
+        end else
+        begin
+          Writeln('[Reflection] Had trouble grabbing all the ground coffins');
+          Inc(failsafe);
+        end;
+
+      end else
+      begin
+        Writeln('[Reflection] Had trouble talking to leo @ start');
+        Inc(failsafe);
+      end;
+
+    if failsafe < 3 then
+      Writeln ('[Reflection] Re-attempting Leo');
+
+    until (failsafe > 2)
+    if failsafe > 2 then
+    begin
+      Writeln('[Reflection] We have failed leo too many times, aborting Leo solving procedure');
+      Exit;
+    end;
+  end;
+end;
