@@ -26,31 +26,47 @@ var
   T: Integer;
   P: TPoint;
 begin
+  if not R_InMolly then
+    Exit;
+
   T := GetSystemTime;
-  if not R_InMolly then Exit;
   While not Result do
   begin
-    if not R_InMolly then Exit;
-    if ValidInterface(242) or ValidInterface(64) then Exit;
-    if (GetSystemTime-T) > 3000 then
+    if not R_InMolly then
+      Exit;
+
+    if ValidInterface(242) or ValidInterface(64) then
+      Exit;
+
+    if (GetSystemTime - T > 3000) then
     begin
+
       if not TileOnMS(Molly.Tile, 20) then
-        WalkToTile(Point(Molly.Tile.X, Molly.Tile.Y-2), 0, 0);
-      wait(700+Random(700));
-      P := TileToMS(Molly.Tile, Molly.Height * 2 / 3);
-      Mouse(P.x, P.y, 2, 2, false);
-      wait(100+Random(100));
-      if R_chooseOption('Talk')then
       begin
-        wait(100+Random(100));
-        While characterMoving do wait(100+Random(100));
+        Writeln('[Reflection] Walking to molly');
+        WalkToTile(Point(Molly.Tile.X, Molly.Tile.Y-2), 0, 0);
+      end;
+      Wait(700+Random(700));
+      P := TileToMS(Molly.Tile, Molly.Height * 2 / 3);
+
+      Mouse(P.X, P.Y, 2, 2, False);
+      Wait(100+Random(100));
+
+      if ChooseOption('alk')then
+      begin
+        Wait(100+Random(100));
+        While CharacterMoving do
+          Wait(100+Random(100));
+
         While (not ValidInterface(242)) and (not ValidInterface(241)) and (not ValidInterface(64)) do wait(100+Random(100));
-        wait(700+Random(700));
+          wait(700+Random(700));
       end;
     end;
+
     Result := ValidInterface(241) or ValidInterface(64) or ValidInterface(242);
     if (GetInterfaceText(228, 2) = 'No thanks.')then
       Exit;
+
   end;
 end;
 
@@ -63,17 +79,19 @@ function R_TalkToMolly: boolean;
 var
   qx, qy: integer;
 begin
-  While (FindColorTolerance(qx, qy, 8388608, 184, 425, 365, 457, 2) or
-    FindColorTolerance(qx, qy, 16711680, 184, 425, 365, 457, 2)) do
+  While (FindColorTolerance(qx, qy, 8388608, 184, 425, 365, 457, 2)) or (FindColorTolerance(qx, qy, 16711680, 184, 425, 365, 457, 2)) do
   begin
-    Result := true;
-    if not R_InMolly then Exit;
+    Result := True;
+    if not R_InMolly then
+      Exit;
+
     if (GetInterfaceText(228, 3) = 'No thanks.')then
       Exit;
-    wait(100+Random(100));
+
+    Wait(100+Random(100));
     Mouse(qx, qy+5, 0, 0, true);
     MouseBox(19, 362, 393, 427, 3);
-    wait(100+Random(100));
+    Wait(100+Random(100));
     ChatWait;
   end;
 end;
@@ -85,9 +103,11 @@ Description: Gets evil twin ID.
 *******************************************************************************}
 procedure NMolly_GetTwin;
 begin
-  if not R_InMolly then Exit;
+  if not R_InMolly then
+    Exit;
+
   TwinID :=  Molly.ID - 40;
-  Writeln('Twin ID: '+inttostr(TwinID));
+  Writeln('[Reflection] Twin ID: '+inttostr(TwinID));
 end;
 
 {*******************************************************************************
@@ -97,7 +117,9 @@ Description: Clicks the option: 'No thanks.'
 *******************************************************************************}
 procedure NMolly_ClickGo;
 begin
-  if not R_InMolly then Exit;
+  if not R_InMolly then
+    Exit;
+
   MouseBox(193, 428, 334, 437, 1);
   ChatWait;
   R_TalkToMolly;
@@ -117,8 +139,10 @@ var
   P: TPoint;
   i: integer;
 begin
-  if not R_InMolly then Exit;
-  wait(400+Random(400));
+  if not R_InMolly then
+    Exit;
+
+  Wait(400+Random(400));
   while R_InMolly do
   begin
     P := TileToMSEx(Tile(MDoorTile.x, MDoorTile.Y), 0.9, 0.5, 15);
@@ -158,8 +182,10 @@ function Molly_OpenCrane: Boolean;
 var
   P: TPoint;
 begin
-  if not R_InMolly then Exit;
-  wait(400+Random(400));
+  if not R_InMolly then
+    Exit;
+
+  Wait(400+Random(400));
   while R_InMolly do
   begin
     P := TileToMS(MCraneTile, 15);
@@ -194,11 +220,14 @@ begin
     B := False;
     while not B do
     begin
-      if FindNPC(TwinID, Twin)then Writeln('Found evil twin!') else
-        Writeln('No evil twin found.');
+      if FindNPC(TwinID, Twin)then
+        Writeln('[Reflection] Found evil twin!')
+      else
+        Writeln('[Reflection] No evil twin found.');
+
       while ClawTile.x <> Twin.Tile.x do
       begin
-        writeln(inttostr(clawtile.x)+' - '+inttostr(twin.tile.x));
+        DebugLn(inttostr(clawtile.x)+' - '+inttostr(twin.tile.x));
         if ClawTile.x > Twin.Tile.x then
         begin
           Mouse(684, 319, 37, 24, True); //right
@@ -273,21 +302,21 @@ begin
     R_MakeCompass('E');
     if Molly_OpenDoor(1) then
     begin
-      Writeln('Opened door!');
+      Writeln('[Reflection] Opened door!');
       MakeCompass('N');
       if not Molly_OpenCrane then
       begin
-        Writeln('Failed to open molly crane. Terminating.');
+        Writeln('[Reflection] Failed to open molly crane. Terminating.');
         TerminateScript;
       end;
       if not Molly_CatchTwin then
       begin
-        Writeln('Failed to catch evil twin. Terminating.');
+        Writeln('[Reflection] Failed to catch evil twin. Terminating.');
         TerminateScript;
       end;
       if not Molly_OpenDoor(2) then
       begin
-        Writeln('Failed to get back to Molly. Terminating.');
+        Writeln('[Reflection] Failed to get back to Molly. Terminating.');
         TerminateScript;
       end;
       WaitToTalkToMolly;
@@ -299,7 +328,7 @@ begin
   begin
     Result := True;
     //Inc(RSolved[RMolly]);
-    AddToReport('Solved Molly Random!');
+    AddToReport('[Reflection] Solved Molly Random!');
   end; {else
     Inc(RFailed[RMolly]); }
 end;

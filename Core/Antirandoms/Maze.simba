@@ -1,0 +1,364 @@
+const
+  PATH_GREEN = 0;
+  PATH_BLUE = 1;
+  PATH_CYAN = 2;
+  PATH_PURPLE = 3;
+
+type
+  TMazeDoors = Record
+    Tiles: TTileArray;
+    Dir: TStringArray;
+  end;
+
+Function r_InMaze: Boolean;
+begin
+  Result := ValidNPC(8632);
+end;
+
+Function r_InMazePath: Integer;
+var
+  MP: TPoint;
+begin
+  Result := -1;
+  MP := GetMyPos;
+
+  If PointInBox(MP, IntToBox(2920, 4572, 2940, 4600))then
+    Result := PATH_PURPLE;
+
+  If PointInBox(MP, IntToBox(2891, 4586, 2894, 4599))then
+    Result := PATH_BLUE;
+
+  If PointInBox(MP, IntToBox(2915, 4555, 2933, 4560))then
+    Result := PATH_CYAN;
+
+  If PointInBox(MP, IntToBox(2891, 4555, 2914, 4561))then
+    Result := PATH_GREEN;
+end;
+
+Function r_MazePath(Path: Integer): TMazeDoors;
+begin
+  Case Path of
+    PATH_PURPLE:
+    begin
+      SetArrayLength(Result.Tiles, 16);
+      SetArrayLength(Result.Dir, 16);
+
+      Result.Tiles[0] := Tile(2932, 4597);
+      Result.Dir[0] := 'n';
+
+      Result.Tiles[1] := Tile(2921, 4599);
+      Result.Dir[1] := 'n';
+
+      Result.Tiles[2] := Tile(2909, 4600);
+      Result.Dir[2] := 's';
+
+      Result.Tiles[3] := Tile(2913, 4598);
+      Result.Dir[3] := 's';
+
+      Result.Tiles[4] := Tile(2908, 4596);
+      Result.Dir[4] := 's';
+
+      Result.Tiles[5] := Tile(2919, 4594);
+      Result.Dir[5] := 's';
+
+      Result.Tiles[6] := Tile(2908, 4592);
+      Result.Dir[6] := 's';
+
+      Result.Tiles[7] := Tile(2898, 4585);
+      Result.Dir[7] := 'e';
+
+      Result.Tiles[8] := Tile(2903, 4588);
+      Result.Dir[8] := 's';
+
+      Result.Tiles[9] := Tile(2902, 4575);
+      Result.Dir[9] := 'e';
+
+      Result.Tiles[10] := Tile(2906, 4585);
+      Result.Dir[10] := 'n';
+
+      Result.Tiles[11] := Tile(2916, 4586);
+      Result.Dir[11] := 's';
+
+      Result.Tiles[12] := Tile(2920, 4582);
+      Result.Dir[12] := 'w';
+
+      Result.Tiles[13] := Tile(2910, 4582);
+      Result.Dir[13] := 's';
+
+      Result.Tiles[14] := Tile(2910, 4572);
+      Result.Dir[14] := 'n';
+
+      Result.Tiles[15] := Tile(2910, 4576);
+      Result.Dir[15] := 'e';
+    end;
+
+    PATH_BLUE:
+    begin
+      SetArrayLength(Result.Tiles, 17);
+      SetArrayLength(Result.Dir, 17);
+
+      Result.Tiles[0] := Tile(2891, 4588);
+      Result.Dir[0] := 'w';
+
+      Result.Tiles[1] := Tile(2889, 4596);
+      Result.Dir[1] := 'w';
+
+      Result.Tiles[2] := Tile(2893, 4600);
+      Result.Dir[2] := 's';
+
+      Result.Tiles[3] := Tile(2901, 4598);
+      Result.Dir[3] := 's';
+
+      Result.Tiles[4] := Tile(2897, 4596);
+      Result.Dir[4] := 's';
+
+      Result.Tiles[5] := Tile(2894, 4587);
+      Result.Dir[5] := 'e';
+
+      Result.Tiles[6] := Tile(2896, 4582);
+      Result.Dir[6] := 'e';
+
+      Result.Tiles[7] := Tile(2898, 4570);
+      Result.Dir[7] := 'e';
+
+      Result.Tiles[8] := Tile(2900, 4567);
+      Result.Dir[8] := 'e';
+
+      Result.Tiles[9] := Tile(2911, 4566);
+      Result.Dir[9] := 'n';
+
+      Result.Tiles[10] := Tile(2906, 4585);
+      Result.Dir[10] := 'n';
+
+      Result.Tiles[11] := Tile(2916, 4586);
+      Result.Dir[11] := 's';
+
+      Result.Tiles[12] := Tile(2920, 4582);
+      Result.Dir[12] := 'w';
+
+      Result.Tiles[13] := Tile(2910, 4582);
+      Result.Dir[13] := 's';
+
+      Result.Tiles[14] := Tile(2910, 4572);
+      Result.Dir[15] := 'n';
+
+      Result.Tiles[16] := Tile(2910, 4576);
+      Result.Dir[16] := 'e';
+    end;
+
+    PATH_CYAN:
+    begin
+      SetArrayLength(Result.Tiles, 16);
+      SetArrayLength(Result.Dir, 16);
+
+      Result.Tiles[0] := Tile(2930, 4555);
+      Result.Dir[0] := 's';
+
+      Result.Tiles[1] := Tile(2912, 4553);
+      Result.Dir[1] := 's';
+
+      Result.Tiles[2] := Tile(2936, 4556);
+      Result.Dir[2] := 'w';
+
+      Result.Tiles[3] := Tile(2934, 4568);
+      Result.Dir[3] := 'w';
+
+      Result.Tiles[4] := Tile(2932, 4575);
+      Result.Dir[4] := 'w';
+
+      Result.Tiles[5] := Tile(2930, 4561);
+      Result.Dir[5] := 'w';
+
+      Result.Tiles[6] := Tile(2929, 4581);
+      Result.Dir[6] := 'e';
+
+      Result.Tiles[7] := Tile(2930, 4590);
+      Result.Dir[7] := 'w';
+
+      Result.Tiles[8] := Tile(2924, 4592);
+      Result.Dir[8] := 's';
+
+      Result.Tiles[9] := Tile(2926, 4575);
+      Result.Dir[9] := 'w';
+
+      Result.Tiles[10] := Tile(2924, 4583);
+      Result.Dir[10] := 'w';
+
+      Result.Tiles[11] := Tile(2916, 4586);
+      Result.Dir[11] := 's';
+
+      Result.Tiles[12] := Tile(2920, 4582);
+      Result.Dir[12] := 'w';
+
+      Result.Tiles[13] := Tile(2910, 4582);
+      Result.Dir[13] := 's';
+
+      Result.Tiles[14] := Tile(2910, 4572);
+      Result.Dir[14] := 'n';
+
+      Result.Tiles[15] := Tile(2910, 4576);
+      Result.Dir[15] := 'e';
+    end;
+
+    PATH_GREEN:
+    begin
+      SetArrayLength(Result.Tiles, 17);
+      SetArrayLength(Result.Dir, 17);
+
+      Result.Tiles[0] := Tile(2903, 4555);
+      Result.Dir[0] := 's';
+
+      Result.Tiles[1] := Tile(2890, 4566);
+      Result.Dir[1] := 'e';
+
+      Result.Tiles[2] := Tile(2892, 4578);
+      Result.Dir[2] := 'e';
+
+      Result.Tiles[3] := Tile(2894, 4567);
+      Result.Dir[3] := 'e';
+
+      Result.Tiles[4] := Tile(2896, 4562);
+      Result.Dir[4] := 'e';
+
+      Result.Tiles[5] := Tile(2905, 4561);
+      Result.Dir[5] := 's';
+
+      Result.Tiles[6] := Tile(2915, 4560);
+      Result.Dir[6] := 'n';
+
+      Result.Tiles[7] := Tile(2909, 4562);
+      Result.Dir[7] := 'n';
+
+      Result.Tiles[8] := Tile(2924, 4566);
+      Result.Dir[8] := 'w';
+
+      Result.Tiles[9] := Tile(2922, 4575);
+      Result.Dir[9] := 'w';
+
+      Result.Tiles[10] := Tile(2916, 4568);
+      Result.Dir[10] := 'n';
+
+      Result.Tiles[11] := Tile(2905, 4573);
+      Result.Dir[11] := 'w';
+
+      Result.Tiles[12] := Tile(2906, 4585);
+      Result.Dir[12] := 'n';
+
+      Result.Tiles[13] := Tile(2916, 4586);
+      Result.Dir[13] := 's';
+
+      Result.Tiles[14] := Tile(2920, 4582);
+      Result.Dir[14] := 'w';
+
+      Result.Tiles[15] := Tile(2910, 4582);
+      Result.Dir[15] := 's';
+
+      Result.Tiles[16] := Tile(2910, 4572);
+      Result.Dir[16] := 'n';
+
+      Result.Tiles[17] := Tile(2910, 4576);
+      Result.Dir[17] := 'e';
+    end;
+  end;
+end;
+
+Function r_WalkMaze: Boolean;
+var
+  Path: TMazeDoors;
+  I, iTime, iTimeEx: Integer;
+  D: String;
+  C: TPoint;
+  B: Boolean;
+  MP: TPoint;
+begin
+  Path := r_MazePath(r_InMazePath);
+
+  For I:=0 to High(Path.Tiles)do
+  begin
+    If Not (D = Path.Dir[I])then
+    begin
+      D := Path.Dir[I];
+      MakeCompass(Path.Dir[I]);
+    end;
+
+    iTime := GetSystemTime;
+    Repeat
+      If Not TileOnMS(Path.Tiles[I], 0)then
+      begin
+        WalkToTile(Path.Tiles[I], 0, 0);
+        Wait(1000+Random(1000));
+      end;
+
+      Case D of
+        'n': C := TileToMSEx(Path.Tiles[I], 0.5, 1.0, 350+Random(400));
+        's': C := TileToMSEx(Path.Tiles[I], 0.5, 0.0, 350+Random(400));
+        'w': C := TileToMSEx(Path.Tiles[I], 0.0, 0.5, 350+Random(400));
+        'e': C := TileToMSEx(Path.Tiles[I], 1.0, 0.5, 350+Random(400));
+      end;
+
+      MMouse(C.X, C.Y, 5, 5);
+      B := WaitUpText('Open', 200+Random(100));
+      GetMousePos(C.X, C.Y);
+      Mouse(C.X, C.Y, 0, 0, B);
+      If Not B then
+        B := WaitOption('Open', 200+Random(100));
+
+      If (B)and(DidClick(True, 1000+random(200))) then
+      begin
+        Writeln('[Reflection] Clicked a door..');
+
+        iTimeEx := GetSystemTime;
+        Repeat
+          MP := GetMyPos;
+
+          If (D = 'n')or(D = 's')then
+            B := ((MP.X = Path.Tiles[I].X)and((MP.Y = Path.Tiles[I].Y-1)or(MP.Y = Path.Tiles[I].Y+1)))
+          else
+            B := ((MP.Y = Path.Tiles[I].Y)and((MP.X = Path.Tiles[I].X-1)or(MP.Y = Path.Tiles[I].X+1)));
+        Until(B)or(GetSystemTime - iTimeEx > 10000);
+      end;
+
+    Until(B)or(GetSystemTime - iTime > 50000);
+
+    If (GetSystemTime - iTime > 30000)then
+    begin
+      Writeln('[Reflection] Took more than 30 secs to get pass a door');
+      Exit;
+    end;
+
+    Wait(3000+Random(1500));
+    iTime := GetSystemTime;
+    While Not IsIdle do
+    begin
+      Wait(100+Random(100));
+      If (GetSystemTime - iTime > 20000) then
+      begin
+        Writeln('[Reflection] Took more than 20 secs to idle');
+        Exit;
+      end;
+    end;
+
+  end;
+end;
+
+Function r_SolveMaze: Boolean;
+var
+  C: TPoint;
+begin
+  Result := r_WalkMaze;
+  Result := True;
+  If Result then
+  begin
+    Writeln('[Reflection] In the middle!');
+    C := TileToMS(Tile(2912, 4576), 0);
+    MMouse(C.X, C.Y, 5, 5);
+    Result := IsUpText('ouch');
+    If Not Result then
+      Exit;
+
+    GetMousePos(C.X, C.Y);
+    Mouse(C.X, C.Y, 0, 0, True);
+    Writeln('[Reflection] Clicked the middle teleport!');
+    Wait(5000+Random(4000));
+  end;
+end;

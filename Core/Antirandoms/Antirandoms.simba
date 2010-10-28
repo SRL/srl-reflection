@@ -116,8 +116,8 @@ begin
   begin
     RandName := 'Maze';
     Music := 'time out';
-    InRandom := nil;
-    SolveRandom := nil;
+    InRandom := @r_InMaze;
+    SolveRandom := @r_SolveMaze;
   end;
 
   With r_RandomArr[R_RANDOM_MIME] do
@@ -287,8 +287,10 @@ begin
       //Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
       Writeln('[Reflection] Trying to solve: ' + r_RandomArr[I].RandName);
       if (r_RandomArr[I].SolveRandom <> nil) then
+      begin
+        SetAngle(True);
         Result := r_RandomArr[I].SolveRandom()
-      else
+      end else
       begin
         Writeln('[Reflection] No random solver for this random yet!');
         Logout;

@@ -31,7 +31,7 @@ begin
     'three': Result := R_THREETAIL;
     'four': Result := R_FOURTAIL;
   end;
-
+  Writeln('[Reflection] Going to look for ' + S + ' tailed pheasant!');
   ClickToContinue;
 end;
 
@@ -80,36 +80,45 @@ begin
   until Result or (GetSystemTime > T);
 end;
 
-Function r_ForesterKill: Boolean;
+Function r_ForesterKill(Seekfor: Integer): Boolean;
 var
-  NPC: TNPC;
+  NPCs: TNPCArray;
   C: TPoint;
-  iTime, P: Integer;
+  iTime, P, iTimeEx: Integer;
 begin
   Writeln('[Reflection] Finding pheasant..');
 
-  P := r_ForesterWants;
+  P := Seekfor;
   iTime := GetSystemTime;
   Repeat
-    NPC := GetNPCNull(P);
-    If Not TileOnMS(NPC.Tile, 0)then
+    NPCs := SortNPCs(GetNPCsBy(P));
+
+    If (GetArrayLength(NPCs) = 0) then
+      Exit;
+
+    If Not TileOnMS(NPCs[0].Tile, 0)then
     begin
-      Writeln('[Reflection] Tile not on MS' + ToStr(NPC.Tile) + ', walking there.');
-      WalkToTile(NPC.Tile, 0, 0);
-      NPC := GetNPCNull(P);
+      Writeln('[Reflection] Tile not on MS' + ToStr(NPCs[0].Tile) + ', walking there.');
+      WalkToTile(NPCs[0].Tile, 0, 0);
+      Exit;
     end;
 
-    C := TileToMS(NPC.Tile, 0);
+    C := TileToMS(NPCs[0].Tile, 0);
     Mouse(C.X, C.Y, 5, 5, False);
     Result := WaitOption('tack', 200+Random(100));
 
     If Result then
     begin
       Writeln('[Reflection] Attacked pheasant!');
-      Wait(3000+Random(2000));
+      Wait(1000+Random(500));
       Flag;
-      While (r_ForesterFight)or(Not Pos('ollect', GetInterfaceText(241, 4)) > 0) do
+      iTimeEx := GetSystemTime;
+      While (Not Pos('ollect', GetInterfaceText(241, 4)) > 0) do
+      begin
         Wait(100+Random(100));
+        If (GetSystemTime - iTimeEx > 6000)then
+          Exit;
+      end;
 
       Wait(1000+Random(500));
     end;
@@ -177,17 +186,41 @@ begin
 end;
 
 Function r_SolveForester: Boolean;
+var
+  iTime: Integer;
+  FWants: Integer;
 begin
-  Result := False;
-  If not r_InForester then
+  Result := r_InForester;
+  If Not Result then
     Exit;
 
-  If (Not r_FindForester)or
-     (Not r_ForesterKill)or
-     (Not r_ForesterPickUp)or
-     (Not r_FindForester)or
-     (Not r_ForesterPortal)then
-       Exit;
+  If Not r_FindForester then
+    Exit;
+
+  FWants := r_ForesterWants;
+
+  iTime := GetSystemTime;
+  Repeat
+    r_ForesterKill(FWants);
+    If (GetSystemTime - iTime > 60000)then
+    begin
+      Writeln('[Reflection] Took more than one minute to recive food!');
+      Exit;
+    end;
+  Until(r_ForesterPickup);
+
+  If Not r_FindForester then
+    Exit;
+
+  iTime := GetSystemTime;
+
+  Repeat
+    If (GetSystemTime - iTime > 30000)then
+    begin
+      Writeln('[Reflection] Took more than 30 secs to leave!');
+      Exit;
+    end;
+  Until(r_ForesterPortal);
 
   Wait(1000+Random(2000));
   Result := (Not r_InForester)and(LoggedIn);
