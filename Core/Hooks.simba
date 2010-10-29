@@ -232,8 +232,8 @@ const
 
 {Class InteractiveObject}
     class_InteractiveObject = 'lw'; //627
-    hook_interactiveobject_GetID = 'K'; //627
-    hook_interactiveobject_GetModel = 'qb'; //627
+    hook_interactiveobject_GetID = 'qb'; //627
+    hook_interactiveobject_GetModel = 'K'; //627
 
 {Class InteractiveObject2}
     class_InteractiveObject2 = 'jg'; //627
@@ -249,19 +249,19 @@ const
     class_WallObjectData = 'uk'; //627
     hook_WallObjectData_GetID = 'ab'; //627
     hook_WallObjectData_GetModel = 'G'; //627
-    hook_WallObjectData_GetOrientation = 'rb';
+    hook_WallObjectData_GetOrientation = 'N'; //627
   hook_WallObjectData_GetID2 = 'D.H'; //not updated
 
 {Class WallDecorationData}
     class_WallDecorationData = 'lu'; //627
     hook_WallDecorationData_GetID = 'ab'; //627
     hook_WallDecorationData_GetModel = 'cb'; //627
-    hook_WallDecorationData_GetOrientation = 'W';
+    hook_WallDecorationData_GetOrientation = 'W'; //627
   hook_WallDecorationData_GetID2 = 'y.H'; //not updated
 
 {Class FloorDecorationData}
     class_FloorDecorationData = 'di'; //627
     hook_FloorDecorationData_GetID = 'H'; //627
     hook_FloorDecorationData_GetModel = 'bb'; //627
-    hook_FloorDecorationData_GetOrientation = 'M';
+    hook_FloorDecorationData_GetOrientation = 'M'; //627
   hook_FloorDecorationData_GetID2 = 'm.H'; //not updated
