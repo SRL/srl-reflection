@@ -212,8 +212,8 @@ const
 
 {Class Item}
     class_Item = 'n'; //627
-    hook_item_GetID = 'j'; //627
-    hook_item_GetStack = 'i'; //627
+    hook_item_GetID = 'i'; //627
+    hook_item_GetStack = 'j'; //627
 
 {Class NodeListCache}
     class_NodeListCache = 'bba'; //627
