@@ -1,0 +1,154 @@
+//-----------------------------------------------------------------//
+//--               Reflection Resource Library                   --//
+//--               » Pillory Solver                              --//
+//-----------------------------------------------------------------//
+// * function R_InPillory: boolean;                                // * by Drags111
+// * function R_OpenCage: boolean;                                 // * by Drags111
+// * function R_GetLock: boolean;                                  // * by Drags111
+// * function R_FindLockKey: boolean;                              // * by Drags111
+// * function R_SolvePillory: string;                              // * by Drags111
+
+{*******************************************************************************
+function R_InPillory: boolean;
+By: Drags111
+Description: Checks if we are in the Pillory Random.
+*******************************************************************************}
+function R_InPillory: boolean;
+var
+  P: TPoint;
+  O: UID;
+begin
+  P := GetMyPos;
+  O := GetObjectAt(P.X, P.Y);
+  Result := (O.objType = 7261);
+end;
+
+{*******************************************************************************
+function R_OpenCage: boolean;
+By: Drags111
+Description: Opens the cage door of the Pillory Random.
+*******************************************************************************}
+function R_OpenCage: boolean;
+var
+  TX, TY, V: Extended;
+  P, T: TPoint;
+begin
+  if ValidInterface(189) then
+    Exit;
+
+  T := GetMyPos;
+  TX := T.X;
+  TY := T.Y;
+  V := 0.5;
+  Result := false;
+  repeat
+    if (ValidInterface(189)) then
+    V := V + 0.1;
+    if (V > 0.8) then V := 0.1;
+    P := TileToMSEx(Tile(TX + V, TY + 0.9), 10);
+    MMouse(P.x, P.y, 4, 4);
+    Wait(RandomRange(100, 200));
+    if IsUpText('nlock') then
+    begin
+      GetMousePos(P.x, P.y);
+      Mouse(P.X, P.Y, 0, 0, false);
+      Wait(RandomRange(80, 100));
+      Result := ChooseOption('Unlock');
+    end;
+  until Result or not R_LoggedIn;
+end;
+
+{*******************************************************************************
+function R_GetLock: String;
+By: Drags111
+Description: Gets the ID of the current lock being displayed.
+*******************************************************************************}
+function R_GetLock: String;
+var
+  ID: Integer;
+begin
+  if (not(ValidInterface(189))) then
+    Exit;
+  ID := GetModelID(189, 4);
+  case ID of
+    9753: Result := 'diamond';
+    9754: Result := 'square';
+    9755: Result := 'circle';
+    9756: Result := 'triangle';
+  end;
+  Writeln('[Reflection] Lock found: ' + Result);
+end;
+
+{*******************************************************************************
+function R_FindLockKey: TPoint;
+By: Drags111
+Description: Finds the location of the key to open the lock.
+*******************************************************************************}
+function R_FindLockKey: TPoint;
+var
+  ID, i, CID: integer;
+  FoundKey: boolean;
+begin
+  if (not(ValidInterface(189))) then
+    Exit;
+  case LowerCase(R_GetLock) of
+    'diamond': CID := 9749;
+    'square': CID := 9750;
+    'circle': CID := 9751;
+    'triangle': CID := 9752;
+  end;
+  for i := 5 to 7 do
+  begin
+    if (not(ValidInterface(189))) then Exit;
+    ID := GetModelID(189, I);
+    if ID = CID then
+    begin
+      Writeln('[Reflection] Found key at Child: ' + ToStr(i));
+      FoundKey := True;
+      Break;
+    end;
+  end;
+  if not FoundKey then Exit;
+  case i of
+    5: Result := Point(209, 224);
+    6: Result := Point(299, 218);
+    7: Result := Point(397, 217);
+  end;
+end;
+
+{*******************************************************************************
+function R_SolvePillory: boolean;
+By: Drags111
+Description: Attempts to solve the Pillory Random!
+*******************************************************************************}
+function R_SolvePillory: boolean;
+var
+  Done: integer;
+  P: TPoint;
+begin
+  if not R_InPillory then Exit;
+
+  R_OpenCage;
+  While not ValidInterface(189) do
+    wait(100+Random(100));
+  repeat
+    if not R_InPillory then Break;
+    repeat
+      if not R_InPillory then Break;
+      if not R_LoggedIn then Exit;
+      P := R_FindLockKey;
+      Result := (P.x <> 0) and (P.y <> 0);
+    until Result;
+    Wait(500 + Random(1000));
+    if (not(ValidInterface(189))) then Break;
+    Mouse(P.x, P.y, 3, 3, true);
+    Inc(Done);
+    while not FindNPCChatText(inttostr(Done), nothing) do
+      Wait(100+Random(100));
+      Wait(1000+Random(500));
+    FindNPCChatText('here to con', ClickLeft);
+    if not R_InPillory then Break;
+  until not (FindNPCChatText('to go', nothing) or R_LoggedIn);
+  wait(2000+Random(2000));
+  Result := not R_InPillory;
+end;

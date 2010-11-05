@@ -1,0 +1,567 @@
+function GetComponentID (ParentI, ChildI : Integer) : Integer;
+var
+  Child: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Result := SmartGetFieldInt(Child, hook_interface_GetID);
+  SmartFreeObject(Child);
+end;
+
+var
+  RS_RMordaut: TNPC;
+  RS_MRanged, RS_MCooking, RS_MFishing, RS_MCombat, RS_MFarming,
+  RS_MMagic, RS_MFiremaking, RS_MHats, RS_MDrinks, RS_MWoodcutting,
+  RS_MBoots, RS_MCrafting, RS_MMining, RS_MSmithing: TIntegerArray;
+  RS_MItems: array of TIntegerArray;
+  RS_MQuestions: array of TStringArray;
+  RS_MDoor, RS_MDir: String;
+
+{*******************************************************************************
+procedure R_SetMordautVars;
+By: Drags111
+Description: Sets the vars needed for mordaut.
+*******************************************************************************}
+procedure R_SetMordautVars;
+begin
+  Writeln('[Reflection] Setting Mordaut vars..');
+
+  RS_MRanged    := [11539, 11540, 11541, 11614, 11615, 11633];
+
+  RS_MCooking   := [11526, 11529, 11545, 11549, 11550, 11555,
+                    11560, 11563, 11564, 11607, 11608, 11616,
+                    11620, 11621, 11622, 11623, 11628, 11629,
+                          11634, 11639, 11641, 11649, 11624];
+
+  RS_MFishing   := [11527, 11574, 11578, 11580, 11599, 11600,
+                    11601, 11602, 11603, 11604, 11605, 11606,
+                    11625];
+
+  RS_MCombat    := [11528, 11531, 11536, 11537, 11579, 11591,
+                    11592, 11593, 11597, 11627, 11631, 11635,
+                    11636, 11638, 11642, 11648];
+
+  RS_MFarming   := [11530, 11532, 11547, 11548, 11554, 11556,
+                    11571, 11581, 11586, 11610, 11645];
+
+  RS_MMagic     := [11533, 11534, 11538, 11562, 11567, 11582];
+
+  RS_MFiremaking:= [11535, 11551, 11552, 11559, 11646];
+
+  RS_MHats      := [11540, 11557, 11558, 11560, 11570, 11619,
+                    11626, 11630, 11632, 11637, 11654];
+
+  RS_MDrinks    := [11542, 11543, 11544, 11644, 11647];
+
+  RS_MWoodcutting:=[11573, 11595];
+
+  RS_MBoots     := [11561, 11618, 11650, 11651];
+
+  RS_MCrafting  := [11546, 11553, 11565, 11566, 11568, 11569,
+                    11572, 11575, 11576, 11577, 11581, 11583,
+                    11584, 11585, 11643, 11652, 11653];
+  RS_MMining    := [11587, 11588, 11594, 11596, 11598, 11609,
+                    11610];
+  RS_MSmithing  := [11611, 11612, 11613];
+
+  RS_MItems := [RS_MRanged, RS_MCooking, RS_MFishing, RS_MCombat, RS_MFarming,
+  RS_MMagic, RS_MFiremaking, RS_MHats, RS_MDrinks, RS_MWoodcutting,
+  RS_MBoots, RS_MCrafting, RS_MMining, RS_MSmithing];
+
+  SetLength(RS_MQuestions, 52);
+  RS_MQuestions[0] := ['I''m feeling dehydrated','Drinks'];
+  RS_MQuestions[1] := ['quenched my thirst','Drinks'];
+  RS_MQuestions[2] := ['light my fire','Firemaking'];
+  RS_MQuestions[3] := ['fishy','Fishing'];
+  RS_MQuestions[4] := ['fishing for answers','Fishing'];
+  RS_MQuestions[5] := ['I feel like a fish out of water!', 'Fishing'];
+  RS_MQuestions[6] := ['fish out of water','Drinks'];
+  RS_MQuestions[7] := ['strange headgear','Hats'];
+  RS_MQuestions[8] := ['tip my hat','Hats'];
+  RS_MQuestions[9] := ['thinking cap','Hats'];
+  RS_MQuestions[10] := ['wizardry here','Magic'];
+  RS_MQuestions[11] := ['rather mystical','Magic'];
+  RS_MQuestions[12] := ['abracada','Magic'];
+  RS_MQuestions[13] := ['hide one''s face','Hats'];
+  RS_MQuestions[14] := ['shall unmask','Hats'];
+  RS_MQuestions[15] := ['hand-to-hand','Combat'];
+  RS_MQuestions[16] := ['melee weapon','Combat'];
+  RS_MQuestions[17] := ['me hearties','Hats'];
+  RS_MQuestions[18] := ['mighty pirate','Drinks']
+  RS_MQuestions[19] := ['mighty archer','Ranged'];
+  RS_MQuestions[20] := ['shiny things','Crafting'];
+  RS_MQuestions[21] := ['range','Ranged'];
+  RS_MQuestions[22] := ['arrow','Ranged'];
+  RS_MQuestions[23] := ['drink','Drinks'];
+  RS_MQuestions[24] := ['logs','Firemaking'];
+  RS_MQuestions[25] := ['light','Firemaking'];
+  RS_MQuestions[26] := ['headgear','Hats'];
+  RS_MQuestions[27] := ['hat','Hats'];
+  RS_MQuestions[28] := ['cap','Hats'];
+  RS_MQuestions[29] := ['mine','Mining'];
+  RS_MQuestions[30] := ['mining','Mining'];
+  RS_MQuestions[31] := ['ore','Mining'];
+  RS_MQuestions[32] := ['fish','Fishing'];
+  RS_MQuestions[33] := ['fishing','Fishing'];
+  RS_MQuestions[34] := ['thinking cap','Hats'];
+  RS_MQuestions[35] := ['cooking','Cooking'];
+  RS_MQuestions[36] := ['cook','Cooking'];
+  RS_MQuestions[37] := ['bake','Cooking'];
+  RS_MQuestions[38] := ['farm','Farming'];
+  RS_MQuestions[39] := ['farming','Farming'];
+  RS_MQuestions[40] := ['cast','Magic'];
+  RS_MQuestions[41] := ['magic','Magic'];
+  RS_MQuestions[42] := ['craft','Crafting'];
+  RS_MQuestions[43] := ['boot','Boots'];
+  RS_MQuestions[44] := ['chop','Woodcutting'];
+  RS_MQuestions[45] := ['cut','Woodcutting'];
+  RS_MQuestions[46] := ['tree','Woodcutting'];
+  RS_MQuestions[47] := ['melee','Combat'];
+  RS_MQuestions[48] := ['fire','Firemaking'];
+  RS_MQuestions[49] := ['sparks from','Firemaking'];
+  RS_MQuestions[50] := ['thirsty','Drinks'];
+  RS_MQuestions[51] := ['igniting my brain', 'Hats'];
+end;
+
+{*******************************************************************************
+function R_InMordaut: boolean;
+By: Drags111
+Description: Checks if we are in the mordaut random.
+*******************************************************************************}
+function R_InMordaut: boolean;
+begin
+  Result := FindNPC(6117, RS_RMordaut);
+end;
+
+{*******************************************************************************
+function R_InRelatedCards: boolean;
+By: Drags111
+Description: Checks if we are in the related cards question.
+*******************************************************************************}
+function R_InRelatedCards: boolean;
+begin
+  Result := ValidInterface(559);
+end;
+
+{*******************************************************************************
+function R_InNextObject: boolean;
+By: Drags111
+Description: Checks if we are in the next object question.
+*******************************************************************************}
+function R_InNextObject: boolean;
+begin
+  Result := ValidInterface(103);
+end;
+
+{*******************************************************************************
+function R_MIDToClass(ID: Integer): string;
+By: Drags111
+Description: Converts ID to category type.
+*******************************************************************************}
+function R_MIDToClass(ID: Integer): string;
+var
+  i, ci: integer;
+begin
+  ci := -1;
+  for i := 0 to High(RS_MItems) do
+    if InIntArray(RS_MItems[i], ID) then ci := i;
+  case ci of
+    -1: Result := 'Error';
+    0: Result := 'Ranged';
+    1: Result := 'Cooking';
+    2: Result := 'Fishing';
+    3: Result := 'Combat';
+    4: Result := 'Farming';
+    5: Result := 'Magic';
+    6: Result := 'Firemaking';
+    7: Result := 'Hats';
+    8: Result := 'Drinks';
+    9: Result := 'Wooductting';
+    10: Result := 'Boots';
+    11: Result := 'Crafting';
+    12: Result := 'Mining';
+    13: Result := 'Smithing';
+    else Result := 'Error 2.';
+  end;
+end;
+
+{*******************************************************************************
+function R_MQuestionToClass(Question: String): string;
+By: Drags111
+Description: Converts question to category.
+*******************************************************************************}
+function R_MQuestionToClass(Question: String): string;
+var
+  i: integer;
+begin
+  Result := '-1';
+  for i := 0 to High(RS_MQuestions) do
+    if (Pos(lowercase(RS_MQuestions[i][0]), Lowercase(Question)) > 0) then
+    begin
+      Result := RS_MQuestions[i][1]
+      Exit;
+    end;
+end;
+
+{*******************************************************************************
+function R_MTalkWait: boolean;
+By: Drags111
+Description: Waits to talk to mordaut.
+*******************************************************************************}
+function R_MTalkWait: boolean;
+var
+  T: Integer;
+  P: TPoint;
+begin
+  if not R_InMordaut then
+    Exit;
+
+  T := GetSystemTime;
+  While not Result do
+  begin
+    if not R_InMordaut then
+      Exit;
+
+    if ValidInterface(242) or ValidInterface(64) or ValidInterface(243) then
+      Exit;
+
+    if (GetSystemTime-T) > 3000 then
+    begin
+      if not TileOnMS(RS_RMordaut.Tile, 20) then
+        WalkToTile(Point(RS_RMordaut.Tile.X, RS_RMordaut.Tile.Y-2), 0, 0);
+
+      Wait(700+Random(700));
+      P := TileToMS(RS_RMordaut.Tile, RS_RMordaut.Height * 2 / 3);
+      Mouse(P.x, P.y, 2, 2, false);
+
+      if WaitOption('alk-', 200+Random(100))then
+      begin
+        Wait(100+Random(100));
+        While characterMoving do
+          Wait(100+Random(100));
+
+        While (not ValidInterface(242)) and (not ValidInterface(241)) and (not ValidInterface(64)) and (not ValidInterface(243))do
+          Wait(100+Random(100));
+
+        Wait(700+Random(700));
+      end;
+    end;
+    Result := ValidInterface(241) or ValidInterface(64) or ValidInterface(242) or ValidInterface(243);
+  end;
+end;
+
+{*******************************************************************************
+function RS_MFindDoorChat: boolean;
+By: Drags111
+Description: Finds the text in the chat box about the door to use.
+*******************************************************************************}
+function RS_MFindDoorChat: boolean;
+var
+  S: String;
+begin
+  if not ValidInterface(242) then
+    Exit;
+
+  S := GetInterfaceText(242, 4);
+  if Pos('To exit', S) < 1 then
+    Exit;
+
+  S := Between('use the ', ' ', S);
+  RS_MDoor := S;
+
+  S := GetInterfaceText(242, 4);
+  RS_MDir := Between('door in the ', ' ', S);
+  Writeln('[Reflection] Time to leave! Door: '+RS_MDoor+', Direction: '+RS_MDir);
+  Result := True;
+end;
+
+{*******************************************************************************
+function R_MGetQuestion: String;
+By: Drags111
+Description: Gets the question to answer.
+*******************************************************************************}
+function R_MGetQuestion: String;
+var
+  qx, qy: integer;
+begin
+  While not(R_InRelatedCards) and  not(R_InNextObject)do
+  begin
+    if not R_InMordaut then Exit;
+    if RS_MFindDoorChat then
+    begin
+      Result := 'Door';
+      Exit;
+    end;
+    if (FindColorTolerance(qx, qy, 8388608, 184, 425, 365, 457, 2) or
+      FindColorTolerance(qx, qy, 16711680, 184, 425, 365, 457, 2)) then
+    begin
+      wait(100+Random(100));
+      Mouse(qx, qy+5, 0, 0, true);
+      MouseBox(19, 362, 393, 427, 3);
+      wait(100+Random(100));
+      ChatWait;
+    end;
+  end;
+  if R_InRelatedCards then
+  begin
+    Writeln('[Reflection] Question type: Related Cards.');
+    Result := 'Cards';
+  end;
+  if R_InNextObject then
+  begin
+    Writeln('[Reflection] Question type: Next Object.');
+    Result := 'Objects';
+  end;
+end;
+
+{*******************************************************************************
+function R_ExitMordaut: boolean;
+By: Drags111
+Description: Exits through the right door.
+*******************************************************************************}
+function R_ExitMordaut: boolean;
+var
+  ID, Time: integer;
+  OffsetX, OffsetY: Extended;
+  Door: TRSObject;
+  T: TPoint;
+begin
+  Case LowerCase(RS_MDoor) of
+    'red': ID := 2188;
+    'green': ID := 2193;
+    'blue': ID := 2189;
+    'purple': ID := 2192;
+    else Writeln('INVALID DOOR COLOR');
+  end;
+
+  Door := GetObjectByID(ID, OBJECT_TYPE_WALLOBJECT, 40);
+  If (Door.ID < 1)then
+  begin
+    Writeln('[Reflection] Failed exiting mordaut');
+    Exit;
+  end;
+
+  Case LowerCase(RS_MDir) of
+
+    'north':
+      begin
+        OffsetX := 0.5;
+        OffsetY := 0.5;
+      end;
+
+    'south-west':
+      begin
+        OffsetX := 1.0;
+        OffsetY := 0.5;
+      end;
+
+    'south-east':
+      begin
+        OffsetX := 0.0;
+        OffsetY := 0.5;
+      end;
+
+    'north-west':
+      begin
+        OffsetX := 1.0;
+        OffsetY := 0.5;
+      end;
+
+  end;
+  if not TileOnMS(Door.Tile, 15)then
+    WalkToTile(Door.Tile, 0, 0);
+
+  While CharacterMoving do
+    Wait(100+Random(100));
+
+  Wait(1000+Random(1000));
+
+  T := TileToMSEx(Door.Tile, OffsetX, OffsetY, 600+Random(200));
+  Mouse(T.X, T.Y, 5, 5, False);
+  Result := WaitOption('pen', 200+Random(100));
+  If not Result then
+    Exit;
+
+  WaitToMove(1000);
+  While CharacterMoving do
+    Wait(100+Random(100));
+
+  MarkTime(Time);
+  While R_InMordaut and (TimeFromMark(Time) < 5000) do
+    Wait(100+Random(100));
+end;
+
+{*******************************************************************************
+function R_MNextObject: boolean;
+By: Drags111
+Description: Does the next object question.
+*******************************************************************************}
+function R_MNextObject: boolean;
+var
+  Cat: String;
+  MF: Boolean;
+  i, qx, qy, fi: integer;
+begin
+  fi := 5;
+  repeat
+    if not ValidInterface(103) then
+      Exit;
+
+    Inc(fi);
+    if (fi > 8)then
+      Exit;
+
+    Writeln('[Reflection] ' + ToStr(GetComponentID(103, fi)));
+    Cat := R_MIDToClass(GetComponentID(103, fi));
+    Writeln('[Reflection] Current category is: '+Cat);
+
+    if not ValidInterface(103) then
+      Exit;
+
+    for i := 10 to 13 do
+      if (R_MIDToClass(GetComponentID(103, i)) = Cat)then
+      begin
+        MF := True;
+        Break;
+      end;
+
+    if not ValidInterface(103) then
+      Exit;
+
+    if MF then
+    begin
+      Result := True;
+      Writeln('[Reflection] Found item at slot: '+inttostr(i-9));
+      While not OptionExists('Select') do
+      begin
+        MMouse(7+(i-9)*99, 244, 3, 3);
+        wait(50+Random(50));
+      end;
+      GetMousePos(qx, qy);
+      Mouse(qx, qy, 0, 0, true);
+      While ValidInterface(103) do
+        Wait(100+Random(100));
+    end;
+  until Result;
+end;
+
+{*******************************************************************************
+procedure RS_MouseCardSlot(slot: integer);
+By: Drags111
+Description: Read the name, im tired. its late.
+*******************************************************************************}
+procedure RS_MouseCardSlot(slot: integer);
+var
+  P: TPoint;
+begin
+  DebugLn('[Reflection] Moving mouse to: ' + ToStr(GetComponentID(559, slot+41)));
+  case slot of
+    1: P := Point(67, 78);
+    2: P := Point(133, 68);
+    3: P := Point(204, 76);
+    4: P := Point(271, 81);
+    5: P := Point(341, 79);
+    6: P := Point(67, 167);
+    7: P := Point(133, 167);
+    8: P := Point(204, 167);
+    9: P := Point(271, 167);
+    10: P := Point(341, 167);
+    11: P := Point(67, 253);
+    12: P := Point(133, 253);
+    13: P := Point(204, 253);
+    14: P := Point(271, 253);
+    15: P := Point(341, 253);
+  end;
+  Mouse(P.X, P.Y, 5, 5, true);
+  wait(500+Random(500));
+end;
+
+{*******************************************************************************
+function R_MRelatedCards: boolean;
+By: Drags111
+Description: Referr to previous description.
+*******************************************************************************}
+procedure R_MRelatedCards;
+var
+  Cat, rClass: String;
+  I, C: integer;
+begin
+  if not ValidInterface(559) then
+    Exit;
+
+  rClass := GetInterfaceText(559, 25);
+  Writeln('[Reflection] ' + rClass);
+  Cat := R_MQuestionToClass(rClass);
+  Writeln('[Reflection] Class: ' + Cat);
+
+  If (Cat = '-1') then
+  begin
+    Writeln('**** New pattern, please post the question on the forums! ****');
+    Writeln(rClass);
+    Logout;
+    Exit;
+  end;
+
+  for I:= 42 to 56 do
+    if (R_MIDToClass(GetComponentID(559, I)) = Cat) then
+    begin
+      RS_MouseCardSlot(I-41);
+      Inc(C);
+    end;
+
+  if not ValidInterface(559) then
+    Exit;
+
+  If (C < 3)then
+  begin
+  end;
+
+  MouseBox(422, 262, 436, 276, 1);
+
+  While ValidInterface(559) do
+    Wait(100+Random(100));
+
+  Wait(1000+Random(1000));
+end;
+
+{*******************************************************************************
+function R_SolveMordaut: boolean;
+By: Drags111
+Description: Weeeeee
+*******************************************************************************}
+function R_SolveMordaut: boolean;
+var
+  QT: String;
+begin
+  if not R_InMordaut then
+    Exit;
+
+  R_SetMordautVars;
+  while R_InMordaut do
+  begin
+    if not R_InMordaut then
+      Break;
+
+    while (QT = '') do
+    begin
+      R_MTalkWait;
+      QT := R_MGetQuestion;
+    end;
+    DebugLn('[Reflection] QT := '+QT);
+    wait(2000+Random(1000));
+    case QT of
+      'Door': R_ExitMordaut;
+      'Cards': R_MRelatedCards;
+      'Objects': R_MNextObject;
+    end;
+    QT := '';
+  end;
+
+
+  if R_LoggedIn then
+  begin
+    Result := True;
+    //Inc(RSolved[RSchool]);
+    AddToReport('Solved Mordaut Random!');
+  end else
+    //Inc(RFailed[RSchool]);
+end;
