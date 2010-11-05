@@ -52,8 +52,8 @@ begin
   begin
     RandName := 'Cap n'' Arrav';
     Music := 'sea shanty';
-    InRandom := nil;
-    SolveRandom := nil;
+    InRandom := @R_InArnav;
+    SolveRandom := @R_SolveArnav;
   end;
 
   With r_RandomArr[R_RANDOM_CERTER] do
@@ -84,8 +84,8 @@ begin
   begin
     RandName := 'Exam';
     Music := 'school''s out';
-    InRandom := nil;
-    SolveRandom := nil;
+    InRandom := @R_InMordaut;
+    SolveRandom := @R_SolveMordaut;
   end;
 
   With r_RandomArr[R_RANDOM_FREAKYFORESTER] do
@@ -255,7 +255,7 @@ end;
 
 function R_SolveNonTalkingRandoms: Boolean;
 var
-  I, iTime: Integer;
+  I: Integer;
   Music: String;
   InRand: Boolean;
 begin
@@ -278,7 +278,7 @@ begin
            Continue;
         Writeln('[Reflection] Might be in a random(missing InRandom function), terminating.');
         Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
-        Logout;
+        LogOut;
         Exit;
       end;
 
@@ -307,18 +307,7 @@ begin
       end else
         Writeln('[Reflection] Random solved');
 
-      iTime := GetSystemTime;
-      while (not IsIdle) do
-      begin
-        Wait(100+Random(100));
-        if (GetSystemTime-iTime > 60*1000)then
-        begin
-          Writeln('[Reflection] Took more than a minute to get out of the random');
-          LogOut;
-          Players[CurrentPlayer].Active := False;
-          Exit;
-        end;
-      end;
+      Wait(12000+Random(5000));
 
       UseRewardBox;
       Exit;

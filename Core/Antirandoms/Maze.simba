@@ -306,6 +306,7 @@ begin
       If (B)and(DidClick(True, 1000+random(200))) then
       begin
         Writeln('[Reflection] Clicked a door..');
+        Result := True;
 
         iTimeEx := GetSystemTime;
         Repeat
@@ -314,7 +315,7 @@ begin
           If (D = 'n')or(D = 's')then
             B := ((MP.X = Path.Tiles[I].X)and((MP.Y = Path.Tiles[I].Y-1)or(MP.Y = Path.Tiles[I].Y+1)))
           else
-            B := ((MP.Y = Path.Tiles[I].Y)and((MP.X = Path.Tiles[I].X-1)or(MP.Y = Path.Tiles[I].X+1)));
+            B := ((MP.Y = Path.Tiles[I].Y)and((MP.X = Path.Tiles[I].X-1)or(MP.X = Path.Tiles[I].X+1)));
         Until(B)or(GetSystemTime - iTimeEx > 10000);
       end;
 

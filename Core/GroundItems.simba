@@ -22,87 +22,6 @@ begin
   Info.NLength := 0;
 end;
 
-function GetItemNodeList(ID: Integer; Info: TCacheInfo): integer;
-var
-  Node, NextNode, D2NextNode, NodeID, i, index: integer;
-  F: Boolean;
-begin
-  F := true;
-  Result := 0;
-  try
-    Index := ID and (Info.NLength - 1);
-    Node := SmartGetFieldArrayObject(Info.Nodes, '', Index);
-
-    for i := Index downto Index-10 do
-    begin
-      if not F then
-      begin
-        Node := SmartGetFieldObject(D2NextNode, hook_node_next);
-      //  SmartFreeObject(D2NextNode);
-      end else
-        F := false;
-      NodeID := SmartGetFieldLongL(Node, hook_node_GetID);
-
-      if(NodeID = ID)then
-      begin
-        Result := SmartGetFieldObject(Node, hook_nodelistcache_GetNodeList);
-        Break;
-      end;
-
-      NextNode := SmartGetFieldObject(Node, hook_node_Previous);
-     // SmartFreeObject(Node);
-      D2NextNode := SmartGetFieldObject(NextNode, hook_node_Previous);
-     // SmartFreeObject(NextNode);
-    end;
-  finally
-    SmartFreeObject(Node);
-    SmartFreeObject(NextNode);
-    SmartFreeObject(D2NextNode);
-  end;
-end;
-
-function GetAllItemsFromTile(NodeList: Integer; T: TTile): TGroundItemArray;
-var
-  Head, Node, ID, NextNode, D2NextNode, H: Integer;
-  F: Boolean;
-begin
-  try
-    Head := SmartGetFieldObject(NodeList, hook_nodelist_Head);
-    Node := SmartGetFieldObject(Head, hook_node_Next);
-    F := True;
-
-    while(ID <> -1)do
-    begin
-      if (not F)then
-      begin
-        Node := SmartGetFieldObject(D2NextNode, hook_node_Previous);
-        SmartFreeObject(D2NextNode);
-      end else
-        F := false;
-      ID := SmartGetFieldInt(Node, hook_item_GetID);
-      if(ID <> -1)then
-      begin
-        SetLength(Result, Length(Result)+1);
-        H := High(Result);
-        Result[H].Tile := T;
-        Result[H].Stack := SmartGetFieldInt(Node, hook_item_GetStack);
-        Result[H].ID := ID;
-      end;
-      NextNode := SmartGetFieldObject(Node, hook_node_Next);
-      SmartFreeObject(Node);
-      D2NextNode := SmartGetFieldObject(NextNode, hook_node_Next);
-      SmartFreeObject(NextNode);
-    end;
-    SmartFreeObject(Head);
-    SmartFreeObject(D2NextNode);
-  finally
-    SmartFreeObject(Node);
-    SmartFreeObject(NextNode);
-    SmartFreeObject(Head);
-    SmartFreeObject(D2NextNode);
-  end;
-end;
-
 {*******************************************************************************
 function NewGroundItem(id, stack: integer; T: TTile): TGroundItem;
 By: Drags111
@@ -119,35 +38,81 @@ end;
 
 {*******************************************************************************
 function GetItemsAt(T: TTile): TGroundItemArray;
-By: Drags111
+By: Method
 Description: Gets all the items on the tile.
 *******************************************************************************}
-function GetItemsAt(T: TTile): TGroundItemArray;
+function GetItemsAt(tile: TTile): TGroundItemArray;
 var
-  plane, ID, NodeList: integer;
-  Info: TCacheInfo;
+  cache, hash, plane, nodes, size, index, tail, cur, next,
+  uid, list, id, stack: Integer;
 begin
-  try
-    Info := LoadCacheInfo(hook_static_GroundItemCache);
-    plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-    ID := T.x or (T.y shl 14) or (plane shl 28);
+  // grab the cache and calculate the tile's hash
+  cache := SmartGetFieldObject(0, hook_static_GroundItemCache);
+  plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
+  hash := tile.x or (tile.y shl 14) or (plane shl 28);
 
-    NodeList := GetItemNodeList(ID, Info);
-    FreeCacheInfo(Info);
+  // grab the nodes array and get the index where our item list
+  // should be, if it exists
+  nodes := SmartGetFieldObject(cache, hook_nodecache_GetNodes);
+  size := SmartGetFieldArraySize(nodes, '', 1);
+  index := hash and (size - 1);
+  SmartFreeObject(cache);
 
-    if (NodeList = 0)then
+  // get the dummy tail node of the current list and its successor
+  // for use in the next loop
+  tail := SmartGetFieldArrayObject(nodes, '', index);
+  cur := SmartGetFieldObject(tail, hook_node_Next);
+  SmartFreeObject(nodes);
+
+  // loop until we come back to the dummy tail node
+  // (the list is circular)
+  while (not (SmartIsEqual(tail, cur))) do
+  begin
+    uid := SmartGetFieldLongL(cur, hook_node_GetID);
+    if (uid = hash) then
     begin
-      SmartFreeObject(NodeList);
-      Exit;
+      // if we have matching uids, grab the list and break
+      list := SmartGetFieldObject(cur, hook_nodelistcache_GetNodeList);
+      break;
     end;
 
-    Result := GetAllItemsFromTile(NodeList, T);
-    SmartFreeObject(NodeList);
-
-  finally
-    SmartFreeObject(NodeList);
-    FreeCacheInfo(Info);
+    // otherwise, update our node
+    next := SmartGetFieldObject(cur, hook_node_Next);
+    SmartFreeObject(cur);
+    cur := next;
   end;
+
+  // free objects we're finished with
+  SmartFreeObject(cur);
+  SmartFreeObject(tail);
+
+  // if we didn't find our list, there are no ground items on
+  // this tile
+  if (list = 0) then
+    Exit;
+
+  // grab pointers for the new list
+  tail := SmartGetFieldObject(list, hook_nodelist_Head);
+  cur := SmartGetFieldObject(tail, hook_node_Next);
+
+  while (not (SmartIsEqual(tail, cur))) do
+  begin
+    // create a new ground item
+    SetArrayLength(Result, GetArrayLength(Result) + 1);
+    id := SmartGetFieldInt(cur, hook_item_GetID);
+    stack := SmartGetFieldInt(cur, hook_item_GetStack);
+    Result[High(Result)] := NewGroundItem(id, stack, tile);
+
+    // update our pointers
+    next := SmartGetFieldObject(cur, hook_node_Next);
+    SmartFreeObject(cur);
+    cur := next;
+  end;
+
+  // free remaining objects
+  SmartFreeObject(cur);
+  SmartFreeObject(tail);
+  SmartFreeObject(list);
 end;
 
 {*******************************************************************************

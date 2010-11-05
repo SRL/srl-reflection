@@ -15,23 +15,28 @@ var
   P: TPoint;
   t: integer;
 begin
-  if not FindNPC('Arnav', NPC)then Exit;
+  if not FindNPC('Arnav', NPC)then
+    Exit;
+
+  Writeln('[Reflection] Finding & speaking with Arnav');
+
   if not TileOnMS(NPC.Tile, NPC.Height * 2 / 3)then
   begin
-    SetAngle(true);
+    SetAngle(True);
     if not TileOnMS(NPC.Tile, NPC.Height * 2 / 3)then
       if not WalkToTile(NPC.Tile, 0, 0)then
         Exit;
   end;
+
   P := TileToMS(NPC.Tile, NPC.Height * 2 / 3);
   Mouse(P.x, P.y, 3, 3, false);
-  Result := R_ChooseOption('Talk-to');
+  Result := WaitOption('alk-', 200+Random(100));
   if Result then
   begin
     MarkTime(t);
     While ((not FindNPCText('click here to')) and (TimeFromMArk(t) < 5000))do
     begin
-      if charactermoving then
+      if CharacterMoving then
         MarkTime(t);
       wait(100+Random(100));
     end;
@@ -42,20 +47,35 @@ function R_HandleArnav: boolean;
 var
   Arnav: TNPC;
 begin
-  if not R_LoggedIn then Exit;
+  if not LoggedIn then
+    Exit;
+
   Result := R_ChestOpen;
-  if Result then Exit;
+  if Result then
+  begin
+    Writeln('[Reflection] Chest is open!');
+    Exit;
+  end;
+
   While not R_ChestOpen do
   begin
-    if not FindNPC('Arnav', Arnav)then Exit;
-    if (( not InteractingWithMe(Arnav)) and (not FindNPCText('ready to try'))
-      and (not R_ClickToContinue))then
+    if not FindNPC('Arnav', Arnav)then
+      Exit;
+    Writeln('[Reflection] 1');
+    if (not FindNPCText('ready to try'))then
       R_TalkToArnav;
-    R_ClickToContinue;
-    if(FindNPCText('ready to try'))then
+
+    Writeln('[Reflection] 2');
+    While ClickToContinue do
+      Wait(7000+Random(5000));
+
+    Writeln('[Reflection] 3');
+    if(FindNPCChatText('ready', ClickLeft))then
     begin
-      Mouse(247, 436, 15, 3, true);
-      wait(800+Random(2000));
+      Wait(4000+Random(2000));
+      ClickToContinue;
+      Wait(3000+Random(1000));
+      Result := r_ChestOpen;
     end;
   end;
 end;
@@ -125,7 +145,9 @@ begin
   while(R_InArnav)do
   begin
     R_HandleArnav;
+    Writeln('[Reflection] 1');
     R_SetToCoins;
+    Writeln('[Reflection] 2');
     Goal := R_GetGoal;
     while(R_ChestOpen)do
     begin
@@ -142,21 +164,18 @@ begin
       Result := FindNPCText('done it!');
       if Result then
       begin
-        R_ClickToContinue;
+        ClickToContinue;
         if not FindNPC('Arnav', NPC)then Exit;
         PT := Tile(NPC.Tile.x-1, NPC.Tile.y+2);
         P := TileToMS(PT, 30);
         Mouse(p.x, p.y, 3, 3, false);
-        Result := R_ChooseOption('Enter');
+        Result := WaitOption('nter', 200+Random(100));
         while(R_InArnav and (TimeFromMark(t) < 8000))do
           wait(100+Random(100));
       end;
     end;
   end;
-  R_ClickToContinue;
+  ClickToContinue;
+  Wait(4000+Random(2000));
   Result := not R_InArnav;
-  if Result then
-    Inc(RSolved[RArnav])
-  else
-    Inc(RFailed[RArnav]);
 end;
