@@ -389,21 +389,25 @@ end;
 
 {*******************************************************************************
 function TrimHTML(s: string): string;
-By: lordsaturn
+By: lordsaturn, fixed by pyroryan
 Description: Removes the HTML junk from a string.
 *******************************************************************************}
 function TrimHTML(S : string): string;
 var
-  P, P2: integer;
+  P, P2, PLength: integer;
+  Temp: string;
 begin
   P := Pos('<', S);
   P2 := Pos('>', S);
   Result := S;
+  PLength := P2 - P + 1;
   while (P <> 0) and (P2 <> 0) do
   begin
-    Delete(Result, P, P2 - P + 1);
+    Delete(Result, P, PLength);
     P := Pos('<', Result);
-    P2 := Pos('>', Result);
+    Temp := Result;
+    Delete(Temp, 1, P - 1);
+    PLength := Pos('>', Temp);
   end;
 end;
 
