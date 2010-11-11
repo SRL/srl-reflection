@@ -55,6 +55,7 @@ const
     hook_static_GroundItemCache = 'ud.o'; //627
     hook_static_CamPosX = 'kn.x'; //627
     hook_static_CamPosY = 'rn.kb'; //627
+    hook_static_CrossHair = 'wca.h'; //627
 
 {Class Animable}
     class_Animable = 'caa'; //627

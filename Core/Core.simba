@@ -650,3 +650,14 @@ begin
     Result := -1;
   end;
 end;
+
+{*******************************************************************************
+function GetCrossHair(): Integer;
+By: pyroryan
+Description: Each crosshair stays up for about 500 milliseconds
+Returns 2: clicked on something (red crosshairs). 1: clicked on ground (yellow crosshairs). 0: nothing (no crosshairs)
+*******************************************************************************}
+function GetCrossHair(): Integer;
+begin
+  Result := SmartGetFieldInt(0, hook_static_CrossHair);
+end;
