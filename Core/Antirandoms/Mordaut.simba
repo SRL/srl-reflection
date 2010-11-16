@@ -346,24 +346,28 @@ begin
       begin
         OffsetX := 0.5;
         OffsetY := 0.5;
+        WalkPath ([Tile(Door.Tile.X, Door.Tile.Y - RandomRange(1,2))]); // Added this [Cstrike] temporary fix
       end;
 
     'south-west':
       begin
         OffsetX := 1.0;
         OffsetY := 0.5;
+        WalkPath ([Tile(Door.Tile.X + RandomRange(1,2), Door.Tile.Y)]); // Added this [Cstrike] temporary fix
       end;
 
     'south-east':
       begin
         OffsetX := 0.0;
         OffsetY := 0.5;
+        WalkPath ([Tile(Door.Tile.X - RandomRange(1,2), Door.Tile.Y)]); // Added this [Cstrike] temporary fix
       end;
 
     'north-west':
       begin
         OffsetX := 1.0;
         OffsetY := 0.5;
+        WalkPath ([Tile(Door.Tile.X + RandomRange(1,2), Door.Tile.Y)]); // Added this [Cstrike] temporary fix
       end;
 
   end;
