@@ -1,3 +1,8 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                    GameTab Routines                          --||
+//------------------------------------------------------------------//
+
 {*******************************************************************************
 function R_GetMMLevels(Which: string): Integer;
 By: lordsaturn and Drags111
@@ -52,7 +57,7 @@ begin
   Result := R_IsResting;
   while(not Result)do
   begin
-    if not R_LoggedIn then Exit;
+    if not LoggedIn then Exit;
     if (TimeFromMark(mt) > 9000)then Exit;
     Mouse(725, 109, 5, 5, false);
     Result := R_ChooseOption('Rest');

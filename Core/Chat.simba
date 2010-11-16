@@ -1,3 +1,21 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                     Chat Routines                            --||
+//------------------------------------------------------------------//
+
+//---                               Constants                               --//
+const
+  CHAT_TYPE_NORMAL  = 0;
+  CHAT_TYPE_CHATTER = 1;
+  //  Private
+  CHAT_TYPE_PRIVATE = 2;
+  //  Trade
+  CHAT_TYPE_TRADE   = 3;
+  //  Black/System
+  CHAT_TYPE_SYSTEM  = 4;
+  //  Includes all the former Types
+  CHAT_TYPE_ALL     = 5;
+
 
 {*******************************************************************************
 function GetChatMessages(ChatType: string; Visible, NoName: Boolean): TStringArray;

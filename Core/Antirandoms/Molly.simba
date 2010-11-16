@@ -324,7 +324,7 @@ begin
     end;
     wait(2000+Random(2000));
   end;
-  if R_LoggedIn then
+  if LoggedIn then
   begin
     Result := True;
     //Inc(RSolved[RMolly]);

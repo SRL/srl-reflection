@@ -1,4 +1,40 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                   Objects Routines                           --||
+//------------------------------------------------------------------//
 
+//---                               Constants                               --//
+const
+  OBJECT_TYPE_INTERACTABLE = 0;
+  OBJECT_TYPE_WALLOBJECT   = 1;
+  OBJECT_TYPE_WALLDECOR    = 2;
+  OBJECT_TYPE_FLOORDECOR   = 3;
+
+
+//---                                Records                                --//
+
+type
+{Contains informations pertaining to Objects}
+  TRSObject = record
+    objType: integer;
+    ID: Integer;
+    Tile: TTile;
+  end;
+
+{Array of TRSObject}
+  TRSObjectArray = array of TRSObject;
+
+
+{*******************************************************************************
+function NULL_RSOBJECT: TRSObject;
+Description: Nulls a TRSObject
+*******************************************************************************}
+function NULL_RSOBJECT: TRSObject;
+begin
+  Result.ID := NULL_INT;
+  Result.objType := NULL_INT;
+  Result.Tile := NULL_TILE;
+end;
 
 {*******************************************************************************
 function NewObject(ID, objType, Tile): TRSObject;

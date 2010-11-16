@@ -1,3 +1,8 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                    MMWalk Routines                           --||
+//------------------------------------------------------------------//
+
 {*******************************************************************************
 function GetMinimapAngleDeg: extended;
 By: BenLand100
@@ -86,9 +91,7 @@ var
   Mark : Integer;
 begin
   StartAngle := (GetMinimapAngleDeg);
-  Writeln(StartAngle);
-  Writeln(R_LoggedIn);
-  if(StartAngle < 0)Or(Not R_LoggedIn)then
+  if(StartAngle < 0)Or(Not LoggedIn)then
     Exit;
   case varType(setAngle) of
     varString:
@@ -165,6 +168,24 @@ begin
     Wait(100);
   end;
   Result := True;
+end;
+
+{*******************************************************************************
+procedure InvertPath(var Path: TTileArray);
+By: Drags111
+Description: Reverses the path(array of tiles).
+*******************************************************************************}
+procedure InvertPath(var Path: TTileArray);
+var
+  Temp: TTileArray;
+  i: integer;
+begin
+  for i := High(Path) downto 0 do
+  begin
+    SetLength(Temp, Length(Temp)+1);
+    Temp[High(Temp)] := Path[i];
+  end;
+  Path := Temp;
 end;
 
 {*******************************************************************************

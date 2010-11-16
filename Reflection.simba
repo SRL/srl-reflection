@@ -3,10 +3,11 @@
 
 {$i ./Core/Constants.simba}
 {$i ./Core/Hooks.simba}
-{$i ./Core/Core.simba}
+{$i ./Core/TileCore.simba}
+{$i ./Core/Text.simba}
+{$i ./Core/NPCs.simba}
+{$i ./Core/Players.simba}
 {$i ./Core/MMWalk.simba}
-{$i ./Core/Characters.simba}
-{$i ./Core/Login.simba}
 {$i ./Core/Objects.simba}
 {$i ./Core/Interfaces.simba}
 {$i ./Core/Inventory.simba}
@@ -14,6 +15,7 @@
 {$i ./Core/Bank.simba}
 {$i ./Core/Chat.simba}
 {$i ./Core/GroundItems.simba}
+{$i ./Core/Other.simba}
 {$i ./Core/GameTab.simba}
 
 {$i ./Core/Antirandoms\Arnav.simba}

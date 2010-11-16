@@ -1,3 +1,38 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                  Inventory Routines                          --||
+//------------------------------------------------------------------//
+
+//---                               Constants                               --//
+const
+  INTERFACE_INVENTORY                                   = 149;
+  INTERFACE_INVENTORY_BANKOPEN                          = 763;
+
+
+//---                                Records                                --//
+type
+{Holds information pertaining to an inventory slot}
+  TInvItem = record
+    ID, StackSize, Slot: integer;
+    Name: String;
+    Actions: TStringArray;
+  end;
+
+{Container for TInvItem}
+  TInvItemArray = array of TInvItem;
+
+{*******************************************************************************
+function NULL_INVITEM: TInvItem;
+Description: Nulls a TInvItem
+*******************************************************************************}
+function NULL_INVITEM: TInvItem;
+begin
+  Result.ID := NULL_INT;
+  Result.StackSize := NULL_INT;
+  Result.Slot := NULL_INT;
+  Result.Name := NULL_STRING;
+  Result.Actions := [];
+end;
 
 {*******************************************************************************
 function getInventoryInterface: Integer;

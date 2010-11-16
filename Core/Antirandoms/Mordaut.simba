@@ -561,7 +561,7 @@ begin
   end;
 
 
-  if R_LoggedIn then
+  if LoggedIn then
   begin
     Result := True;
     //Inc(RSolved[RSchool]);

@@ -1,3 +1,29 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                    Bank Routines                             --||
+//------------------------------------------------------------------//
+
+//---                               Constants                               --//
+const
+  INTERFACE_BANK                                        = 762;
+  INTERFACE_BANK_PIN                                    = 13;
+  INTERFACE_BANK_BUTTON_CLOSE                           = 42;
+  INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY         = 36;
+  INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS           = 32;
+  INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS              = 34;
+  INTERFACE_BANK_BUTTON_HELP                            = 43;
+  INTERFACE_BANK_BUTTON_INSERT                          = 15;
+  INTERFACE_BANK_BUTTON_ITEM                            = 19;
+  INTERFACE_BANK_BUTTON_NOTE                            = 19;
+  INTERFACE_BANK_BUTTON_SEARCH                          = 17;
+  INTERFACE_BANK_BUTTON_SWAP                            = 15;
+  INTERFACE_BANK_INVENTORY                              = 92;
+  INTERFACE_BANK_ITEM_FREE_COUNT                        = 23;
+  INTERFACE_BANK_ITEM_FREE_MAX                          = 24;
+  INTERFACE_BANK_ITEM_MEMBERS_COUNT                     = 25;
+  INTERFACE_BANK_ITEM_MEMBERS_MAX                       = 26;
+  INTERFACE_BANK_SCROLLBAR                              = 114;
+
 {*******************************************************************************
 Function R_BankScreen: Boolean;
 By:
@@ -31,11 +57,10 @@ var
 begin
   if not R_BankScreen then
     Exit;
+
   if(fast)then
-  begin
-    DepositAll;
-  end else
-  begin
+    DepositAll
+  else
     for I := 1 to 28 do
     begin
       MarkTime(MT);
@@ -49,7 +74,7 @@ begin
           Wait(44 + random(44));
       end;
     end;
-  end;
+
 end;
 
 {*******************************************************************************

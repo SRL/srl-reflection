@@ -69,12 +69,12 @@ begin
           Continue;
       end;
       Wait(100);
-    until (Animation <> '') or not R_LoggedIn or not R_InMime;
+    until (Animation <> '') or not LoggedIn or not R_InMime;
     while not(FindColorTolerance(mx, my, 1122502, MCX1, MCY1, MCX2, MCY2, 40)) do
       if R_InMime then Wait(100 + Random(100)) else Break;
     Wait(1000 + Random(500));
     FindTextTPAEx(11503238, 10, MCX1, MCY1, MCX2, MCY2, mx, my, Animation, NPCChars, ClickLeft)
     Result := R_InMime;
-  until not(Result or R_LoggedIn or not R_InMime);
-  Result := R_LoggedIn;
+  until not(Result or LoggedIn or not R_InMime);
+  Result := LoggedIn;
 end;

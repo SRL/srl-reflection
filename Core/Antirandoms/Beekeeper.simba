@@ -41,7 +41,7 @@ function HandleKeeper: boolean;
 var
   Keeper: TNPC;
 begin
-  if not R_LoggedIn then Exit;
+  if not LoggedIn then Exit;
   Result := BuildInterfaceUp;
   if Result then Exit;
   While not BuildInterfaceUp do

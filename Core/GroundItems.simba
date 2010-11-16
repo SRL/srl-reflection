@@ -1,7 +1,38 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                 Grounditems Routines                         --||
+//------------------------------------------------------------------//
+
+//---                                Records                                --//
 type
+{Holds information pertaining to a ground item}
+  TGroundItem = record
+    ID: Integer;
+    Stack: Integer;
+    Tile: TTile;
+  end;
+
+{Array of TGroundItem}
+  TGroundItemArray = array of TGroundItem;
+
+{?????}
   TCacheInfo = record
     Cache, Nodes, NLength: integer;
   end;
+
+{*******************************************************************************
+function NULL_GROUNDITEM: TGroundItem;
+Description: Nulls a TGroundItem
+*******************************************************************************}
+function NULL_GROUNDITEM: TGroundItem;
+begin
+  with result do
+  begin
+    ID := NULL_INT;
+    Tile := NULL_TILE;
+    Stack := NULL_INT;
+  end;
+end;
 
 function LoadCacheInfo(CachePath: String):TCacheInfo;
 begin

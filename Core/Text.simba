@@ -1,0 +1,287 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                     Text Routines                            --||
+//------------------------------------------------------------------//
+
+{*******************************************************************************
+function TrimHTML(s: string): string;
+By: lordsaturn, fixed by pyroryan
+Description: Removes the HTML junk from a string.
+*******************************************************************************}
+function TrimHTML(S : string): string;
+var
+  P, P2, PLength: integer;
+  Temp: string;
+begin
+  P := Pos('<', S);
+  P2 := Pos('>', S);
+  Result := S;
+  PLength := P2 - P + 1;
+  while (P <> 0) and (P2 <> 0) do
+  begin
+    Delete(Result, P, PLength);
+    P := Pos('<', Result);
+    Temp := Result;
+    Delete(Temp, 1, P - 1);
+    PLength := Pos('>', Temp);
+  end;
+end;
+
+{*******************************************************************************
+procedure GetJavaString(javaString: integer; var pascalString: string; maxLength: integer);
+By: BenLand100
+Description: Returns a string from a javaString with a specified  maxLength. Do
+             not let it overflow, bad things will happen.
+*******************************************************************************}
+function GetJavaString(javaString: integer; maxLength: integer): string;
+Begin
+  SetLength(result, maxLength);
+  SetLength(result, SmartStringFromString(javaString, result));
+End;
+
+{*******************************************************************************
+function IsMenuOpen: boolean;
+By: BenLand100
+Description: Returns true if the menu is displayed
+*******************************************************************************}
+function IsMenuOpen: boolean;
+begin
+  result:= SmartGetFieldBoolean(0, hook_static_MenuOpen);
+end;
+
+{*******************************************************************************
+function GetMenuCount: integer;
+By: BenLand100
+Description: Returns the number of menu items
+*******************************************************************************}
+function GetMenuCount: integer;
+begin
+  Result := SmartGetFieldInt(0, hook_static_MenuOptionCount);
+end;
+
+{*******************************************************************************
+function GetMenuText: TStringArray;
+By: BenLand100
+Description: Dumps the data from the MenuNodeList into a TStringArray
+*******************************************************************************}
+function GetMenuText: TStringArray;
+var
+  count, nodeList, head, next, last, javaString: Integer;
+  item: string;
+begin
+  nodeList:= SmartGetFieldObject(0, hook_static_MenuNodeList);
+  head:= SmartGetFieldObject(nodeList, hook_nodelist_Head);
+  //for some reason, the head has null strings, so skip it
+  next:= SmartGetFieldObject(head, hook_node_Next);
+  count:= GetMenuCount;
+  SetLength(result,count);
+  repeat
+    javaString:= SmartGetFieldObject(next, hook_menu_Action);
+    item:= GetJavaString(javaString,256);
+    SmartFreeObject(javaString);
+    javaString:= SmartGetFieldObject(next, hook_menu_Option);
+    item:= item + ' ' + GetJavaString(javaString,256);
+    SmartFreeObject(javaString);
+    result[count-1]:= TrimHTML(item);
+    last:= next;
+    next:= SmartGetFieldObject(last, hook_node_Next);
+    SmartFreeObject(last);
+    count:= count - 1;
+  until (count = 0);
+  SmartFreeObject(next);
+  SmartFreeObject(head);
+  SmartFreeObject(nodeList);
+end;
+
+{*******************************************************************************
+function R_ChooseOptionMulti(Options : TStringArray) : Boolean;
+By: Drags111 - Based off nava2's and Lordsaturns.
+Description: Chooses the first found option of "Options" from the Right
+             Click menu, returns True and Clicks if found, else it will Move the
+             mouse to a random Coord or select cancel.
+*******************************************************************************}
+function R_ChooseOptionMulti(Options : TStringArray) : Boolean;
+var
+  i, i2, xOff, yOff, t: Integer;
+  P : TPoint;
+  MenuOptions: TStringArray;
+
+begin
+  Result := False;
+  if not IsMenuOpen then
+  begin
+    MarkTime(t);
+    while(TimeFromMark(t) < 1000)do ;
+    if not IsMenuOpen then Exit;
+  end;
+
+  P := Point(SmartGetFieldInt(0, hook_static_MenuX) + 4, SmartGetFieldInt(0, hook_static_MenuY) + 4);
+  //Writeln('MenuX: '+ToStr(SmartGetFieldInt(0, hook_static_MenuX)));
+  //Writeln('MenuY: '+ToStr(SmartGetFieldInt(0, hook_static_MenuY)));
+  MenuOptions := GetMenuText;
+
+  for i := 0 to High(MenuOptions) do
+  begin
+    for i2 := 0 to High(Options) do
+    begin
+      if(Pos(Lowercase(Options[i2]), Lowercase(MenuOptions[i])) <> 0)then
+      begin
+        xOff := RandomRange(4, 4 + Random(Length(MenuOptions[i]) * 4 - 4));
+        yOff := 21 + (16 * i) + RandomRange(2, 10);
+        Mouse(P.x + xOff, P.y + yOff, 0, 0, True);
+        Wait(RandomRange(80, 100));
+        Result := not IsMenuOpen;
+        Exit;
+      end;
+    end;
+  end;
+
+  case Random(2) of
+    0: R_ChooseOptionMulti(['Cancel']);
+    1: while IsMenuOpen do
+       begin
+         MMouse(Random(MSX2), Random(MSY2), 0, 0);
+         Wait(RandomRange(100, 200));
+       end;
+  end;
+end;
+
+{*******************************************************************************
+function R_ChooseOption(Option : String) : Boolean;
+By: Drags111
+Description: Chooses the option "Option" from the Right Click menu, returns
+             True and clicks if found, else it will Move the Mouse to a random
+             Coord or will select cancel.
+*******************************************************************************}
+function R_ChooseOption(Option : String) : Boolean;
+begin
+  Result := R_ChooseOptionMulti([Option]);
+end;
+
+{*******************************************************************************
+function OptionExists(option: string): Boolean;
+By: Drags111
+Description: Returns true if an option exists in the choose option menu. Choose
+             option menu does NOT have to be open.
+*******************************************************************************}
+function OptionExists(Option : string) : Boolean;
+var
+  i: integer;
+  MenuOptions: TStringArray;
+begin
+  MenuOptions := GetMenuText;
+  for i := High(MenuOptions) downto 0 do
+  begin
+    Result := (Pos(Option, MenuOptions[i]) > 0);
+    if Result then Exit;
+  end;
+end;
+
+{*******************************************************************************
+function R_GetUpText: string;
+By: Drags111
+Description: Gets the UpText (the text in the upper left corner of RS).
+*******************************************************************************}
+function R_GetUpText: string;
+var
+  MenuOptions: TStringArray;
+  First: String;
+begin
+  MenuOptions := GetMenuText;
+  First := Trim(MenuOptions[0]);
+  Result := First;
+  if (Length(MenuOptions) > 1) and (Result <> '') then
+    Result := Result+' / '+inttostr(Length(MenuOptions))+' more options';
+end;
+
+{*******************************************************************************
+function R_IsUpTextMulti(UpText: TStringArray): Boolean;
+By: Drags111
+Description: Returns true if any instance of the UpText is found.
+*******************************************************************************}
+function R_IsUpTextMulti(UpText: TStringArray): Boolean;
+var
+  i: integer;
+  UT: String;
+begin
+  UT := R_GetUpText;
+  for I := 0 to High(UpText) do
+  begin
+    Result := Pos(Lowercase(UpText[I]), Lowercase(UT)) > 0;
+    if Result then Exit;
+  end;
+end;
+
+{*******************************************************************************
+function R_IsUpText(UpText: string): Boolean;
+By: Drags111
+Description: Returns true if UpText is found.
+*******************************************************************************}
+function R_IsUpText(UpText: string): Boolean;
+begin
+  Result := R_IsUpTextMulti([UpText]);
+end;
+
+{*******************************************************************************
+function r_WaitOptionMulti(S: TStringArray; Time: Integer): Boolean;
+By: Naike
+Description: Waits for a string and selects it
+*******************************************************************************}
+function r_WaitOptionMulti(S: TStringArray; Time: Integer): Boolean;
+var
+  T: Integer;
+begin
+  Result := False;
+  T := GetSystemTime + Time;
+  while (GetSystemTime < T) do
+  begin
+    if r_ChooseOptionMulti(S) then
+    begin
+      Result := True;
+      Exit;
+    end;
+    Wait(20 + Random(10));
+  end;
+end;
+
+{*******************************************************************************
+function r_WaitOption(S: String; Time: Integer): Boolean;
+By: Naike
+Description: Waits for a string and selects it
+*******************************************************************************}
+function r_WaitOption(S: String; Time: Integer): Boolean;
+begin
+  Result := r_WaitOptionMulti([S], Time);
+end;
+
+{*******************************************************************************
+function r_WaitUpTextMulti(S: TStringArray; Time: Integer): Boolean;
+By: Naike
+Description: Waits for a uptext
+*******************************************************************************}
+function r_WaitUpTextMulti(S: TStringArray; Time: Integer): Boolean;
+var
+  T: Integer;
+begin
+  Result := False;
+  T := GetSystemTime + Time;
+  while (GetSystemTime < T) do
+  begin
+    if r_IsUpTextMulti(S) then
+    begin
+      Result := True;
+      Exit;
+    end;
+    Wait(20 + Random(10));
+  end;
+end;
+
+{*******************************************************************************
+function r_WaitUpText(S: String; Time: Integer): Boolean;
+By: Naike
+Description: Waits for a uptext
+*******************************************************************************}
+function r_WaitUpText(S: String; Time: Integer): Boolean;
+begin
+  Result := r_WaitUpTextMulti([S], Time);
+end;

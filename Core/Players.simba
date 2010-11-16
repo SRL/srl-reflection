@@ -1,0 +1,318 @@
+//------------------------------------------------------------------\\
+//--               Simba Reflection Library                       --||
+//--                    Player Routines                           --||
+//------------------------------------------------------------------//
+
+//---                                Records                                --//
+type
+{Holds information related to a player}
+  TPlayer = record
+    Index, Level, Animation, Height, HPRatio, Interacting,
+    Orientation: integer;// SOUTH = 0; NORTH = 180; CLOCKWISE.
+    Tile: TTile;
+    Name: String;
+    Moving: boolean;
+  end;
+
+{Array of TPlayer}
+  TPlayerArray = array of TPlayer;
+
+{Holds information related to your character}
+  TMe = record
+    Tile: TTile;
+    MS: TPoint;
+    Animation, Speed, LoginIndex, Interacting: Integer;
+    HPRatio, Height, Level, Combat, TurnDirection: Integer;
+    Name: string;
+    InFight: boolean;
+    Experience, Levels: array[0..24] of Integer;
+    Equipment: TIntegerArray;
+    Orientation: Integer; // SOUTH = 0; NORTH = 180; CLOCKWISE.
+  end;
+
+{*******************************************************************************
+function NULL_PLAYER: TPlayer;
+Description: Nulls a TPlayer
+*******************************************************************************}
+function NULL_PLAYER: TPlayer;
+begin
+  Result.Index := NULL_INT;
+  Result.Name := NULL_STRING;
+  Result.Tile := NULL_TILE;
+  Result.Moving := False;
+  Result.Animation := NULL_INT;
+  Result.Height := NULL_INT;
+  Result.HPRatio := NULL_INT;
+  Result.Orientation := NULL_INT;
+  Result.Level := NULL_INT;
+  Result.Interacting := NULL_INT;
+end;
+
+{*******************************************************************
+Function LoginIndex: Integer;
+By:
+Description: Uses the LoginIndex hook.
+             2 = Logged Out, 4 = Logging Into Lobby, 6 = Lobbby,
+             8 = logging into game, 9 = Logged In. Reaches 10 at
+             some points, but with no significance.
+********************************************************************}
+function LoginIndex : Integer;
+begin
+  Result := SmartGetFieldInt(0, hook_static_LoginIndex);
+end;
+
+{*******************************************************************************
+Function GetAnimation: Integer;
+By: lordsaturn
+Description: Gets character animation
+*******************************************************************************}
+function GetAnimation: Integer;
+var
+  MyPlayer : Integer;
+begin
+  MyPlayer := SmartGetFieldObject(0, hook_static_MyPlayer);
+  Result := SmartGetFieldInt(MyPlayer, hook_character_Animation);
+  SmartFreeObject(MyPlayer);
+end;
+
+{*******************************************************************************
+Function GetSpeed : integer;
+By: Drags111
+Description: Returns the character speed. 0 = not moving. > 0 = moving.
+*******************************************************************************}
+function GetSpeed: Integer;
+var
+  MyPlayer: Integer;
+begin
+  MyPlayer := SmartGetFieldObject(0, hook_static_MyPlayer);
+  result:= SmartGetFieldInt(MyPlayer, hook_character_Motion);
+  SmartFreeObject(MyPlayer);
+end;
+
+{*******************************************************************************
+function IsIdle: Boolean;
+By: lordsaturn
+Description: Returns true if the your player is idle. (no movement or animation)
+*******************************************************************************}
+function IsIdle: Boolean;
+begin
+  Result := (GetAnimation = -1) and (GetSpeed = 0);
+end;
+
+{*******************************************************************************
+function CharacterMoving: Boolean;
+By: lordsaturn
+Description: Returns true if the your player is moving
+*******************************************************************************}
+function CharacterMoving: Boolean;
+begin
+  Result := (GetSpeed > 0);
+end;
+
+{*******************************************************************************
+function CharacterAnimating: Boolean;
+By: lordsaturn
+Description: Returns true if the your player is moving
+*******************************************************************************}
+function CharacterAnimating: Boolean;
+begin
+  Result := (GetAnimation > -1);
+end;
+
+{*******************************************************************************
+function WaitForAnimation(timeout: integer): boolean;
+By: Drags111
+Description: Waits until your character animates, or the timeout is reached.
+*******************************************************************************}
+function WaitForAnimation(timeout: integer): boolean;
+var
+  t: integer;
+begin
+  Result := false;
+  MarkTime(t);
+  while GetAnimation = -1 do
+  begin
+    if(TimeFromMark(t) >= timeout)then
+      Exit;
+    wait(50);
+  end;
+  Result := true;
+end;
+
+{*******************************************************************************
+function GetPlayers: array of TPlayer;
+By: Widget edited by lordsaturn and drags111
+Description: Returns all the players on the minimap
+*******************************************************************************}
+function GetPlayers: array of TPlayer;
+var
+  i, IndexPos, Count, Player, theName, L: integer;
+begin
+  Count := SmartGetFieldInt(0, hook_static_PlayerCount);
+  SetArrayLength(result, Count);
+  if Count < 1 then Exit;
+  for i := 0 to Count-1 do
+  try
+    IndexPos := SmartGetFieldArrayInt(0, hook_static_PlayerIndexArray, i);
+    Player := SmartGetFieldArrayObject(0, hook_static_GetPlayers, IndexPos);
+    theName := SmartGetFieldObject(Player, hook_player_GetName);
+    Result[L].Index := IndexPos;
+    Result[L].Name := GetJavaString(theName, 255);
+    Result[L].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) / 512));
+    Result[L].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) / 512));
+    Result[L].Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight));
+    Result[L].Animation := SmartGetFieldInt(Player, hook_character_Animation);
+    Result[L].Moving := (SmartGetFieldInt(Player, hook_character_Motion)>0);
+    Result[L].HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
+    Result[L].Level := SmartGetFieldInt(Player, hook_player_GetLevel);
+    Result[L].Orientation := Round(FixD(180 + (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048));
+    Result[L].Interacting := SmartGetFieldInt(Player, hook_character_GetInteracting);
+    Inc(L);
+  finally
+    SmartFreeObject(Player);
+    SmartFreeObject(theName);
+  end;
+  SetArrayLength(Result, L);
+end;
+
+{*******************************************************************************
+function SortPlayers(Players: TPlayerArray): TPlayerArray;
+By: lordsaturn
+Description: Sorts players by distance from you.
+*******************************************************************************}
+function SortPlayers(Players: TPlayerArray): TPlayerArray;
+var
+  i,i2, H: integer;
+  tpa: TPointArray;
+begin
+  H := High(Players);
+  if H < 0 then Exit;
+  SetArrayLength(TPA, H+1);
+  SetArrayLength(Result, H+1);
+  for i := 0 to H do
+    TPA[i] := Players[i].Tile;
+  SortTPAFrom(TPA, GetMyPos);
+  for i := 0 to H do
+    for i2 := 0 to H do
+      if (TPA[i].x=Players[i2].Tile.x) and (TPA[i].y=Players[i2].Tile.y) then
+        Result[i] := Players[i2];
+end;
+
+{*******************************************************************************
+function GetPlayersBy(TheVar: Variant): TPlayerArray;
+By: Drags111
+Description: Returns all the players by the variant. (Name or Index);
+*******************************************************************************}
+function GetPlayersBy(TheVar: Variant): TPlayerArray;
+var
+  vType, i, resCounter, Hi: Integer;
+  Players: TPlayerArray;
+  b: boolean;
+begin
+  Players := SortPlayers(GetPlayers);
+  SetLength(Result, Length(Players));
+  vType := VarType(TheVar);
+  if (vType = varString) then
+    TheVar := LowerCase(Trim(TheVar));
+  Hi := High(Players);
+  for i := Hi downto 0 do
+  begin
+    case vType of
+      varInteger: B := Players[i].Index = TheVar;
+      varString: B := (Pos(TheVar, LowerCase(Trim(Players[i].Name))) > 0);
+      else Exit;
+    end;
+    if not B then
+      Continue;
+    Result[resCounter] := Players[i];
+    inc(resCounter);
+  end;
+
+  SetLength(Result, resCounter);
+end;
+
+{*******************************************************************************
+function GetPlayer(theVar: Variant):TPlayer;
+By: Drags111
+Description: Gets the closest player that matches the argument
+*******************************************************************************}
+function GetPlayer(theVar: Variant):TPlayer;
+var
+  Players: TPlayerArray;
+  i, vType, Hi: Integer;
+  B: Boolean;
+begin
+  Result := NULL_PLAYER;
+  vType := VarType(TheVar);
+  if (vType = varString) then
+    TheVar := LowerCase(TheVar);
+  Players := SortPlayers(GetPlayers);
+  Hi := High(Players);
+  for i := Hi downto 0 do
+  begin
+    case (vType) of
+      varInteger: B := Players[i].Index = TheVar;
+      varString: B := (Pos(TheVar, LowerCase(Players[i].Name)) > 0);
+      else Continue;
+    end;
+    if (B) then
+    begin
+      Result := Players[i];
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function GetMe: TMe;
+By: Widget, lordsaturn, Drags111
+Description: Returns you
+*******************************************************************************}
+function GetMe: TMe; // Sounds funny =P
+var
+  Player, theName, pdef, i: integer;
+begin
+  try
+    Player := SmartGetFieldObject(0, hook_static_MyPlayer);
+    pdef := SmartGetFieldObject(Player, hook_player_PlayerDef);
+    theName := SmartGetFieldObject(Player, hook_player_GetName);
+    Result.Name := GetJavaString(theName, 255);
+    Result.Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) / 512));
+    Result.Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) / 512));
+    Result.Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight)) / 4;
+    Result.Animation := SmartGetFieldInt(Player, hook_character_Animation);
+    Result.Speed := SmartGetFieldInt(Player, hook_character_Motion);
+    Result.HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
+    Result.Level := SmartGetFieldInt(Player, hook_player_GetLevel);
+    Result.InFight := (SmartGetFieldInt(0,hook_static_LoopCycle) < SmartGetFieldInt(Player,hook_character_LoopCycleStatus));
+    Result.Orientation := Round(FixD(180 + (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048));
+    Result.Interacting := SmartGetFieldInt(0, hook_character_GetInteracting);
+    for i := 0 to 24 do
+    begin
+      Result.Experience[i] := SmartGetFieldArrayInt(0, hook_static_GetSkillExperiences, i);
+      Result.Levels[i] := SmartGetFieldArrayInt(0, hook_static_GetSkillLevels, i);
+    end;
+  finally
+    SmartFreeObject(theName);
+    SmartFreeObject(Player);
+    SmartFreeObject(pdef);
+  end;
+end;
+
+{*******************************************************************************
+function InteractingWithMe(NPC: TNPC): Boolean;
+By: Drags111
+Description: Checks if the NPC is currently interacting with your character.
+*******************************************************************************}
+function InteractingWithMe(NPC: TNPC): Boolean;
+var
+  Me: TMe;
+  Player: TPlayer;
+  PIdx: integer;
+begin
+  NPC := GetNPC(NPC.ID);
+  Me := GetMe;
+  PIdx := (NPC.Interacting - 32768);
+  Player := GetPlayer(PIdx);
+  Result := (Player.Name = Me.Name);
+end;

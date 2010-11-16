@@ -1,10 +1,7 @@
 //------------------------------------------------------------------\\
-//--             Scar Non-Standard Resource Library               --||
-//--                  » Reflection Routines - Interfaces          --||
+//--               Simba Reflection Library                       --||
+//--                  Interface Routines                          --||
 //------------------------------------------------------------------//
-// * function GetInterface(Index, ChildIndex: Integer): Integer;    // * by Bobarkinator
-// * function GetInterfaceText(ParentI, ChildI: Integer): String;   // * by Method
-// * function ValidInterface(ParentI: Integer): Boolean;            // * by Method
 
 {*******************************************************************************
 function ValidInterface(idx: Integer): Boolean;
