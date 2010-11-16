@@ -74,7 +74,7 @@ var
 begin
   GraveStone := GetObjectByID (LEO_GRAVESTONE_MIDDLE, OBJECT_TYPE_INTERACTABLE, 52);
   TP := TileToMM(Tile(GraveStone.Tile.X, GraveStone.Tile.Y+1));
-  Mouse (TP.X, TP.X, 1, 1, True);
+  Mouse (TP.X, TP.Y, 1, 1, True);
   Wait (3000+Random(1200));
 end;
 
