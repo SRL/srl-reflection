@@ -92,3 +92,13 @@ begin
     Wait(20 + Random(10));
   end;
 end;
+
+{************************************************* ******************
+Function R_LoggedIn: Boolean;
+By: Method / Drags111 / Zyt3x
+Description: Returns true if you're logged in.
+************************************************** ******************}
+function R_LoggedIn: Boolean;
+begin
+  Result := (LoginIndex = 10) or (LoginIndex = 11);
+end;
