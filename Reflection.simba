@@ -99,6 +99,26 @@ begin
 end;
 
 {*******************************************************************************
+Procedure SetupReflectionEx(B: Boolean);
+By: Reflection development team
+Description: Sets up reflection constants, and checks if hooks are outdated.
+Will try to update if outdated.
+*******************************************************************************}
+Procedure SetupReflectionEx(Update: Boolean);
+begin
+  SetupConstants;
+
+  if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
+  begin
+    Writeln('[Reflection] Hooks outdated!');
+    If Update then
+      UpdateHooks
+    else
+      TerminateScript;
+  end;
+end;
+
+{*******************************************************************************
 Procedure SetupReflection;
 By: Reflection development team
 Description: Sets up reflection constants, and checks if hooks are outdated.
@@ -106,11 +126,5 @@ Will try to update if outdated.
 *******************************************************************************}
 Procedure SetupReflection;
 begin
-  SetupConstants;
-
-  if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
-  begin
-    Writeln('[Reflection] Hooks outdated!');
-    UpdateHooks;
-  end;
+  SetupReflectionEx(True);
 end;
