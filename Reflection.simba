@@ -31,27 +31,86 @@
 {$i ./Core/Antirandoms\Sandwich.simba}
 {$i ./Core/Antirandoms\Antirandoms.simba}
 
+
 {*******************************************************************************
-procedure SetupReflectionEx(World: Integer; Signed, Members, Term: Boolean);
-By: Drags111
-Description: Sets up reflection. If Term is true and the hooks are
-            outdated, it will terminate the script. If term is false then
-            the script will continue to run, which means you will need backups
-            for your reflection functions.
+function r_GetSVNClientVersion: Integer;
+By: Naike
+Description: Gets the newest hooks.simba svn clientversion!
 *******************************************************************************}
-function SetupReflectionEx(Terminate: Boolean): boolean;
+function r_GetSVNClientVersion: Integer;
+var
+  S: String;
+  I: Integer;
+begin
+  S := GetPage('http://simbareflection.googlecode.com/svn/trunk/Core/Hooks.simba');
+
+  I := Pos('ClientVersion', S);
+  Delete(S, 1, I+15);
+  S := Copy(S, 1, Pos(';', S)-1);
+
+  Result := StrToIntDef(S, -1);
+end;
+
+{*******************************************************************************
+function r_GetSVNHookRev: Integer;
+By: Naike
+Description: Gets the newest hooks.simba svn hook rev!
+*******************************************************************************}
+function r_GetSVNHookRev: Integer;
+var
+  S: String;
+  I: Integer;
+begin
+  S := GetPage('http://simbareflection.googlecode.com/svn/trunk/Core/Hooks.simba');
+
+  I := Pos('HookRev', S);
+  Delete(S, 1, I+9);
+  S := Copy(S, 1, Pos(';', S)-1);
+  Result := StrToIntDef(S, -1);
+end;
+
+
+{*******************************************************************************
+Procedure UpdateHooks;
+By: Naike
+Description: Tries to update to new hooks!
+*******************************************************************************}
+Procedure UpdateHooks;
+var
+  myFile, ClientRev, RevHook: Integer;
+begin
+  ClientRev := r_GetSVNClientVersion;
+  RevHook := r_GetSVNHookRev;
+
+  If ((ClientRev = ClientVersion)and(RevHook = HookRev)) then
+  begin
+    Writeln('[Reflection] No new hooks have been uploaded, be patient!');
+    TerminateScript;
+  end;
+
+  Writeln('[Reflection] You''re using outdated hooks(' + ToStr(ClientVersion) + ', rev ' + ToStr(HookRev) + '), updating to ' + ToStr(ClientRev) + ', rev ' + ToStr(RevHook) + '!');
+
+  myFile := RewriteFile(AppPath + 'includes\reflection\core\hooks.simba', False);
+  WriteFileString(myFile, GetPage('http://simbareflection.googlecode.com/svn/trunk/Core/Hooks.simba'));
+  CloseFile(myFile);
+
+  Writeln('[Reflection] Updated to ' + ToStr(ClientRev) + ', rev ' + ToStr(RevHook) + ', please restart the script!');
+  TerminateScript;
+end;
+
+{*******************************************************************************
+Procedure SetupReflection;
+By: Reflection development team
+Description: Sets up reflection constants, and checks if hooks are outdated.
+Will try to update if outdated.
+*******************************************************************************}
+Procedure SetupReflection;
 begin
   SetupConstants;
-  Result := true;
-  SRL_OnFindRandomCall := @R_OnFindRandomCall;
+
   if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
   begin
-    Result := False;
-    if(Terminate)then
-    begin
-      Writeln('*****Hooks are outdated. Terminating script.*****');
-      TerminateScript;
-    end else
-      Writeln('*************HOOKS ARE OUTDATED.*************');
+    Writeln('[Reflection] Hooks outdated!');
+    UpdateHooks;
   end;
 end;
