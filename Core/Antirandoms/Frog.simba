@@ -9,6 +9,63 @@ begin
 end;
 
 {*******************************************************************************
+function R_FrogChattingInterfaceOpen : Boolean;
+by: Cstrike
+Description: If there's an interface up, return true, else false.
+*******************************************************************************}
+function R_FrogChattingInterfaceOpen : Boolean;
+var
+  ValidFrogInterfaces : TIntegerArray;
+  i : Integer;
+begin
+  ValidFrogInterfaces := [64, 65, 66, 67, 68, 241, 242, 243, 244, 245];
+  for i:=0 to high (ValidFrogInterfaces) do
+  begin
+    if (ValidInterface(ValidFrogInterfaces[i])) then
+    begin
+      Result := True;
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+procedure R_FrogTalkToHerald;
+by: Cstrike
+Description: Talks to Frog at start
+*******************************************************************************}
+procedure R_FrogTalkToHerald;
+var
+  NPCs : TNPCArray;
+  i : Integer;
+  TP : TPoint;
+begin
+  if R_FrogChattingInterfaceOpen then
+  begin
+    Writeln ('[Reflection] Already talking to frog herald.');
+  end else
+  begin
+    NPCs := GetNPCsNull;
+    if high (NPCs) < 0 then
+    begin
+      Writeln ('[Reflection] No frog herald found...')
+      Exit;
+    end;
+    for i:=0 to high (NPCs) do
+    begin
+      if NPCs[i].ID = 2472 then
+      begin
+        TP := TileToMS(NPCs[i].Tile, 0);
+        Mouse (TP.X, TP.Y, 0, 0, false);
+        wait (250+random(250));
+        if R_ChooseOptionMulti (['eral']) then
+          Exit;
+      end;
+    end;
+  end;
+end;
+
+{*******************************************************************************
 function R_FrogFindClickPrincess: Boolean;
 by: Cstrike
 Description: Finds princess and selects her
@@ -57,8 +114,8 @@ begin
 
      end;
 
-  until (TimeFromMark(iTime) > 120000)
-  writeln ('[Reflection] Error finding frog! Time > 2 mins');
+  until (TimeFromMark(iTime) > 60000)
+  writeln ('[Reflection] Error finding frog! Time > 1 min');
 end;
 
 {*******************************************************************************
@@ -88,17 +145,35 @@ by: Cstrike
 Description: Attempts to solve frog random, returns true if successful.
 *******************************************************************************}
 function R_SolveFrogCave : Boolean;
-var TimedCount : Integer;
+var
+  TimedCount, ChatTimeOut : Integer;
 begin
   if Not R_InFrogCave then
     Exit;
 
+  // Talk to frog herald
+  R_FrogTalkToHerald;
+  wait (1000+random(2500));
+
+  // While talking, shut him up
+  MarkTime(ChatTimeOut);
   While (GetInterfaceText(242, 6) = 'Click here to continue')do
   begin
     Wait(600+Random(300));
     ClickToContinue;
+    if ChatTimeOut > 12000 then Break;
   end;
 
+  // Just in case anything random happens... it will catch all other interfaces
+  MarkTime(ChatTimeOut);
+  While (R_FrogChattingInterfaceOpen)do
+  begin
+    Wait(600+Random(300));
+    ClickToContinue;
+    if ChatTimeOut > 12000 then Break;
+  end;
+
+  // Talk to and solve princess
   MarkTime (TimedCount);
   repeat
     if R_FrogFindClickPrincess then
