@@ -211,7 +211,7 @@ const
     hook_nodecache_GetNodes = 'a'; //629
 
 {Class Item}
-    class_Item = bb'; //629
+    class_Item = 'bb'; //629
     hook_item_GetID = 'k'; //629
     hook_item_GetStack = 'i'; //629
 
