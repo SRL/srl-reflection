@@ -207,7 +207,7 @@ const
     hook_ground_FloorDecoration = 'q'; //629
 
 {Class NodeCache}
-    class_NodeCache_GetNodes = 'mp'; //629
+    class_NodeCache = 'mp'; //629
     hook_nodecache_GetNodes = 'a'; //629
 
 {Class Item}
