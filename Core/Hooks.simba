@@ -19,7 +19,7 @@
 
 const
     ClientVersion = 630;
-    HookRev = 1;
+    HookRev = 2;
 
 {Static Hooks}
     hook_static_LoginIndex = 'rca.E'; //630
@@ -128,16 +128,16 @@ const
     hook_sdviewport_zZ = 'p'; //630
 
 {Class SDToolkit}
-    class_SDToolkit = 'st';
-    hook_sdtoolkit_xMin = 'J';
-    hook_sdtoolkit_xMax = 'E';
-    hook_sdtoolkit_yMin = 'y';
-    hook_sdtoolkit_yMax = 'G';
-    hook_sdtoolkit_zMin = 'I';
-    hook_sdtoolkit_zMax = 'L';
-    hook_sdtoolkit_xScale = 'U';
-    hook_sdtoolkit_yScale = 'V';
-    hook_sdtoolkit_Viewport = 'Q';
+    class_SDToolkit = 'sa'; //630
+    hook_sdtoolkit_Viewport = 'L'; //630
+    hook_sdtoolkit_xMin = 'C'; //630
+    hook_sdtoolkit_xMax = 'X'; //630
+    hook_sdtoolkit_yMin = 'T'; //630
+    hook_sdtoolkit_yMax = 'ab'; //630
+    hook_sdtoolkit_zMin = 'O'; //630
+    hook_sdtoolkit_zMax = 'lb'; //630
+    hook_sdtoolkit_xScale = 'A'; //630
+    hook_sdtoolkit_yScale = 'K'; //630
 
 {Class SDModel}
     class_SDModel = 'lq'; //630
