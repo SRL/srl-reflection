@@ -19,7 +19,7 @@
 
 const
     ClientVersion = 631;
-    HookRev = 3;
+    HookRev = 4;
 
 {Static Hooks}
     hook_static_LoginIndex = 'lj.w'; //631
@@ -36,7 +36,7 @@ const
     hook_static_MapAngle = 'pq.l'; //631
     hook_static_DestX = 'wca.o'; //631
     hook_static_DestY = 'sb.ti'; //631
-    hook_static_MenuOptionCount = 'mg.a'; //631
+    hook_static_MenuOptionCount = 'qs.d'; //631
     hook_static_MenuX = 'bm.o'; //631
     hook_static_MenuY = 'eq.o'; //631
     hook_static_MenuOpen = 'wga.d'; //631
