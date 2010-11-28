@@ -55,6 +55,11 @@ begin
   Result := FindNPC('Quiz Master', QuizMaster);
 end;
 
+function R_InQuiz : Boolean;
+begin
+  Result := inQuizMaster;
+end;
+
 {*******************************************************************************
 function ReturnGroup(id: integer): String;
 By: Drags111
@@ -143,9 +148,12 @@ begin
   if R_LoggedIn then
   begin
     Result := True;
+  end;
+  {
     Inc(RSolved[RQuiz]);
     AddToReport('Solved Quiz Random!');
   end else
     Inc(RFailed[RQuiz]);
+  }
 end;
 

@@ -18,7 +18,14 @@
 {$i ./Core/Other.simba}
 {$i ./Core/GameTab.simba}
 
-{$i ./Core/Antirandoms\ScapeRune.simba} // Also known as EvilBob
+//{$i ./Core/Antirandoms\Prison.simba} // Not solved yet
+//{$i ./Core/Antirandoms\Pillory.simba} // This is FUBAR
+//{$i ./Core/Antirandoms\Demon.simba} // Error w/ variable names... >_>
+{$i ./Core/Antirandoms\Certer.simba}
+{$i ./Core/Antirandoms\Abyss.simba}
+{$i ./Core/Antirandoms\Quiz.simba}
+{$i ./Core/Antirandoms\Pinball.simba}
+{$i ./Core/Antirandoms\ScapeRune.simba}
 {$i ./Core/Antirandoms\Arnav.simba}
 {$i ./Core/Antirandoms\Mordaut.simba}
 {$i ./Core/Antirandoms\Gravedigger.simba}

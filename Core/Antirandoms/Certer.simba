@@ -26,32 +26,16 @@ begin
   Result := (ValidNPC (CERTER_NPCNAME1)) or (ValidNPC (CERTER_NPCNAME2)) or (ValidNPC (CERTER_NPCNAME3));
 end;
 
-// Thanks to some help from ZephyrsFury
-// Modify these later since interfaces are updated
-function R_CerterGetChildCompID (ParentI, ChildI, CompI: Integer): Integer;
-var
-   Child, Comp: Integer;
+// Inheritance
+function R_CerterGetChildCompID (ParentI, ChildI, CompI: Integer) : Integer;
 begin
-  Child := GetInterface(ParentI, ChildI);
-  Comp := SmartGetFieldArrayObject(Child, hook_interface_GetComponents, compI);
-  Result := SmartGetFieldInt(Comp, hook_interface_GetModelID);
-  SmartFreeObject(Comp);
-  SmartFreeObject(Child);
+  Result := GetChildComponentID (ParentI, ChildI, CompI);
 end;
 
-// This was pretty much made to my knowledge by ZephyrsFury
-// Modify these later since interfaces are updated
-function R_CerterGetComponentText(ParentI, ChildI, CompI: Integer): String;
-var
-   Text, Child, Comp: Integer;
+// Inheritance
+function R_CerterGetComponentText(ParentI, ChildI, CompI: Integer) : String;
 begin
-  Child := GetInterface(ParentI, ChildI);
-  Comp := SmartGetFieldArrayObject(Child, hook_interface_GetComponents, compI);
-  Text := SmartGetFieldObject(Comp, hook_interface_GetText);
-  Result := GetJavaString(Text, 255);
-  SmartFreeObject(Text);
-  SmartFreeObject(Comp);
-  SmartFreeObject(Child);
+  Result := GetChildComponentText (ParentI, ChildI, CompI);
 end;
 
 {*******************************************************************************

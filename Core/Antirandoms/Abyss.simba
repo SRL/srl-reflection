@@ -1,0 +1,197 @@
+// Thank you to RSBot for the lever numbers, without them this would have been impossible
+// By Cstrike
+// DONT BE DUMB LIKE ME (Cstrike), DO NOT SOLVE A P2P ACCOUNT ON F2P. BAD IDEA.
+
+const
+  R_ABYSS_LEVER_N = 8995;
+  R_ABYSS_LEVER_S = 8997;
+  R_ABYSS_LEVER_E = 8994;
+  R_ABYSS_LEVER_W = 8996;
+
+function R_InAbyss : Boolean;
+begin
+  Result := True;
+  // Get music "Into The Abyss"
+  // Objects  8995-8998
+end;
+
+function R_AbyssSearchLever (Setting : Integer; LeverArray : TIntegerArray) : Boolean;
+var
+  i : Integer;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+  for i:=0 to high (LeverArray) do
+  begin
+    if LeverArray[i] = Setting then
+    begin
+      Result := True;
+      Writeln ('[Reflection] Found matching setting');
+      Exit;
+    end;
+  end;
+end;
+
+function R_AbyssDetermineLever (var Direction : String) : Boolean;
+var
+  Setting531, i : Integer;
+  LeverN, LeverS, LeverE, LeverW : TIntegerArray;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+  Direction := '';
+  LeverN := [32, 64, 135236, 67778, 135332, 34017, 202982, 101443, 101603, 236743, 33793, 67682, 135172, 236743, 169093, 33889, 202982, 67714, 101539];
+  LeverE := [4, 6, 101474, 101473, 169124, 169123, 67648, 135301, 135298, 67651, 169121, 33827, 67652, 236774, 101479, 33824, 202951];
+  LeverS := [4228, 32768, 68707, 167011, 38053, 230433, 164897, 131072, 168068, 65536, 35939, 103589, 235718, 204007, 100418, 133186, 99361, 136357, 1057, 232547];
+  LeverW := [105571, 37921, 131204, 235751, 1024, 165029, 168101, 68674, 203974, 2048, 100451, 6144, 39969, 69698, 32801, 136324];
+  for i:=1 to 3 do
+  begin
+    Setting531 := GetSetting(531);
+    Writeln ('[Reflection] Setting #531 for abyss: '+IntToStr(Setting531));
+    if not R_AbyssSearchLever (Setting531, LeverN) then
+    begin
+      if not R_AbyssSearchLever (Setting531, LeverE) then
+      begin
+        if not R_AbyssSearchLever (Setting531, LeverS) then
+        begin
+          if not R_AbyssSearchLever (Setting531, Leverw) then
+          begin
+            Writeln ('[Reflection] Warning, had trouble getting direction to press [attempt '+inttostr(i)+' of 3]');
+            Wait (1000+random(500));
+          end else Direction := 'w';
+        end else Direction := 's';
+      end else Direction := 'e';
+    end else Direction := 'n';
+    if Direction <> '' then Result := True;
+    if Result then Break;
+  end;
+end;
+
+function R_AbyssPullLever (LeverNumber : Integer) : Boolean;
+var
+  i, x, y : Integer;
+  LeverObj : TRSObject;
+  TP : TPoint;
+  AbyssCenter : TTile;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+  AbyssCenter := GetMyPos; // Failsafe
+  for i:=1 to 3 do // Try 3x
+  begin
+    LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 52);
+    if not TileOnMS (LeverObj.Tile, 0) then
+    begin
+      Writeln ('[Reflection] Tile not found on MS, moving near it');
+      case LeverNumber of // I'll turn this into one line of code later on
+        R_ABYSS_LEVER_N : AbyssCenter := Tile(LeverObj.Tile.x, LeverObj.Tile.y - 4);
+        R_ABYSS_LEVER_S : AbyssCenter := Tile(LeverObj.Tile.x, LeverObj.Tile.y + 4);
+        R_ABYSS_LEVER_E : AbyssCenter := Tile(LeverObj.Tile.x - 4, LeverObj.Tile.y);
+        R_ABYSS_LEVER_W : AbyssCenter := Tile(LeverObj.Tile.x + 4, LeverObj.Tile.y);
+      end;
+      if not WalkToTile (AbyssCenter, 0, 0) then Writeln ('[Reflection] Failed to walk near appendage');
+    end;
+    SetAngle (True);
+    case LeverNumber of // I'll turn this into one line of code later on
+        R_ABYSS_LEVER_N : MakeCompass ('s');
+        R_ABYSS_LEVER_S : MakeCompass ('n');
+        R_ABYSS_LEVER_E : MakeCompass ('w');
+        R_ABYSS_LEVER_W : MakeCompass ('e');
+    end;
+    {
+    end else Writeln ('[Reflection] Desired lever is on mainscreen');
+    }
+    TP := TileToMS (LeverObj.Tile, 0); //line85
+    MMouse (TP.x, TP.y, 2, 2);
+    wait (350+random(500));
+    if R_IsUpTextMulti (['Operate', 'Appendage']) then
+    begin
+      Writeln ('[Reflection] Found proper lever! Pulling...');
+      Result := R_ChooseOptionMulti (['prate', 'ppen']);
+      Exit;
+    end else
+    begin
+      Writeln ('[Reflection] Error: Lever TPoint not found, moving mouse around to find it...');
+      wait (500+random(300));
+      MMouse (274, 326, 2, 2);
+      wait (300+random(300));
+      if R_IsUpTextMulti (['prate', 'ppen']) then
+      begin
+        Writeln ('[Reflection] Found proper lever! Pulling...');
+        GetMousePos (x, y);
+        Mouse (x, y, 0, 0, false);
+        wait (500+random(250));
+        Result := R_ChooseOptionMulti (['prate', 'ppen']);
+        Exit;
+      end;
+      MMouse (276, 328, 2, 2);
+      wait (300+random(300));
+      if R_IsUpTextMulti (['prate', 'ppen']) then
+      begin
+        Writeln ('[Reflection] Found proper lever! Pulling...');
+        GetMousePos (x, y);
+        Mouse (x, y, 0, 0, false);
+        wait (500+random(250));
+        Result := R_ChooseOptionMulti (['prate', 'ppen']);
+        Exit;
+      end;
+      MMouse (TP.x+3, TP.y+3, 2, 2);
+      wait (300+random(300));
+      if R_IsUpTextMulti (['prate', 'ppen']) then
+      begin
+        Writeln ('[Reflection] Found proper lever! Pulling...');
+        GetMousePos (x, y);
+        Mouse (x, y, 0, 0, false);
+        wait (500+random(250));
+        Result := R_ChooseOptionMulti (['prate', 'ppen']);
+        Exit;
+      end;
+      MMouse (TP.x-2, TP.y-2, 2, 2);
+      wait (300+random(300));
+      if R_IsUpTextMulti (['prate', 'ppen']) then
+      begin
+        Writeln ('[Reflection] Found proper lever! Pulling...');
+        GetMousePos (x, y);
+        Mouse (x, y, 0, 0, false);
+        wait (500+random(250));
+        Result := R_ChooseOptionMulti (['prate', 'ppen']);
+        Exit;
+      end;
+      MMouse (TP.x+random(4), TP.y+random(4), 2, 2);
+      wait (300+random(300));
+      if R_IsUpTextMulti (['prate', 'ppen']) then
+      begin
+        Writeln ('[Reflection] Found proper lever! Pulling...');
+        GetMousePos (x, y);
+        Mouse (x, y, 0, 0, false);
+        wait (500+random(250));
+        Result := R_ChooseOptionMulti (['prate', 'ppen']);
+        Exit;
+      end;
+    end;
+  end;
+end;
+
+function R_SolveAbyss : Boolean;
+var Direction : String;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+  Direction := ''; // Failsafe
+  if R_InAbyss then
+  begin
+    R_AbyssDetermineLever (Direction);
+    if Direction = '' then Writeln ('[Reflection] Failed getting proper appendage in Abyssal random. Please report this to reflection developers!')
+    else
+    begin
+      if Direction = 'n' then Result := R_AbyssPullLever(R_ABYSS_LEVER_N)
+        else if Direction = 's' then Result := R_AbyssPullLever(R_ABYSS_LEVER_S)
+          else if Direction = 'e' then Result := R_AbyssPullLever(R_ABYSS_LEVER_E)
+            else if Direction = 'w' then Result := R_AbyssPullLever(R_ABYSS_LEVER_W);
+    end;
+  end else Writeln ('[Reflection] Not in Abyss random!');
+end;

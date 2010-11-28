@@ -36,8 +36,8 @@ begin
   begin
     RandName := 'Abyss';
     Music := 'into the abyss';
-    InRandom := nil;
-    SolveRandom := nil;
+    InRandom := @R_InAbyss;
+    SolveRandom := @R_SolveAbyss;
   end;
 
   With r_RandomArr[R_RANDOM_BEEKEEPER] do
@@ -59,7 +59,7 @@ begin
   With r_RandomArr[R_RANDOM_CERTER] do
   begin
     RandName := 'Certer';
-    Music := '';
+    Music := ''; // Need music first...
     InRandom := nil;
     SolveRandom := nil;
   end;
@@ -147,9 +147,9 @@ begin
   With r_RandomArr[R_RANDOM_PINBALL] do
   begin
     RandName := 'Pinball';
-    Music := '';
-    InRandom := nil;
-    SolveRandom := nil;
+    Music := 'pinball wizard';
+    InRandom := @R_InPinball;
+    SolveRandom := @R_SolvePinball;
   end;
 
   With r_RandomArr[R_RANDOM_PRISON] do
@@ -164,8 +164,8 @@ begin
   begin
     RandName := 'Quiz';
     Music := '';
-    InRandom := nil;
-    SolveRandom := nil;
+    InRandom := @R_InQuiz;
+    SolveRandom := @R_SolveQuizMaster;
   end;
 
   With r_RandomArr[R_RANDOM_SANDWICHLADY] do

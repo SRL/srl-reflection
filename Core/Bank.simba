@@ -6,6 +6,7 @@
 //---                               Constants                               --//
 const
   INTERFACE_BANK                                        = 762;
+  INTERFACE_DEPOSITBOX                                  = 11;
   INTERFACE_BANK_PIN                                    = 13;
   INTERFACE_BANK_BUTTON_CLOSE                           = 42;
   INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY         = 36;
