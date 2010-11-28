@@ -1,0 +1,310 @@
+// Special thanks to RSBot for making this possible
+// Special thanks to Bad Boy JH for helping us create this
+
+const
+  CERTER_PORTALID = 11368;
+  CERTER_MUSIC = 'Dream';
+  CERTER_GILES_NPC_ID = 8635;
+  CERTER_NPCNAME1 = 'Niles';
+  CERTER_NPCNAME2 = 'Miles';
+  CERTER_NPCNAME3 = 'Giles';
+  CERTER_START_TALK = 'to identify something for me.';
+  CERTER_MODELINTERFACE = 184;
+  CERTER_MODELCHILD = 8;
+  CERTER_MODELCOMP = 3; // Get model ID
+  CERTER_CHOICE_A_TEXT = 0; // From 184 8 [x]
+  CERTER_CHOICE_B_TEXT = 1; // "
+  CERTER_CHOICE_C_TEXT = 2; // "
+
+{*******************************************************************************
+function R_InCerter : Boolean;
+By: Cstrike
+Description: Checks if in this random.
+*******************************************************************************}
+function R_InCerter : Boolean;
+begin
+  Result := (ValidNPC (CERTER_NPCNAME1)) or (ValidNPC (CERTER_NPCNAME2)) or (ValidNPC (CERTER_NPCNAME3));
+end;
+
+// Thanks to some help from ZephyrsFury
+// Modify these later since interfaces are updated
+function R_CerterGetChildCompID (ParentI, ChildI, CompI: Integer): Integer;
+var
+   Child, Comp: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Comp := SmartGetFieldArrayObject(Child, hook_interface_GetComponents, compI);
+  Result := SmartGetFieldInt(Comp, hook_interface_GetModelID);
+  SmartFreeObject(Comp);
+  SmartFreeObject(Child);
+end;
+
+// This was pretty much made to my knowledge by ZephyrsFury
+// Modify these later since interfaces are updated
+function R_CerterGetComponentText(ParentI, ChildI, CompI: Integer): String;
+var
+   Text, Child, Comp: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Comp := SmartGetFieldArrayObject(Child, hook_interface_GetComponents, compI);
+  Text := SmartGetFieldObject(Comp, hook_interface_GetText);
+  Result := GetJavaString(Text, 255);
+  SmartFreeObject(Text);
+  SmartFreeObject(Comp);
+  SmartFreeObject(Child);
+end;
+
+{*******************************************************************************
+function R_CerterClickContinueIfTalking : Boolean;
+By: Cstrike
+Description: Handles certer talking to us.
+*******************************************************************************}
+function R_CerterClickContinueIfTalking : Boolean;
+var
+  i, j, t : Integer;
+  ChatActive : Boolean;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  ChatActive := False; // Boolean for if were talking
+
+  // Check if were being talked to
+  for j := 241 to 245 do
+  begin
+    if ValidInterface(j) then
+    begin
+      ChatActive := True;
+      Break;
+    end;
+  end;
+
+  // If we find no chat boxes then...
+  if not ChatActive then
+  begin
+    Writeln ('[Reflection] Certer is not talking to us, returning result true');
+    Result := True;
+    Exit;
+  end;
+
+  // Since we have chat, enter a 15-20 second loop that keeps looking for chat and clicking continue
+  MarkTime(t);
+  repeat
+    for i := 241 to 245 do
+    begin
+      if ValidInterface(i) then
+      begin
+        Mouse(303, 452, 72, 7, True);
+        MMouse (203, 352, 80, 50);
+        wait (1000+random(2000));
+      end;
+    end;
+
+    // Check if were being talked to again
+    for j := 241 to 245 do
+    begin
+      if ValidInterface(j) then
+      begin
+        ChatActive := True;
+        Break;
+      end;
+    end;
+    wait (500+random(350));
+
+    if not ChatActive then Break;
+    ChatActive := False; // If we come around again it will be set true if were still talking
+
+  until (TimeFromMark(t) > 20000)
+
+  if not (TimeFromMark(t) > 20000) then Result := True
+  else Writeln ('[Reflection] Had an error (or lag) while talking to certer!');
+end;
+
+{*******************************************************************************
+function R_CerterSelectAnswer : Boolean;
+By: Cstrike
+Description: Selects right answer.
+*******************************************************************************}
+function R_CerterSelectAnswer : Boolean;
+var
+  CerterIDArr : TIntegerArray;
+  CerterNameArr : TStringArray;
+  ModelIDNumber, i, j, t, AnswerLetter : Integer;
+  ModelIDName : String;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  ModelIDName := '';
+  ModelIDNumber := -2;
+  AnswerLetter := -1;
+
+  // Interface failsafe
+  if not ValidInterface(CERTER_MODELINTERFACE) then
+  begin
+    Writeln ('[Reflection] Not at certer interface!');
+    Exit;
+  end;
+
+  // These line up with one another for what to look for
+  CerterIDArr := [2807, 8828, 8829, 8832, 8833, 8834, 8835, 8836, 8837];
+  CerterNameArr := ['bowl', 'battleaxe', 'fish', 'shield', 'helmet', 'ring', 'shears', 'sword', 'spade'];
+  ModelIDNumber := R_CerterGetChildCompID (CERTER_MODELINTERFACE, CERTER_MODELCHILD, CERTER_MODELCOMP);
+
+  // Search for index
+  for i := 0 to high (CerterIDArr) do
+  begin
+    if CerterIDArr[i] = ModelIDNumber then Break;
+  end;
+
+  // If we max out the array and dont find it, then we failed...
+  if (i = high (CerterIDArr)) and (ModelIDNumber <> CerterIDArr[high (CerterIDArr)]) then
+  begin
+    Writeln ('[Reflection] Warning, ID number not known (Random gave us model ID #'+ToStr(ModelIDNumber)+')');
+    Exit;
+  end;
+
+  // Now, since we found it...
+  ModelIDName := CerterNameArr[i];
+
+  // Failsafe
+  if ModelIDName = '' then
+  begin
+    Writeln ('[Reflection] Model name not valid (its blank)');
+    Exit;
+  end;
+
+  // Tell our user and debug at the same time
+  Writeln ('[Reflection] Found ID #'+ToStr(ModelIDNumber)+', therefore looking for '+ModelIDName+' in answers');
+
+  // Search interface for proper name
+  for j := CERTER_CHOICE_A_TEXT to CERTER_CHOICE_C_TEXT do
+  begin
+    if (pos(lowercase(ModelIDName),lowercase(R_CerterGetComponentText(CERTER_MODELINTERFACE, CERTER_MODELCHILD, j))) > 0) then
+    begin
+      AnswerLetter := j;
+      Writeln ('[Reflection] Found answer at position: '+ToStr(AnswerLetter)+' of 2');
+    end;
+  end;
+
+  // Failsafe
+  if AnswerLetter < 0 then
+  begin
+    Writeln ('[Reflection] Had trouble finding the answer text: '+ModelIDName);
+    Exit;
+  end;
+
+  // Seem human while making decision
+  wait (1000+random(2500));
+
+  // Move mouse to answer [based off of answerletter
+  Mouse (120, (55 + (AnswerLetter*35)), 40, 3, true);
+
+  // Wait for response to see if we succeeded
+  MarkTime(t);
+  repeat
+    wait (50);
+  until (not ValidInterface(CERTER_MODELINTERFACE)) or (TimeFromMark(t) > 15000)
+  if not ValidInterface(CERTER_MODELINTERFACE) then
+  begin
+    Writeln ('[Reflection] Chose answer, hopefully correct');
+    Result := True;
+  end;
+end;
+
+{*******************************************************************************
+function R_CerterTalkToNPC : Boolean;
+By: Cstrike
+Description: Talks to certer. NOT USED, BUT USED IN SCRIPT. FIX LATER :)
+*******************************************************************************}
+function R_CerterTalkToNPC : Boolean;
+begin
+  if not LoggedIn then Exit;
+  {
+  Result := False;
+  if ValidInterface(CERTER_MODELINTERFACE) then
+  begin
+    Result := True;
+    Exit;
+  end;
+  }
+  Result := True;
+end;
+
+{*******************************************************************************
+function R_CerterExitCerter : Boolean;
+By: Cstrike
+Description: Exits through portal.
+*******************************************************************************}
+function R_CerterExitCerter : Boolean;
+var
+  PortalObj : TRSObject;
+  TP : TPoint;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  PortalObj := GetObjectByID(CERTER_PORTALID, OBJECT_TYPE_INTERACTABLE, 30);
+  if PortalObj = NULL_RSOBJECT then Exit;
+  if TileOnMS (PortalObj.Tile, 0) then
+  begin
+    TP := TileToMS (PortalObj.Tile, 0);
+    Mouse (TP.x, TP.y, 3, 3, false);
+    if R_ChooseOptionMulti (['nte', 'orta']) then
+    begin
+      Result := True;
+      wait (1000+random(2000));
+    end;
+    wait (500+random(500));
+  end;
+
+end;
+
+{*******************************************************************************
+function R_SolveCerter : Boolean;
+By: Cstrike
+Description: Solves certer.
+*******************************************************************************}
+function R_SolveCerter : Boolean;
+var
+  i : Integer;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+
+  if R_InCerter then
+  begin
+    for i := 1 to 3 do // 3 chances
+    begin
+      if R_CerterClickContinueIfTalking then
+      begin
+        wait (200+random(200));
+        if R_CerterTalkToNPC then
+        begin
+          wait (300+random(300));
+          if R_CerterClickContinueIfTalking then
+          begin
+            wait (250+random(270));
+            if R_CerterSelectAnswer then
+            begin
+              wait (400+random(210));
+              if R_CerterClickContinueIfTalking then
+              begin
+                wait (600+random(250));
+                if R_CerterExitCerter then
+                begin
+                  wait (400+random(700));
+                  Writeln ('[Reflection] Certer portal exiting completed.');
+                  Result := True;
+                  Break;
+                end else Writeln ('[Reflection] Error: Had trouble exiting random');
+              end else Writeln ('[Reflection] Error: Had trouble while talking to certer');
+            end else Writeln ('[Reflection] Error: Had trouble selecting right answer');
+          end else Writeln ('[Reflection] Error: Had trouble while talking to certer');
+        end else Writeln ('[Reflection] Error: Had trouble with certer interaction');
+      end else Writeln ('[Reflection] Error: Had trouble while talking to certer');
+      wait (1000+random(2000));
+    end; // End 3 chances
+  end else Writeln ('[Reflection] Warning: Not in certer random');
+
+  Result := R_LoggedIn;
+  if not Result then Writeln ('[Reflection] Failed solving certer.')
+  else Writeln ('[Reflection] Certer solved!');
+end;

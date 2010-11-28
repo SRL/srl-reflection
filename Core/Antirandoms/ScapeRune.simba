@@ -1,0 +1,627 @@
+const
+  R_EVILBOB_PORTAL = 8987;
+  R_EVILBOB_COOKINGPOT = 8985;
+  R_EVILBOB_DEPOSITBOX = 32930;
+  R_EVILBOB_FISHINGSPOT = 8986;
+  R_EVILBOB_SMALLFISHINGNET = 6209;
+  R_EVILBOB_MIDDLE_X = 3422;
+  R_EVILBOB_MIDDLE_Y = 4777;
+  R_EVILBOB_SERVANTNAME = 'Servant';
+  R_EVILBOB_EVILBOBNAME = 'Evil Bob';
+  R_EVILBOB_DIRECTIONINTERFACE = 186;
+  R_EVILBOB_DIRECTIONCOMP = 0;
+  R_EVILBOB_DIRECTIONCOMPTEXT = 'Evil Bob wants fish from the Fishing spots beyond this statue.';
+  R_EVILBOB_CLICKCONT = 'Click here to continue';
+  R_EVILBOB_FISHID1 = 6202;
+  R_EVILBOB_FISHID2 = 6206;
+  R_EVILBOB_FISHIDUNCOOKED1 = 6200;
+  R_EVILBOB_FISHIDUNCOOKED2 = 6204;
+
+{*******************************************************************************
+function R_InScapeRune: Boolean;
+by: Cstrike
+Description: Checks if in Evil bob's ScapeRune random.
+*******************************************************************************}
+function R_InScapeRune: Boolean;
+begin
+  Result := ValidNPC(R_EVILBOB_EVILBOBNAME);
+end;
+
+{*******************************************************************************
+procedure R_ScapeRuneDepositItems (ItemsToDeposit : Integer);
+by: Cstrike
+Description: Deposists that number in the DropBox.
+*******************************************************************************}
+procedure R_ScapeRuneDepositItems (ItemsToDeposit : Integer);
+begin
+  if not LoggedIn then Exit;
+  Writeln ('[Reflection] Depositing '+inttostr(ItemsToDeposit)+' items to make space');
+end;
+
+{*******************************************************************************
+procedure R_ScapeRuneDestroyBadFish;
+by: Cstrike
+Description: Destroys bad fish if we for whatever reason happen to get one.
+*******************************************************************************}
+procedure R_ScapeRuneDestroyFish;
+var
+  DestroyArray : TIntegerArray;
+  i, t : Integer;
+begin
+  if not LoggedIn then Exit;
+  DestroyArray := [R_EVILBOB_FISHID1, R_EVILBOB_FISHID2, R_EVILBOB_FISHIDUNCOOKED1, R_EVILBOB_FISHIDUNCOOKED2];
+  for i:=0 to high(DestroyArray) do
+  begin
+    if R_CountItemID(DestroyArray[i]) > 0 then
+    begin
+      writeln ('[Reflection] Destroying improper fish.');
+      R_ClickItemID (DestroyArray[i], false, 'Destroy');
+      wait (500+random(500));
+      // Wait for interface to pop up
+      MarkTime(t);
+      repeat
+        wait (50);
+      until (ValidInterface(94)) or (TimeFromMark(t) > 6000)
+      // Click interface
+      MarkTime(t);
+      repeat
+        wait (50);
+        if (GetInterfaceText(94, 3) = 'Yes.') then
+        begin
+          Mouse (322,387, 3, 3, true);
+          wait (1000+random(500));
+        end;
+      until (not ValidInterface(94)) or (TimeFromMark(t) > 2000)
+    end
+  end;
+end;
+
+{*******************************************************************************
+procedure R_ScapeRuneClickToContinue (Int, Comp : Integer);
+by: Cstrike
+Description: Determines the proper direction to go.
+*******************************************************************************}
+procedure R_ScapeRuneClickToContinue (Int, Comp : Integer);
+var
+  t : Integer;
+begin
+  if not LoggedIn then Exit;
+  MarkTime (t);
+  if (not ValidInterface(Int)) then Exit;
+  repeat
+    if (GetInterfaceText (Int, Comp) = R_EVILBOB_CLICKCONT) then
+      Mouse(303, 452, 72, 7, True);
+  until (not (GetInterfaceText (Int, Comp) = R_EVILBOB_CLICKCONT)) or (TimeFromMark(t) > 8000)
+end;
+
+{*******************************************************************************
+procedure R_ScapeRuneWalkToCenter;
+by: Cstrike
+Description: Walks to center.
+*******************************************************************************}
+procedure R_ScapeRuneWalkToCenter;
+begin
+  if not LoggedIn then Exit;
+  if not WalkToTile (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y), 2, 0) then
+  begin
+    if TileOnMM (Tile(R_EVILBOB_MIDDLE_X+6, R_EVILBOB_MIDDLE_Y)) then
+    begin
+      WalkToTile (Tile(R_EVILBOB_MIDDLE_X+6, R_EVILBOB_MIDDLE_Y), 2, 0);
+      writeln ('[Reflection] Moving from east to center');
+    end else
+    if TileOnMM (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y+6)) then
+    begin
+      WalkToTile (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y+6), 2, 0);
+      writeln ('[Reflection] Moving from north to center');
+    end else
+    if TileOnMM (Tile(R_EVILBOB_MIDDLE_X-6, R_EVILBOB_MIDDLE_Y)) then
+    begin
+      WalkToTile (Tile(R_EVILBOB_MIDDLE_X-6, R_EVILBOB_MIDDLE_Y), 2, 0);
+      writeln ('[Reflection] Moving from west to center');
+    end else
+    if TileOnMM (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y-6)) then
+    begin
+      WalkToTile (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y-6), 2, 0);
+      writeln ('[Reflection] Moving from south to center');
+    end;
+    WalkToTile (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y), 2, 0);
+  end;
+end;
+
+{*******************************************************************************
+procedure R_ScapeRuneClickContBobAll;
+by: Cstrike
+Description: Returns true if no interfaces are available to chat with Bob.
+*******************************************************************************}
+procedure R_ScapeRuneClickContBobAll;
+var
+  t : Integer;
+begin
+  MarkTime (t);
+  repeat
+    R_ScapeRuneClickToContinue(64,5);
+    R_ScapeRuneClickToContinue(65,6);
+    R_ScapeRuneClickToContinue(66,7);
+    R_ScapeRuneClickToContinue(241,5);
+    R_ScapeRuneClickToContinue(242,6);
+    R_ScapeRuneClickToContinue(243,7);
+  until ((not (ValidInterface(64))) and (not (ValidInterface(65))) and (not (ValidInterface(66)))
+        and (not (ValidInterface(241))) and (not (ValidInterface(242))) and (not (ValidInterface(243)))
+          or (TimeFromMark(t) > 30000))
+  Writeln ('[Reflection] No more bob chat interfaces up');
+end;
+
+{*******************************************************************************
+function R_ScapeRuneTalkToServant: Boolean;
+by: Cstrike
+Description: Checks if in Evil bob's ScapeRune random.
+*******************************************************************************}
+function R_ScapeRuneTalkToServantStart: Boolean;
+var
+  NPC : TNPC;
+  TP : TPoint;
+  t : Integer;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  if FindNPC(R_EVILBOB_SERVANTNAME, NPC) then
+  begin
+    if not TileOnMS (NPC.Tile, 0) then R_ScapeRuneWalkToCenter;
+    if TileOnMS (NPC.Tile, 0) then
+    begin
+      TP := TileToMS (NPC.Tile, 0);
+      Mouse (TP.x, TP.y, 2, 3, false);
+      if R_ChooseOptionMulti (['Talk','alk','-to']) then
+      begin
+        MarkTime(t);
+        // Wait until we start chatting with the Servant
+        repeat
+          If (ValidInterface(64))
+            or (ValidInterface(65))
+              or (ValidInterface(241))
+                or (ValidInterface(242))
+                  or (ValidInterface(186)) then Break;
+          wait (50);
+        until (TimeFromMark(t) > 10000)
+        // If theres an error...
+        if (TimeFromMark(t) > 10000) then
+        begin
+          Writeln ('[Reflection] We clicked to talk with the Servant but its not happening...');
+          Exit;
+        end;
+        // Failsafe in case we talked to the Servant already
+        if (ValidInterface(186)) then
+        begin
+          Writeln ('[Reflection] Servant skipped to the showing of the statue, skipping to finding fish location function');
+          Result := True;
+          Exit;
+        end;
+        // If we haven't talked to the Servant, then shut her up:
+        MarkTime(t);
+        repeat
+          R_ScapeRuneClickToContinue (64, 5);
+          R_ScapeRuneClickToContinue (241, 5);
+          R_ScapeRuneClickToContinue (65, 6);
+          R_ScapeRuneClickToContinue (242, 6);
+          wait (200+random(500));
+        until (ValidInterface(186)) or (TimeFromMark(t) > 20000)
+        Result := True;
+      end;
+    end;
+  end else
+  begin
+    writeln ('[Reflection] Could not index Servant, walking to center');
+    R_ScapeRuneWalkToCenter;
+  end;
+end;
+
+{*******************************************************************************
+function R_ScapeRuneGetFishingNet: Boolean;
+by: Cstrike
+Description: Gets a fishing net.
+*******************************************************************************}
+function R_ScapeRuneGetFishingNet: Boolean;
+var
+  GroundItemArr : TGroundItemArray;
+  TileToGetItem : TTile;
+  i, t : Integer;
+  TP : TPoint;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+
+  if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0) then
+  begin
+    writeln ('[Reflection] Fishing net is in inventory');
+    Result := True;
+    Exit;
+  end;
+
+  // Try 3x to get a fishing net
+  for i:=1 to 3 do
+  begin
+    writeln ('[Reflection] Attempt #'+inttostr(i)+'/3 to get fishing net');
+
+    // Pick a tile to pick it up from
+    case random(6) of
+      0: TileToGetItem := Tile(3416, 4786);
+      1: TileToGetItem := Tile(3412, 4784);
+      2: TileToGetItem := Tile(3414, 4768);
+      3: TileToGetItem := Tile(3429, 4784);
+      4: TileToGetItem := Tile(3432, 4783);
+      5: TileToGetItem := Tile(3431, 4772);
+      6: TileToGetItem := Tile(3429, 4769);
+    end;
+
+    // Move to location
+    if TileOnMM (TileToGetItem) then WalkToTile (TileToGetItem, 2, 0)
+    else
+    begin
+      R_ScapeRuneWalkToCenter;
+      WalkToTile (TileToGetItem, 2, 0);
+    end;
+
+    // Pick up item
+    if TileOnMS (TileToGetItem, 0) then
+    begin
+      MarkTime (t);
+      repeat
+        GroundItemArr := GetItemsAt (TileToGetItem);
+        if high (GroundItemArr) < 0 then Break;
+        TP := TileToMS (TileToGetItem, 0);
+        Mouse (TP.x, TP.y, 1, 1, true);
+        wait (2000+random(3000));
+      until (TimeFromMark(t) > 10000) or (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0)
+    end else
+    begin
+      writeln ('[Reflection] Could not find fishing net at Tile('+inttostr(TileToGetItem.x)+','+inttostr(TileToGetItem.y)+')');
+    end;
+
+    // If successful...
+    if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0) then
+    begin
+      Result := true;
+      writeln ('[Reflection] Successfully obtained a fishing net to complete task with');
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_ScapeRuneDetermineDirectionOfFishAndWalkTo (var TileToFishAt : TTile) : Boolean;
+by: Cstrike
+Description: Determines the proper direction to go. Returns 'n, e, s, w'.
+Returns true when walking in proper direction. It also puts a tile in the var
+TileToFishAt for later functions
+*******************************************************************************}
+function R_ScapeRuneDetermineDirectionOfFishAndWalkTo (var TileToFishAt : TTile) : Boolean;
+var
+  FishObj : TRSObjectArray;
+  FishObjTile, TileToArrive : TTile;
+  i, j, t : Integer;
+  TP : TPoint;
+  Direction : String;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  Direction := 'none';
+  TileToFishAt := Tile(0,0); // Failsafe
+  FishObjTile := Tile(0,0); // Failsafe
+  if (GetInterfaceText (R_EVILBOB_DIRECTIONINTERFACE, R_EVILBOB_DIRECTIONCOMP)
+    = R_EVILBOB_DIRECTIONCOMPTEXT) then
+  begin
+    for j:=1 to 3 do
+    begin
+      writeln ('[Reflection] Searching for proper fishing pool attempt #'+inttostr(j));
+      wait (6500+random(3200)); // Let camera calibrate to pause
+      FishObj := GetObjectsByID([R_EVILBOB_FISHINGSPOT], OBJECT_TYPE_INTERACTABLE, 52);
+
+      // If we found more than 4 fish pools or none, we have a problem
+      if (high(FishObj) < 0) then
+      begin
+        writeln ('[Reflection] Had trouble getting fish location ['+inttostr(high(FishObj))+']');
+        Exit;
+      end else // Here we check tile on MS
+      begin
+        for i:=0 to high (FishObj) do
+        begin
+          if (TileOnMS (FishObj[i].Tile, 0)) then
+          begin
+            writeln ('[Reflection] Found fish tile on screen, tile indexed');
+            FishObjTile := FishObj[i].Tile;
+            Break;
+          end;
+        end;
+      end;
+      if FishObjTile.x > 0 then Break; // If we have found the tile, stop trying
+    end;
+
+    // N: Y should be -ve cause its higher, X shouldnt differ by abs dist of 7
+    if (iabs(R_EVILBOB_MIDDLE_X - FishObjTile.x) < 7) and
+      (R_EVILBOB_MIDDLE_Y - FishObjTile.y <= -7) then Direction := 'n';
+
+    // E: X should be -ve cause its more right, Y shouldnt differ by abs dist of 7
+    if (R_EVILBOB_MIDDLE_X - FishObjTile.x <= -7) and
+      (iAbs(R_EVILBOB_MIDDLE_Y - FishObjTile.y) < 7) then Direction := 'e';
+
+    // S: Y should be +ve cause its lower, X shouldnt differ by abs dist of 7
+    if (iabs(R_EVILBOB_MIDDLE_X - FishObjTile.x) < 7) and
+      (R_EVILBOB_MIDDLE_Y - FishObjTile.y >= 7) then Direction := 's';
+
+    // W: X should be +ve cause its more left, Y shouldnt differ by abs dist of 7
+    if (R_EVILBOB_MIDDLE_X - FishObjTile.x >= 7) and
+      (iAbs(R_EVILBOB_MIDDLE_Y - FishObjTile.y) < 7) then Direction := 'w';
+
+    // Walking part
+    if Direction = 'none' then
+    begin
+      writeln ('[Reflection] Warning: Error occured, could not find direction to walk for Evil Bob ScapeRune!');
+      Exit;
+    end else
+    begin
+      TP := Point (0,0); // Failsafe
+      TileToArrive := Tile (0,0); // Failsafe
+      case Direction of // Needs more randomness TBH
+        'n': begin
+                TP := TileToMM (Tile(FishObjTile.x, FishObjTile.y - 2));
+                TileToArrive := Tile(FishObjTile.x, FishObjTile.y - 2);
+                TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
+                MakeCompass ('s');
+             end;
+        'e': begin
+                TP := TileToMM (Tile(FishObjTile.x - 2, FishObjTile.y));
+                TileToArrive := Tile(FishObjTile.x - 2, FishObjTile.y);
+                TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
+                MakeCompass ('w');
+             end;
+        's': begin
+               TP := TileToMM (Tile(FishObjTile.x, FishObjTile.y + 2));
+               TileToArrive := Tile(FishObjTile.x, FishObjTile.y + 2);
+               TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
+               MakeCompass ('n');
+             end;
+        'w': begin
+               TP := TileToMM (Tile(FishObjTile.x + 2, FishObjTile.y));
+               TileToArrive := Tile(FishObjTile.x + 2, FishObjTile.y);
+               TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
+               MakeCompass ('e');
+             end;
+      end;
+      if (TP.x > 0) and (TileToArrive.x > 0) then
+      begin
+        Mouse (TP.x, TP.y, 2, 2, true);
+        MarkTime (t);
+        repeat
+          wait (50);
+        until (TimeFromMark(t) > 6000) or (DistanceFrom(TileToArrive) < 4)
+        if (TimeFromMark(t) > 6000) then writeln ('[Reflection] Warning: Did timed out, did not get to TileToArrive');
+        if (DistanceFrom(TileToArrive) < 4) then Result := True; // If we are near the spot then result = true
+      end else writeln ('[Reflection] Error with walking to fishing spot');
+    end;
+  end else writeln ('[Reflection] Not in proper interface to get direction');
+end;
+
+{*******************************************************************************
+function R_ScapeRuneFishAtTile (TileToFishAt : TTile) : Boolean;
+by: Cstrike
+Description: Fishes the food for Bob at that tile. Returns true if it gets a
+fish to [un]cook with.
+*******************************************************************************}
+function R_ScapeRuneFishAtTile (TileToFishAt : TTile) : Boolean;
+var
+  NPCs : TNPCArray;
+  i, t, t2, t3, InviCount : Integer;
+  TP : TPoint;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  if (TileToFishAt.x < 1) then Exit;
+
+  // Find if the inputted tile is a viable fishing tile
+  MarkTime (t);
+  repeat
+
+    // Make sure were standing still
+    MarkTime (t3);
+    repeat
+      wait (300);
+    until (not Charactermoving) or (TimeFromMark(t3) > 5000)
+    wait (650+random(350));
+
+    // Find tile
+    if TileOnMS (TileToFishAt, 0) then
+    begin
+      TP := TileToMS (TileToFishAt, 0);
+      wait (250+random(150));
+      case random(3) of
+        0..1: Mouse (TP.x, TP.y, 2, 2, true);
+        2..3: begin
+                Mouse (TP.x, TP.y, 2, 2, false);
+                R_ChooseOptionMulti (['fish', 'ish', 'net', 'et']); // Crap!
+              end;
+      end;
+    end else
+    begin
+      NPCs := GetNPCsAt(TileToFishAt);
+      for i:=0 to high(NPCs) do
+      begin
+        if (iAbs(NPCs[i].Tile.x - TileToFishAt.x) > 6) and (iAbs(NPCs[i].Tile.y - TileToFishAt.y) > 6) then
+        begin
+          if TileOnMS (TileToFishAt, 0) then
+          begin
+            TP := TileToMS (TileToFishAt, 0);
+            case random(3) of
+              0..1: Mouse (TP.x, TP.y, 2, 2, true);
+              2..3: begin
+                      Mouse (TP.x, TP.y, 2, 2, false);
+                      R_ChooseOptionMulti (['fish', 'ish', 'net', 'et']); // Crap!
+                    end;
+            end;
+            Break;
+          end else writeln ('[Reflection] Warning: Tile is not on the minimap!');
+        end;
+      end;
+    end;
+
+    InviCount := R_InvCount; // Use this for detecting when we pickup fish
+
+    // Now that we are fishing, wait until we catch something
+    MarkTime (t2);
+    repeat
+      wait (50);
+    until (TimeFromMark(t2) > 22000) or (InviCount < R_InvCount)
+
+    if (InviCount < R_InvCount) then Result := True;
+    wait (1000+random(1000));
+
+  until (TimeFromMark(t) > 60000) or (InviCount < R_InvCount)
+end;
+
+{*******************************************************************************
+function R_ScapeRuneCookFish : Boolean;
+by: Cstrike
+Description: Cooks the fish.
+*******************************************************************************}
+function R_ScapeRuneCookFish : Boolean;
+var
+  CookPots : TRSObjectArray;
+  TP : TPoint;
+  i, j, k : Integer;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  for k:=1 to 3 do
+  begin
+    Writeln ('[Reflection] Attempt '+ToStr(k)+'/3 of cooking fish');
+    R_ScapeRuneWalkToCenter;
+    CookPots := GetObjectsByID ([R_EVILBOB_COOKINGPOT], OBJECT_TYPE_INTERACTABLE, 52);
+
+    // Failsafe
+    if high(CookPots) < 0 then
+    begin
+      Writeln ('[Reflection] Failed to find cooking pot to uncook');
+      Exit;
+    end;
+
+    // Try and find both, you never know if one has an error...
+    for j:=1 to 2 do
+    begin
+      for i:=0 to high(CookPots) do
+      begin
+        R_ClickItemName ('Fish-like thing', false, 'Use');
+        wait (500+random(500));
+        if TileOnMS (CookPots[i].Tile, 0) then
+        begin;
+          TP := TileToMS (CookPots[i].Tile, 0);
+          Mouse (TP.x, TP.y, 2, 2, true);
+          if true then
+          begin
+            wait (4000+random(2200));
+            if (R_CountItemName('Raw') > 0) then
+            begin
+              Writeln ('[Reflection] Successfully made proper uncooked fish!');
+              Result := True;
+              Exit;
+            end else Writeln ('[Reflection] Was unable to cook ');
+          end else Writeln ('[Reflection] Error: ChooseOption Use was not present');
+        end else Writeln ('[Reflection] Pot #'+inttostr(i)+' not on MainScreen');
+      end;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_ScapeRuneFinishRandom : Boolean;
+by: Cstrike
+Description: Gives that stupid cat it's crap and leaves
+*******************************************************************************}
+function R_ScapeRuneFinishRandom : Boolean;
+var
+  t, i : Integer;
+  TP, TPPortal : TPoint;
+  Portal : TRSObject;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+
+  R_ClickItemName ('Raw fish-like', false, 'Use');
+  wait (500+random(500));
+  MakeCompass('n');
+  TP := TileToMS (Tile(R_EVILBOB_MIDDLE_X-2, R_EVILBOB_MIDDLE_Y), 0);
+  Mouse (TP.x, TP.y, 1, 1, true); // Click bob, more failsafe here needed
+
+  // Talk to bob
+  MarkTime(t);
+  repeat
+    wait(50);
+  until (ValidInterface(64)) or (TimeFromMark(t) > 10000)
+  R_ScapeRuneClickContBobAll;
+
+  // Enter portal here
+  wait (500+random(500));
+  for i:=1 to 3 do
+  begin
+    Portal := GetObjectByID (R_EVILBOB_PORTAL, OBJECT_TYPE_INTERACTABLE, 52);
+    if TileOnMS (Portal.Tile, 0) then
+    begin
+      TPPortal := TileToMS (Portal.Tile, 0);
+      Mouse (TPPortal.x, TPPortal.y, 3, 3, false);
+      wait (400+random(400));
+      if R_ChooseOption ('Enter Portal') then
+      begin
+        Writeln ('[Reflection] Entering exit portal to finish random...');
+        Result := True;
+        Exit;
+      end else Writeln ('[Reflection] Had trouble finding "Enter Portal" ChooseOption');
+    end else R_ScapeRuneWalkToCenter;
+    wait (1000+random(500));
+  end;
+end;
+
+{*******************************************************************************
+function R_SolveScapeRune : Boolean;
+by: Cstrike
+Description: Solves Evil Bob's ScapeRune random.
+*******************************************************************************}
+function R_SolveScapeRune : Boolean;
+var
+  i : Integer;
+  FishingTile : TTile;
+begin
+  if not LoggedIn then Exit;
+  Result := False;
+  FishingTile := Tile(0,0); // Failsafe
+
+  // Inventory failsafe
+  if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) = 0) then R_ScapeRuneDepositItems(1);
+
+  R_ScapeRuneDestroyFish; // Cleans the plate
+
+  for i:= 1 to 3 do
+  begin
+    Writeln ('[Reflection] ScapeRune solving attempt '+inttostr(i)+'/3');
+    if (R_ScapeRuneGetFishingNet) then
+    begin
+      if (R_ScapeRuneTalkToServantStart) then
+      begin
+        if (R_ScapeRuneDetermineDirectionOfFishAndWalkTo(FishingTile)) then
+        begin
+          if (R_ScapeRuneFishAtTile(FishingTile))then
+          begin
+            if (R_ScapeRuneCookFish) then
+            begin
+              if (R_ScapeRuneFinishRandom) then
+              begin
+                Writeln ('[Reflection] Evil Bobs ScapeRune solved!');
+                Result := True;
+                Break;
+              end else Writeln ('[Reflection] Had trouble giving fish to bob and/or finishing random');
+            end else Writeln ('[Reflection] Had trouble cooking the fish');
+          end else Writeln ('[Reflection] Had trouble fishing at specified tile');
+        end else Writeln ('[Reflection] Had trouble determining direction of fishing and walking to that spot');
+      end else Writeln ('[Reflection] Had trouble talking to Servant');
+    end else Writeln ('[Reflection] Had trouble getting fishing net');
+    R_ScapeRuneDestroyFish; // Just incase
+  end; // End of 3 tries
+  if not Result then Writeln ('[Reflection] Failed 3x the ScapeRune random, returning false...');
+end;

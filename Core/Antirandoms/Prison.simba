@@ -1,0 +1,10 @@
+// This file is being developed... Cstrike.
+function R_InPrison : Boolean;
+begin
+  Result := False;
+end;
+
+function R_SolvePrison : Boolean;
+begin
+  Result := False;
+end;
