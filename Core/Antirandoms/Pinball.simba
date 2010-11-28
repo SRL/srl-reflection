@@ -7,7 +7,6 @@ function R_InPinball : Boolean;
 begin
   Result := ValidNPC('Tilt');
 end;
-
 {*******************************************************************************
 function Pinball_GetScore : Integer;
 by: lordsaturn
@@ -22,11 +21,21 @@ begin
   Result := StrToIntDef(S, 11);
 end;
 
+{*******************************************************************************
+function Pinball_GetPillar: TRSObject;
+by: ???
+Description: Returns valid pinball tower ID's.
+*******************************************************************************}
 function Pinball_GetPillar: TRSObject;
 begin
   Result := GetObjectByIDEx([15000, 15002, 15004, 15006, 15008], 0, 52);
 end;
 
+{*******************************************************************************
+function Pinball_Leave: boolean;
+by: ???
+Description: Leaves random.
+*******************************************************************************}
 function Pinball_Leave: boolean;
 var
   TheExit: TRSObject;
@@ -61,15 +70,31 @@ begin
 end;
 
 {*******************************************************************************
+function R_PinballAngleDrasticChange (x, y, xMax, yMax : Integer) : Boolean;
+By: Cstrike
+Description: You input x and y as your current camera angle, and xMax, ymax is
+the max value you will accept as the camera not having moved too far away to
+cause a misclick. Returns true if the camera changes too drastically. Using 100
+for x/yMax is good.
+*******************************************************************************}
+function R_PinballAngleDrasticChange (x, y, xMax, yMax : Integer) : Boolean;
+var xnew, ynew : Integer;
+begin
+  xnew := GetCamPosX;
+  ynew := GetCamPosY;
+  if (iAbs(x - xnew) > xMax) or (iAbs(y - ynew) > yMax) then result := true else result := false;
+end;
+
+{*******************************************************************************
 function R_SolvePinball : Boolean;
-by: lordsaturn
+by: lordsaturn, modification added by Bad Boy JH
 Description: Solves Pinball Random.
 *******************************************************************************}
 function R_SolvePinball : Boolean;
 var
-  CurrPole: TRSObject;
+  LastPole, CurrPole: TRSObject;
   P: TPoint;
-  t, lastscore, currscore: integer;
+  x, y, t, lastscore, currscore: integer;
 begin
   if not R_InPinball then Exit;
   while R_InPinball do
@@ -85,16 +110,24 @@ begin
     end;
     while R_ClickToContinue do
       wait(900+Random(900));
-    CurrPole := Pinball_GetPillar;
+    LastPole := CurrPole;
+    MarkTime(t);
+    while ((LastPole = CurrPole) and (TimeFromMark(t) < 10000)) do
+      CurrPole := Pinball_GetPillar;
     if (CurrPole <> NULL_RSOBJECT)then
     begin
-      P := TileToMS(CurrPole.Tile, 400);
-      Mouse(P.x, P.y, 3, 3, false);
+      repeat
+        x := GetCamPosX;
+        y := GetCamPosY;
+        P := TileToMS(CurrPole.Tile, 400);
+        Mouse(P.x, P.y, 3, 3, false);
+        wait (5+random(15));
+      until not R_PinballAngleDrasticChange(X, Y, 100, 100);
       if R_ChooseOption('tag')then
       begin
         Writeln('Tagged!');
         MarkTime(t);
-        while((currscore = lastscore) and (TimeFromMark(t) < 10000))do
+        while((currscore = lastscore) and (TimeFromMark(t) < 10000)) do
         begin
           if CharacterMoving then
             MarkTime(t);
@@ -105,9 +138,8 @@ begin
   end;
   R_ClickToContinue;
   Result := not R_InPinball;
-  if Result then
+{  if Result then
     Inc(RSolved[RPinballs])
   else
-    Inc(RFailed[RPinballs]);
+    Inc(RFailed[RPinballs]); }
 end;
-
