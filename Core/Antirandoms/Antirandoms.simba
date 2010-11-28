@@ -76,8 +76,8 @@ begin
   begin
     RandName := 'Evilbob';
     Music := 'evil bob''s island';
-    InRandom := nil;
-    SolveRandom := nil;
+    InRandom := @R_InScapeRune;
+    SolveRandom := @R_SolveScapeRune;
   end;
 
   With r_RandomArr[R_RANDOM_EXAM] do
@@ -253,7 +253,7 @@ begin
   Result := GetInterfaceText(187, 4);
 end;
 
-function R_SolveNonTalkingRandoms: Boolean;
+function R_SolveNonTalkingRandoms (ItemsToNotDeposit : TIntegerArray) : Boolean;
 var
   I: Integer;
   Music: String;
@@ -323,7 +323,23 @@ Description: Calls the random checks.
 *******************************************************************************}
 function R_FindRandoms: Boolean;
 begin
-  Result := R_SolveNonTalkingRandoms;
+  Result := R_SolveNonTalkingRandoms ([]);
+  if (Result) then
+  begin
+    if (SRL_Procs[srl_OnFindRandom] <> nil) then
+      SRL_Procs[srl_OnFindRandom]();
+  end;
+end;
+
+{*******************************************************************************
+function R_FindRandomsDeposit (ItemsToNotDeposit : TIntegerArray): Boolean;
+By: Nava2, modded by Cstrike
+Description: Does random checks, and once developed, will deposit items you
+specifiy for randoms so you don't lose anything precious.
+*******************************************************************************}
+function R_FindRandomsDeposit (ItemsToNotDeposit : TIntegerArray) : Boolean;
+begin
+  Result := R_SolveNonTalkingRandoms (ItemsToNotDeposit);
   if (Result) then
   begin
     if (SRL_Procs[srl_OnFindRandom] <> nil) then
