@@ -17,6 +17,7 @@
 {$i ./Core/GroundItems.simba}
 {$i ./Core/Other.simba}
 {$i ./Core/GameTab.simba}
+{$i ./Core/Items.simba}
 
 //{$i ./Core/Antirandoms\Prison.simba} // Not solved yet
 //{$i ./Core/Antirandoms\Pillory.simba} // This is FUBAR
