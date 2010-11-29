@@ -1,10 +1,157 @@
-// This file is being developed... Cstrike.
+const
+  PRISON_PETENAME = 'Prison pete';
+  PRISON_PETEID = 3118;
+  PRISON_KEYID = 6966;
+  PRISON_MODELINTERFACE = 273; // or 271 :(
+  PRISON_MODELCOMPONENT = 3; // component of interface above
+
+
+{*******************************************************************************
+function R_InPrison : Boolean;
+By: Cstrike
+Description: Checks if in this random. Don't know if hes null or not.
+*******************************************************************************}
 function R_InPrison : Boolean;
 begin
+  Result := ValidNPC (PRISON_PETEID);
+  if not Result then
+    Result := ValidNPCNull (PRISON_PETEID);
+end;
+
+{*******************************************************************************
+function R_PrisonClickOnPete : Boolean;
+By: Cstrike
+Description: Moves near him if need be and clicks on him.
+*******************************************************************************}
+function R_PrisonClickOnPete : Boolean;
+var
+  PrisonPeteNPCList : TNPCArray;
+  PrisonPeteTile : TTile;
+  i : Integer;
+  TP : TPoint;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+
+  // Make sure NPC is valid
+  if ValidNPCNull (PRISON_PETEID) then
+    PrisonPeteNPCList := GetNPCsNull
+  else
+    PrisonPeteNPCList := GetNPCs;
+  // Failsafe
+  if high(PrisonPeteNPCList) < 0 then
+  begin
+    Writeln ('[Reflection] Could not find Prison Pete! NPC arrays are empty');
+    Exit;
+  end;
+
+  // Find his tile
+  PrisonPeteTile := Tile(0,0); // Failsafe
+  for i:=0 to high(PrisonPeteNPCList) do
+  begin
+    if (PrisonPeteNPCList[i].ID = 3118) then
+    begin
+      PrisonPeteTile := PrisonPeteNPCList[i].Tile;
+      Break;
+    end;
+  end;
+
+  // If we can't see him, move near him
+  if not TileOnMS (PrisonPeteTile, 0) then
+    WalkToTile (PrisonPeteTile, 2, 0);
+
+  wait (350+random(550));
+  // Click on the guy
+  if TileOnMS (PrisonPeteTile, 0) then
+  begin
+    TP := TileToMS (PrisonPeteTile, 0);
+    Mouse (TP.x, TP.y, 2, 2, false);
+    wait (500+random(500));
+    if R_ChooseOptionMulti (['rison']) then
+      Result := True;
+  end else Writeln ('[Reflection] Could not find Prison Pete tile on MS');
+  wait (500+random(1000));
+  if Result then Writeln ('[Reflection] Successfully clicked to talk to Prison Pete');
+end;
+
+{*******************************************************************************
+function R_PrisonPullLever : Boolean;
+By: Cstrike
+Description: Pulls the lever.
+*******************************************************************************}
+function R_PrisonPullLever : Boolean;
+begin
+  if not LoggedIn then
+    Exit;
   Result := False;
 end;
 
+{*******************************************************************************
+function R_PrisonDetermineNPCToPop (ModelID : Integer) : Integer;
+By: Cstrike
+Description: Returns NPC ID based on ModelID input of what to pop.
+*******************************************************************************}
+function R_PrisonDetermineNPCToPop (ModelID : Integer) : Integer;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := -1;
+  case ModelID of
+    1: Result := 1;
+  end;
+end;
+
+{*******************************************************************************
+function R_PrisonFindAndPopNPC (IDToPop : Integer) : Boolean;
+By: Cstrike
+Description: Searches for the balloon and pops it until I gets the key.
+*******************************************************************************}
+function R_PrisonFindAndPopNPC (IDToPop : Integer) : Boolean;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+end;
+
+{*******************************************************************************
+function R_PrisonGiveKeyToPete : Boolean;
+By: Cstrike
+Description: This gives the key to pete (mainly clicks continue, but can use it
+on pete in case we log in randomly to a key).
+*******************************************************************************}
+function R_PrisonGiveKeyToPete : Boolean;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+end;
+
+{*******************************************************************************
+function R_ExitPrisonRandom : Boolean;
+By: Cstrike
+Description: Leaves through the door.
+*******************************************************************************}
+function R_ExitPrisonRandom : Boolean;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+end;
+
+{*******************************************************************************
+function R_SolvePrison : Boolean
+By: Cstrike
+Description: Solves the random.
+*******************************************************************************}
 function R_SolvePrison : Boolean;
 begin
+  if not LoggedIn then
+    Exit;
   Result := False;
+
+  if R_InPrison then
+  begin
+    MakeCompass ('s');
+  end;
 end;

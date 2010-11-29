@@ -19,8 +19,8 @@
 {$i ./Core/GameTab.simba}
 {$i ./Core/Items.simba}
 
-//{$i ./Core/Antirandoms\Prison.simba} // Not solved yet
-//{$i ./Core/Antirandoms\Pillory.simba} // This is FUBAR
+//{$i ./Core/Antirandoms\Pillory.simba} // This is FUBAR, need new solver
+{$i ./Core/Antirandoms\Prison.simba} // Not solved yet technically
 {$i ./Core/Antirandoms\Certer.simba}
 {$i ./Core/Antirandoms\Abyss.simba}
 {$i ./Core/Antirandoms\Quiz.simba}
