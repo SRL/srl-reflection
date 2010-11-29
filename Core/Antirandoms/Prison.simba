@@ -1,6 +1,12 @@
 const
   PRISON_PETENAME = 'Prison Pete';
   PRISON_PETEID = 3118;
+  PRISON_PETE_TILE_X = 2084;
+  PRISON_PETE_TILE_Y = 4460;
+  PRISON_DOOR_EXIT_X = 2085;
+  PRISON_DOOR_EXIT_Y = 4460;
+  PRISON_DOOR_TILEMSEX_X = 1.0;
+  PRISON_DOOR_TILEMSEX_Y = 1.0;
   PRISON_KEYID = 6966;
   PRISON_LEVERID = 10817;
   PRISON_LEVERUPTEXT = 'Pull Lever';
@@ -177,46 +183,72 @@ end;
 function R_PrisonDetermineNPCToPop(ModelID: Integer; var BalloonID: Integer; var BalloonDataArray : TIntegerArray): Boolean;
 By: Cstrike
 Description: Fills variables with data, returns true if it filled the variables.
-Special thanks to RSBot.
+BalloonDataArray borrowed from RSBot, though I haven't used their data at all.
 *******************************************************************************}
-function R_PrisonDetermineNPCToPop(ModelID: Integer; var BalloonID: Integer; var BalloonDataArray : TIntegerArray): Boolean;
+function R_PrisonDetermineNPCToPop(ModelID: Integer; var BalloonNPCIDs: TIntegerArray; var BalloonDataArray : TIntegerArray): Boolean;
 begin
   if not LoggedIn then
     Exit;
   Result := False;
-  BalloonID := -1;
+  BalloonNPCIDs := [];
   BalloonDataArray := [];
   case ModelID of
     10749: begin // Skinny bend @ tail
-             BalloonID := 3119;
+             BalloonNPCIDs := [13091, 13092]; //BalloonID := 3119;
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 36, 37, 37, 37, 38, 38, 39, 39, 40, 40, 22, 41, 41, 42, 43, 44, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 48, 48, 49, 49, 50, 50, 51, 51, 52, 53, 53, 54, 54, 49, 49, 55, 55, 52, 52, 56, 56, 57, 22, 22, 61, 62, 63, 59, 60, 66, 66, 66, 66, 66, 67, 67, 67, 67, 67, 67, 67, 67, 68, 68, 69, 69, 70, 70, 43, 71, 71, 72, 72, 68, 68, 73, 73, 43, 43, 74, 74, 75, 76, 76, 80, 81, 82, 78, 79, 85, 85, 85, 85, 85, 86, 86, 86, 87, 87, 88, 88, 89, 89, 90, 91, 91, 92, 43, 93, 96, 96, 96, 96, 96, 97, 97, 97, 98, 98, 99, 99, 100, 100, 5, 101, 101, 102, 103, 104, 107, 107, 107, 107, 107, 108, 108, 108, 109, 109, 110, 110, 111, 111, 103, 112, 112, 113, 114, 115];
              Result := True;
            end;
     10750: begin // Skinny long tail, no bend
-             BalloonID := 3120;
+             BalloonNPCIDs := [11241, 11238, 11237, 11236, 11239, 11240]; //BalloonID := 3120;
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 37, 37, 38, 38, 39, 22, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 43, 43, 44, 44, 45, 45, 46, 46, 47, 48, 48, 49, 49, 44, 44, 50, 50, 47, 47, 51, 51, 52, 22, 22, 56, 57, 58, 54, 55, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 64, 64, 65, 65, 38, 66, 66, 67, 67, 63, 63, 68, 68, 38, 38, 69, 69, 70, 71, 71, 75, 76, 77, 73, 74, 80, 80, 80, 80, 80, 81, 81, 81, 82, 82, 82, 83, 83, 83, 84, 84, 5, 85, 85, 86, 86, 87, 87, 88, 89, 89, 90, 90, 92, 93, 96, 96, 96, 96, 97, 97, 98, 98, 99, 100, 103, 103, 103, 103, 104, 104, 105, 105, 106, 107];
              Result := True;
            end;
     10751: begin // Fat one (aka: Cartman)
-             BalloonID := 3121;
+             BalloonNPCIDs := [13095, 13096, 13094, 13093]; //BalloonID := 3121;
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 36, 37, 37, 37, 38, 38, 39, 39, 40, 40, 41, 42, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 46, 46, 47, 47, 48, 48, 49, 49, 50, 51, 51, 52, 52, 47, 47, 53, 53, 50, 50, 54, 54, 55, 22, 22, 59, 60, 61, 57, 58, 64, 64, 64, 64, 64, 65, 65, 65, 65, 65, 65, 65, 65, 66, 66, 67, 67, 68, 68, 43, 69, 69, 70, 70, 66, 66, 71, 71, 43, 43, 72, 72, 73, 74, 74, 78, 79, 80, 76, 77, 83, 83, 83, 83, 83, 84, 84, 84, 85, 85, 86, 86, 87, 87, 89, 90, 92, 92, 92, 92, 93, 93, 94, 94, 95, 5, 98, 98, 98, 98, 98, 99, 99, 99, 22, 22, 100, 100, 101, 101, 101, 102, 102, 103, 103, 103, 104, 105, 106, 106, 107, 107, 108, 109, 110, 110, 113, 113, 113, 113, 113, 114, 114, 114, 22, 22, 115, 115, 116, 116, 116, 117, 117, 118, 118, 118, 119, 120, 121, 121, 122, 122, 123, 124, 125, 125, 128, 128, 128, 128, 128, 129, 129, 129, 22, 22, 130, 130, 131, 131, 131, 132, 132, 133, 133, 133, 134, 135, 136, 136, 137, 137, 138, 32, 139, 139];
              Result := True;
            end;
     10752: begin // Horns
-             BalloonID := 3122;
+             BalloonNPCIDs := [13089, 13098, 13097]; //BalloonID := 3122;
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 36, 37, 37, 37, 38, 38, 39, 39, 40, 40, 22, 41, 41, 42, 43, 44, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 48, 48, 49, 49, 50, 50, 51, 51, 52, 53, 53, 54, 54, 49, 49, 55, 55, 52, 52, 56, 56, 57, 22, 22, 61, 62, 63, 59, 60, 66, 66, 66, 66, 66, 67, 67, 67, 67, 67, 67, 67, 67, 68, 68, 69, 69, 70, 70, 43, 71, 71, 72, 72, 68, 68, 73, 73, 43, 43, 74, 74, 75, 76, 76, 80, 81, 82, 78, 79, 85, 85, 85, 85, 85, 86, 86, 86, 87, 87, 88, 88, 89, 89, 90, 91, 91, 92, 43, 93, 96, 96, 96, 96, 97, 97, 98, 98, 99, 5, 102, 102, 102, 102, 102, 102, 103, 103, 103, 103, 104, 104, 105, 105, 106, 106, 106, 107, 107, 108, 109, 109, 110, 110, 110, 111, 112, 113, 117, 115, 119, 119, 119, 119, 119, 119, 120, 120, 120, 120, 121, 121, 122, 122, 123, 123, 123, 124, 124, 125, 126, 126, 127, 127, 127, 128, 129, 130, 134, 132, 136, 136, 136, 136, 136, 137, 137, 137, 22, 22, 138, 138, 139, 139, 139, 140, 140, 141, 141, 141, 142, 143, 144, 144, 145, 145, 146, 147, 148, 148, 151, 151, 151, 151, 151, 152, 152, 152, 22, 22, 153, 153, 154, 154, 154, 155, 155, 156, 156, 156, 157, 158, 159, 159, 160, 160, 161, 162, 163, 163];
              Result := True;
            end;
   end;
-  Writeln ('[Reflection] Balloon ID returned = '+ToStr(BalloonID));
+  Writeln ('[Reflection] Balloon ID returned = '+ToStr(BalloonNPCIDs));
 end;
 
 {*******************************************************************************
-function R_PrisonFindAndPopNPC (IDToPop : Integer) : Boolean;
+function R_PrisonFindAndPopNPC(IDsToPop: TIntegerArray): Boolean;
 By: Cstrike
 Description: Searches for the balloon and pops it until I gets the key.
 *******************************************************************************}
-function R_PrisonFindAndPopNPC (IDToPop : Integer) : Boolean;
+function R_PrisonFindAndPopNPC(IDsToPop: TIntegerArray): Boolean;
+var
+  i, t: Integer;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+  if high(IDsToPop) < 0 then
+  begin
+    Writeln ('[Reflection] Warning: IDsToPop has no values in it...');
+    Exit;
+  end;
+  MarkTime(t);
+  repeat
+    wait (500+random(500));
+    for i:=0 to high(IDsToPop) do
+    begin
+    end;
+  until (TimeFromMark(t) > 30000)
+end;
+
+{*******************************************************************************
+function R_PrisonBobSaysItsTimeToLeave: Boolean;
+By: Cstrike
+Description: If it's time to leave due to success, it's time to leave ;)
+*******************************************************************************}
+function R_PrisonBobSaysItsTimeToLeave: Boolean;
 begin
   if not LoggedIn then
     Exit;
@@ -252,8 +284,7 @@ begin
     begin
       Writeln ('[Reflection] Account hasnt been terminated, attempting to solve random...');
     end else
-    // If we are pre-terminated, then the random is screwed and account will be lost
-    begin
+    begin // If we are pre-terminated, then the random is screwed and account will be lost
       Writeln ('[Reflection] Account is terminated (>15 mins), exiting random to return you to a lost spot.');
     end;
   end;
