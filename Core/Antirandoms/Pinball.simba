@@ -138,6 +138,7 @@ begin
   end;
   R_ClickToContinue;
   Result := not R_InPinball;
+  SetAngle(True);
 {  if Result then
     Inc(RSolved[RPinballs])
   else

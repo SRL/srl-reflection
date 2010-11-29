@@ -379,11 +379,17 @@ begin
 
   Wait(1000+Random(1000));
 
-  T := TileToMSEx(Door.Tile, OffsetX, OffsetY, 600+Random(200));
-  Mouse(T.X, T.Y, 5, 5, False);
-  Result := WaitOption('pen', 200+Random(100));
-  If not Result then
-    Exit;
+  Time := GetSystemTime;
+  Repeat
+    if (GetSystemTime - Time > 30000)then
+      Exit;
+
+    T := TileToMSEx(Door.Tile, OffsetX, OffsetY, 600+Random(200));
+    Mouse(T.X, T.Y, 5, 5, False);
+    Result := WaitOption('pen', 200+Random(100));
+    If not Result then
+      MakeCompass(Random(361));
+  Until(Result);
 
   WaitToMove(1000);
   While CharacterMoving do

@@ -262,9 +262,11 @@ end;
 
 function R_SolveNonTalkingRandoms : Boolean;
 var
-  I: Integer;
+  I, iTime: Integer;
   Music: String;
   InRand: Boolean;
+  T: TTile;
+  RandomBox: TBox;
 begin
   If Not LoggedIn then
     Exit;
@@ -291,8 +293,11 @@ begin
 
     if (InRand) then
     begin
-      //Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
+      Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
       Writeln('[Reflection] Trying to solve: ' + r_RandomArr[I].RandName);
+      T := GetMyPos;
+      RandomBox := IntToBox(T.X-70, T.Y-70, T.X+70, T.Y+70);
+
       if (r_RandomArr[I].SolveRandom <> nil) then
       begin
         SetAngle(True);
@@ -314,7 +319,17 @@ begin
       end else
         Writeln('[Reflection] Random solved');
 
-      Wait(12000+Random(5000));
+      iTime := GetSystemTime;
+      While TileInBox(RandomBox, GetMyPos)do
+      begin
+        Wait(1000+Random(1500));
+        If (GetSystemTime - iTime > 30000)then
+          Exit;
+      end;
+      Wait(2000+Random(1000));
+
+      Players[CurrentPlayer].Rand := '';
+
 
       UseRewardBox;
       Exit;
