@@ -61,7 +61,7 @@ begin
   With r_RandomArr[R_RANDOM_CERTER] do
   begin
     RandName := 'Certer';
-    Music := 'autumn voyage';
+    Music := ''; //'start', 'unknown land', 'dream', 'autumn voyage';
     InRandom := @R_InCerter;
     SolveRandom := @R_SolveCerter;
   end;
@@ -146,8 +146,8 @@ begin
   begin
     RandName := 'Pillory';
     Music := ''; // NEED MUSIC
-    InRandom := @R_InPillory;
-    SolveRandom := @R_SolvePillory;
+    InRandom := nil;
+    SolveRandom := nil;
   end;
 
   With r_RandomArr[R_RANDOM_PINBALL] do

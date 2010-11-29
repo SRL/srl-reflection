@@ -3,7 +3,7 @@
 
 const
   CERTER_PORTALID = 11368;
-  CERTER_MUSIC = 'Dream';
+  CERTER_MUSIC = 'Dream'; //Start, autumn voyage, unknown land
   CERTER_GILES_NPC_ID = 8635;
   CERTER_NPCNAME1 = 'Niles';
   CERTER_NPCNAME2 = 'Miles';
@@ -131,12 +131,13 @@ begin
   // These line up with one another for what to look for
   CerterIDArr := [2807, 8828, 8829, 8832, 8833, 8834, 8835, 8836, 8837];
   CerterNameArr := ['bowl', 'battleaxe', 'fish', 'shield', 'helmet', 'ring', 'shears', 'sword', 'spade'];
-  ModelIDNumber := R_CerterGetChildCompID (CERTER_MODELINTERFACE, CERTER_MODELCHILD, CERTER_MODELCOMP);
+  ModelIDNumber := GetChildComponentModelID (CERTER_MODELINTERFACE, CERTER_MODELCHILD, CERTER_MODELCOMP);
 
   // Search for index
   for i := 0 to high (CerterIDArr) do
   begin
     if CerterIDArr[i] = ModelIDNumber then Break;
+    writeln ('['+ToStr(i)+'/'+ToStr(high(CerterIDArr))+']'+ToStr(CerterIDArr[i]) +' -- '+ToStr(ModelIDNumber));
   end;
 
   // If we max out the array and dont find it, then we failed...
