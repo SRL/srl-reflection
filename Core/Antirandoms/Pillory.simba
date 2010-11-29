@@ -16,11 +16,15 @@ Description: Checks if we are in the Pillory Random.
 function R_InPillory: boolean;
 var
   P: TPoint;
-  O: UID;
+  O: TRSObject;
 begin
   P := GetMyPos;
-  O := GetObjectAt(P.X, P.Y);
-  Result := (O.objType = 7261);
+  O := GetObjectAt(P, OBJECT_TYPE_INTERACTABLE);
+  Result := False;
+  if O.ID = 7261 then //  O: UID;   O.objType = 7261
+    Result := True;
+  if not Result then
+    Result := not (O = NULL_RSOBJECT);
 end;
 
 {*******************************************************************************
@@ -31,7 +35,9 @@ Description: Opens the cage door of the Pillory Random.
 function R_OpenCage: boolean;
 var
   TX, TY, V: Extended;
-  P, T: TPoint;
+  P: TPoint;
+  T: TTIle;
+  timer: Integer;
 begin
   if ValidInterface(189) then
     Exit;
@@ -41,21 +47,22 @@ begin
   TY := T.Y;
   V := 0.5;
   Result := false;
+  MarkTime(timer);
   repeat
     if (ValidInterface(189)) then
     V := V + 0.1;
     if (V > 0.8) then V := 0.1;
-    P := TileToMSEx(Tile(TX + V, TY + 0.9), 10);
+    P := TileToMSEx(T, TX + V, TY + 0.9, 10);
     MMouse(P.x, P.y, 4, 4);
     Wait(RandomRange(100, 200));
-    if IsUpText('nlock') then
+    if R_IsUpText('nlock') then
     begin
       GetMousePos(P.x, P.y);
       Mouse(P.X, P.Y, 0, 0, false);
       Wait(RandomRange(80, 100));
       Result := ChooseOption('Unlock');
     end;
-  until Result or not R_LoggedIn;
+  until Result or not R_LoggedIn or (TimeFrommark(timer) > 20000);
 end;
 
 {*******************************************************************************
@@ -123,32 +130,39 @@ Description: Attempts to solve the Pillory Random!
 *******************************************************************************}
 function R_SolvePillory: boolean;
 var
-  Done: integer;
+  Done, t, t2, t3, t4: integer;
   P: TPoint;
 begin
   if not R_InPillory then Exit;
 
   R_OpenCage;
-  While not ValidInterface(189) do
+  MarkTime(t);
+  repeat
     wait(100+Random(100));
+  until (ValidInterface(189)) or (TimeFromMark(t) > 20000)
+
+  MarkTime(t2);
   repeat
     if not R_InPillory then Break;
+    MarkTime(t3);
     repeat
       if not R_InPillory then Break;
       if not R_LoggedIn then Exit;
       P := R_FindLockKey;
       Result := (P.x <> 0) and (P.y <> 0);
-    until Result;
+    until Result or (TimeFromMark(t3) > 25000)
     Wait(500 + Random(1000));
     if (not(ValidInterface(189))) then Break;
     Mouse(P.x, P.y, 3, 3, true);
     Inc(Done);
-    while not FindNPCChatText(inttostr(Done), nothing) do
+    MarkTime(t4);
+    repeat
       Wait(100+Random(100));
-      Wait(1000+Random(500));
+    until (FindNPCChatText(inttostr(Done), nothing)) or (TimeFromMark(t4) > 20000)
+    Wait(1000+Random(500));
     FindNPCChatText('here to con', ClickLeft);
     if not R_InPillory then Break;
-  until not (FindNPCChatText('to go', nothing) or R_LoggedIn);
+  until not (FindNPCChatText('to go', nothing) or R_LoggedIn) or (TimeFromMark(t) > 20000)
   wait(2000+Random(2000));
   Result := not R_InPillory;
 end;
