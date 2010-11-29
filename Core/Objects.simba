@@ -389,3 +389,57 @@ begin
   Temp := GetObjectAt(Obj.Tile, Obj.objType);
   Result := (Obj = Temp);
 end;
+
+
+{*******************************************************************************
+function SortObjects(ObjArray : TRSObjectArray): TRSObjectArray;
+By: Modded by Cstrike (Inherited from Widget and lordsaturn)
+Description: Sorts Objects by distance from you.
+*******************************************************************************}
+function SortObjects(ObjArray : TRSObjectArray): TRSObjectArray;
+var
+  i, i2, L: integer;
+  TPA: TPointArray;
+begin
+  L := GetArrayLength(ObjArray);
+  if L < 1 then Exit;
+  SetArrayLength(TPA, L);
+  SetArrayLength(Result, L);
+  for i := 0 to L - 1 do
+    TPA[i] := ObjArray[i].Tile;
+  SortTPAFrom(TPA, GetMyPos);
+  for i := 0 to L - 1 do
+    for i2 := 0 to L - 1 do
+      if (TPA[i].x = ObjArray[i2].Tile.x) and (TPA[i].y = ObjArray[i2].Tile.y) then
+        Result[i] := ObjArray[i2];
+end;
+
+{*******************************************************************************
+function R_OpenDoor (ClosedDoorID, MouseRandomness : Integer) : Boolean;
+By: Cstrike
+Description: Opens door with ID. Will be made better later, but for now will do.
+*******************************************************************************}
+function R_OpenDoor (ClosedDoorID, MouseRandomness : Integer) : Boolean;
+var
+  Door : TRSObject;
+  TP : TPoint;
+begin
+  if not LoggedIn then Exit;
+  Result := False;                                    // Minimap radius = 15
+  Door := GetObjectByID (ClosedDoorID, OBJECT_TYPE_INTERACTABLE, 15);
+  if Door = NULL_RSOBJECT then
+  begin
+    writeln ('[Reflection] Door not found, returning false');
+    Exit;
+  end;
+  if TileOnMS (Door.Tile, 0) then
+  begin
+    TP := TileToMS (Door.Tile, 0);
+    Mouse (TP.x, TP.y, MouseRandomness, MouseRandomness, false);
+    wait (400+random(700));
+    if R_ChooseOptionMulti (['pen ', 'oor']) then
+    begin
+      Result := True;
+    end else Writeln ('[Reflection] Open door menu text not found');
+  end else Writeln ('[Reflection] Door not on main screen');
+end;
