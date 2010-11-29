@@ -1,8 +1,9 @@
-Const
-  R_DEMONID = 2790;
+const
+  R_RANDOM_DEMON_ID = 2790;
 
+// Fixed variable from really common name to something not so common (Cstrike)
 var
-  Sign1, Sign2, Sign3, Sign4: Integer;
+  g_R_Demon_Sign1, g_R_Demon_Sign2, g_R_Demon_Sign3, g_R_Demon_Sign4: Integer;
 
 {*******************************************************************************
 function R_InDemon : Boolean;
@@ -11,163 +12,173 @@ Description: Results true if the Drill Demon is found.
 *******************************************************************************}
 function R_InDemon : Boolean;
 begin
-  Result := ValidNPCNull(2790);
+  Result := ValidNPCNull(R_RANDOM_DEMON_ID);
 end;
 
+{*******************************************************************************
+procedure R_SetSigns;
+by: ??? (Probably Drags111)
+Description: Sets what signs are what.
+*******************************************************************************}
 procedure R_SetSigns;
 begin
   case GetSetting(531) of
     668:begin
-					sign1 := 1;
-					sign2 := 2;
-					sign3 := 3;
-					sign4 := 4;
+					g_R_Demon_sign1 := 1;
+					g_R_Demon_sign2 := 2;
+					g_R_Demon_sign3 := 3;
+					g_R_Demon_sign4 := 4;
         end;
 		675:begin
-					sign1 := 2;
-					sign2 := 1;
-					sign3 := 3;
-					sign4 := 4;
+					g_R_Demon_sign1 := 2;
+					g_R_Demon_sign2 := 1;
+					g_R_Demon_sign3 := 3;
+					g_R_Demon_sign4 := 4;
         end;
 		724:begin
-					sign1 := 1;
-					sign2 := 3;
-					sign3 := 2;
-					sign4 := 4;
+					g_R_Demon_sign1 := 1;
+					g_R_Demon_sign2 := 3;
+					g_R_Demon_sign3 := 2;
+					g_R_Demon_sign4 := 4;
         end;
 		738:begin
-					sign1 := 3;
-					sign2 := 1;
-					sign3 := 2;
-					sign4 := 4;
+					g_R_Demon_sign1 := 3;
+					g_R_Demon_sign2 := 1;
+					g_R_Demon_sign3 := 2;
+					g_R_Demon_sign4 := 4;
         end;
 		787:begin
-					sign1 := 2;
-					sign2 := 3;
-					sign3 := 1;
-					sign4 := 4;
+					g_R_Demon_sign1 := 2;
+					g_R_Demon_sign2 := 3;
+					g_R_Demon_sign3 := 1;
+					g_R_Demon_sign4 := 4;
         end;
 		794:begin
-					sign1 := 3;
-					sign2 := 2;
-					sign3 := 1;
-					sign4 := 4;
+					g_R_Demon_sign1 := 3;
+					g_R_Demon_sign2 := 2;
+					g_R_Demon_sign3 := 1;
+					g_R_Demon_sign4 := 4;
         end;
 		1116:begin
-					sign1 := 1;
-					sign2 := 2;
-					sign3 := 4;
-					sign4 := 3;
+					g_R_Demon_sign1 := 1;
+					g_R_Demon_sign2 := 2;
+					g_R_Demon_sign3 := 4;
+					g_R_Demon_sign4 := 3;
         end;
 		1123:begin
-					sign1 := 2;
-					sign2 := 1;
-					sign3 := 4;
-					sign4 := 3;
+					g_R_Demon_sign1 := 2;
+					g_R_Demon_sign2 := 1;
+					g_R_Demon_sign3 := 4;
+					g_R_Demon_sign4 := 3;
         end;
 		1228:begin
-					sign1 := 1;
-					sign2 := 4;
-					sign3 := 2;
-					sign4 := 3;
+					g_R_Demon_sign1 := 1;
+					g_R_Demon_sign2 := 4;
+					g_R_Demon_sign3 := 2;
+					g_R_Demon_sign4 := 3;
         end;
 		1249:begin
-					sign1 := 4;
-					sign2 := 1;
-					sign3 := 2;
-					sign4 := 3;
+					g_R_Demon_sign1 := 4;
+					g_R_Demon_sign2 := 1;
+					g_R_Demon_sign3 := 2;
+					g_R_Demon_sign4 := 3;
         end;
 		1291:begin
-					sign1 := 2;
-					sign2 := 4;
-					sign3 := 1;
-					sign4 := 3;
+					g_R_Demon_sign1 := 2;
+					g_R_Demon_sign2 := 4;
+					g_R_Demon_sign3 := 1;
+					g_R_Demon_sign4 := 3;
         end;
 		1305:begin
-					sign1 := 4;
-					sign2 := 2;
-					sign3 := 1;
-					sign4 := 3;
+					g_R_Demon_sign1 := 4;
+					g_R_Demon_sign2 := 2;
+					g_R_Demon_sign3 := 1;
+					g_R_Demon_sign4 := 3;
         end;
 		1620:begin
-					sign1 := 1;
-					sign2 := 3;
-					sign3 := 4;
-					sign4 := 2;
+					g_R_Demon_sign1 := 1;
+					g_R_Demon_sign2 := 3;
+					g_R_Demon_sign3 := 4;
+					g_R_Demon_sign4 := 2;
         end;
 		1634:begin
-					sign1 := 3;
-					sign2 := 1;
-					sign3 := 4;
-					sign4 := 2;
+					g_R_Demon_sign1 := 3;
+					g_R_Demon_sign2 := 1;
+					g_R_Demon_sign3 := 4;
+					g_R_Demon_sign4 := 2;
         end;
 		1676:begin
-					sign1 := 1;
-					sign2 := 4;
-					sign3 := 3;
-					sign4 := 2;
+					g_R_Demon_sign1 := 1;
+					g_R_Demon_sign2 := 4;
+					g_R_Demon_sign3 := 3;
+					g_R_Demon_sign4 := 2;
         end;
 		1697:begin
-					sign1 := 4;
-					sign2 := 1;
-					sign3 := 3;
-					sign4 := 2;
+					g_R_Demon_sign1 := 4;
+					g_R_Demon_sign2 := 1;
+					g_R_Demon_sign3 := 3;
+					g_R_Demon_sign4 := 2;
         end;
 		1802:begin
-					sign1 := 3;
-					sign2 := 4;
-					sign3 := 1;
-					sign4 := 2;
+					g_R_Demon_sign1 := 3;
+					g_R_Demon_sign2 := 4;
+					g_R_Demon_sign3 := 1;
+					g_R_Demon_sign4 := 2;
         end;
 		1809:begin
-					sign1 := 4;
-					sign2 := 3;
-					sign3 := 1;
-					sign4 := 2;
+					g_R_Demon_sign1 := 4;
+					g_R_Demon_sign2 := 3;
+					g_R_Demon_sign3 := 1;
+					g_R_Demon_sign4 := 2;
         end;
 		2131:begin
-					sign1 := 2;
-					sign2 := 3;
-					sign3 := 4;
-					sign4 := 1;
+					g_R_Demon_sign1 := 2;
+					g_R_Demon_sign2 := 3;
+					g_R_Demon_sign3 := 4;
+					g_R_Demon_sign4 := 1;
         end;
 		2138:begin
-					sign1 := 3;
-					sign2 := 2;
-					sign3 := 4;
-					sign4 := 1;
+					g_R_Demon_sign1 := 3;
+					g_R_Demon_sign2 := 2;
+					g_R_Demon_sign3 := 4;
+					g_R_Demon_sign4 := 1;
         end;
 		2187:begin
-					sign1 := 2;
-					sign2 := 4;
-					sign3 := 3;
-					sign4 := 1;
+					g_R_Demon_sign1 := 2;
+					g_R_Demon_sign2 := 4;
+					g_R_Demon_sign3 := 3;
+					g_R_Demon_sign4 := 1;
         end;
 		2201:begin
-					sign1 := 4;
-					sign2 := 2;
-					sign3 := 3;
-					sign4 := 1;
+					g_R_Demon_sign1 := 4;
+					g_R_Demon_sign2 := 2;
+					g_R_Demon_sign3 := 3;
+					g_R_Demon_sign4 := 1;
         end;
 		2250:begin
-					sign1 := 3;
-					sign2 := 4;
-					sign3 := 2;
-					sign4 := 1;
+					g_R_Demon_sign1 := 3;
+					g_R_Demon_sign2 := 4;
+					g_R_Demon_sign3 := 2;
+					g_R_Demon_sign4 := 1;
         end;
 		2257:begin
-					sign1 := 4;
-					sign2 := 3;
-					sign3 := 2;
-					sign4 := 1;
+					g_R_Demon_sign1 := 4;
+					g_R_Demon_sign2 := 3;
+					g_R_Demon_sign3 := 2;
+					g_R_Demon_sign4 := 1;
         end;
   end;
-  Writeln(Sign1);
-  Writeln(Sign2);
-  Writeln(Sign3);
-  Writeln(Sign4);
+  Writeln('[Reflection] Sign 1: '+ToStr(g_R_Demon_Sign1));
+  Writeln('[Reflection] Sign 2: '+ToStr(g_R_Demon_Sign2));
+  Writeln('[Reflection] Sign 3: '+ToStr(g_R_Demon_Sign3));
+  Writeln('[Reflection] Sign 4: '+ToStr(g_R_Demon_Sign4));
 end;
 
+{*******************************************************************************
+function R_GetCommand: String;
+by: ??? (Probably Drags111)
+Description: Gets command from Demon.
+*******************************************************************************}
 function R_GetCommand: String;
 var
   i: integer;
@@ -204,12 +215,17 @@ begin
   end;
 end;
 
+{*******************************************************************************
+function R_SolveDemon : Boolean;
+by: ??? (Probably Drags111)
+Description: Does action specified by name.
+*******************************************************************************}
 function R_Jump: boolean;
 var
   P: TPoint;
 begin
   Writeln('Star jumps');
-  if(sign1 = 1)then
+  if(g_R_Demon_sign1 = 1)then
   begin
     if not TileOnMS(Tile(3160, 4820), 0)then
       WalkToTile(Tile(3160, 4820), 0, 0);
@@ -217,7 +233,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign2 = 1)then
+  if(g_R_Demon_sign2 = 1)then
   begin
     if not TileOnMS(Tile(3162, 4820), 0)then
       WalkToTile(Tile(3162, 4820), 0, 0);
@@ -225,7 +241,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign3 = 1)then
+  if(g_R_Demon_sign3 = 1)then
   begin
     if not TileOnMS(Tile(3164, 4820), 0)then
       WalkToTile(Tile(3164, 4820), 0, 0);
@@ -233,7 +249,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign4 = 1)then
+  if(g_R_Demon_sign4 = 1)then
   begin
     if not TileOnMS(Tile(3166, 4820), 0)then
       WalkToTile(Tile(3166, 4820), 0, 0);
@@ -243,11 +259,16 @@ begin
   end;
 end;
 
+{*******************************************************************************
+function R_SolveDemon : Boolean;
+by: ??? (Probably Drags111)
+Description: Does action specified by name.
+*******************************************************************************}
 function R_PushUps: boolean;
 var
   P: TPoint;
 begin
-  if(sign1 = 2)then
+  if(g_R_Demon_sign1 = 2)then
   begin
     if not TileOnMS(Tile(3160, 4820), 0)then
       WalkToTile(Tile(3160, 4820), 0, 0);
@@ -255,7 +276,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign2 = 2)then
+  if(g_R_Demon_sign2 = 2)then
   begin
     if not TileOnMS(Tile(3162, 4820), 0)then
       WalkToTile(Tile(3162, 4820), 0, 0);
@@ -263,7 +284,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign3 = 2)then
+  if(g_R_Demon_sign3 = 2)then
   begin
     if not TileOnMS(Tile(3164, 4820), 0)then
       WalkToTile(Tile(3164, 4820), 0, 0);
@@ -271,7 +292,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign4 = 2)then
+  if(g_R_Demon_sign4 = 2)then
   begin
     if not TileOnMS(Tile(3166, 4820), 0)then
       WalkToTile(Tile(3166, 4820), 0, 0);
@@ -281,12 +302,17 @@ begin
   end;
 end;
 
+{*******************************************************************************
+function R_SolveDemon : Boolean;
+by: ??? (Probably Drags111)
+Description: Does action specified by name.
+*******************************************************************************}
 function R_SitUps: boolean;
 var
   P: TPoint;
 begin
   Writeln('Situps');
-  if(sign1 = 3)then
+  if(g_R_Demon_sign1 = 3)then
   begin
     Writeln('Found sign');
     if not TileOnMS(Tile(3160, 4820), 0)then
@@ -295,7 +321,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign2 = 3)then
+  if(g_R_Demon_sign2 = 3)then
   begin
     Writeln('Found sign');
     if not TileOnMS(Tile(3162, 4820), 0)then
@@ -304,7 +330,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign3 = 3)then
+  if(g_R_Demon_sign3 = 3)then
   begin
     Writeln('Found sign');
     if not TileOnMS(Tile(3164, 4820), 0)then
@@ -313,7 +339,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign4 = 3)then
+  if(g_R_Demon_sign4 = 3)then
   begin
     Writeln('Found sign');
     if not TileOnMS(Tile(3166, 4820), 0)then
@@ -324,11 +350,16 @@ begin
   end;
 end;
 
+{*******************************************************************************
+function R_SolveDemon : Boolean;
+by: ??? (Probably Drags111)
+Description: Does action specified by name.
+*******************************************************************************}
 function R_Jog: boolean;
 var
   P: TPoint;
 begin
-  if(sign1 = 4)then
+  if(g_R_Demon_sign1 = 4)then
   begin
     if not TileOnMS(Tile(3160, 4820), 0)then
       WalkToTile(Tile(3160, 4820), 0, 0);
@@ -336,7 +367,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign2 = 4)then
+  if(g_R_Demon_sign2 = 4)then
   begin
     if not TileOnMS(Tile(3162, 4820), 0)then
       WalkToTile(Tile(3162, 4820), 0, 0);
@@ -344,7 +375,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign3 = 4)then
+  if(g_R_Demon_sign3 = 4)then
   begin
     if not TileOnMS(Tile(3164, 4820), 0)then
       WalkToTile(Tile(3164, 4820), 0, 0);
@@ -352,7 +383,7 @@ begin
     Mouse(P.x, P.y, 3, 3, false);
     Result := R_ChooseOption('use');
   end;
-  if(sign4 = 4)then
+  if(g_R_Demon_sign4 = 4)then
   begin
     if not TileOnMS(Tile(3166, 4820), 0)then
       WalkToTile(Tile(3166, 4820), 0, 0);
@@ -367,7 +398,6 @@ function R_SolveDemon : Boolean;
 by: Drags111
 Description: Solves the Drill Demon Random.
 *******************************************************************************}
-
 function R_SolveDemon : Boolean;
 var
   t: integer;

@@ -69,7 +69,7 @@ begin
     RandName := 'Drill Demon';
     Music := 'corporal punishment';
     InRandom := @R_InDemon;
-    SolveRandom := nil;
+    SolveRandom := @R_SolveDemon;
   end;
 
   With r_RandomArr[R_RANDOM_EVILBOB] do
