@@ -1,0 +1,5 @@
+WORD WRAP ON:
+This folder contains all the item databases in text format.
+
+Thanks,
+Cstrike
