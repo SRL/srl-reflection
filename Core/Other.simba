@@ -124,3 +124,46 @@ function R_LobbyScreen: Boolean;
 begin
   Result := ValidInterface (INTERFACE_LOBBY_SCREEN);
 end;
+
+{*******************************************************************************
+function R_WorldMapOpen : Boolean;
+By: Cstrike
+Description: Returns true if world map is open
+******************************************************************************* }
+function R_WorldMapOpen : Boolean;
+begin
+  Result := ValidInterface (755);
+end;
+
+{*******************************************************************************
+function R_CloseWorldMap : Boolean;
+By: Cstrike
+Description: Closes map.
+******************************************************************************* }
+function R_CloseWorldMap : Boolean;
+var
+  t : Integer;
+begin
+  Result := False;
+  if not R_LoggedIn then Exit;
+  if not R_WorldMapOpen then
+  begin
+    Result := True;
+    Exit;
+  end;
+  MarkTime(t);
+  Mouse (740, 10, 13, 13, true);
+  repeat
+    wait (50);
+  until (TimeFromMark(t) > 7000) or not R_WorldMapOpen
+  Result := not R_WorldMapOpen;
+  if Result then Exit;
+
+  // Sometimes the clicking fails due to a jagex glitch, therefore try again
+  MarkTime(t);
+  Mouse (740, 10, 13, 13, true);
+  repeat
+    wait (50);
+  until (TimeFromMark(t) > 7000) or not R_WorldMapOpen
+  Result := not R_WorldMapOpen;
+end;
