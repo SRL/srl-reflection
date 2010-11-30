@@ -7,6 +7,7 @@
 // * function R_GetLock: boolean;                                  // * by Drags111
 // * function R_FindLockKey: boolean;                              // * by Drags111
 // * function R_SolvePillory: string;                              // * by Drags111
+// Special thanks to Harri for allowing the solve to be tested
 
 {*******************************************************************************
 function R_InPillory: boolean;
@@ -24,7 +25,7 @@ begin
   PilloryTiles := [Point(2608, 3105),  Point(3226, 3407), Point(2685, 3489),
                    Point(2683, 3489), Point(2681, 3489), Point(2604, 3105),
                    Point(3228, 3407), Point(2606, 3105), Point(3230, 3407)];
-  Result := PointInTPA(T, PilloryTiles); //O.objType = 7261;  O: UID;
+  Result := PointInTPA(T, PilloryTiles);
 end;
 
 {*******************************************************************************

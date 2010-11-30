@@ -196,22 +196,68 @@ begin
 end;
 
 {*******************************************************************************
-function R_CerterTalkToNPC : Boolean;
+function R_CerterTalkToNPC: Boolean;
 By: Cstrike
-Description: Talks to certer. NOT USED, BUT USED IN SCRIPT. FIX LATER :)
+Description: Talks to certer if we are not for some reason.
 *******************************************************************************}
-function R_CerterTalkToNPC : Boolean;
+function R_CerterTalkToNPC: Boolean;
+var
+  i, j, k: Integer;
+  NPCs : TNPCArray;
+  TP : TPoint;
 begin
   if not LoggedIn then Exit;
-  {
-  Result := False;
-  if ValidInterface(CERTER_MODELINTERFACE) then
-  begin
-    Result := True;
-    Exit;
-  end;
-  }
   Result := True;
+
+  // If were at the model screen, skip
+  if ValidInterface(CERTER_MODELINTERFACE) then Exit;
+
+  // If were talking to him, skip...
+  for i:=0 to high (INTERFACE_TALKS) do
+    if ValidInterface(INTERFACE_TALKS[i]) then Exit;
+
+  Result := False; // If we are clearly not talking to him then... now try to talk to him
+
+  // Regular NPCs
+  NPCs := GetNPCs;
+  if high(NPCs) > -1 then // We have a match in this case
+    for j:=0 to high(NPCs) do
+    begin
+      if TileOnMS (NPCs[i].Tile, 0) then
+      begin
+        TP := TileToMS (NPCs[i].Tile, 0);
+        Mouse (TP.X, TP.Y, 2, 2, false);
+        wait (500+random(500));
+        if R_ChooseOptionMulti (['iles', 'alk-to']) then
+        begin
+          Writeln ('[Reflection] Selected talk to NPC since we weren''t talking to him');
+          Result := True;
+          wait (2000+random(2000));
+          Exit;
+        end;
+      end;
+    end;
+
+  // Null NPC's if Jagex wants to screw with us
+  NPCs := GetNPCsNull;
+  if high(NPCs) > -1 then // We have a match in this case
+    for j:=0 to high(NPCs) do
+    begin
+      if TileOnMS (NPCs[i].Tile, 0) then
+      begin
+        TP := TileToMS (NPCs[i].Tile, 0);
+        Mouse (TP.X, TP.Y, 2, 2, false);
+        wait (500+random(500));
+        if R_ChooseOptionMulti (['iles', 'alk-to']) then
+        begin
+          Writeln ('[Reflection] Selected talk to NPC since we weren''t talking to him');
+          Result := True;
+          wait (2000+random(2000));
+          Exit;
+        end;
+      end;
+    end;
+  Writeln ('[Reflection] Warning: We are not talking to a Certer and we can''t find them...');
 end;
 
 {*******************************************************************************
