@@ -151,11 +151,37 @@ begin
 end;
 
 {*******************************************************************************
-function GetValidChildren(index: Integer): TIntegerArray;
+function GetValidInterfaceComponents (ParentI : Integer): TIntegerArray;
 By: pyroryan
-Description: Checks for valid children.
+Description: Inheritance.
 *******************************************************************************}
-function GetValidChildren(index: Integer): TIntegerArray;
+function GetValidInterfaceComponents (ParentI : Integer): TIntegerArray;
+var
+  Interfaces, IL, c: integer; //Children, i, iface,
+begin
+  try
+    Interfaces := SmartGetFieldObject(0, hook_static_GetInterfaces);
+    IL := SmartGetFieldArraySize(Interfaces, '', 1);
+    SmartFreeObject(Interfaces);
+    c := 0;
+    while not (SmartIsNull(GetInterface(ParentI, c))) do
+    begin
+      SetArrayLength (Result, c+1);
+      Result[c] := c;
+      Inc(c);
+    end;
+    SetLength(Result, c);
+  finally
+  end;
+end;
+
+{*******************************************************************************
+function GetValidChildrenComponents(ParentI, ChildI: Integer): TIntegerArray;
+By: pyroryan/Cstrike
+Description: Returns all the components in the parent-->child interface.
+*******************************************************************************}
+{
+function GetValidChildrenComponents(ParentI, ChildI: Integer): TIntegerArray;
 var
   Interfaces, IL, c: integer; //Children, i, iface,
 begin
@@ -174,16 +200,7 @@ begin
   finally
   end;
 end;
-
-{*******************************************************************************
-function GetValidInterfaceComponents (ParentI : Integer): TIntegerArray;
-By: pyroryan
-Description: Inheritance.
-*******************************************************************************}
-function GetValidInterfaceComponents (ParentI : Integer): TIntegerArray;
-begin
-  Result := GetValidChildren (ParentI);
-end;
+}
 
 {*******************************************************************************
 function GetValidChildComponents (ParentI, ChildI: Integer): TIntegerArray;
@@ -334,6 +351,18 @@ Description: Returns relative TPoint.
 function GetInterfaceComponentRelativePoint (ParentI, ChildI : Integer): TPoint;
 begin
   Result := Point (GetInterfaceComponentRelativeX(ParentI, ChildI), GetInterfaceComponentRelativeY(ParentI, ChildI));
+end;
+
+{*******************************************************************************
+function GetInterfaceAbsolutePointBase (ParentI : Integer): TPoint;
+By: Cstrike
+Description: Will get absolute position if applicable. UNDER DEVELOPMENT STILL!
+*******************************************************************************}
+function GetInterfaceAbsolutePointBase (ParentI : Integer): TPoint;
+begin
+  case ParentI of
+    241: Result := Point (7, 347);
+  end;
 end;
 
 {*******************************************************************************
@@ -509,40 +538,15 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildComponentAbsoluteTPoint (ParentI, ChildI, CompI: Integer): TPoint;
-By: Cstrike
-Description: Returns absolute TPoint. UNDER DEVELOPMENT STILL!
-*******************************************************************************}
-{
-function GetChildComponentAbsolutePoint (ParentI, ChildI, CompI: Integer): TPoint;
-begin
-  Result := Point (0, 0);
-end;
-}
-
-{*******************************************************************************
-function ReturnInterfaceAbsolutePoint (ParentI : Integer): TPoint;
-By: Cstrike
-Description: Will get absolute position if applicable. UNDER DEVELOPMENT STILL!
-*******************************************************************************}
-function ReturnInterfaceAbsolutePoint (ParentI : Integer): TPoint;
-begin
-  case ParentI of
-    241: Result := Point (7, 347);
-  end;
-end;
-
-{*******************************************************************************
-function GetInterfaceComponentAbsolutePoint (ParentI, ChildI : Integer): TPoint;
+function GetChildAbsolutePointBase (ParentI : Integer): TPoint;
 By: Cstrike
 Description: Returns absolute TPoint. UNDER DEVELOPMENT STILL.
 *******************************************************************************}
-{
-function GetInterfaceComponentAbsolutePoint (ParentI, ChildI : Integer): TPoint;
+function GetChildAbsolutePointBase (ParentI : Integer): TPoint;
 begin
   Result := Point (0, 0);
 end;
-}
+
 
 {*******************************************************************************
 procedure ScavengeInterfaceComponentsFor (ParentI : Integer; DataValue : Integer; DataType : String);
@@ -558,7 +562,7 @@ begin
 
     'textureid', 'texture', 'texture id':
     begin
-      InterfaceComp := GetValidChildren(ParentI);
+      InterfaceComp := GetValidInterfaceComponents(ParentI);
       for i:=0 to high(InterfaceComp) do
       begin
         if GetInterfaceComponentID(ParentI, InterfaceComp[i]) = DataValue then
@@ -570,7 +574,7 @@ begin
 
     'modelid', 'model','model id':
     begin
-      InterfaceComp := GetValidChildren(ParentI);
+      InterfaceComp := GetValidInterfaceComponents(ParentI);
       for i:=0 to high(InterfaceComp) do
       begin
         if GetModelZoom(ParentI, InterfaceComp[i]) = DataValue then
@@ -582,17 +586,62 @@ begin
 
     'x', 'xvalue', 'x value', 'x relative':
     begin
-
+      InterfaceComp := GetValidInterfaceComponents(ParentI);
+      for i:=0 to high(InterfaceComp) do
+      begin
+        if GetInterfaceComponentRelativeX(ParentI, InterfaceComp[i]) = DataValue then
+        begin
+          Writeln ('[Reflection] Data scavenge for value '+ToStr(DataValue)+' found at Interface [I: '+ToStr(ParentI)+ ', C: '+ToStr(InterfaceComp[i])+']');
+        end;
+      end;
     end;
 
     'y', 'yvalue', 'y value', 'y relative':
     begin
-
+      InterfaceComp := GetValidInterfaceComponents(ParentI);
+      for i:=0 to high(InterfaceComp) do
+      begin
+        if GetInterfaceComponentRelativeY(ParentI, InterfaceComp[i]) = DataValue then
+        begin
+          Writeln ('[Reflection] Data scavenge for value '+ToStr(DataValue)+' found at Interface [I: '+ToStr(ParentI)+ ', C: '+ToStr(InterfaceComp[i])+']');
+        end;
+      end;
     end;
 
     'stack', 'stackid', 'stack id':
     begin
+      InterfaceComp := GetValidInterfaceComponents(ParentI);
+      for i:=0 to high(InterfaceComp) do
+      begin
+        if GetInterfaceComponentStack(ParentI, InterfaceComp[i]) = DataValue then
+        begin
+          Writeln ('[Reflection] Data scavenge for value '+ToStr(DataValue)+' found at Interface [I: '+ToStr(ParentI)+ ', C: '+ToStr(InterfaceComp[i])+']');
+        end;
+      end;
+    end;
 
+    'width':
+    begin
+      InterfaceComp := GetValidInterfaceComponents(ParentI);
+      for i:=0 to high(InterfaceComp) do
+      begin
+        if GetInterfaceComponentWidth(ParentI, InterfaceComp[i]) = DataValue then
+        begin
+          Writeln ('[Reflection] Data scavenge for value '+ToStr(DataValue)+' found at Interface [I: '+ToStr(ParentI)+ ', C: '+ToStr(InterfaceComp[i])+']');
+        end;
+      end;
+    end;
+
+    'height':
+    begin
+      InterfaceComp := GetValidInterfaceComponents(ParentI);
+      for i:=0 to high(InterfaceComp) do
+      begin
+        if GetInterfaceComponentHeight(ParentI, InterfaceComp[i]) = DataValue then
+        begin
+          Writeln ('[Reflection] Data scavenge for value '+ToStr(DataValue)+' found at Interface [I: '+ToStr(ParentI)+ ', C: '+ToStr(InterfaceComp[i])+']');
+        end;
+      end;
     end;
 
   end;
@@ -601,17 +650,17 @@ begin
 end;
 
 {*******************************************************************************
-procedure ScavengeInterfaceForText (ParentI : Integer; TextFragment : Integer);
+procedure ScavengeInterfaceComponentsForText (ParentI : Integer; TextFragment : Integer);
 By: Cstrike
 Description: Looks for text fragment in parent. Don't use this too often or
 Simba will crap out on you, try to use it to components with < 150 components.
 *******************************************************************************}
-procedure ScavengeInterfaceForText (ParentI : Integer; TextFragment : String);
+procedure ScavengeInterfaceComponentsForText (ParentI : Integer; TextFragment : String);
 var
   i : Integer;
   InterfaceComp : TIntegerArray;
 begin
-  InterfaceComp := GetValidChildren(ParentI);
+  InterfaceComp := GetValidInterfaceComponents(ParentI);
   for i:=0 to high(InterfaceComp) do
     begin
     if Pos (TextFragment, GetInterfaceText(ParentI, InterfaceComp[i])) > 0 then
@@ -619,4 +668,19 @@ begin
       Writeln ('[Reflection] Data scavenge for value '+ToStr(TextFragment)+' found in string "'+GetInterfaceText(ParentI, InterfaceComp[i])+'" at Interface [I: '+ToStr(ParentI)+ ', C: '+ToStr(InterfaceComp[i])+']');
     end;
   end;
+end;
+
+////////////////////////////////////////////////////////////////////////////////
+//                        Common outdated names                               //
+////////////////////////////////////////////////////////////////////////////////
+// These exist to keep older scripts running that haven't updated to new names.
+
+{*******************************************************************************
+function GetValidChildren(index: Integer): TIntegerArray;
+By: pyroryan
+Description: Checks for valid children.
+*******************************************************************************}
+function GetValidChildren(index: Integer): TIntegerArray;
+begin
+  Result := GetValidInterfaceComponents(index);
 end;
