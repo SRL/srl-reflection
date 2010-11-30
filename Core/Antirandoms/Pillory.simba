@@ -48,6 +48,7 @@ begin
   V := 0.5;
   Result := false;
   MarkTime(timer);
+  Writeln ('[Reflection] Doing R_OpenCage');
   repeat
     if (ValidInterface(189)) then
     V := V + 0.1;
@@ -61,8 +62,10 @@ begin
       Mouse(P.X, P.Y, 0, 0, false);
       Wait(RandomRange(80, 100));
       Result := ChooseOption('Unlock');
+      if Result then Writeln ('[Reflection] Doing R_OpenCage returned true');
     end;
   until Result or not R_LoggedIn or (TimeFrommark(timer) > 20000);
+  if not Result or not R_LoggedIn then Writeln ('[Reflection] R_OpenCage failed/timed out');
 end;
 
 {*******************************************************************************
