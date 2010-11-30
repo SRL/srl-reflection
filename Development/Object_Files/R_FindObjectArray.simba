@@ -1,0 +1,34 @@
+program ReflectionObjectFinder;
+
+function R_FindObjectArray(ObjectName: String): TIntegerArray;
+var FileInt, i: Integer;
+    FilePath, Data: String;
+    TSA: TStringArray;
+begin
+  Result := [];
+  FilePath := AppPath+'Includes\Reflection\Development\Object_Files\Objects.txt';
+  FileInt := OpenFile(FilePath, true);
+  try
+    if not ReadFileString (FileInt, Data, FileSize(FileInt)) then
+    begin
+      Writeln ('[Reflection] Error in file while reading: "'+FilePath+'"');
+      Exit;
+    end;
+  except
+    Writeln ('[Reflection] File doesn''t exist at path: "'+FilePath+'"');
+    Exit;
+  end;
+  CloseFile(FileInt);
+  TSA := Explode(chr(10), Data);
+  for i:=0 to high(TSA) do
+    if (Pos(lowercase(ObjectName), lowercase(TSA[i]))) > 0 then
+    begin
+      Insert('&', TSA[i], 1);
+      SetArrayLength(Result, high(Result)+2);
+      Result[high(Result)] := StrToInt(Between('&', ':', TSA[i]));
+    end;
+end;
+
+begin
+  writeln(R_FindObjectArray('ank boot'));
+end.
