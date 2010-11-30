@@ -145,9 +145,9 @@ begin
   With r_RandomArr[R_RANDOM_PILLORY] do
   begin
     RandName := 'Pillory';
-    Music := ''; // NEED MUSIC
-    InRandom := nil;
-    SolveRandom := nil;
+    Music := '';
+    InRandom := @R_InPillory;
+    SolveRandom := @R_SolvePillory;
   end;
 
   With r_RandomArr[R_RANDOM_PINBALL] do

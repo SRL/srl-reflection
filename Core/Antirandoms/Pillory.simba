@@ -10,21 +10,21 @@
 
 {*******************************************************************************
 function R_InPillory: boolean;
-By: Drags111
+By: Drags111, modded by Cstrike
 Description: Checks if we are in the Pillory Random.
 *******************************************************************************}
-function R_InPillory: boolean;
+function R_InPillory: Boolean;
 var
-  P: TPoint;
-  O: TRSObject;
+  P: TTile;
+  T: TPoint;
+  PilloryTiles : TPointArray;
 begin
   P := GetMyPos;
-  O := GetObjectAt(P, OBJECT_TYPE_INTERACTABLE);
-  Result := False;
-  if O.ID = 7261 then //  O: UID;   O.objType = 7261
-    Result := True;
-  if not Result then
-    Result := not (O = NULL_RSOBJECT);
+  T := Point(P.X, P.Y); // This is redundant right? I swear coding tiles/points causes things to go FUBAR. This is to be safe
+  PilloryTiles := [Point(2608, 3105),  Point(3226, 3407), Point(2685, 3489),
+                   Point(2683, 3489), Point(2681, 3489), Point(2604, 3105),
+                   Point(3228, 3407), Point(2606, 3105), Point(3230, 3407)];
+  Result := PointInTPA(T, PilloryTiles); //O.objType = 7261;  O: UID;
 end;
 
 {*******************************************************************************
@@ -163,6 +163,6 @@ begin
     FindNPCChatText('here to con', ClickLeft);
     if not R_InPillory then Break;
   until not (FindNPCChatText('to go', nothing) or R_LoggedIn) or (TimeFromMark(t) > 20000)
-  wait(2000+Random(2000));
+  wait(3000+Random(3500));
   Result := not R_InPillory;
 end;
