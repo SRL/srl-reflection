@@ -50,9 +50,8 @@ begin
       P := TileToMS(Molly.Tile, Molly.Height * 2 / 3);
 
       Mouse(P.X, P.Y, 2, 2, False);
-      Wait(100+Random(100));
 
-      if ChooseOption('alk')then
+      if WaitOption('alk', 200+Random(100))then
       begin
         Wait(100+Random(100));
         While CharacterMoving do
@@ -327,8 +326,6 @@ begin
   if LoggedIn then
   begin
     Result := True;
-    //Inc(RSolved[RMolly]);
     AddToReport('[Reflection] Solved Molly Random!');
-  end; {else
-    Inc(RFailed[RMolly]); }
+  end;
 end;

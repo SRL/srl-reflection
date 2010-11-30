@@ -1,25 +1,6 @@
 const
   r_RandomCount = 18;
 
-  R_RANDOM_ABYSS = 0;
-  R_RANDOM_BEEKEEPER = 1;
-  R_RANDOM_CAPNARRAV = 2;
-  R_RANDOM_CERTER = 3;
-  R_RANDOM_DRILLDEMON = 4;
-  R_RANDOM_EVILBOB = 5;
-  R_RANDOM_EXAM = 6;
-  R_RANDOM_FREAKYFORESTER = 7;
-  R_RANDOM_FROG = 8;
-  R_RANDOM_GRAVEDIGGER = 9;
-  R_RANDOM_MAZE = 10;
-  R_RANDOM_MIME = 11;
-  R_RANDOM_MOLLY = 12;
-  R_RANDOM_PILLORY = 13;
-  R_RANDOM_PINBALL = 14;
-  R_RANDOM_PRISON = 15;
-  R_RANDOM_QUIZ = 16;
-  R_RANDOM_SANDWICHLADY = 17;
-
 type
   r_Random = Record
     RandName, Music: String;
@@ -32,7 +13,7 @@ var
 
 Procedure r_SetupRandoms;
 begin
-  With r_RandomArr[R_RANDOM_ABYSS] do
+  With r_RandomArr[rand_Abyss] do
   begin
     RandName := 'Abyss';
     Music := 'into the abyss';
@@ -40,7 +21,7 @@ begin
     SolveRandom := @R_SolveAbyss;
   end;
 
-  With r_RandomArr[R_RANDOM_BEEKEEPER] do
+  With r_RandomArr[rand_Beekeeper] do
   begin
     RandName := 'Beekeeper';
     Music := ''; // Wheres the music?
@@ -50,7 +31,7 @@ begin
 
   // Needs deposit
   // BTW N1ke, this is "capn arNav" :P
-  With r_RandomArr[R_RANDOM_CAPNARRAV] do
+  With r_RandomArr[rand_CapnArnav] do
   begin
     RandName := 'Cap n'' Arrav';
     Music := 'sea shanty';
@@ -58,7 +39,7 @@ begin
     SolveRandom := @R_SolveArnav;
   end;
 
-  With r_RandomArr[R_RANDOM_CERTER] do
+  With r_RandomArr[rand_Certer] do
   begin
     RandName := 'Certer';
     Music := ''; //'start', 'unknown land', 'dream', 'autumn voyage';
@@ -66,7 +47,7 @@ begin
     SolveRandom := @R_SolveCerter;
   end;
 
-  With r_RandomArr[R_RANDOM_DRILLDEMON] do
+  With r_RandomArr[rand_Demon] do
   begin
     RandName := 'Drill Demon';
     Music := 'corporal punishment';
@@ -75,7 +56,7 @@ begin
   end;
 
   // Needs deposit
-  With r_RandomArr[R_RANDOM_EVILBOB] do
+  With r_RandomArr[rand_ScapeRune] do
   begin
     RandName := 'Evilbob';
     Music := 'evil bob''s island';
@@ -83,7 +64,7 @@ begin
     SolveRandom := @R_SolveScapeRune;
   end;
 
-  With r_RandomArr[R_RANDOM_EXAM] do
+  With r_RandomArr[rand_Mordaut] do
   begin
     RandName := 'Exam';
     Music := 'school''s out';
@@ -92,7 +73,7 @@ begin
   end;
 
   // Needs deposit
-  With r_RandomArr[R_RANDOM_FREAKYFORESTER] do
+  With r_RandomArr[rand_Forester] do
   begin
     RandName := 'Freaky forester';
     Music := 'pheasant peasant';
@@ -100,7 +81,7 @@ begin
     SolveRandom := @R_SolveForester;
   end;
 
-  With r_RandomArr[R_RANDOM_FROG] do
+  With r_RandomArr[rand_Frog] do
   begin
     RandName := 'Frog';
     Music := 'frogland';
@@ -109,7 +90,7 @@ begin
   end;
 
   // Needs deposit
-  With r_RandomArr[R_RANDOM_GRAVEDIGGER] do
+  With r_RandomArr[rand_Leo] do
   begin
     RandName := 'Gravedigger';
     Music := 'spooky';
@@ -117,7 +98,7 @@ begin
     SolveRandom := @r_SolveLeo;
   end;
 
-  With r_RandomArr[R_RANDOM_MAZE] do
+  With r_RandomArr[rand_Maze] do
   begin
     RandName := 'Maze';
     Music := 'time out';
@@ -125,7 +106,7 @@ begin
     SolveRandom := @r_SolveMaze;
   end;
 
-  With r_RandomArr[R_RANDOM_MIME] do
+  With r_RandomArr[rand_Mime] do
   begin
     RandName := 'Mime';
     Music := 'artistry';
@@ -133,7 +114,7 @@ begin
     SolveRandom := @R_SolveMime;
   end;
 
-  With r_RandomArr[R_RANDOM_MOLLY] do
+  With r_RandomArr[rand_Molly] do
   begin
     RandName := 'Molly';
     Music := 'head to head';
@@ -142,7 +123,7 @@ begin
   end;
 
   // This is just broken to hell
-  With r_RandomArr[R_RANDOM_PILLORY] do
+  With r_RandomArr[rand_Pillory] do
   begin
     RandName := 'Pillory';
     Music := '';
@@ -150,7 +131,7 @@ begin
     SolveRandom := @R_SolvePillory;
   end;
 
-  With r_RandomArr[R_RANDOM_PINBALL] do
+  With r_RandomArr[rand_Pinball] do
   begin
     RandName := 'Pinball';
     Music := 'pinball wizard';
@@ -159,7 +140,7 @@ begin
   end;
 
   // Needs deposit
-  With r_RandomArr[R_RANDOM_PRISON] do
+  With r_RandomArr[rand_PrisonPete] do
   begin
     RandName := 'Prison';
     Music := 'in the clink';
@@ -167,7 +148,7 @@ begin
     SolveRandom := nil; // Not complete
   end;
 
-  With r_RandomArr[R_RANDOM_QUIZ] do
+  With r_RandomArr[rand_Quiz] do
   begin
     RandName := 'Quiz';
     Music := 'the quiz master';
@@ -175,7 +156,7 @@ begin
     SolveRandom := @R_SolveQuizMaster;
   end;
 
-  With r_RandomArr[R_RANDOM_SANDWICHLADY] do
+  With r_RandomArr[rand_Sandwich] do
   begin
     RandName := 'Sandwhich lady';
     Music := 'snack attack';
@@ -260,7 +241,7 @@ begin
   Result := GetInterfaceText(187, 4);
 end;
 
-function R_SolveNonTalkingRandoms : Boolean;
+function R_SolveNonTalkingRandoms: Boolean;
 var
   I, iTime: Integer;
   Music: String;
@@ -307,6 +288,7 @@ begin
         Writeln('[Reflection] No random solver for this random yet!');
         Logout;
         Players[CurrentPlayer].Active := False;
+        Inc(RandFailed[I]);
         Exit;
       end;
 
@@ -315,6 +297,7 @@ begin
         Writeln('[Reflection] Random solving for ' + r_RandomArr[I].RandName + ' failed');
         Logout;
         Players[CurrentPlayer].Active := False;
+        Inc(RandFailed[I]);
         Exit;
       end else
         Writeln('[Reflection] Random solved');
@@ -329,7 +312,7 @@ begin
       Wait(2000+Random(1000));
 
       Players[CurrentPlayer].Rand := '';
-
+      Inc(RandSolved[I]);
 
       UseRewardBox;
       Exit;
