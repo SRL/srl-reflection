@@ -223,9 +223,9 @@ begin
   if high(NPCs) > -1 then // We have a match in this case
     for j:=0 to high(NPCs) do
     begin
-      if TileOnMS (NPCs[i].Tile, 0) then
+      if TileOnMS (NPCs[j].Tile, 0) then
       begin
-        TP := TileToMS (NPCs[i].Tile, 0);
+        TP := TileToMS (NPCs[j].Tile, 0);
         Mouse (TP.X, TP.Y, 2, 2, false);
         wait (500+random(500));
         if R_ChooseOptionMulti (['iles', 'alk-to']) then
@@ -241,11 +241,11 @@ begin
   // Null NPC's if Jagex wants to screw with us
   NPCs := GetNPCsNull;
   if high(NPCs) > -1 then // We have a match in this case
-    for j:=0 to high(NPCs) do
+    for k:=0 to high(NPCs) do
     begin
-      if TileOnMS (NPCs[i].Tile, 0) then
+      if TileOnMS (NPCs[k].Tile, 0) then
       begin
-        TP := TileToMS (NPCs[i].Tile, 0);
+        TP := TileToMS (NPCs[k].Tile, 0);
         Mouse (TP.X, TP.Y, 2, 2, false);
         wait (500+random(500));
         if R_ChooseOptionMulti (['iles', 'alk-to']) then
