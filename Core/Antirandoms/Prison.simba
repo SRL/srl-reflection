@@ -16,6 +16,18 @@ const
   PRISON_DEPOSITBOXID = 32924;
   PRISON_NPCPOPNAME = 'Pop Balloon animal';
 
+  // Phase setup
+  PRISON_PHASE_TALKTOPETEATSTART = 0;
+  PRISON_PHASE_CHECKIFTERMINATED = 1;
+  PRISON_PHASE_FINISHSTARTINGCONVERSATION = 2;
+  PRISON_PHASE_PULLLEVER = 3;
+  PRISON_PHASE_ANALYZEANIMAL = 4;
+  PRISON_PHASE_POPANIMAL = 5;
+  PRISON_PHASE_CHECKIFWENEEDMOREKEYS = 6;
+  PRISON_PHASE_RANDOMCOMPLETED = 7;
+  PRISON_PHASE_EXITTHROUGHDOOR = 8;
+  PRISON_PHASE_TERMINATERANDOM = 9;
+
 {*******************************************************************************
 function R_InPrison : Boolean;
 By: Cstrike
@@ -97,7 +109,7 @@ begin
     TP := TileToMS (PrisonPeteTile, 0);
     Mouse (TP.x, TP.y, 2, 2, false);
     wait (500+random(500));
-    if R_ChooseOptionMulti (['rison']) then
+    if R_ChooseOptionMulti (['rison', 'ete']) then
       Result := True;
   end else R_Debug('Could not find Prison Pete tile on MS', 'Prison');
   wait (500+random(1000));
@@ -147,7 +159,7 @@ begin
       wait (250+random(500));
     end;
     R_Debug('Failed to find lever and/or pull it', 'Prison');
-  end else R_Debug('Lever is no on MS somehow..', 'Prison');
+  end else R_Debug('Lever is not on MS somehow..', 'Prison');
 end;
 
 {*******************************************************************************
@@ -241,7 +253,7 @@ begin
   Result := False;
   if high(IDsToPop) < 0 then
   begin
-    R_Debug('Warning: IDsToPop has no values in it..', 'Prison');
+    R_Debug('Warning: IDsToPop has no values in it...', 'Prison');
     Exit;
   end;
   MarkTime(t);
@@ -278,24 +290,114 @@ begin
 end;
 
 {*******************************************************************************
-function R_SolvePrison : Boolean
+function R_SolvePrison: Boolean
 By: Cstrike
 Description: Solves the random.
 *******************************************************************************}
-function R_SolvePrison : Boolean;
+function R_SolvePrison: Boolean;
+var
+  t, PrisonPhase, SolveAttempts: Integer;
+  PrisonOutOfTime: Boolean;
 begin
-  if not LoggedIn then
+  if not LoggedIn or not R_InPrison then
     Exit;
   Result := False;
+  PrisonOutOfTime := False;
+  SolveAttempts := 0;
 
-  if R_InPrison then
-  begin
-    if not R_PrisonPreTerminated then
-    begin
-      R_Debug('Account hasnt been terminated, attempting to solve random...', 'Prison');
-    end else
-    begin // If we are pre-terminated, then the random is screwed and account will be lost
-      R_Debug('Account is terminated (>15 mins), exiting random to return you to a lost spot.', 'Prison');
+  // Phase style solving
+  PrisonPhase := PRISON_PHASE_TALKTOPETEATSTART;
+  repeat
+
+    // Phase terminate
+    if not R_InPrison then
+      Exit;
+
+
+    // Initiate phase solving
+    case PrisonPhase of
+
+      // Talk to pete @ start
+      PRISON_PHASE_TALKTOPETEATSTART = 0:
+      begin
+        if R_PrisonClickOnPete then
+          PrisonPhase := PRISON_PHASE_FINISHSTARTINGCONVERSATION;
+        // Check if terminated
+        wait (500+random(1000));
+        if R_PrisonPreTerminated then
+        begin
+          R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
+          PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
+          PrisonOutOfTime := True;
+        end;
+      end;
+
+      PRISON_PHASE_FINISHSTARTINGCONVERSATION:
+      begin
+        if R_PrisonPreTerminated then
+        begin
+          R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
+          PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
+          PrisonOutOfTime := True;
+        end;
+      end;
+
+      PRISON_PHASE_PULLLEVER:
+      begin
+        // Check if terminated
+        wait (500+random(1000));
+        if R_PrisonPreTerminated then
+        begin
+          R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
+          PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
+          PrisonOutOfTime := True;
+        end;
+      end;
+
+      PRISON_PHASE_ANALYZEANIMAL:
+      begin
+      end;
+
+      PRISON_PHASE_POPANIMAL:
+      begin
+
+        // Check if terminated
+        wait (500+random(1000));
+        if R_PrisonPreTerminated then
+        begin
+          R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
+          PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
+          PrisonOutOfTime := True;
+        end;
+      end;
+
+      PRISON_PHASE_CHECKIFWENEEDMOREKEYS:
+      begin
+
+        // Check if terminated
+        wait (500+random(1000));
+        if R_PrisonPreTerminated then
+        begin
+          R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
+          PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
+          PrisonOutOfTime := True;
+        end;
+      end;
+
+      PRISON_PHASE_RANDOMCOMPLETED:
+      begin
+      end;
+
+      PRISON_PHASE_EXITTHROUGHDOOR:
+      begin
+      end;
+
+    else // Else if the number gets fudged up for any reason
+      PrisonPhase := PRISON_PHASE_TERMINATERANDOM;
     end;
-  end;
+
+    if PrisonPhase = PRISON_PHASE_TERMINATERANDOM then
+      R_Debug ('Error with prison solver phase number, terminating solver', 'Prison');
+
+  until (Result) or (TimeFromMark(t) > 15*60*1000) or (PrisonPhase = PRISON_PHASE_TERMINATERANDOM)
 end;
