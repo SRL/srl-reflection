@@ -31,7 +31,7 @@ begin
     'three': Result := R_THREETAIL;
     'four': Result := R_FOURTAIL;
   end;
-  Writeln('[Reflection] Going to look for ' + S + ' tailed pheasant!');
+  r_Debug('Going to look for ' + S + ' tailed pheasant!', 'Forester');
   ClickToContinue;
 end;
 
@@ -41,7 +41,7 @@ var
   C: TPoint;
   iTime: Integer;
 begin
-  Writeln('[Reflection] Finding Freaky forester..');
+  r_Debug('Finding Freaky forester..', 'Forester');
 
   iTime := GetSystemTime;
   Repeat
@@ -49,7 +49,7 @@ begin
 
     If Not TileOnMS(NPC.Tile, 0)then
     begin
-      Writeln('[Reflection] Tile not on MS' + ToStr(NPC.Tile) + ', walking there.');
+      r_Debug('Tile not on MS' + ToStr(NPC.Tile) + ', walking there.', 'Forester');
       WalkToTile(NPC.Tile, 0, 0);
     end;
 
@@ -59,13 +59,13 @@ begin
 
     If Result then
     begin
-      Writeln('[Reflection] Found Freaky forester!');
+      r_Debug('Found Freaky forester!', 'Forester');
       Wait(2000+Random(1000));
       Flag;
       Exit;
     end;
   until(GetSystemTime-iTime > 30000);
-  Writeln('[Reflection] Took > 30 secs finding forester, result = false');
+  r_Debug('Took > 30 secs finding forester, result = false', 'Forester');
 end;
 
 function r_ForesterFight: boolean;
@@ -86,7 +86,7 @@ var
   C: TPoint;
   iTime, P, iTimeEx: Integer;
 begin
-  Writeln('[Reflection] Finding pheasant..');
+  r_Debug('Finding pheasant..', 'Forester');
 
   P := Seekfor;
   iTime := GetSystemTime;
@@ -98,7 +98,7 @@ begin
 
     If Not TileOnMS(NPCs[0].Tile, 0)then
     begin
-      Writeln('[Reflection] Tile not on MS' + ToStr(NPCs[0].Tile) + ', walking there.');
+      r_Debug('Tile not on MS' + ToStr(NPCs[0].Tile) + ', walking there.', 'Forester');
       WalkToTile(NPCs[0].Tile, 0, 0);
       Exit;
     end;
@@ -109,7 +109,7 @@ begin
 
     If Result then
     begin
-      Writeln('[Reflection] Attacked pheasant!');
+      r_Debug('Attacked pheasant!', 'Forester');
       Wait(1000+Random(500));
       Flag;
       iTimeEx := GetSystemTime;
@@ -135,13 +135,13 @@ begin
   For I:=0 to High(G)do
    If (G[I].ID = R_MEATID)then
    begin
-     Writeln('[Reflection] Found meat' + ToStr(G[I].Tile));
+     r_Debug('Found meat' + ToStr(G[I].Tile), 'Forester');
      C := TileToMS(G[I].Tile, 0);
      Mouse(C.X, C.Y, 3, 3, False);
      Result := WaitOption('ake', 200+Random(100));
      If Result then
      begin
-       Writeln('[Reflection] Picking up meat..');
+       r_Debug('Picking up meat..', 'Forester');
        Wait(1000+Random(500));
        Flag;
        Exit;
@@ -162,7 +162,7 @@ begin
   Obj := GetObjectByIDEx([R_FORESTERPORTALID], OBJECT_TYPE_INTERACTABLE, 40);
   If Not (Obj.ID = R_FORESTERPORTALID)then
   begin
-    Writeln('[Reflection] Problem finding leaving portal, result = false');
+    r_Debug('Problem finding leaving portal, result = false', 'Forester');
     Exit;
   end;
 
@@ -204,7 +204,7 @@ begin
     r_ForesterKill(FWants);
     If (GetSystemTime - iTime > 60000)then
     begin
-      Writeln('[Reflection] Took more than one minute to recive food!');
+      r_Debug('Took more than one minute to recive food!', 'Forester');
       Exit;
     end;
   Until(r_ForesterPickup);
@@ -217,7 +217,7 @@ begin
   Repeat
     If (GetSystemTime - iTime > 30000)then
     begin
-      Writeln('[Reflection] Took more than 30 secs to leave!');
+      r_Debug('Took more than 30 secs to leave!', 'Forester');
       Exit;
     end;
   Until(r_ForesterPortal);

@@ -35,7 +35,7 @@ Description: Deposists that number in the DropBox.
 procedure R_ScapeRuneDepositItems (ItemsToDeposit : Integer);
 begin
   if not LoggedIn then Exit;
-  Writeln ('[Reflection] Depositing '+inttostr(ItemsToDeposit)+' items to make space');
+  R_Debug('Depositing '+inttostr(ItemsToDeposit)+' items to make space', 'ScapeRune');
 end;
 
 {*******************************************************************************
@@ -54,7 +54,7 @@ begin
   begin
     if R_CountItemID(DestroyArray[i]) > 0 then
     begin
-      writeln ('[Reflection] Destroying improper fish.');
+      R_Debug('Destroying improper fish.', 'ScapeRune');
       R_ClickItemID (DestroyArray[i], false, 'Destroy');
       wait (500+random(500));
       // Wait for interface to pop up
@@ -107,22 +107,22 @@ begin
     if TileOnMM (Tile(R_EVILBOB_MIDDLE_X+6, R_EVILBOB_MIDDLE_Y)) then
     begin
       WalkToTile (Tile(R_EVILBOB_MIDDLE_X+6, R_EVILBOB_MIDDLE_Y), 2, 0);
-      writeln ('[Reflection] Moving from east to center');
+      R_Debug('Moving from east to center', 'ScapeRune');
     end else
     if TileOnMM (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y+6)) then
     begin
       WalkToTile (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y+6), 2, 0);
-      writeln ('[Reflection] Moving from north to center');
+      R_Debug('Moving from north to center', 'ScapeRune');
     end else
     if TileOnMM (Tile(R_EVILBOB_MIDDLE_X-6, R_EVILBOB_MIDDLE_Y)) then
     begin
       WalkToTile (Tile(R_EVILBOB_MIDDLE_X-6, R_EVILBOB_MIDDLE_Y), 2, 0);
-      writeln ('[Reflection] Moving from west to center');
+      R_Debug('Moving from west to center', 'ScapeRune');
     end else
     if TileOnMM (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y-6)) then
     begin
       WalkToTile (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y-6), 2, 0);
-      writeln ('[Reflection] Moving from south to center');
+      R_Debug('Moving from south to center', 'ScapeRune');
     end;
     WalkToTile (Tile(R_EVILBOB_MIDDLE_X, R_EVILBOB_MIDDLE_Y), 2, 0);
   end;
@@ -148,7 +148,7 @@ begin
   until ((not (ValidInterface(64))) and (not (ValidInterface(65))) and (not (ValidInterface(66)))
         and (not (ValidInterface(241))) and (not (ValidInterface(242))) and (not (ValidInterface(243)))
           or (TimeFromMark(t) > 30000))
-  Writeln ('[Reflection] No more bob chat interfaces up');
+  R_Debug('No more bob chat interfaces up', 'ScapeRune');
 end;
 
 {*******************************************************************************
@@ -186,13 +186,13 @@ begin
         // If theres an error...
         if (TimeFromMark(t) > 10000) then
         begin
-          Writeln ('[Reflection] We clicked to talk with the Servant but its not happening...');
+          R_Debug('We clicked to talk with the Servant but its not happening...', 'ScapeRune');
           Exit;
         end;
         // Failsafe in case we talked to the Servant already
         if (ValidInterface(186)) then
         begin
-          Writeln ('[Reflection] Servant skipped to the showing of the statue, skipping to finding fish location function');
+          R_Debug('Servant skipped to the showing of the statue, skipping to finding fish location function', 'ScapeRune');
           Result := True;
           Exit;
         end;
@@ -210,7 +210,7 @@ begin
     end;
   end else
   begin
-    writeln ('[Reflection] Could not index Servant, walking to center');
+    R_Debug('Could not index Servant, walking to center', 'ScapeRune');
     R_ScapeRuneWalkToCenter;
   end;
 end;
@@ -232,7 +232,7 @@ begin
 
   if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0) then
   begin
-    writeln ('[Reflection] Fishing net is in inventory');
+    R_Debug('Fishing net is in inventory', 'ScapeRune');
     Result := True;
     Exit;
   end;
@@ -240,7 +240,7 @@ begin
   // Try 3x to get a fishing net
   for i:=1 to 3 do
   begin
-    writeln ('[Reflection] Attempt #'+inttostr(i)+'/3 to get fishing net');
+    R_Debug('Attempt #'+inttostr(i)+'/3 to get fishing net', 'ScapeRune');
 
     // Pick a tile to pick it up from
     case random(6) of
@@ -274,14 +274,14 @@ begin
       until (TimeFromMark(t) > 10000) or (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0)
     end else
     begin
-      writeln ('[Reflection] Could not find fishing net at Tile('+inttostr(TileToGetItem.x)+','+inttostr(TileToGetItem.y)+')');
+      R_Debug('Could not find fishing net at Tile('+inttostr(TileToGetItem.x)+','+inttostr(TileToGetItem.y)+')', 'ScapeRune');
     end;
 
     // If successful...
     if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0) then
     begin
       Result := true;
-      writeln ('[Reflection] Successfully obtained a fishing net to complete task with');
+      R_Debug('Successfully obtained a fishing net to complete task with', 'ScapeRune');
       Exit;
     end;
   end;
@@ -312,14 +312,14 @@ begin
   begin
     for j:=1 to 3 do
     begin
-      writeln ('[Reflection] Searching for proper fishing pool attempt #'+inttostr(j));
+      R_Debug('Searching for proper fishing pool attempt #'+inttostr(j), 'ScapeRune');
       wait (6500+random(3200)); // Let camera calibrate to pause
       FishObj := GetObjectsByID([R_EVILBOB_FISHINGSPOT], OBJECT_TYPE_INTERACTABLE, 52);
 
       // If we found more than 4 fish pools or none, we have a problem
       if (high(FishObj) < 0) then
       begin
-        writeln ('[Reflection] Had trouble getting fish location ['+inttostr(high(FishObj))+']');
+        R_Debug('Had trouble getting fish location ['+inttostr(high(FishObj))+']', 'ScapeRune');
         Exit;
       end else // Here we check tile on MS
       begin
@@ -327,7 +327,7 @@ begin
         begin
           if (TileOnMS (FishObj[i].Tile, 0)) then
           begin
-            writeln ('[Reflection] Found fish tile on screen, tile indexed');
+            R_Debug('Found fish tile on screen, tile indexed', 'ScapeRune');
             FishObjTile := FishObj[i].Tile;
             Break;
           end;
@@ -355,7 +355,7 @@ begin
     // Walking part
     if Direction = 'none' then
     begin
-      writeln ('[Reflection] Warning: Error occured, could not find direction to walk for Evil Bob ScapeRune!');
+      R_Debug('Warning: Error occured, could not find direction to walk for Evil Bob ScapeRune!', 'ScapeRune');
       Exit;
     end else
     begin
@@ -394,11 +394,11 @@ begin
         repeat
           wait (50);
         until (TimeFromMark(t) > 6000) or (DistanceFrom(TileToArrive) < 4)
-        if (TimeFromMark(t) > 6000) then writeln ('[Reflection] Warning: Did timed out, did not get to TileToArrive');
+        if (TimeFromMark(t) > 6000) then R_Debug('Warning: Did timed out, did not get to TileToArrive', 'ScapeRune');
         if (DistanceFrom(TileToArrive) < 4) then Result := True; // If we are near the spot then result = true
-      end else writeln ('[Reflection] Error with walking to fishing spot');
+      end else R_Debug('Error with walking to fishing spot', 'ScapeRune');
     end;
-  end else writeln ('[Reflection] Not in proper interface to get direction');
+  end else R_Debug('Not in proper interface to get direction', 'ScapeRune');
 end;
 
 {*******************************************************************************
@@ -458,7 +458,7 @@ begin
                     end;
             end;
             Break;
-          end else writeln ('[Reflection] Warning: Tile is not on the minimap!');
+          end else R_Debug('Warning: Tile is not on the minimap!', 'ScapeRune');
         end;
       end;
     end;
@@ -492,14 +492,14 @@ begin
   Result := False;
   for k:=1 to 3 do
   begin
-    Writeln ('[Reflection] Attempt '+ToStr(k)+'/3 of cooking fish');
+    R_Debug('Attempt '+ToStr(k)+'/3 of cooking fish', 'ScapeRune');
     R_ScapeRuneWalkToCenter;
     CookPots := GetObjectsByID ([R_EVILBOB_COOKINGPOT], OBJECT_TYPE_INTERACTABLE, 52);
 
     // Failsafe
     if high(CookPots) < 0 then
     begin
-      Writeln ('[Reflection] Failed to find cooking pot to uncook');
+      R_Debug('Failed to find cooking pot to uncook', 'ScapeRune');
       Exit;
     end;
 
@@ -519,12 +519,12 @@ begin
             wait (4000+random(2200));
             if (R_CountItemName('Raw') > 0) then
             begin
-              Writeln ('[Reflection] Successfully made proper uncooked fish!');
+              R_Debug('Successfully made proper uncooked fish!', 'ScapeRune');
               Result := True;
               Exit;
-            end else Writeln ('[Reflection] Was unable to cook ');
-          end else Writeln ('[Reflection] Error: ChooseOption Use was not present');
-        end else Writeln ('[Reflection] Pot #'+inttostr(i)+' not on MainScreen');
+            end else R_Debug('Was unable to cook ', 'ScapeRune');
+          end else R_Debug('Error: ChooseOption Use was not present', 'ScapeRune');
+        end else R_Debug('Pot #'+inttostr(i)+' not on MainScreen', 'ScapeRune');
       end;
     end;
   end;
@@ -569,10 +569,10 @@ begin
       wait (400+random(400));
       if R_ChooseOption ('Enter Portal') then
       begin
-        Writeln ('[Reflection] Entering exit portal to finish random...');
+        R_Debug('Entering exit portal to finish random...', 'ScapeRune');
         Result := True;
         Exit;
-      end else Writeln ('[Reflection] Had trouble finding "Enter Portal" ChooseOption');
+      end else R_Debug('Had trouble finding "Enter Portal" ChooseOption', 'ScapeRune');
     end else R_ScapeRuneWalkToCenter;
     wait (1000+random(500));
   end;
@@ -599,7 +599,7 @@ begin
 
   for i:= 1 to 3 do
   begin
-    Writeln ('[Reflection] ScapeRune solving attempt '+inttostr(i)+'/3');
+    R_Debug('ScapeRune solving attempt '+inttostr(i)+'/3', 'ScapeRune');
     if (R_ScapeRuneGetFishingNet) then
     begin
       if (R_ScapeRuneTalkToServantStart) then
@@ -612,16 +612,16 @@ begin
             begin
               if (R_ScapeRuneFinishRandom) then
               begin
-                Writeln ('[Reflection] Evil Bobs ScapeRune solved!');
+                R_Debug('Evil Bobs ScapeRune solved!', 'ScapeRune');
                 Result := True;
                 Break;
-              end else Writeln ('[Reflection] Had trouble giving fish to bob and/or finishing random');
-            end else Writeln ('[Reflection] Had trouble cooking the fish');
-          end else Writeln ('[Reflection] Had trouble fishing at specified tile');
-        end else Writeln ('[Reflection] Had trouble determining direction of fishing and walking to that spot');
-      end else Writeln ('[Reflection] Had trouble talking to Servant');
-    end else Writeln ('[Reflection] Had trouble getting fishing net');
+              end else R_Debug('Had trouble giving fish to bob and/or finishing random', 'ScapeRune');
+            end else R_Debug('Had trouble cooking the fish', 'ScapeRune');
+          end else R_Debug('Had trouble fishing at specified tile', 'ScapeRune');
+        end else R_Debug('Had trouble determining direction of fishing and walking to that spot', 'ScapeRune');
+      end else R_Debug('Had trouble talking to Servant', 'ScapeRune');
+    end else R_Debug('Had trouble getting fishing net', 'ScapeRune');
     R_ScapeRuneDestroyFish; // Just incase
   end; // End of 3 tries
-  if not Result then Writeln ('[Reflection] Failed 3x the ScapeRune random, returning false...');
+  if not Result then R_Debug (' Failed 3x the ScapeRune random, returning false...', 'ScapeRune');
 end;

@@ -266,7 +266,7 @@ begin
       begin
         if (not(r_RandomArr[I].InRandom <> nil)and(r_RandomArr[I].Music = ''))then
            Continue;
-        Writeln('[Reflection] Might be in a random(missing InRandom function), terminating.');
+        R_Debug('Might be in a random(missing InRandom function), terminating.', '');
         Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
         LogOut;
         Exit;
@@ -275,7 +275,7 @@ begin
     if (InRand) then
     begin
       Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
-      Writeln('[Reflection] Trying to solve: ' + r_RandomArr[I].RandName);
+      R_Debug('Trying to solve: ' + r_RandomArr[I].RandName, '');
       T := GetMyPos;
       RandomBox := IntToBox(T.X-70, T.Y-70, T.X+70, T.Y+70);
 
@@ -285,7 +285,7 @@ begin
         Result := r_RandomArr[I].SolveRandom()
       end else
       begin
-        Writeln('[Reflection] No random solver for this random yet!');
+        R_Debug('No random solver for ' + r_RandomArr[I].RandName, '');
         Logout;
         Players[CurrentPlayer].Active := False;
         Inc(RandFailed[I]);
@@ -294,13 +294,13 @@ begin
 
       if (not Result) then
       begin
-        Writeln('[Reflection] Random solving for ' + r_RandomArr[I].RandName + ' failed');
+        R_Debug('Random solving failed for ' + r_RandomArr[I].RandName, '');
         Logout;
         Players[CurrentPlayer].Active := False;
         Inc(RandFailed[I]);
         Exit;
       end else
-        Writeln('[Reflection] Random solved');
+        R_Debug(r_RandomArr[I].RandName + ' solved', '');
 
       iTime := GetSystemTime;
       While TileInBox(RandomBox, GetMyPos)do
@@ -310,6 +310,7 @@ begin
           Exit;
       end;
       Wait(2000+Random(1000));
+      R_Debug('Out of random', '');
 
       Players[CurrentPlayer].Rand := '';
       Inc(RandSolved[I]);

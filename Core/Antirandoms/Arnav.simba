@@ -18,7 +18,7 @@ begin
   if not FindNPC('Arnav', NPC)then
     Exit;
 
-  Writeln('[Reflection] Finding & speaking with Arnav');
+  R_Debug('Finding & speaking with Arnav', 'CapNArnav');
 
   if not TileOnMS(NPC.Tile, NPC.Height * 2 / 3)then
   begin
@@ -53,7 +53,7 @@ begin
   Result := R_ChestOpen;
   if Result then
   begin
-    Writeln('[Reflection] Chest is open!');
+    R_Debug('Chest is open!', 'CapNArnav');
     Exit;
   end;
 
@@ -61,15 +61,13 @@ begin
   begin
     if not FindNPC('Arnav', Arnav)then
       Exit;
-    Writeln('[Reflection] 1');
+
     if (not FindNPCText('ready to try'))then
       R_TalkToArnav;
 
-    Writeln('[Reflection] 2');
     While ClickToContinue do
       Wait(7000+Random(5000));
 
-    Writeln('[Reflection] 3');
     if(FindNPCChatText('ready', ClickLeft))then
     begin
       Wait(4000+Random(2000));
@@ -145,9 +143,7 @@ begin
   while(R_InArnav)do
   begin
     R_HandleArnav;
-    Writeln('[Reflection] 1');
     R_SetToCoins;
-    Writeln('[Reflection] 2');
     Goal := R_GetGoal;
     while(R_ChestOpen)do
     begin

@@ -32,3 +32,11 @@ begin
                     'runecrafting', 'hunter', 'construction', 'summoning',
                     'dungeoneering'];
 end;
+
+Procedure R_Debug(Debug, InTags: String);
+begin
+  If (InTags = '') then
+    Writeln('[Reflection] ' + Debug)
+  else
+    Writeln('[' + InTags + '] ' + Debug);
+end;

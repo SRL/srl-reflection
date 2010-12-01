@@ -43,6 +43,9 @@ begin
   if R_FrogChattingInterfaceOpen then
   begin
     Writeln ('[Reflection] Already talking to frog herald.');
+    While r_ClickToContinue do
+      Wait(1000+Random(1000));
+
   end else
   begin
     NPCs := GetNPCsNull;

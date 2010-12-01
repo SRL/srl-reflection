@@ -305,7 +305,7 @@ begin
 
       If (B)and(DidClick(True, 1000+random(200))) then
       begin
-        Writeln('[Reflection] Clicked a door..');
+        R_Debug('Clicked a door..', 'Maze');
         Result := True;
 
         iTimeEx := GetSystemTime;
@@ -323,7 +323,7 @@ begin
 
     If (GetSystemTime - iTime > 30000)then
     begin
-      Writeln('[Reflection] Took more than 30 secs to get pass a door');
+      R_Debug('Took more than 30 secs to get pass a door', 'Maze');
       Exit;
     end;
 
@@ -334,7 +334,7 @@ begin
       Wait(100+Random(100));
       If (GetSystemTime - iTime > 20000) then
       begin
-        Writeln('[Reflection] Took more than 20 secs to idle');
+        R_Debug('Took more than 20 secs to idle', 'Maze');
         Exit;
       end;
     end;
@@ -350,7 +350,7 @@ begin
   Result := True;
   If Result then
   begin
-    Writeln('[Reflection] In the middle!');
+    R_Debug(' In the middle!', 'Maze');
     C := TileToMS(Tile(2912, 4576), 0);
     MMouse(C.X, C.Y, 5, 5);
     Result := IsUpText('ouch');
@@ -359,7 +359,7 @@ begin
 
     GetMousePos(C.X, C.Y);
     Mouse(C.X, C.Y, 0, 0, True);
-    Writeln('[Reflection] Clicked the middle teleport!');
+    R_Debug(' Clicked the middle teleport!', 'Maze');
     Wait(5000+Random(4000));
   end;
 end;

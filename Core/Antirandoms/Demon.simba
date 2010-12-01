@@ -168,10 +168,6 @@ begin
 					g_R_Demon_sign4 := 1;
         end;
   end;
-  Writeln('[Reflection] Sign 1: '+ToStr(g_R_Demon_Sign1));
-  Writeln('[Reflection] Sign 2: '+ToStr(g_R_Demon_Sign2));
-  Writeln('[Reflection] Sign 3: '+ToStr(g_R_Demon_Sign3));
-  Writeln('[Reflection] Sign 4: '+ToStr(g_R_Demon_Sign4));
 end;
 
 {*******************************************************************************
@@ -188,7 +184,7 @@ begin
     //if(Pos('get back to', GetInterfaceText(INTERFACE_TALKS[i], 4)) > 0)then
     if(ValidInterface(INTERFACE_TALKS[i]))then
     begin
-      Writeln('Continue.');
+      r_Debug('Continue.', 'Demon');
       Mouse(306, 455, 10, 2, true);
       Break;
     end;
@@ -224,7 +220,7 @@ function R_Jump: boolean;
 var
   P: TPoint;
 begin
-  Writeln('Star jumps');
+  r_Debug('Star jumps', 'Demon');
   if(g_R_Demon_sign1 = 1)then
   begin
     if not TileOnMS(Tile(3160, 4820), 0)then
@@ -311,10 +307,10 @@ function R_SitUps: boolean;
 var
   P: TPoint;
 begin
-  Writeln('Situps');
+  r_Debug('Situps', 'Demon');
   if(g_R_Demon_sign1 = 3)then
   begin
-    Writeln('Found sign');
+    r_Debug('Found sign', 'Demon');
     if not TileOnMS(Tile(3160, 4820), 0)then
       WalkToTile(Tile(3160, 4820), 0, 0);
     P := TileToMS(Tile(3160, 4820), 0);
@@ -323,7 +319,7 @@ begin
   end;
   if(g_R_Demon_sign2 = 3)then
   begin
-    Writeln('Found sign');
+    r_Debug('Found sign', 'Demon');
     if not TileOnMS(Tile(3162, 4820), 0)then
       WalkToTile(Tile(3162, 4820), 0, 0);
     P := TileToMS(Tile(3162, 4820), 0);
@@ -332,7 +328,7 @@ begin
   end;
   if(g_R_Demon_sign3 = 3)then
   begin
-    Writeln('Found sign');
+    r_Debug('Found sign', 'Demon');
     if not TileOnMS(Tile(3164, 4820), 0)then
       WalkToTile(Tile(3164, 4820), 0, 0);
     P := TileToMS(Tile(3164, 4820), 0);
@@ -341,7 +337,7 @@ begin
   end;
   if(g_R_Demon_sign4 = 3)then
   begin
-    Writeln('Found sign');
+    r_Debug('Found sign', 'Demon');
     if not TileOnMS(Tile(3166, 4820), 0)then
       WalkToTile(Tile(3166, 4820), 0, 0);
     P := TileToMS(Tile(3166, 4820), 0);
@@ -421,7 +417,7 @@ begin
       ClickToContinue;
     end;
     R_SetSigns;
-    Writeln('Doing order '+order);
+    r_Debug('Doing order '+order, 'Demon');
     case order of
       'jumps': R_Jump;
       'push ups': R_Pushups;

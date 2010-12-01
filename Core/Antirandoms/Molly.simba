@@ -43,7 +43,7 @@ begin
 
       if not TileOnMS(Molly.Tile, 20) then
       begin
-        Writeln('[Reflection] Walking to molly');
+        R_Debug('Walking to molly', 'Molly');
         WalkToTile(Point(Molly.Tile.X, Molly.Tile.Y-2), 0, 0);
       end;
       Wait(700+Random(700));
@@ -106,7 +106,7 @@ begin
     Exit;
 
   TwinID :=  Molly.ID - 40;
-  Writeln('[Reflection] Twin ID: '+inttostr(TwinID));
+  R_Debug('Twin ID: '+inttostr(TwinID), 'Molly');
 end;
 
 {*******************************************************************************
@@ -220,9 +220,9 @@ begin
     while not B do
     begin
       if FindNPC(TwinID, Twin)then
-        Writeln('[Reflection] Found evil twin!')
+        R_Debug('Found evil twin!', 'Molly')
       else
-        Writeln('[Reflection] No evil twin found.');
+        R_Debug('No evil twin found.', 'Molly');
 
       while ClawTile.x <> Twin.Tile.x do
       begin
@@ -242,7 +242,7 @@ begin
       FindNPC(TwinID, Twin);
       while ClawTile.y <> Twin.Tile.y do
       begin
-        writeln(inttostr(clawtile.y)+' - '+inttostr(twin.tile.y));
+        R_Debug(inttostr(clawtile.y)+' - '+inttostr(twin.tile.y), 'Molly');
         if ClawTile.y > Twin.Tile.y then
         begin
           Mouse(629, 260, 24, 32, True); //up
@@ -301,21 +301,21 @@ begin
     R_MakeCompass('E');
     if Molly_OpenDoor(1) then
     begin
-      Writeln('[Reflection] Opened door!');
+      R_Debug('Opened door!', 'Molly');
       MakeCompass('N');
       if not Molly_OpenCrane then
       begin
-        Writeln('[Reflection] Failed to open molly crane. Terminating.');
+        R_Debug('Failed to open molly crane. Terminating.', 'Molly');
         TerminateScript;
       end;
       if not Molly_CatchTwin then
       begin
-        Writeln('[Reflection] Failed to catch evil twin. Terminating.');
+        R_Debug('Failed to catch evil twin. Terminating.', 'Molly');
         TerminateScript;
       end;
       if not Molly_OpenDoor(2) then
       begin
-        Writeln('[Reflection] Failed to get back to Molly. Terminating.');
+        R_Debug('Failed to get back to Molly. Terminating.', 'Molly');
         TerminateScript;
       end;
       WaitToTalkToMolly;
@@ -324,8 +324,5 @@ begin
     wait(2000+Random(2000));
   end;
   if LoggedIn then
-  begin
     Result := True;
-    AddToReport('[Reflection] Solved Molly Random!');
-  end;
 end;

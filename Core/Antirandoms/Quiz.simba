@@ -100,7 +100,7 @@ begin
   for i := 0 to High(Groups) do
     if (StrInArrayCount(Groups[i], Groups) = 1) then
       Result := i+1;
-  Writeln('Odd Group Out: '+inttostr(Result));
+  R_Debug('Odd Group Out: '+inttostr(Result), 'Quiz');
 end;
 
 {*******************************************************************************
@@ -155,15 +155,7 @@ begin
     wait (1000+random(1500));
   end;
   wait (2200+random(3000));
-  if R_LoggedIn then
-  begin
+  if LoggedIn then
     Result := True;
-  end;
-  {
-    Inc(RSolved[RQuiz]);
-    AddToReport('Solved Quiz Random!');
-  end else
-    Inc(RFailed[RQuiz]);
-  }
 end;
 

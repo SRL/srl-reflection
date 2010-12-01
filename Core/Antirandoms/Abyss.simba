@@ -27,7 +27,7 @@ begin
     if LeverArray[i] = Setting then
     begin
       Result := True;
-      Writeln ('[Reflection] Found matching setting');
+      R_Debug('Found matching setting', 'Abyss');
       Exit;
     end;
   end;
@@ -49,7 +49,7 @@ begin
   for i:=1 to 3 do
   begin
     Setting531 := GetSetting(531);
-    Writeln ('[Reflection] Setting #531 for abyss: '+IntToStr(Setting531));
+    R_Debug('Setting #531: ' + IntToStr(Setting531), 'Abyss');
     if not R_AbyssSearchLever (Setting531, LeverN) then
     begin
       if not R_AbyssSearchLever (Setting531, LeverE) then
@@ -58,7 +58,7 @@ begin
         begin
           if not R_AbyssSearchLever (Setting531, Leverw) then
           begin
-            Writeln ('[Reflection] Warning, had trouble getting direction to press [attempt '+inttostr(i)+' of 3]');
+            R_Debug('Warning, had trouble getting direction to press [attempt '+inttostr(i)+' of 3]', 'Abyss');
             Wait (1000+random(500));
           end else Direction := 'w';
         end else Direction := 's';
@@ -85,14 +85,14 @@ begin
     LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 52);
     if not TileOnMS (LeverObj.Tile, 0) then
     begin
-      Writeln ('[Reflection] Tile not found on MS, moving near it');
+      R_Debug('Tile not found on MS, moving near it', 'Abyss');
       case LeverNumber of // I'll turn this into one line of code later on
         R_ABYSS_LEVER_N : AbyssCenter := Tile(LeverObj.Tile.x, LeverObj.Tile.y - 4);
         R_ABYSS_LEVER_S : AbyssCenter := Tile(LeverObj.Tile.x, LeverObj.Tile.y + 4);
         R_ABYSS_LEVER_E : AbyssCenter := Tile(LeverObj.Tile.x - 4, LeverObj.Tile.y);
         R_ABYSS_LEVER_W : AbyssCenter := Tile(LeverObj.Tile.x + 4, LeverObj.Tile.y);
       end;
-      if not WalkToTile (AbyssCenter, 0, 0) then Writeln ('[Reflection] Failed to walk near appendage');
+      if not WalkToTile (AbyssCenter, 0, 0) then R_Debug('Failed to walk near appendage', 'Abyss');
     end;
     SetAngle (True);
     case LeverNumber of // I'll turn this into one line of code later on
@@ -109,18 +109,18 @@ begin
     wait (350+random(500));
     if R_IsUpTextMulti (['Operate', 'Appendage']) then
     begin
-      Writeln ('[Reflection] Found proper lever! Pulling...');
+      R_Debug('Found proper lever! Pulling...', 'Abyss');
       Result := R_ChooseOptionMulti (['prate', 'ppen']);
       Exit;
     end else
     begin
-      Writeln ('[Reflection] Error: Lever TPoint not found, moving mouse around to find it...');
+      R_Debug('Error: Lever TPoint not found, moving mouse around to find it...', 'Abyss');
       wait (500+random(300));
       MMouse (274, 326, 2, 2);
       wait (300+random(300));
       if R_IsUpTextMulti (['prate', 'ppen']) then
       begin
-        Writeln ('[Reflection] Found proper lever! Pulling...');
+        R_Debug('Found proper lever! Pulling...', 'Abyss');
         GetMousePos (x, y);
         Mouse (x, y, 0, 0, false);
         wait (500+random(250));
@@ -131,7 +131,7 @@ begin
       wait (300+random(300));
       if R_IsUpTextMulti (['prate', 'ppen']) then
       begin
-        Writeln ('[Reflection] Found proper lever! Pulling...');
+        R_Debug('Found proper lever! Pulling...', 'Abyss');
         GetMousePos (x, y);
         Mouse (x, y, 0, 0, false);
         wait (500+random(250));
@@ -142,7 +142,7 @@ begin
       wait (300+random(300));
       if R_IsUpTextMulti (['prate', 'ppen']) then
       begin
-        Writeln ('[Reflection] Found proper lever! Pulling...');
+        R_Debug('Found proper lever! Pulling...', 'Abyss');
         GetMousePos (x, y);
         Mouse (x, y, 0, 0, false);
         wait (500+random(250));
@@ -153,7 +153,7 @@ begin
       wait (300+random(300));
       if R_IsUpTextMulti (['prate', 'ppen']) then
       begin
-        Writeln ('[Reflection] Found proper lever! Pulling...');
+        R_Debug('Found proper lever! Pulling...', 'Abyss');
         GetMousePos (x, y);
         Mouse (x, y, 0, 0, false);
         wait (500+random(250));
@@ -164,7 +164,7 @@ begin
       wait (300+random(300));
       if R_IsUpTextMulti (['prate', 'ppen']) then
       begin
-        Writeln ('[Reflection] Found proper lever! Pulling...');
+        R_Debug('Found proper lever! Pulling...', 'Abyss');
         GetMousePos (x, y);
         Mouse (x, y, 0, 0, false);
         wait (500+random(250));
@@ -185,7 +185,7 @@ begin
   if R_InAbyss then
   begin
     R_AbyssDetermineLever (Direction);
-    if Direction = '' then Writeln ('[Reflection] Failed getting proper appendage in Abyssal random. Please report this to reflection developers!')
+    if Direction = '' then R_Debug('Failed getting proper appendage in Abyssal random. Please report this to reflection developers!', 'Abyss')
     else
     begin
       if Direction = 'n' then Result := R_AbyssPullLever(R_ABYSS_LEVER_N)
@@ -193,5 +193,5 @@ begin
           else if Direction = 'e' then Result := R_AbyssPullLever(R_ABYSS_LEVER_E)
             else if Direction = 'w' then Result := R_AbyssPullLever(R_ABYSS_LEVER_W);
     end;
-  end else Writeln ('[Reflection] Not in Abyss random!');
+  end else R_Debug('Not in Abyss random!', 'Abyss');
 end;

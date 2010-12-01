@@ -23,7 +23,7 @@ Description: Sets the vars needed for mordaut.
 *******************************************************************************}
 procedure R_SetMordautVars;
 begin
-  Writeln('[Reflection] Setting Mordaut vars..');
+  R_Debug('Setting Mordaut vars..', 'Mordaut');
 
   RS_MRanged    := [11539, 11540, 11541, 11614, 11615, 11633];
 
@@ -270,7 +270,7 @@ begin
 
   S := GetInterfaceText(242, 4);
   RS_MDir := Between('door in the ', ' ', S);
-  Writeln('[Reflection] Time to leave! Door: '+RS_MDoor+', Direction: '+RS_MDir);
+  R_Debug('Time to leave! Door: '+RS_MDoor+', Direction: '+RS_MDir, 'Mordaut');
   Result := True;
 end;
 
@@ -303,12 +303,12 @@ begin
   end;
   if R_InRelatedCards then
   begin
-    Writeln('[Reflection] Question type: Related Cards.');
+    R_Debug('Question type: Related Cards.', 'Mordaut');
     Result := 'Cards';
   end;
   if R_InNextObject then
   begin
-    Writeln('[Reflection] Question type: Next Object.');
+    R_Debug('Question type: Next Object.', 'Mordaut');
     Result := 'Objects';
   end;
 end;
@@ -330,13 +330,13 @@ begin
     'green': ID := 2193;
     'blue': ID := 2189;
     'purple': ID := 2192;
-    else Writeln('INVALID DOOR COLOR');
+    else R_Debug('INVALID DOOR COLOR', 'Mordaut');
   end;
 
   Door := GetObjectByID(ID, OBJECT_TYPE_WALLOBJECT, 40);
   If (Door.ID < 1)then
   begin
-    Writeln('[Reflection] Failed exiting mordaut');
+    R_Debug('Failed exiting mordaut', 'Mordaut');
     Exit;
   end;
 
@@ -420,9 +420,9 @@ begin
     if (fi > 8)then
       Exit;
 
-    Writeln('[Reflection] ' + ToStr(GetComponentID(103, fi)));
+    R_Debug(' ' + ToStr(GetComponentID(103, fi)), 'Mordaut');
     Cat := R_MIDToClass(GetComponentID(103, fi));
-    Writeln('[Reflection] Current category is: '+Cat);
+    R_Debug('Current category is: '+ Cat, 'Mordaut');
 
     if not ValidInterface(103) then
       Exit;
@@ -440,7 +440,7 @@ begin
     if MF then
     begin
       Result := True;
-      Writeln('[Reflection] Found item at slot: '+inttostr(i-9));
+      R_Debug('Found item at slot: '+inttostr(i-9), 'Mordaut');
       While not OptionExists('Select') do
       begin
         MMouse(7+(i-9)*99, 244, 3, 3);
@@ -463,7 +463,7 @@ procedure RS_MouseCardSlot(slot: integer);
 var
   P: TPoint;
 begin
-  DebugLn('[Reflection] Moving mouse to: ' + ToStr(GetComponentID(559, slot+41)));
+  r_Debug('Moving mouse to: ' + ToStr(GetComponentID(559, slot+41)), 'Mordaut');
   case slot of
     1: P := Point(67, 78);
     2: P := Point(133, 68);
@@ -499,14 +499,14 @@ begin
     Exit;
 
   rClass := GetInterfaceText(559, 25);
-  Writeln('[Reflection] ' + rClass);
+  R_Debug(' ' + rClass, 'Mordaut');
   Cat := R_MQuestionToClass(rClass);
-  Writeln('[Reflection] Class: ' + Cat);
+  R_Debug(' Class: ' + Cat, 'Mordaut');
 
   If (Cat = '-1') then
   begin
-    Writeln('**** New pattern, please post the question on the forums! ****');
-    Writeln(rClass);
+    R_Debug('**** New pattern, please post the question on the forums! ****', 'Mordaut');
+    R_Debug(rClass, 'Mordaut');
     Logout;
     Exit;
   end;
@@ -556,7 +556,7 @@ begin
       R_MTalkWait;
       QT := R_MGetQuestion;
     end;
-    DebugLn('[Reflection] QT := '+QT);
+    R_Debug('QT := '+ QT, 'Mordaut');
     wait(2000+Random(1000));
     case QT of
       'Door': R_ExitMordaut;
@@ -566,12 +566,7 @@ begin
     QT := '';
   end;
 
-
   if LoggedIn then
-  begin
     Result := True;
-    //Inc(RSolved[RSchool]);
-    AddToReport('Solved Mordaut Random!');
-  end else
-    //Inc(RFailed[RSchool]);
+
 end;

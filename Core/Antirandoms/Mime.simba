@@ -44,7 +44,7 @@ var
 begin
   if not R_InMime then
     Exit;
-  Writeln('[Reflection] Found Mime!');
+  R_Debug('Found Mime!', 'Mime');
   Mime_ClearMessages;
   repeat
     if not R_InMime then Break;
@@ -55,7 +55,7 @@ begin
       if not R_InMime then Break;
       FindNPC('Mime', Mime);
       i := Mime.Animation;
-      //if i > 0 then Writeln('Mimes Animation: '+inttostr(i));
+      //if i > 0 then R_Debug('Mimes Animation: '+inttostr(i));
       case i of  // Set our Animation text
         857: Animation := 'Think';
         860: Animation := 'Cry';

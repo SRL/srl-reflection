@@ -67,7 +67,7 @@ begin
     4: Result := 21;
     else
     begin
-      Writeln('Invalid slot number.');
+      r_Debug('Invalid slot number.', 'Beekeeper');
       Result := -1;
     end;
   end;
@@ -85,7 +85,7 @@ var
   TL, BR, P: TPoint; //Top left, Bottom right
 begin
   if not ValidInterface(420) then Exit;
-  Writeln('[Reflection] Moving peice!');
+  r_Debug('Moving peice!', 'Beekeeper');
 
   case From of
     1: Child := 12;

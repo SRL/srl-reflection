@@ -49,7 +49,7 @@ begin
   V := 0.5;
   Result := false;
   MarkTime(timer);
-  Writeln ('[Reflection] Doing R_OpenCage');
+  R_Debug('Doing R_OpenCage', 'Pillory');
   repeat
     if (ValidInterface(189)) then
     V := V + 0.1;
@@ -63,10 +63,10 @@ begin
       Mouse(P.X, P.Y, 0, 0, false);
       Wait(RandomRange(80, 100));
       Result := ChooseOption('Unlock');
-      if Result then Writeln ('[Reflection] Doing R_OpenCage returned true');
+      if Result then R_Debug(' Doing R_OpenCage returned true', 'Pillory');
     end;
   until Result or not R_LoggedIn or (TimeFrommark(timer) > 20000);
-  if not Result or not R_LoggedIn then Writeln ('[Reflection] R_OpenCage failed/timed out');
+  if not Result or not R_LoggedIn then R_Debug ('R_OpenCage failed/timed out', 'Pillory');
 end;
 
 {*******************************************************************************
@@ -87,7 +87,7 @@ begin
     9755: Result := 'circle';
     9756: Result := 'triangle';
   end;
-  Writeln('[Reflection] Lock found: ' + Result);
+  R_Debug('Lock found: ' + Result, 'Pillory');
 end;
 
 {*******************************************************************************
@@ -114,7 +114,7 @@ begin
     ID := GetModelID(189, I);
     if ID = CID then
     begin
-      Writeln('[Reflection] Found key at Child: ' + ToStr(i));
+      R_Debug('Found key at Child: ' + ToStr(i), 'Pillory');
       FoundKey := True;
       Break;
     end;

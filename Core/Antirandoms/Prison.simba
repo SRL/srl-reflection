@@ -71,7 +71,7 @@ begin
   // Failsafe
   if high(PrisonPeteNPCList) < 0 then
   begin
-    Writeln ('[Reflection] Could not find Prison Pete! NPC arrays are empty');
+    R_Debug('Could not find Prison Pete! NPC arrays are empty', 'Prison');
     Exit;
   end;
 
@@ -99,9 +99,9 @@ begin
     wait (500+random(500));
     if R_ChooseOptionMulti (['rison']) then
       Result := True;
-  end else Writeln ('[Reflection] Could not find Prison Pete tile on MS');
+  end else R_Debug('Could not find Prison Pete tile on MS', 'Prison');
   wait (500+random(1000));
-  if Result then Writeln ('[Reflection] Successfully clicked to talk to Prison Pete');
+  if Result then R_Debug('Successfully clicked to talk to Prison Pete', 'Prison');
 end;
 
 {*******************************************************************************
@@ -121,7 +121,7 @@ begin
   Lever := GetObjectByID(PRISON_LEVERID, OBJECT_TYPE_INTERACTABLE, 25);
   if (Lever = NULL_RSOBJECT) then
   begin
-    Writeln ('[Reflection] Warning, NULL_RSOBJECT (no lever) found!');
+    R_Debug('Warning, NULL_RSOBJECT (no lever) found!', 'Prison');
     Exit;
   end;
   if TileOnMS (Lever.Tile, 0) then
@@ -130,7 +130,7 @@ begin
     wait (200+random(300));
     for i:=1 to 3 do
     begin
-      Writeln ('[Reflection] Attempt '+ToStr(i)+'of 3 in pulling prison lever');
+      R_Debug('Attempt '+ToStr(i)+'of 3 in pulling prison lever', 'Prison');
       TP := TileToMSEx(Lever.Tile, 0.5, 0.0, 500);
       MMouse (TP.X, TP.Y, 1, 2);
       if R_IsUpTextMulti (['ull', 'ever']) then
@@ -139,15 +139,15 @@ begin
         Mouse (x, y, 0, 0, false);
         if R_ChooseOptionMulti (['ull', 'ever']) then
         begin
-          Writeln ('[Reflection] Lever pulled');
+          R_Debug('Lever pulled', 'Prison');
           Result := True;
           Exit;
         end;
       end;
       wait (250+random(500));
     end;
-    Writeln ('[Reflection] Failed to find lever and/or pull it');
-  end else Writeln ('[Reflection] Lever is no on MS somehow...');
+    R_Debug('Failed to find lever and/or pull it', 'Prison');
+  end else R_Debug('Lever is no on MS somehow..', 'Prison');
 end;
 
 {*******************************************************************************
@@ -168,7 +168,7 @@ begin
   until (ValidInterface(PRISON_MODELINTERFACE)) or (TimeFromMark(t) > TimeoutMs)
   Result := ValidInterface (PRISON_MODELINTERFACE);
   if not Result then
-    Writeln ('[Reflection] PRISON_MODELINTERFACE timed out');
+    R_Debug('PRISON_MODELINTERFACE timed out', 'Prison');
 end;
 
 {*******************************************************************************
@@ -224,7 +224,7 @@ begin
              Result := True;
            end;
   end;
-  Writeln ('[Reflection] Balloon ID returned = '+ToStr(BalloonNPCIDs));
+  R_Debug('Balloon ID returned = '+ToStr(BalloonNPCIDs), 'Prison');
 end;
 
 {*******************************************************************************
@@ -241,7 +241,7 @@ begin
   Result := False;
   if high(IDsToPop) < 0 then
   begin
-    Writeln ('[Reflection] Warning: IDsToPop has no values in it...');
+    R_Debug('Warning: IDsToPop has no values in it..', 'Prison');
     Exit;
   end;
   MarkTime(t);
@@ -292,10 +292,10 @@ begin
   begin
     if not R_PrisonPreTerminated then
     begin
-      Writeln ('[Reflection] Account hasnt been terminated, attempting to solve random...');
+      R_Debug('Account hasnt been terminated, attempting to solve random...', 'Prison');
     end else
     begin // If we are pre-terminated, then the random is screwed and account will be lost
-      Writeln ('[Reflection] Account is terminated (>15 mins), exiting random to return you to a lost spot.');
+      R_Debug('Account is terminated (>15 mins), exiting random to return you to a lost spot.', 'Prison');
     end;
   end;
 end;

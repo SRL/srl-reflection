@@ -23,7 +23,7 @@ var
   S: string;
 begin
   S := Between('have a ', ' for free', GetInterfaceText(243, 6));
-  Writeln('[Reflection] Item is: ' + S);
+  R_Debug('Item is: ' + S, 'Sandwichlady');
   Case lowercase(S) of
     'doughnut': Result := 45666;
     'baguette': Result := 10726;
@@ -71,7 +71,7 @@ var
   Mark: Integer;
 begin
   MarkTime(Mark);
-  Writeln('[Reflection] Waiting for selection screen...');
+  R_Debug('Waiting for selection screen..', 'Sandwichlady');
   while TimeFromMark(Mark) < 30000 do
   begin
     Wait(randomRange(500, 1500));
@@ -82,7 +82,7 @@ begin
     end;
   end;
   if Result then
-    Writeln ('[Reflection] Screen selection found');
+    R_Debug('Screen selection found', 'Sandwichlady');
   wait (200+random(300));
 end;
 
@@ -101,7 +101,7 @@ var
 begin
   Result := False;
   // Portal Method #1
-  Writeln('[Reflection] Attempt 1 of 2 (Portal exit normal)');
+  R_Debug('Attempt 1 of 2 (Portal exit normal)', 'Sandwichlady');
   Portal := GetObjectByID (R_SANDWICHLADY_PORTAL, OBJECT_TYPE_INTERACTABLE, 25);
   if not (Portal = NULL_RSOBJECT) then
   begin
@@ -115,20 +115,20 @@ begin
       wait (500+random(1000));
       if R_ChooseOptionMulti (['xit', 'ortal']) then
       begin
-        Writeln('[Reflection] Found portal, exiting...');
+        R_Debug('Found portal, exiting..', 'Sandwichlady');
         Result := True;
         Exit;
       end;
-    end else Writeln('[Reflection] Portal could not be found at all');
-  end else Writeln('[Reflection] Portal returned as a NULL_RSOBJECT, not good.');
+    end else R_Debug('Portal could not be found at all', 'Sandwichlady');
+  end else R_Debug('Portal returned as a NULL_RSOBJECT, not good.', 'Sandwichlady');
 
   // NPC Method #2
-  Writeln ('[Reflection] Attempt 2 of 2 (Portal exit relative to NPC)');
+  R_Debug('Attempt 2 of 2 (Portal exit relative to NPC)', 'Sandwichlady');
   NPC := GetNPCNull(R_SANDWICHLADY_ID);
   If Not TileOnMS(NPC.Tile, 0) then
    If Not WalkToTile(NPC.Tile, 0, 0)then
    begin
-     Writeln('[Reflection] Failed walking to the portal!');
+     R_Debug('Failed walking to the portal!', 'Sandwichlady');
      Exit;
    end;
   ThePoint := TileToMS(Tile( NPC.Tile.X+2, NPC.Tile.Y-3), 0);
@@ -136,11 +136,11 @@ begin
   wait (500+random(1000));
   if R_ChooseOptionMulti (['xit', 'ortal']) then
   begin
-    Writeln('[Reflection] Clicked the portal!');
+    R_Debug('Clicked the portal!', 'Sandwichlady');
     Result := True;
     Exit;
   end;
-  Writeln('[Reflection] Failed to exit portal, oh no!');
+  R_Debug('Failed to exit portal, oh no!', 'Sandwichlady');
 end;
 
 {*******************************************************************************
@@ -160,7 +160,7 @@ begin
   Item := R_SandwichDetectFreeItem;
   if not ValidInterface(297) then
   begin
-    Writeln('[Reflection] Item detected (ID: '+ToStr(Item)+'), clicking continue to get rid of interface');
+    R_Debug('Item detected (ID: '+ToStr(Item)+'), clicking continue to get rid of interface', 'Sandwichlady');
     ClickToContinue;
   end;
   Wait (300+random(500));
@@ -171,7 +171,7 @@ begin
   if (ThePoint.x = -1) or (ThePoint.y = -1) then
     Exit;
   Mouse(ThePoint.x, ThePoint.y, 10, 10, True);
-  Writeln('[Reflection] Clicked item!');
+  R_Debug('Clicked item!', 'Sandwichlady');
   wait (1000+random(2000));
   Result := R_ExitSandwichRandom;
   if Result then

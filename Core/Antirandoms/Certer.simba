@@ -65,7 +65,7 @@ begin
   // If we find no chat boxes then...
   if not ChatActive then
   begin
-    Writeln ('[Reflection] Certer is not talking to us, returning result true');
+    r_Debug('Certer is not talking to us, returning result true', 'Certer');
     Result := True;
     Exit;
   end;
@@ -100,7 +100,7 @@ begin
   until (TimeFromMark(t) > 20000)
 
   if not (TimeFromMark(t) > 20000) then Result := True
-  else Writeln ('[Reflection] Had an error (or lag) while talking to certer!');
+  else r_Debug('Had an error (or lag) while talking to certer!', 'Certer');
 end;
 
 {*******************************************************************************
@@ -124,7 +124,7 @@ begin
   // Interface failsafe
   if not ValidInterface(CERTER_MODELINTERFACE) then
   begin
-    Writeln ('[Reflection] Not at certer interface!');
+    r_Debug('Not at certer interface!', 'Certer');
     Exit;
   end;
 
@@ -137,13 +137,13 @@ begin
   for i := 0 to high (CerterIDArr) do
   begin
     if CerterIDArr[i] = ModelIDNumber then Break;
-    writeln ('['+ToStr(i)+'/'+ToStr(high(CerterIDArr))+']'+ToStr(CerterIDArr[i]) +' -- '+ToStr(ModelIDNumber));
+    r_Debug('['+ToStr(i)+'/'+ToStr(high(CerterIDArr))+']'+ToStr(CerterIDArr[i]) +' -- '+ToStr(ModelIDNumber), 'Certer');
   end;
 
   // If we max out the array and dont find it, then we failed...
   if (i = high (CerterIDArr)) and (ModelIDNumber <> CerterIDArr[high (CerterIDArr)]) then
   begin
-    Writeln ('[Reflection] Warning, ID number not known (Random gave us model ID #'+ToStr(ModelIDNumber)+')');
+    r_Debug('Warning, ID number not known (Random gave us model ID #'+ToStr(ModelIDNumber)+')', 'Certer');
     Exit;
   end;
 
@@ -153,12 +153,12 @@ begin
   // Failsafe
   if ModelIDName = '' then
   begin
-    Writeln ('[Reflection] Model name not valid (its blank)');
+    r_Debug('Model name not valid (its blank)', 'Certer');
     Exit;
   end;
 
   // Tell our user and debug at the same time
-  Writeln ('[Reflection] Found ID #'+ToStr(ModelIDNumber)+', therefore looking for '+ModelIDName+' in answers');
+  r_Debug('Found ID #'+ToStr(ModelIDNumber)+', therefore looking for '+ModelIDName+' in answers', 'Certer');
 
   // Search interface for proper name
   for j := CERTER_CHOICE_A_TEXT to CERTER_CHOICE_C_TEXT do
@@ -166,14 +166,14 @@ begin
     if (pos(lowercase(ModelIDName),lowercase(R_CerterGetComponentText(CERTER_MODELINTERFACE, CERTER_MODELCHILD, j))) > 0) then
     begin
       AnswerLetter := j;
-      Writeln ('[Reflection] Found answer at position: '+ToStr(AnswerLetter)+' of 2');
+      r_Debug('Found answer at position: '+ToStr(AnswerLetter)+' of 2', 'Certer');
     end;
   end;
 
   // Failsafe
   if AnswerLetter < 0 then
   begin
-    Writeln ('[Reflection] Had trouble finding the answer text: '+ModelIDName);
+    r_Debug('Had trouble finding the answer text: '+ModelIDName, 'Certer');
     Exit;
   end;
 
@@ -190,7 +190,7 @@ begin
   until (not ValidInterface(CERTER_MODELINTERFACE)) or (TimeFromMark(t) > 15000)
   if not ValidInterface(CERTER_MODELINTERFACE) then
   begin
-    Writeln ('[Reflection] Chose answer, hopefully correct');
+    r_Debug('Chose answer, hopefully correct', 'Certer');
     Result := True;
   end;
 end;
@@ -230,7 +230,7 @@ begin
         wait (500+random(500));
         if R_ChooseOptionMulti (['iles', 'alk-to']) then
         begin
-          Writeln ('[Reflection] Selected talk to NPC since we weren''t talking to him');
+          r_Debug('Selected talk to NPC since we weren''t talking to him', 'Certer');
           Result := True;
           wait (2000+random(2000));
           Exit;
@@ -250,14 +250,14 @@ begin
         wait (500+random(500));
         if R_ChooseOptionMulti (['iles', 'alk-to']) then
         begin
-          Writeln ('[Reflection] Selected talk to NPC since we weren''t talking to him');
+          r_Debug('Selected talk to NPC since we weren''t talking to him', 'Certer');
           Result := True;
           wait (2000+random(2000));
           Exit;
         end;
       end;
     end;
-  Writeln ('[Reflection] Warning: We are not talking to a Certer and we can''t find them...');
+  r_Debug('Warning: We are not talking to a Certer and we can''t find them...', 'Certer');
 end;
 
 {*******************************************************************************
@@ -322,20 +322,19 @@ begin
                 if R_CerterExitCerter then
                 begin
                   wait (400+random(700));
-                  Writeln ('[Reflection] Certer portal exiting completed.');
+                  r_Debug('Certer portal exiting completed.', 'Certer');
                   Result := True;
                   Break;
-                end else Writeln ('[Reflection] Error: Had trouble exiting random');
-              end else Writeln ('[Reflection] Error: Had trouble while talking to certer');
-            end else Writeln ('[Reflection] Error: Had trouble selecting right answer');
-          end else Writeln ('[Reflection] Error: Had trouble while talking to certer');
-        end else Writeln ('[Reflection] Error: Had trouble with certer interaction');
-      end else Writeln ('[Reflection] Error: Had trouble while talking to certer');
+                end else r_Debug('Error: Had trouble exiting random', 'Certer');
+              end else r_Debug('Error: Had trouble while talking to certer', 'Certer');
+            end else r_Debug('Error: Had trouble selecting right answer', 'Certer');
+          end else r_Debug('Error: Had trouble while talking to certer', 'Certer');
+        end else r_Debug('Error: Had trouble with certer interaction', 'Certer');
+      end else r_Debug('Error: Had trouble while talking to certer', 'Certer');
       wait (1000+random(2000));
     end; // End 3 chances
-  end else Writeln ('[Reflection] Warning: Not in certer random');
+  end else r_Debug('Warning: Not in certer random', 'Certer');
 
   Result := R_LoggedIn;
-  if not Result then Writeln ('[Reflection] Failed solving certer.')
-  else Writeln ('[Reflection] Certer solved!');
+  if not Result then r_Debug('Failed solving certer.', 'Certer');
 end;

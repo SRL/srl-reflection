@@ -103,7 +103,7 @@ begin
     currscore := Pinball_GetScore;
     if(currscore >= 10)then
     begin
-      Writeln('Done tagging pillars! Score is 10!');
+      R_Debug('Done tagging pillars! Score is 10!', 'Pinball');
       Result := True;
       Pinball_Leave;
       Break;
@@ -125,7 +125,7 @@ begin
       until not R_PinballAngleDrasticChange(X, Y, 100, 100);
       if R_ChooseOption('tag')then
       begin
-        Writeln('Tagged!');
+        R_Debug('Tagged!', 'Pinball');
         MarkTime(t);
         while((currscore = lastscore) and (TimeFromMark(t) < 10000)) do
         begin
@@ -139,8 +139,4 @@ begin
   R_ClickToContinue;
   Result := not R_InPinball;
   SetAngle(True);
-{  if Result then
-    Inc(RSolved[RPinballs])
-  else
-    Inc(RFailed[RPinballs]); }
 end;
