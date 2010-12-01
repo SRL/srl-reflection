@@ -30,6 +30,7 @@ const
   PRISON_PHASE_TERMINATERANDOM = 9;
   PRISON_PHASE_SOLVEDRANDOM = 10;
 
+// WORKS!
 {*******************************************************************************
 function R_InPrison : Boolean;
 By: Cstrike
@@ -42,6 +43,7 @@ begin
     Result := ValidNPCNull (PRISON_PETEID);
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonPreTerminated : Boolean;
 By: Cstrike
@@ -61,6 +63,7 @@ begin
     Result := True;
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonClickOnPete : Boolean;
 By: Cstrike
@@ -354,6 +357,7 @@ begin
   Result := False;
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonExitRandom(FailedPrison: Boolean): Boolean;
 By: Cstrike
