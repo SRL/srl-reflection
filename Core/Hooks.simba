@@ -18,215 +18,215 @@
  *}
 
 const
-    ClientVersion = 631;
-    HookRev = 7;
+    ClientVersion = 632;
+    HookRev = 1;
 
 {Static Hooks}
-    hook_static_LoginIndex = 'lj.w'; //631
-    hook_static_MyPlayer = 'ln.g'; //631
-    hook_static_BaseX = 'ej.i'; //631
-    hook_static_BaseY = 'ee.c'; //631
-    hook_static_NPCIndexArray = 'fc.n'; //631
-    hook_static_NPCNodes = 'bf.i'; //631
-    hook_static_NPCCount = 'wq.u'; //631
-    hook_static_GroundSettingsArray = 'aw.L'; //631
-    hook_static_LoadedPlane = 'dda.f'; //631
-    hook_static_PlaneArray = 'lca.a'; //631
-    hook_static_Toolkit = 'gq.n'; //631
-    hook_static_MapAngle = 'pq.l'; //631
-    hook_static_DestX = 'wca.o'; //631
-    hook_static_DestY = 'sb.ti'; //631
-    hook_static_MenuOptionCount = 'qs.d'; //631
-    hook_static_MenuX = 'bm.o'; //631
-    hook_static_MenuY = 'eq.o'; //631
-    hook_static_MenuWidth = 'ol.e'; //631
-    hook_static_MenuHeight = 'qk.a'; //631
-    hook_static_MenuX2 = 'wca.i'; //631
-    hook_static_MenuY2 = 'mg.a'; //631
-    hook_static_MenuWidth2 = 'mia.j'; //631
-    hook_static_MenuHeight2 = 'dl.I'; //631
-    hook_static_MenuOpen = 'wga.d'; //631
-    hook_static_MenuNodeList = 'ea.a'; //631
-    hook_static_LoopCycle = 'jg.n'; //631
-    hook_static_PlayerCount = 'un.H'; //631
-    hook_static_PlayerIndexArray = 'ae.c'; //631
-    hook_static_GetPlayers = 'wh.X'; //631
-    hook_static_GetSkillLevels = 'qa.P'; //631
-    hook_static_GetSkillExperiences = 'iaa.o'; //631
-    hook_static_GroundTiles = 'b.Q'; //631
-    hook_static_GetInterfaces = 'tt.o'; //631
-    hook_static_ValidInterfaces = 'or.r'; //631
-    hook_static_GetSettings = 'pha.Q'; //631
-    hook_static_GroundItemCache = 'bi.v'; //631
-    hook_static_CamPosX = 'iv.j'; //631
-    hook_static_CamPosY = 'wv.l'; //631
-    hook_static_GetCrossHairColor = 'b.O'; //631
+    hook_static_LoginIndex = 'pp.a'; //632
+    hook_static_MyPlayer = 'in.c'; //632
+    hook_static_BaseX = 'wi.c'; //632
+    hook_static_BaseY = 'vda.p'; //632
+    hook_static_NPCIndexArray = 'wd.e'; //632
+    hook_static_NPCNodes = 'td.D'; //632
+    hook_static_NPCCount = 'caa.z'; //632
+    hook_static_GroundSettingsArray = 'eda.e'; //632
+    hook_static_LoadedPlane = 'ej.I'; //632
+    hook_static_PlaneArray = 'bda.Nb'; //632
+    hook_static_Toolkit = 'gf.d'; //632
+    hook_static_MapAngle = 'rt.b'; //632
+    hook_static_DestX = 'nm.c'; //632
+    hook_static_DestY = 'aw.X'; //632
+    hook_static_MenuOptionCount = 'tk.D'; //632
+    hook_static_MenuX = 'qp.D'; //632
+    hook_static_MenuY = 'efa.Vd'; //632
+    hook_static_MenuWidth = 'lf.J'; //632
+    hook_static_MenuHeight = 'nd.v'; //632
+    hook_static_MenuX2 = 'js.p'; //632
+    hook_static_MenuY2 = 'nca.H'; //632
+    hook_static_MenuWidth2 = 'su.p'; //632
+    hook_static_MenuHeight2 = 'mc.a'; //632
+    hook_static_MenuOpen = 'ho.e'; //632
+    hook_static_MenuNodeList = 'cl.b'; //632
+    hook_static_LoopCycle = 'pp.b'; //632
+    hook_static_PlayerCount = 'lk.c'; //632
+    hook_static_PlayerIndexArray = 'tb.h'; //632
+    hook_static_GetPlayers = 'aw.T'; //632
+    hook_static_GetSkillLevels = 'bi.t'; //632
+    hook_static_GetSkillExperiences = 'ua.b'; //632
+    hook_static_GroundTiles = 'or.u'; //632
+    hook_static_GetInterfaces = 'nia.f'; //632
+    hook_static_ValidInterfaces = 'tu.f'; //632
+    hook_static_GetSettings = 'pea.f'; //632
+    hook_static_GroundItemCache = 'uda.b'; //632
+    hook_static_CamPosX = 'wq.a'; //632
+    hook_static_CamPosY = 'nu.k'; //632
+    hook_static_GetCrossHairColor = 'da.t'; //632
 
 {Class Animable}
-    class_Animable = 'ig';  //631
-    hook_animable_PixelX = 'i'; //631
-    hook_animable_PixelY = 'h'; //631
-    hook_animable_Plane = 't'; //631
+    class_Animable = 'rr';  //632
+    hook_animable_PixelX = 'q'; //632
+    hook_animable_PixelY = 'k'; //632
+    hook_animable_Plane = 'j'; //632
 
 {Class Player}
-    class_Player = 'kc'; //631
-    hook_player_GetLevel = 'id'; //631
-    hook_player_GetName = 'Md'; //631
-    hook_player_PlayerDef = 'xd'; //631
-    hook_player_GetTeam = 'Bd'; //631
+    class_Player = 'efa'; //632
+    hook_player_GetLevel = 'Id'; //632
+    hook_player_GetName = 'rd'; //632
+    hook_player_PlayerDef = 'je'; //632
+    hook_player_GetTeam = 'Bd'; //632
 
 {Class Character}
-    class_Character = 'hg'; //631
-    hook_character_GetHitDamges = 'S'; //check?-631
-    hook_character_Animation = 'X'; //631
-    hook_character_Motion = 'Vc'; //631
-    hook_character_WalkQueueX = 'Xc'; //631
-    hook_character_WalkQueueY = 'Qc'; //631
-    hook_character_GetHeight = 'xb'; //631
-    hook_character_LoopCycleStatus = 'vb'; //631
-    hook_character_HPRatio = 'jb'; //631
-    hook_character_GetInteracting = 'wb'; //631
-    hook_character_Orientation = 'ec'; //631
+    class_Character = 'bda'; //632
+    hook_character_GetHitDamges = 'Bb'; //check?-632
+    hook_character_Animation = 'mc'; //632
+    hook_character_Motion = 'Zc'; //632
+    hook_character_WalkQueueX = 'cd'; //632
+    hook_character_WalkQueueY = 'id'; //632
+    hook_character_GetHeight = 'xc'; //632
+    hook_character_LoopCycleStatus = 'Vc'; //632
+    hook_character_HPRatio = 'X'; //632
+    hook_character_GetInteracting = 'pc'; //632
+    hook_character_Orientation = 'ec'; //632
 
 {Class NPC}
-    class_NPC = 'am'; //631
-    hook_npc_NPCDef = 'ld'; //631
+    class_NPC = 'pk'; //632
+    hook_npc_NPCDef = 'td'; //632
 
 {Class NPCDef}
-    class_NPCDef = 'iea'; //631
-    hook_npcdef_GetActions = 'G'; //631
-    hook_npcdef_GetName = 'y'; //631
-    hook_npcdef_GetLevel = 'rb'; //631
-    hook_npcdef_GetID = 'Ab'; //631
+    class_NPCDef = 'saa'; //632
+    hook_npcdef_GetActions = 'cb'; //632
+    hook_npcdef_GetName = 'Ab'; //632
+    hook_npcdef_GetLevel = 'N'; //632
+    hook_npcdef_GetID = 'S'; //632
 
 {Class NPCNode}
-    class_NPCNode = 'sq'; //631
-    hook_npcnode_GetNPC = 'n'; //631
+    class_NPCNode = 'vf'; //632
+    hook_npcnode_GetNPC = 'j'; //632
 
 {Class GroundTile}
-    class_GroundTile = 'ch'; //631
+    class_GroundTile = 'cj'; //632
 
 {Class Plane}
-    class_Plane = 's'; //631
+    class_Plane = 's'; //632
 
 {Class RSInteractable}
-    class_RSInteractable = 'ib'; //631
+    class_RSInteractable = 'tm'; //632
 
 {Class Toolkit}
-    class_Toolkit = 'ha'; //631
+    class_Toolkit = 'ha'; //632
 
 {Class Viewport}
-    class_Viewport = 'uha'; //631
+    class_Viewport = 'dfa'; //632
 
 {Class SDViewport}
-    class_SDViewport = 'mda';
-    hook_sdviewport_xOff = 'j'; //631
-    hook_sdviewport_xX = 'F'; //631
-    hook_sdviewport_xY = 'v'; //631
-    hook_sdviewport_xZ = 'z'; //631
-    hook_sdviewport_yOff = 'y'; //631
-    hook_sdviewport_yX = 'x'; //631
-    hook_sdviewport_yY = 's'; //631
-    hook_sdviewport_yZ = 'B'; //631
-    hook_sdviewport_zOff = 'n'; //631
-    hook_sdviewport_zX = 'u'; //631
-    hook_sdviewport_zY = 'e'; //631
-    hook_sdviewport_zZ = 'E'; //631
+    class_SDViewport = 'ch'; //632
+    hook_sdviewport_xOff = 'D'; //632
+    hook_sdviewport_xX = 'h'; //632
+    hook_sdviewport_xY = 'w'; //632
+    hook_sdviewport_xZ = 'j'; //632
+    hook_sdviewport_yOff = 'J'; //632
+    hook_sdviewport_yX = 'u'; //632
+    hook_sdviewport_yY = 'v'; //632
+    hook_sdviewport_yZ = 't'; //632
+    hook_sdviewport_zOff = 'z'; //632
+    hook_sdviewport_zX = 'p'; //632
+    hook_sdviewport_zY = 'g'; //632
+    hook_sdviewport_zZ = 'A'; //632
 
 {Class SDToolkit}
-    class_SDToolkit = 'ii'; //631
-    hook_sdtoolkit_Viewport = 'fb'; //631
-    hook_sdtoolkit_xMin = 'eb'; //631
-    hook_sdtoolkit_xMax = 'L'; //631
-    hook_sdtoolkit_yMin = 'qb'; //631
-    hook_sdtoolkit_yMax = 'R'; //631
-    hook_sdtoolkit_zMin = 'X'; //631
-    hook_sdtoolkit_zMax = 'Y'; //631
-    hook_sdtoolkit_xScale = 'cb'; //631
-    hook_sdtoolkit_yScale = 'pb'; //631
+    class_SDToolkit = 'lr'; //632
+    hook_sdtoolkit_Viewport = 'nb'; //632
+    hook_sdtoolkit_xMin = 'R'; //632
+    hook_sdtoolkit_xMax = 'lb'; //632
+    hook_sdtoolkit_yMin = 'eb'; //632
+    hook_sdtoolkit_yMax = 'P'; //632
+    hook_sdtoolkit_zMin = 'ib'; //632
+    hook_sdtoolkit_zMax = 'J'; //632
+    hook_sdtoolkit_xScale = 'gb'; //632
+    hook_sdtoolkit_yScale = 'X'; //632
 
 {Class SDModel}
-    class_SDModel = 'mh'; //631
-    hook_sdmodel_getIndices1 = 's'; //631
-    hook_sdmodel_getIndices2 = 'N'; //631
-    hook_sdmodel_getIndices3 = 'Hb'; //631
-    hook_sdmodel_getPointsX = 'Rb'; //631
-    hook_sdmodel_getPointsY = 'cb'; //631
-    hook_sdmodel_getPointsZ = 'V'; //631
+    class_SDModel = 'uj'; //632
+    hook_sdmodel_getIndices1 = 'P'; //632
+    hook_sdmodel_getIndices2 = 'C'; //632
+    hook_sdmodel_getIndices3 = 'cb'; //632
+    hook_sdmodel_getPointsX = 'Cb'; //632
+    hook_sdmodel_getPointsY = 'u'; //632
+    hook_sdmodel_getPointsZ = 'Nb'; //632
 
 {Class SDPlane}
-    class_SDPlane = 's'; //631
-    hook_sdplane_TileHeights = 'b'; //631
+    class_SDPlane = 's'; //632
+    hook_sdplane_TileHeights = 'h'; //632
 
 {Class NodeList}
-    class_NodeList = 'fha'; //631
-    hook_nodelist_Current = 'm'; //631
-    hook_nodelist_Head = 'a'; //631
+    class_NodeList = 'bq'; //632
+    hook_nodelist_Current = 'x'; //632
+    hook_nodelist_Head = 'q'; //632
 
 {Class Node}
-    class_Node = 'tq'; //631
-    hook_node_Next = 'h';
-    hook_node_Previous = 'g'; //631
-    hook_node_GetID = 'i'; //631
+    class_Node = 'mc'; //632
+    hook_node_Next = 'g'; //632
+    hook_node_Previous = 'f'; //632
+    hook_node_GetID = 'h'; //632
 
 {Class Menu}
-    class_Menu = 'jm'; //631
-    hook_menu_Action = 'y'; //631
-    hook_menu_Option = 'x'; //631
+    class_Menu = 'fh'; //632
+    hook_menu_Action = 'x'; //632
+    hook_menu_Option = 'B'; //632
 
 {Class PlayerDef}
-    class_PlayerDef = 'me'; //631
-    hook_playerdef_GetEquipment = 'k'; //631
+    class_PlayerDef = 'uba'; //632
+    hook_playerdef_GetEquipment = 'a'; //632
 
 {Class AnimableNode}
-    class_AnimableNode = 'su'; //631
-    hook_AnimableNode_GetAnimable = 'd'; //631
-    hook_AnimableNode_GetNext = 'c'; //631
+    class_AnimableNode = 'jba'; //632
+    hook_AnimableNode_GetAnimable = 'b'; //632
+    hook_AnimableNode_GetNext = 'd'; //632
 
 {Class ObjectInterface}
-    class_ObjectInterface = 'paa'; //631
-    hook_interface_GetActions = 'ad'; //631
-    hook_interface_GetX = 'oc'; //631
-    hook_interface_GetY = 'Fb'; //631
-    hook_interface_GetWidth = 'K'; //631
-    hook_interface_GetHeight = 'Db'; //631
-    hook_interface_GetText = 'Cc'; //631
-    hook_interface_GetTextureID = 'R'; //631
-    hook_interface_GetTextColor = 'Jc'; //631
-    hook_interface_GetModelID = 'h'; //631
-    hook_interface_GetModelZoom = 'pb'; //631
-    hook_interface_GetName = 'l'; //631
-    hook_interface_GetChildren = 'Z'; //631
-    hook_interface_GetID = 'x'; //631
-    hook_interface_GetStack = 'Jb'; //631
-    hook_interface_GetParentID = 'Wb'; //631
-    hook_interface_IsHidden = 'Hb'; //631
+    class_ObjectInterface = 'tp'; //632
+    hook_interface_GetActions = 'd'; //632
+    hook_interface_GetX = 'vb'; //632
+    hook_interface_GetY = 'Vb'; //632
+    hook_interface_GetWidth = 'mc'; //632
+    hook_interface_GetHeight = 'F'; //632
+    hook_interface_GetText = 'Ab'; //632
+    hook_interface_GetTextureID = 'fd'; //632
+    hook_interface_GetTextColor = 'Wc'; //632
+    hook_interface_GetModelID = 'cb'; //632
+    hook_interface_GetModelZoom = 'e'; //632
+    hook_interface_GetName = 'uc'; //632
+    hook_interface_GetChildren = 'Mb'; //632
+    hook_interface_GetID = 'Tc'; //632
+    hook_interface_GetStack = 'Z'; //632
+    hook_interface_GetParentID = 'M'; //632
+    hook_interface_IsHidden = 'cc'; //632
 
 {Class Ground}
-    class_Ground = 'ch'; //631
-    hook_ground_AnimableList = 'l'; //631
-    hook_ground_WallObject1 = 'n'; //631
-    hook_ground_WallObject2 = 'm'; //631
-    hook_ground_WallDecoration1 = 'g'; //631
-    hook_ground_WallDecoration2 = 'p'; //631
-    hook_ground_FloorDecoration = 'f'; //631
+    class_Ground = 'cj';
+    hook_ground_AnimableList = 'q'; //632
+    hook_ground_WallObject1 = 'c'; //632
+    hook_ground_WallObject2 = 'f'; //632
+    hook_ground_WallDecoration1 = 'm'; //632
+    hook_ground_WallDecoration2 = 'i'; //632
+    hook_ground_FloorDecoration = 'n'; //632
 
 {Class NodeCache}
-    class_NodeCache = 'gca'; //631
-    hook_nodecache_GetNodes = 'e'; //631
+    class_NodeCache = 'pfa'; //632
+    hook_nodecache_GetNodes = 'm'; //632
 
 {Class Item}
-    class_Item = 'ad'; //631
-    hook_item_GetID = 'k'; //631
-    hook_item_GetStack = 'o'; //631
+    class_Item = 'cf'; //632
+    hook_item_GetID = 'l'; //632
+    hook_item_GetStack = 'k'; //632
 
 {Class NodeListCache}
-    class_NodeListCache = 'fc'; //631
-    hook_nodelistcache_GetNodeList = 'o'; //631
+    class_NodeListCache = 'hb'; //632
+    hook_nodelistcache_GetNodeList = 'n'; //632
 
 {Class SettingArray}
-    class_SettingArray = 'le'; //631
-    hook_settingarray_GetData = 'l'; //631
+    class_SettingArray = 'dr'; //632
+    hook_settingarray_GetData = 'k'; //632
 
 {
   /////////////// HOOKS BELOW HERE ARE *OUTDATED* AS OF 14 July 2010 (Client 614) ////////////////////////
@@ -236,37 +236,38 @@ const
  //Some work actually. You're welcome. Updated as much as I could. (Thanks to TRiLeZ and pyroryan.)
 
 {Class InteractiveObject}
-    class_InteractiveObject = 'tv'; //631
-    hook_interactiveobject_GetID = 'rb'; //631
-    hook_interactiveobject_GetModel = 'nb'; //631
+    class_InteractiveObject = 'gu'; //632
+    hook_interactiveobject_GetID = 'wb'; //632
+    hook_interactiveobject_GetModel = 'mb'; //632
 
 {Class InteractiveObject2}
-    class_InteractiveObject2 = 'sr'; //631
-    hook_interactiveobject2_GetObjectData = 'db'; //631
+    class_InteractiveObject2 = 'od'; //632
+    hook_interactiveobject2_GetObjectData = 'lb'; //632
     //hook_interactiveobject_GetID2 = 'w.H'; //not updated
 
 {Class SecondLevelObject}
-    class_SecondLevelObject = 'mt'; //631
-    hook_secondlevelobject_GetID = 's'; //631
+    class_SecondLevelObject = 'iea'; //632
+    hook_secondlevelobject_GetID = 't'; //632
+    hook_secondlevelobject_GetModel = 'f'; //632
 
 //WallObjectData, WallDecorationData, FloorDecorationData updated -pyroryan
 {Class WallObjectData}
-    class_WallObjectData = 'ur'; //631
-    hook_WallObjectData_GetID = 'ib'; //631
-    hook_WallObjectData_GetModel = 'mb'; //631
-    hook_WallObjectData_GetOrientation = 'O'; //631
+    class_WallObjectData = 'ki'; //632
+    hook_WallObjectData_GetID = 'T'; //632
+    hook_WallObjectData_GetModel = 'W'; //632
+    hook_WallObjectData_GetOrientation = 'Y'; //632
   hook_WallObjectData_GetID2 = 'D.H'; //not updated
 
 {Class WallDecorationData}
-    class_WallDecorationData = 'mo'; //631
-    hook_WallDecorationData_GetID = 'cb'; //631
-    hook_WallDecorationData_GetModel = 'bb'; //631
-    hook_WallDecorationData_GetOrientation = 'lb'; //631
+    class_WallDecorationData = 'vu'; //632
+    hook_WallDecorationData_GetID = 'N'; //632
+    hook_WallDecorationData_GetModel = 'X'; //632
+    hook_WallDecorationData_GetOrientation = 'db'; //632
   hook_WallDecorationData_GetID2 = 'y.H'; //not updated
 
 {Class FloorDecorationData}
-    class_FloorDecorationData = 'ma'; //631
-    hook_FloorDecorationData_GetID = 'jb'; //631
-    hook_FloorDecorationData_GetModel = 'pb'; //631
-    hook_FloorDecorationData_GetOrientation = 'lb'; //631
+    class_FloorDecorationData = 'cq'; //632
+    hook_FloorDecorationData_GetID = 'W'; //632
+    hook_FloorDecorationData_GetModel = 'kb'; //632
+    hook_FloorDecorationData_GetOrientation = 'X'; //632
   hook_FloorDecorationData_GetID2 = 'm.H'; //not updated
