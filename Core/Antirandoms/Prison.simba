@@ -15,6 +15,7 @@ const
   PRISON_MODELCOMPONENT = 3;
   PRISON_DEPOSITBOXID = 32924;
   PRISON_NPCPOPNAME = 'Pop Balloon animal';
+  PRISON_EXITDOORFINAL = 'Open Unlocked door';
 
   // Phase setup
   PRISON_PHASE_TALKTOPETEATSTART = 0;
@@ -27,6 +28,7 @@ const
   PRISON_PHASE_RANDOMCOMPLETED = 7;
   PRISON_PHASE_EXITTHROUGHDOOR = 8;
   PRISON_PHASE_TERMINATERANDOM = 9;
+  PRISON_PHASE_SOLVEDRANDOM = 10;
 
 {*******************************************************************************
 function R_InPrison : Boolean;
@@ -117,6 +119,33 @@ begin
 end;
 
 {*******************************************************************************
+function R_PrisonByPassText(Text: String; ParentI, ChildI, TimeoutMs: Integer): Boolean;
+By: Cstrike
+Description: Clicks text and returns true if it clicked, false if no "click cnt"
+*******************************************************************************}
+function R_PrisonByPassText(Text: String; ParentI, ChildI, TimeoutMs: Integer): Boolean;
+var
+  GrabText : String;
+  t: Integer;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := False;
+  MarkTime(t);
+  repeat
+    wait (400+random(200));
+    GrabText := GetInterfaceComponentText (ParentI, ChildI);
+    if Pos(Text, GrabText) > 0 then
+    begin
+      Mouse(303, 452, 72, 7, True);
+      wait (1000+random(500));
+      Result := True;
+      Exit;
+    end;
+  until (TimeFromMark(t) > TimeoutMs)
+end;
+
+{*******************************************************************************
 function R_PrisonPullLever: Boolean;
 By: Cstrike
 Description: Pulls the lever.
@@ -202,6 +231,24 @@ begin
 end;
 
 {*******************************************************************************
+function R_PrisonReturnModelToPopID: Integer;
+By: Cstrike
+Description: Selects that option.
+*******************************************************************************}
+function R_PrisonReturnModelToPopID: Integer;
+begin
+  if not LoggedIn then
+    Exit;
+  Result := -1;
+  wait (500+random(1500));
+  if ValidInterface (PRISON_MODELINTERFACE) then
+    Result := GetInterfaceComponentModelID (PRISON_MODELINTERFACE, PRISON_MODELCOMPONENT)
+  else
+    R_Debug ('Prison popping interface was not valid', 'Prison');
+  R_Debug ('Model ID obtained: '+ToStr(Result), 'Prison');
+end;
+
+{*******************************************************************************
 function R_PrisonDetermineNPCToPop(ModelID: Integer; var BalloonID: Integer; var BalloonDataArray : TIntegerArray): Boolean;
 By: Cstrike
 Description: Fills variables with data, returns true if it filled the variables.
@@ -247,6 +294,8 @@ Description: Searches for the balloon and pops it until I gets the key.
 function R_PrisonFindAndPopNPC(IDsToPop: TIntegerArray): Boolean;
 var
   i, t: Integer;
+  NPCs : TNPCArray;
+  TP: TPoint;
 begin
   if not LoggedIn then
     Exit;
@@ -257,12 +306,40 @@ begin
     Exit;
   end;
   MarkTime(t);
+  R_Debug ('Beginning popping attempt...', 'Prison');
   repeat
+    NPCs := SortNPCs(GetNPCs);
+    if high(NPCs) < 0 then
+      NPCs := SortNPCs(GetNPCsNull);
+    if high(NPCs) < 0 then
+    begin
+      R_Debug ('There are no null NPCs or regular NPCs apparently...', 'Prison');
+      Exit;
+    end;
     wait (500+random(500));
     for i:=0 to high(IDsToPop) do
     begin
+      if InIntArray(IDsToPop, NPCs[i].ID) then
+      begin
+        if not TileOnMS(NPCs[i].Tile, 0) then
+          WalkToTile(NPCs[i].Tile, 2, 0);
+        wait (100+random(50));
+        if (TileOnMS(NPCs[i].Tile, 0)) then
+        begin
+          TP := TileToMS(NPCs[i].Tile, 0);
+          Mouse (TP.X, TP.Y, 2, 2, false);
+          wait (340+random(230));
+          if R_ChooseOptionMulti (['nimal', 'alloon']) then
+          begin
+            R_Debug ('Successfully popped a balloon', 'Prison');
+            Result := True;
+            Wait (1000+random(500));
+            Exit;
+          end else R_Debug ('Couldn''t find balloon at spot', 'Prison');
+        end;
+      end;
     end;
-  until (TimeFromMark(t) > 30000)
+  until (TimeFromMark(t) > 25000)
 end;
 
 {*******************************************************************************
@@ -278,15 +355,36 @@ begin
 end;
 
 {*******************************************************************************
-function R_PrisonExitRandom : Boolean;
+function R_PrisonExitRandom(FailedPrison: Boolean): Boolean;
 By: Cstrike
 Description: Leaves through the door.
 *******************************************************************************}
-function R_PrisonExitRandom : Boolean;
+function R_PrisonExitRandom(FailedPrison: Boolean): Boolean;
+var
+  TP: TPoint;
 begin
   if not LoggedIn then
     Exit;
   Result := False;
+  MakeCompass('n');
+  TP := TileToMSEx (Tile(PRISON_DOOR_EXIT_X, PRISON_DOOR_EXIT_Y), 1.0, 0.0, 300);
+  Mouse (TP.X, TP.Y, 1, 3, false);
+  Wait (500+random(350));
+  if R_ChooseOptionMulti (['nlocked', 'pen', 'oor']) then
+  begin
+    if not FailedPrison then
+    begin
+      R_Debug ('FREEEEDDDDOOOOOOOOMMMMM', 'Prison');
+      Result := True;
+    end else
+    begin
+      R_Debug ('Leaving prison with head in shame', 'Prison');
+      Result := True;
+    end;
+    Wait (500+random(500));
+
+    Exit;
+  end else R_Debug ('Somehow failed to open the door, wtf!', 'Prison');
 end;
 
 {*******************************************************************************
@@ -296,29 +394,40 @@ Description: Solves the random.
 *******************************************************************************}
 function R_SolvePrison: Boolean;
 var
-  t, PrisonPhase, SolveAttempts: Integer;
+  t, timePrison, PrisonPhase, SolveAttempts, ModelObtained: Integer;
   PrisonOutOfTime: Boolean;
+  AnimalIDsToPop, BalloonArrayData: TIntegerArray;
 begin
   if not LoggedIn or not R_InPrison then
     Exit;
   Result := False;
   PrisonOutOfTime := False;
   SolveAttempts := 0;
+  AnimalIDsToPop := [];
+  BalloonArrayData := [];
+
+  // Remove this crap later
+  Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');
+  Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');
+  Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');
 
   // Phase style solving
   PrisonPhase := PRISON_PHASE_TALKTOPETEATSTART;
+  MarkTime(timePrison);
   repeat
 
     // Phase terminate
     if not R_InPrison then
+    begin
+      R_Debug('R_InPrison returned as false, exiting random solver','Prison');
       Exit;
-
+    end;
 
     // Initiate phase solving
     case PrisonPhase of
 
-      // Talk to pete @ start
-      PRISON_PHASE_TALKTOPETEATSTART = 0:
+      { Talk to pete @ start [DONE] }
+      PRISON_PHASE_TALKTOPETEATSTART:
       begin
         if R_PrisonClickOnPete then
           PrisonPhase := PRISON_PHASE_FINISHSTARTINGCONVERSATION;
@@ -332,8 +441,16 @@ begin
         end;
       end;
 
+      { If Pete is talking after we select the option, shut him up [DONE] }
       PRISON_PHASE_FINISHSTARTINGCONVERSATION:
       begin
+        if R_PrisonHowDoIGetOutOfHere then
+        begin
+          wait (1000+random(1000));
+          ClickToContinue;
+          PrisonPhase := PRISON_PHASE_PULLLEVER;
+        end;
+        // Check if terminated
         if R_PrisonPreTerminated then
         begin
           R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
@@ -342,8 +459,11 @@ begin
         end;
       end;
 
+      { Pull the lever, now with 100% better heights [DONE] }
       PRISON_PHASE_PULLLEVER:
       begin
+        if R_PrisonPullLever then
+          PrisonPhase := PRISON_PHASE_ANALYZEANIMAL;
         // Check if terminated
         wait (500+random(1000));
         if R_PrisonPreTerminated then
@@ -354,13 +474,45 @@ begin
         end;
       end;
 
+      { Scan to see what animal it is [DONE] }
       PRISON_PHASE_ANALYZEANIMAL:
       begin
+        if R_PrisonWaitForNPCScreen(7500+random(3500)) then
+        begin
+          ModelObtained := R_PrisonReturnModelToPopID;
+          if ModelObtained > 0 then
+          begin
+            R_Debug('Loading Animal NPC data...','Prison');
+            if R_PrisonDetermineNPCToPop(ModelObtained, AnimalIDsToPop, BalloonArrayData) then
+            begin
+              R_Debug('Animal IDs to pop: '+ToStr(AnimalIDsToPop),'Prison');
+              PrisonPhase := PRISON_PHASE_POPANIMAL;
+            end;
+          end else
+            R_Debug('PRISON_PHASE_ANALYZEANIMAL gone wrong due to wrong model number (less than 0)','Prison');
+        end;
+        // Check if terminated
+        wait (500+random(1000));
+        if R_PrisonPreTerminated then
+        begin
+          R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
+          PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
+          PrisonOutOfTime := True;
+        end;
       end;
 
+      { Pop the valid animals }
       PRISON_PHASE_POPANIMAL:
       begin
-
+        if R_PrisonFindAndPopNPC(AnimalIDsToPop) then
+        begin
+          wait (800+random(1200));
+          if R_CountItemID (PRISON_KEYID) > 0 then
+          begin
+            R_Debug ('Popped ID and got a key', 'Prison');
+            PrisonPhase := PRISON_PHASE_CHECKIFWENEEDMOREKEYS;
+          end else R_Debug ('Lag while getting key?', 'Prison');
+        end;
         // Check if terminated
         wait (500+random(1000));
         if R_PrisonPreTerminated then
@@ -371,9 +523,38 @@ begin
         end;
       end;
 
+      { Wait for his response and see if we need more keys }
       PRISON_PHASE_CHECKIFWENEEDMOREKEYS:
       begin
-
+        // Deal with Pete's crap
+        R_Debug ('Got key, looking for "can try it on"', 'Prison');
+        if R_PrisonByPassText('can try it on', 242, 5, 7500) then
+        begin
+          R_Debug ('Got key, looking for "the right one"', 'Prison');
+          if R_PrisonByPassText('the right one', 241, 4, 7500) then
+          begin
+            R_Debug ('Waiting for Petes response to see if we succeeded or not...', 'Prison');
+            wait (6500+random(3300));
+            // If we solved the random
+            if R_PrisonByPassText('the keys right', 242, 5, 2500) then
+            begin
+              R_Debug ('We solved the prison! All the keys are right', 'Prison');
+              ClickToContinue;
+              PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
+            end;
+            // If we need more keys
+            if PrisonPhase <> PRISON_PHASE_EXITTHROUGHDOOR then
+            begin
+              if R_PrisonByPassText('next lock unlo', 242, 5, 2500) then
+              begin
+                R_Debug ('Need to pop more balloons', 'Prison');
+                PrisonPhase := PRISON_PHASE_PULLLEVER;
+              end;
+              ClickToContinue;
+            end else ClickToContinue;
+          end;
+        end;
+        R_Debug ('Checking "if we need more keys" termination...', 'Prison');
         // Check if terminated
         wait (500+random(1000));
         if R_PrisonPreTerminated then
@@ -384,20 +565,38 @@ begin
         end;
       end;
 
-      PRISON_PHASE_RANDOMCOMPLETED:
-      begin
-      end;
-
+      { Exit through the door! }
       PRISON_PHASE_EXITTHROUGHDOOR:
       begin
+        R_Debug ('Trying to exit the final door...', 'Prison');
+        if R_PrisonExitRandom(PrisonOutOfTime) then
+        begin
+          if not PrisonOutOfTime then
+            R_Debug ('OMG YES I think we''re out', 'Prison');
+          PrisonPhase := PRISON_PHASE_SOLVEDRANDOM;
+        end;
       end;
 
     else // Else if the number gets fudged up for any reason
       PrisonPhase := PRISON_PHASE_TERMINATERANDOM;
     end;
 
+    // If we mess up...
     if PrisonPhase = PRISON_PHASE_TERMINATERANDOM then
       R_Debug ('Error with prison solver phase number, terminating solver', 'Prison');
 
-  until (Result) or (TimeFromMark(t) > 15*60*1000) or (PrisonPhase = PRISON_PHASE_TERMINATERANDOM)
+    Wait (500+random(500));
+
+    // Just in case
+    if PrisonPhase = PRISON_PHASE_SOLVEDRANDOM then
+      Break;
+
+  until (Result) or (TimeFromMark(timePrison) > 15*60*1000) or (PrisonPhase = PRISON_PHASE_TERMINATERANDOM) or (PrisonPhase = PRISON_PHASE_SOLVEDRANDOM)
+  if (TimeFromMark(timePrison) > 15*60*1000) then
+    R_Debug ('Error: Solver timed out', 'Prison');
+  // Remove this crap also later
+  Writeln ('[IMPORTANT] ATTEMPTED PRISON SOLVE DONE [IMPORTANT]');
+  Writeln ('[IMPORTANT] ATTEMPTED PRISON SOLVE DONE [IMPORTANT]');
+  Writeln ('[IMPORTANT] ATTEMPTED PRISON SOLVE DONE [IMPORTANT]');
+  wait (2000+random(2000));
 end;
