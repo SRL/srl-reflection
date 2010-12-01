@@ -127,24 +127,34 @@ begin
   while not ValidInterface(243) do
   begin
     wait(100+Random(100));
-    if ((GetSystemTime - t) > 3000) then Exit;
+    if ((GetSystemTime - t) > 4500) then Exit;
   end;
 end;
 
 {*******************************************************************************
 function R_SolveQuizMaster: boolean;
-By: Drags111
+By: Drags111, fixed by Cstrike
 Description: Solves the Quiz Master!
 *******************************************************************************}
 function R_SolveQuizMaster: boolean;
+var
+  t: Integer;
 begin
   if not inQuizMaster then Exit;
+
+  // Move mouse away safely so it doesnt block the "Click to continue"
+  MMouse (50, 50, 500, 200);
+  wait (250+random(880));
+  MarkTime(t);
   while inQuizMaster do
   begin
     TalkToMaster;
     if (SlotToID(1) > -1) then
       AnswerQuestion;
+    if (TimeFromMark(t) > 60000) then Break;
+    wait (1000+random(1500));
   end;
+  wait (2200+random(3000));
   if R_LoggedIn then
   begin
     Result := True;
