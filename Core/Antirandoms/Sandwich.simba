@@ -1,29 +1,46 @@
+// Thanks to
 Const
   R_SANDWICHLADY_ID = 8630;
+  R_SANDWICHLADY_PORTAL = 11373;
 
-function r_InSandwichLadyRandom: Boolean;
+{*******************************************************************************
+function R_InSandwichLadyRandom: Boolean;
+By: ???
+Description: Checks if in this random.
+*******************************************************************************}
+function R_InSandwichLadyRandom: Boolean;
 begin
   Result := ValidNPCNull(R_SANDWICHLADY_ID);
 end;
 
-function DetectFreeItem: Integer;
+{*******************************************************************************
+function R_SandwichDetectFreeItem: Integer
+By: ???/Cstrike
+Description: Checks if in this random. Updated by Cstrike to include new items.
+*******************************************************************************}
+function R_SandwichDetectFreeItem: Integer;
 var
   S: string;
 begin
   S := Between('have a ', ' for free', GetInterfaceText(243, 6));
   Writeln('[Reflection] Item is: ' + S);
   Case lowercase(S) of
-    'doughnut'          : Result := 45666;
-    'baguette'          : Result := 10726;
-    'roll'              : Result := 10727;
-    'chocolate bar'     : Result := 10728;
-    'meat pie'          : Result := 10730;
-    'square sandwich'   : Result := 10731;
-    'triangle sandwich' : Result := 10732;
+    'doughnut': Result := 45666;
+    'baguette': Result := 10726;
+    'roll': Result := 10727;
+    'chocolate bar': Result := 10728;
+    'meat pie', 'pie': Result := 10730;
+    'square sandwich', 'square': Result := 10731;
+    'triangle sandwich': Result := 10732;
   end;
 end;
 
-Function FoodPoint(ID: Integer): TPoint;
+{*******************************************************************************
+Function R_SandwichFoodPoint(ID: Integer): TPoint;
+By: ???
+Description: Gets food TP.
+*******************************************************************************}
+Function R_SandwichFoodPoint(ID: Integer): TPoint;
 var
   I: Integer;
   Children: TIntegerArray;
@@ -44,28 +61,69 @@ begin
   end;
 end;
 
-Function WaitForSelectionScreen: Boolean;
+{*******************************************************************************
+Function R_SandwichWaitForSelectionScreen: Boolean;
+By: ???
+Description: Waits for the screen selection
+*******************************************************************************}
+Function R_SandwichWaitForSelectionScreen: Boolean;
 var
   Mark: Integer;
 begin
   MarkTime(Mark);
-  Writeln('[Reflection] Waiting for selection screen');
-  while TimeFromMark(Mark) < 60000 do
+  Writeln('[Reflection] Waiting for selection screen...');
+  while TimeFromMark(Mark) < 30000 do
   begin
     Wait(randomRange(500, 1500));
     if ValidInterface(297) then
     begin
       Result := True;
-      Exit;
+      Break;
     end;
   end;
+  if Result then
+    Writeln ('[Reflection] Screen selection found');
+  wait (200+random(300));
 end;
 
-Procedure ExitSandwichRandom;
+{*******************************************************************************
+function R_ExitSandwichRandom: Boolean;
+By: Cstrike/???
+Description: Exits through portal. Cstrike: Did MASSIVE revamp of this procedure
+A lot less crap now.
+*******************************************************************************}
+function R_ExitSandwichRandom: Boolean;
 var
   NPC: TNPC;
+  Portal: TRSObject;
   ThePoint: TPoint;
+  TP: TPoint;
 begin
+  Result := False;
+  // Portal Method #1
+  Writeln('[Reflection] Attempt 1 of 2 (Portal exit normal)');
+  Portal := GetObjectByID (R_SANDWICHLADY_PORTAL, OBJECT_TYPE_INTERACTABLE, 25);
+  if not (Portal = NULL_RSOBJECT) then
+  begin
+    if not TileOnMS (Portal.Tile, 0) then
+      WalkToTile (Portal.Tile, 2, 0);
+    wait (200+random(500));
+    if TileOnMS (Portal.Tile, 0) then
+    begin
+      TP := TileToMS (Portal.Tile, 0);
+      Mouse (TP.X, TP.Y, 2, 2, false);
+      wait (500+random(1000));
+      if R_ChooseOptionMulti (['xit', 'ortal']) then
+      begin
+        Writeln('[Reflection] Found portal, exiting...');
+        Result := True;
+        Exit;
+      end;
+    end else Writeln('[Reflection] Portal could not be found at all');
+  end else Writeln('[Reflection] Portal returned as a NULL_RSOBJECT, not good.');
+
+  // NPC Method #2
+  Writeln ('[Reflection] Attempt 2 of 2 (Portal exit relative to NPC)');
   NPC := GetNPCNull(R_SANDWICHLADY_ID);
   If Not TileOnMS(NPC.Tile, 0) then
    If Not WalkToTile(NPC.Tile, 0, 0)then
@@ -73,30 +131,49 @@ begin
      Writeln('[Reflection] Failed walking to the portal!');
      Exit;
    end;
-
   ThePoint := TileToMS(Tile( NPC.Tile.X+2, NPC.Tile.Y-3), 0);
-  Mouse(ThePoint.x, ThePoint.y, 7, 7, True);
-  Writeln('[Reflection] Clicked the portal!');
-  Wait(1000+Random(500));
-  Flag;
+  Mouse(ThePoint.x, ThePoint.y, 5, 5, false);
+  wait (500+random(1000));
+  if R_ChooseOptionMulti (['xit', 'ortal']) then
+  begin
+    Writeln('[Reflection] Clicked the portal!');
+    Result := True;
+    Exit;
+  end;
+  Writeln('[Reflection] Failed to exit portal, oh no!');
 end;
 
-Function r_SolveSandwichRandom: Boolean;
+{*******************************************************************************
+Function R_SolveSandwichRandom: Boolean;
+By: Cstrike/???
+Description: Solves it. Remodelled by Cstrike from crap to a failsafe solver.
+Watch it go out of date and then I look like the ass.
+*******************************************************************************}
+Function R_SolveSandwichRandom: Boolean;
 var
   Item: Integer;
   ThePoint: TPoint;
 begin
-  if not r_InSandwichLadyRandom then
+  if not R_InSandwichLadyRandom then
     Exit;
-  Item := DetectFreeItem;
-  Writeln('[Reflection] ClickToContinue');
-  ClickToContinue;
-  WaitForSelectionScreen;
-  ThePoint := FoodPoint(Item);
+  wait (150+random(250));
+  Item := R_SandwichDetectFreeItem;
+  if not ValidInterface(297) then
+  begin
+    Writeln('[Reflection] Item detected (ID: '+ToStr(Item)+'), clicking continue to get rid of interface');
+    ClickToContinue;
+  end;
+  Wait (300+random(500));
+  R_SandwichWaitForSelectionScreen;
+  Wait (500+random(800));
+  ThePoint := R_SandwichFoodPoint(Item);
+  Wait (300+random(500));
   if (ThePoint.x = -1) or (ThePoint.y = -1) then
     Exit;
   Mouse(ThePoint.x, ThePoint.y, 10, 10, True);
-  Writeln('[Reflection] Clicked correct item!');
-  ExitSandwichRandom;
-  Result := True;
+  Writeln('[Reflection] Clicked item!');
+  wait (1000+random(2000));
+  Result := R_ExitSandwichRandom;
+  if Result then
+    Wait (500+random(1500));
 end;

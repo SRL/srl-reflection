@@ -140,7 +140,7 @@ begin
   SetArrayLength (Result, 0);
   CommonInterfaces := [34, 137, 149, 187, 190, 192, 259, 261, 271, 320, 387,
                        464, 548, 550, 551, 589, 745, 747, 748, 749, 750, 751,
-                       752, 752, 884, 891];
+                       752, 884, 891];
   ValidInterfaces := GetValidInterfaces;
   for i:=0 to high(ValidInterfaces) do
   begin
