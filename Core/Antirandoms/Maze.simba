@@ -280,9 +280,9 @@ var
   B: Boolean;
   MP, DoorPos: TPoint;
 begin
-  Path := r_MazePath(PATH_CYAN);
+  Path := r_MazePath(r_InMazePath);
 
-  For I:=11 to High(Path.Tiles)do
+  For I:=0 to High(Path.Tiles)do
   begin
     If Not (D = Path.Dir[I])then
     begin
