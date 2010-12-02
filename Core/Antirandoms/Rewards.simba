@@ -5,103 +5,97 @@
 // * function R_FindRewardBox: Boolean;                            // * by mormonman
 //to be done: R_SolveExpBook, R_SolveLamp, R_SolveRewardsBox       //
 
+Const
+  ID_REWARDBOX = 14664;
+  ID_LAMP = 2528;
+  ID_EXPBOOK = 11640;
+  ID_MYSTERYBOX = 6199;
+
+
 {*******************************************************************************
-procedure UseRewardBox: Boolean;
-by: Nava2, Timer, Drags111
-Description: Finds the reward box, and opens it getting the reward.
+Function R_GetRewardCords(skill: string): TPoint;
+By: Naike
+Description: Gets the TPoint of a reward skill (Lamp/Exp book)
 *******************************************************************************}
-
-function R_UseRewardBox: Boolean;
-var
-  Time, Height, Index: Integer;
-  Text, TPA: TPointArray;
-  B: TBox;
-  Item: TInvItem;
-
+Function R_GetRewardCords(skill: string): TPoint;
 begin
-  Writeln('Using box.');
-  Result := False;
-  if (not LoggedIn) then exit;
-  GameTab(tab_Inv);
-  if (not(R_ItemIDExists(Item, 14664)))then
-    if (not(R_ItemIDExists(Item, 6199)))then
-      Exit;
-
-  if (Length(Trim(srl_Implode(Players[CurrentPlayer].BoxRewards, ''))) = 0) then
-    Players[CurrentPlayer].BoxRewards := ['XP'];
-
-  MouseItem(Item.Slot, True);
-
-  Result := False;
-  Text := LoadTextTPA('hoose', UpChars, Height);
-  Time := GetTimeRunning + 10000;
-  FindColorsTolerance(TPA, 2070783, 185, 34, 327, 50, 3);
-  while (not Result and (GetTimeRunning < Time)) do
-  begin
-    Wait(RandomRange(80, 100));
-    FindColorsTolerance(TPA, 2070783, 185, 34, 327, 50, 3);
-    if (Length(TPA) > 10) then
-      Result := FindTextTPAinTPA(Height, Text, TPA, TPA);
-  end;
-
-  if (not Result) then
-  begin
-    SRL_Warn('UseRewardBox', 'Could not open Reward Screen', Warn_AllVersions);
-    Exit;
-  end;
-  Wait(Random(100));
-  if (not FindBoxOption(B, Index)) then
-  begin
-    SRL_Warn('UseRewardBox', 'Could not find a usable option.', Warn_AllVersions);
-    Exit;
-  end;
-
-  Mouse(B.X1, B.Y1, 0, 0, True);
-  Time := GetTimeRunning + 2000;
-  Result := False;
-  while (not Result) and (GetTimeRunning < Time) do
-  begin
-    FindColorsTolerance(TPA, 1317148, 35, 70, 362, 311, 3);
-    Result := Length(TPA) > 50;
-    Wait(50 + Random(50));
-  end;
-  if (not Result) then
-  begin
-    CloseWindow;
-    Exit;
-  end;
-  MouseBox(413, 171, 469, 200, 1);
-  Time := GetSystemTime;
-  while (CountColorTolerance(1317148, B.x1 - 10, B.y1 - 10, B.x1 + 10, B.y1 + 10, 3) > 50) and (GetSystemTime - Time < 5000) do
-  begin
-    if (Pos('thing else', GetChatBoxText(8, clBlack)) > 0) then
-    begin
-      CloseWindow;
-      Wait(500 + Random(500));
-      SetLength(RB_SkipArray, Length(RB_SkipArray) + 1);
-      RB_SkipArray[High(RB_SkipArray)] := Index;
-      Result := UseRewardBox;
-      Break;
+  case (LowerCase(Skill)) of
+    'attack': Result := Point(81, 109);
+    'strength': Result := Point(139, 110);
+    'ranged': Result := Point(196, 113);
+    'magic': Result := Point(257, 117);
+    'defence': Result := Point(319, 109);
+    'crafting', 'craft': Result := Point(376, 111);
+    'hitpoints', 'hp': Result := Point(436, 112);
+    'prayer', 'pray': Result := Point(79, 166);
+    'agility': Result := Point(141, 166);
+    'herblore': Result := Point(199, 171);
+    'thieving', 'thief': Result := Point(258, 167);
+    'fishing', 'fish': Result := Point(325, 164);
+    'runecraft', 'runecrafting': Result := Point(375, 167);
+    'slayer', 'slay': Result := Point(436, 173);
+    'farming', 'farm': Result := Point(83, 224);
+    'mining', 'mine': Result := Point(137, 222);
+    'smithing', 'smith': Result := Point(197, 220);
+    'hunting', 'hunt', 'hunter': Result := Point(257, 222);
+    'cooking', 'cook': Result := Point(318, 227);
+    'firemaking', 'fire': Result := Point(378, 226);
+    'woodcutting', 'wc': Result := Point(439, 222);
+    'fletching', 'fletch': Result := Point(135, 272);
+    'construction': Result := Point(192, 276);
+    'summoning': Result := Point(256, 273);
+    'dungeoneering': Result := Point(310, 271);
+    else
+      Result := Point(-1, -1);
     end;
-    Wait(100 + Random(200));
-  end;
-  RB_SkipArray := [];
-  if (CloseWindow) then
-    Result := False;
 end;
 
 {*******************************************************************************
-function R_FindRewardBox: Boolean;
-By: mormonman
-Description: If it finds the reward box in the inventory then it solves it with
-SRL's solver(I might make a reflection one).
+function R_FindRewardBoxes: Boolean;
+By: Naike
+Description: Deals with Lamp, Mystery box, Exp book and reward box!
 *******************************************************************************}
-function R_FindRewardBox: Boolean;
+function R_FindRewardBoxes: Boolean;
 var
-  Item: TInvItem;
+  Items: TInvItemArray;
+  I: Integer;
+  P: TPoint;
 begin
-  Result:= R_ItemIDExists(Item, 14664);
+  Result:= R_ItemIDExistsEx([ID_REWARDBOX, ID_LAMP, ID_EXPBOOK, ID_MYSTERYBOX], Items);
   if not Result then
-    Result := R_ItemIDExists(Item, 6199);
-  if Result then R_UseRewardBox;
+    Exit;
+
+  For I:=0 to High(Items)do
+   Case Items[I].ID of
+     ID_REWARDBOX:
+     begin
+       r_Debug('Reward box found', '');
+       Result := UseRewardBox;
+       Wait(4000+Random(1000));
+       If Result then
+       begin
+         R_FindRewardBoxes;
+         Exit;
+       end;
+     end;
+
+     ID_LAMP, ID_EXPBOOK:
+     begin
+       r_Debug('Solving lamp/exp book', '');
+       MouseItem(Items[I].Slot, True);
+       Wait(2500+Random(2000));
+       P := R_GetRewardCords(LampSkill);
+       Mouse(P.X, P.Y, 12, 12, True);
+       Wait(150+Random(100));
+       Mouse(399, 279, 20, 5, True);
+       Wait(1000+Random(700));
+       Result := ClickToContinue;
+     end;
+
+     ID_MYSTERYBOX:
+     begin
+
+     end;
+
+   end;
 end;

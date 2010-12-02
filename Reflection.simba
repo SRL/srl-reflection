@@ -37,6 +37,7 @@
 {$i ./Core/Antirandoms\Demon.simba}
 {$i ./Core/Antirandoms\Forester.simba}
 {$i ./Core/Antirandoms\Sandwich.simba}
+{$i ./Core/Antirandoms\Rewards.simba}
 {$i ./Core/Antirandoms\Antirandoms.simba}
 
 
