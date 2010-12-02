@@ -419,3 +419,83 @@ begin
   end;
   While(GetSpeed > 0)do wait(100+Random(100));
 end;
+
+{*******************************************************************************
+Function r_WindPath(xs, ys, xe, ye, gravity, wind, minWait, maxWait, maxStep, targetArea: extended): TPointArray;
+By: JuKKa
+Description: Generates a blind path of points!
+*******************************************************************************}
+Function r_WindPath(xs, ys, xe, ye, gravity, wind, minWait, maxWait, maxStep, targetArea: extended): TPointArray;
+var
+  veloX, veloY, windX, windY, veloMag, dist, randomDist, lastDist, step: extended;
+  lastX, lastY: integer;
+  sqrt2, sqrt3, sqrt5: extended;
+begin
+  sqrt2:= sqrt(2);
+  sqrt3:= sqrt(3);
+  sqrt5:= sqrt(5);
+  while hypot(xs - xe, ys - ye) > 1 do
+  begin
+    dist:= hypot(xs - xe, ys - ye);
+    wind:= minE(wind, dist);
+    if dist >= targetArea then
+    begin
+      windX:= windX / sqrt3 + (random(round(wind) * 2 + 1) - wind) / sqrt5;
+      windY:= windY / sqrt3 + (random(round(wind) * 2 + 1) - wind) / sqrt5;
+    end else
+    begin
+      windX:= windX / sqrt2;
+      windY:= windY / sqrt2;
+      if (maxStep < 3) then
+      begin
+        maxStep:= random(3) + 3.0;
+      end else
+      begin
+        maxStep:= maxStep / sqrt5;
+      end;
+    end;
+    veloX:= veloX + windX;
+    veloY:= veloY + windY;
+    veloX:= veloX + gravity * (xe - xs) / dist;
+    veloY:= veloY + gravity * (ye - ys) / dist;
+    if hypot(veloX, veloY) > maxStep then
+    begin
+      randomDist:= maxStep / 2.0 + random(round(maxStep) / 2);
+      veloMag:= sqrt(veloX * veloX + veloY * veloY);
+      veloX:= (veloX / veloMag) * randomDist;
+      veloY:= (veloY / veloMag) * randomDist;
+    end;
+    lastX:= Round(xs);
+    lastY:= Round(ys);
+    xs:= xs + veloX;
+    ys:= ys + veloY;
+    SetArrayLength(Result, GetArrayLength(Result) + 1);
+    Result[ High(Result) ] := Point(Round(xs), Round(ys));
+    step:= hypot(xs - lastX, ys - lastY);
+    lastdist:= dist;
+  end;
+end;
+
+{*******************************************************************************
+Function WebWalk(T: TTile): Boolean;
+By: JuKKa
+Description: Walks blindly using WindPath!
+*******************************************************************************}
+Function r_WebWalk(T: TTile): Boolean;
+Var
+  I: Integer;
+  M, P: TPoint;
+  CTRLPoints: TPointArray;
+Begin
+  P := TileToPoint(T);
+  Repeat
+    M := GetMyPos;
+    CtrlPoints := r_WindPath(M.x, M.y, P.X, P.Y, 5.0, 2.5, 0.0, 0.0, 4.5, 2.5);
+    For I:= High(CtrlPoints) DownTo 0 Do
+      if WalkToTile(Tile(CtrlPoints[i].x, CtrlPoints[i].y),0, 10) Then
+      Begin
+        Result := I = High(CtrlPoints);
+        Break;
+      End;
+  Until( Result );
+End;
