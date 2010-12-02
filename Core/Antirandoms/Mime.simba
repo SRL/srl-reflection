@@ -52,11 +52,16 @@ begin
       MouseBox(232, 450, 378, 459, 1);
     Animation := '';
     repeat
-      if not R_InMime then Break;
+      if not R_InMime then
+        Break;
+
       FindNPC('Mime', Mime);
-      i := Mime.Animation;
-      //if i > 0 then R_Debug('Mimes Animation: '+inttostr(i));
-      case i of  // Set our Animation text
+      I := Mime.Animation;
+
+      If (I > 0) then
+        R_Debug('Mime animates, ID: ' + ToStr(I), 'Mime');
+
+      Case I of  // Set our Animation text
         857: Animation := 'Think';
         860: Animation := 'Cry';
         861: Animation := 'Laugh';
@@ -73,6 +78,8 @@ begin
     while not(FindColorTolerance(mx, my, 1122502, MCX1, MCY1, MCX2, MCY2, 40)) do
       if R_InMime then Wait(100 + Random(100)) else Break;
     Wait(1000 + Random(500));
+
+    r_Debug('Clicking "' + Animation + '" (ID: ' + ToStr(I) + ')', 'Mime');
     FindTextTPAEx(11503238, 10, MCX1, MCY1, MCX2, MCY2, mx, my, Animation, NPCChars, ClickLeft)
     Result := R_InMime;
   until not(Result or LoggedIn or not R_InMime);

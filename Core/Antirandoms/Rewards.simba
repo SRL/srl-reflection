@@ -69,7 +69,7 @@ begin
    Case Items[I].ID of
      ID_REWARDBOX:
      begin
-       r_Debug('Reward box found', '');
+       r_Debug('Reward box found', 'Rewards');
        Result := UseRewardBox;
        Wait(4000+Random(1000));
        If Result then
@@ -81,7 +81,7 @@ begin
 
      ID_LAMP, ID_EXPBOOK:
      begin
-       r_Debug('Solving lamp/exp book', '');
+       r_Debug('Handling experience reward', 'Rewards');
        MouseItem(Items[I].Slot, True);
        Wait(2500+Random(2000));
        P := R_GetRewardCords(LampSkill);
@@ -94,7 +94,10 @@ begin
 
      ID_MYSTERYBOX:
      begin
-
+       r_Debug('Clicking mystery box', 'Rewards');
+       MouseItem(Items[I].Slot, True);
+       Wait(2500+Random(2000));
+       Result := True;
      end;
 
    end;
