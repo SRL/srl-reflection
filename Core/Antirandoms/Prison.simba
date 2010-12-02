@@ -249,6 +249,8 @@ begin
   else
     R_Debug ('Prison popping interface was not valid', 'Prison');
   R_Debug ('Model ID obtained: '+ToStr(Result), 'Prison');
+  Mouse (498, 22, 2, 2, true);
+  wait (500+random(500));
 end;
 
 {*******************************************************************************
@@ -311,21 +313,19 @@ begin
   MarkTime(t);
   R_Debug ('Beginning popping attempt...', 'Prison');
   repeat
-    NPCs := SortNPCs(GetNPCs);
-    if high(NPCs) < 0 then
-      NPCs := SortNPCs(GetNPCsNull);
+    NPCs := SortNPCs(GetNPCsNull);
     if high(NPCs) < 0 then
     begin
       R_Debug ('There are no null NPCs or regular NPCs apparently...', 'Prison');
       Exit;
     end;
     wait (500+random(500));
-    for i:=0 to high(IDsToPop) do
+    for i:=0 to high(NPCs) do
     begin
       if InIntArray(IDsToPop, NPCs[i].ID) then
       begin
         if not TileOnMS(NPCs[i].Tile, 0) then
-          WalkToTile(NPCs[i].Tile, 2, 0);
+          Break;//WalkToTile(NPCs[i].Tile, 2, 0);
         wait (100+random(50));
         if (TileOnMS(NPCs[i].Tile, 0)) then
         begin
@@ -409,6 +409,7 @@ begin
   SolveAttempts := 0;
   AnimalIDsToPop := [];
   BalloonArrayData := [];
+  MakeCompass('s');
 
   // Remove this crap later
   Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');

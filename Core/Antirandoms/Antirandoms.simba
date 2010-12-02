@@ -145,7 +145,7 @@ begin
     RandName := 'Prison';
     Music := 'in the clink';
     InRandom := @R_InPrison;
-    SolveRandom := @R_SolvePrison; // Testing phase
+    SolveRandom := nil; //@R_SolvePrison; // Testing phase
   end;
 
   With r_RandomArr[rand_Quiz] do
