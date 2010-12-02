@@ -21,6 +21,7 @@ var
 begin
   Result := -1;
   MP := GetMyPos;
+  r_Debug('Player Pos: ' + ToStr(MP), 'Maze');
 
   If PointInBox(MP, IntToBox(2920, 4572, 2940, 4600))then
     Result := PATH_PURPLE;
@@ -40,6 +41,8 @@ begin
   Case Path of
     PATH_PURPLE:
     begin
+      r_Debug('Loading purple path', 'Maze');
+
       SetArrayLength(Result.Tiles, 16);
       SetArrayLength(Result.Dir, 16);
 
@@ -94,6 +97,8 @@ begin
 
     PATH_BLUE:
     begin
+      r_Debug('Loading blue path', 'Maze');
+
       SetArrayLength(Result.Tiles, 17);
       SetArrayLength(Result.Dir, 17);
 
@@ -148,6 +153,8 @@ begin
 
     PATH_CYAN:
     begin
+      r_Debug('Loading cyan path', 'Maze');
+
       SetArrayLength(Result.Tiles, 16);
       SetArrayLength(Result.Dir, 16);
 
@@ -202,6 +209,8 @@ begin
 
     PATH_GREEN:
     begin
+      r_Debug('Loading green path', 'Maze');
+
       SetArrayLength(Result.Tiles, 17);
       SetArrayLength(Result.Dir, 17);
 
@@ -269,11 +278,11 @@ var
   D: String;
   C: TPoint;
   B: Boolean;
-  MP: TPoint;
+  MP, DoorPos: TPoint;
 begin
-  Path := r_MazePath(r_InMazePath);
+  Path := r_MazePath(PATH_CYAN);
 
-  For I:=0 to High(Path.Tiles)do
+  For I:=11 to High(Path.Tiles)do
   begin
     If Not (D = Path.Dir[I])then
     begin
@@ -283,9 +292,12 @@ begin
 
     iTime := GetSystemTime;
     Repeat
+      B := False;
+
       If Not TileOnMS(Path.Tiles[I], 0)then
       begin
-        WalkToTile(Path.Tiles[I], 0, 0);
+        r_WebWalk(Path.Tiles[I]);
+        r_Flag;
         Wait(1000+Random(1000));
       end;
 
@@ -301,45 +313,41 @@ begin
       GetMousePos(C.X, C.Y);
       Mouse(C.X, C.Y, 0, 0, B);
       If Not B then
-        B := WaitOption('Open', 200+Random(100));
+        WaitOption('Open', 200+Random(100));
 
-      If (B)and(DidClick(True, 1000+random(200))) then
+      B := False;
+      If (r_WaitCrossHairColor(CROSSHAIR_RED, 1000+Random(100))) then
       begin
-        R_Debug('Clicked a door..', 'Maze');
-        Result := True;
+        Flag;
+        r_Debug('Trying to walk through door[' + ToStr(I) + ']', 'Maze');
 
+        DoorPos := TileToPoint(Path.Tiles[I]);
         iTimeEx := GetSystemTime;
         Repeat
-          MP := GetMyPos;
+          MP := TileToPoint(GetMyPos);
 
-          If (D = 'n')or(D = 's')then
-            B := ((MP.X = Path.Tiles[I].X)and((MP.Y = Path.Tiles[I].Y-1)or(MP.Y = Path.Tiles[I].Y+1)))
-          else
-            B := ((MP.Y = Path.Tiles[I].Y)and((MP.X = Path.Tiles[I].X-1)or(MP.X = Path.Tiles[I].X+1)));
-        Until(B)or(GetSystemTime - iTimeEx > 10000);
+          Case D of
+            'n': B := (DoorPos.Y+1 = MP.Y);
+            's': B := (DoorPos.Y-1 = MP.Y);
+            'w': B := (DoorPos.X-1 = MP.X);
+            'e': B := (DoorPos.X+1 = MP.X);
+          end;
+
+        Until(B)or(GetSystemTime - iTimeEx > 8000);
+        If B then
+          R_Debug('Sucessfully walked through door[' + ToStr(I) + ']', 'Maze');
       end;
 
-    Until(B)or(GetSystemTime - iTime > 50000);
+    Until(B)or(GetSystemTime - iTime > 180000);
 
-    If (GetSystemTime - iTime > 30000)then
+    If (GetSystemTime - iTime > 180000)then
     begin
-      R_Debug('Took more than 30 secs to get pass a door', 'Maze');
+      R_Debug('Took more than 180 secs to get pass a door', 'Maze');
       Exit;
     end;
 
-    Wait(3000+Random(1500));
-    iTime := GetSystemTime;
-    While Not IsIdle do
-    begin
-      Wait(100+Random(100));
-      If (GetSystemTime - iTime > 20000) then
-      begin
-        R_Debug('Took more than 20 secs to idle', 'Maze');
-        Exit;
-      end;
-    end;
-
   end;
+  Result := True;
 end;
 
 Function r_SolveMaze: Boolean;
@@ -347,19 +355,19 @@ var
   C: TPoint;
 begin
   Result := r_WalkMaze;
-  Result := True;
   If Result then
   begin
-    R_Debug(' In the middle!', 'Maze');
-    C := TileToMS(Tile(2912, 4576), 0);
+    R_Debug('In the middle!', 'Maze');
+    Wait(1500+Random(1000));
+    C := TileToMS(Tile(2912, 4576), 300);
     MMouse(C.X, C.Y, 5, 5);
-    Result := IsUpText('ouch');
+    Result := R_WaitUpText('Touch', 200+Random(100));
     If Not Result then
       Exit;
 
     GetMousePos(C.X, C.Y);
     Mouse(C.X, C.Y, 0, 0, True);
-    R_Debug(' Clicked the middle teleport!', 'Maze');
-    Wait(5000+Random(4000));
+    R_Debug('Clicked the middle teleport!', 'Maze');
+    Wait(3000+Random(4000));
   end;
 end;
