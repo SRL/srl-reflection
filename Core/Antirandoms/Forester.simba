@@ -110,7 +110,7 @@ begin
     If Result then
     begin
       r_Debug('Attacked pheasant!', 'Forester');
-      Wait(1000+Random(500));
+      Wait(2000+Random(500));
       Flag;
       iTimeEx := GetSystemTime;
       While (Not Pos('ollect', GetInterfaceText(241, 4)) > 0) do
@@ -120,7 +120,8 @@ begin
           Exit;
       end;
 
-      Wait(1000+Random(500));
+      r_Debug('Time to collect the raw pheasant!', 'Forester');
+      Wait(3000+Random(500));
     end;
   until(Result)or(GetSystemTime-iTime > 60000)
 end;
@@ -131,14 +132,14 @@ var
   I: Integer;
   C: TPoint;
 begin
-  G := GetItemsNear(2);
-  For I:=0 to High(G)do
+  G := GetItemsNear(6);
+  For I:=0 to High(G) do
    If (G[I].ID = R_MEATID)then
    begin
      r_Debug('Found meat' + ToStr(G[I].Tile), 'Forester');
      C := TileToMS(G[I].Tile, 0);
      Mouse(C.X, C.Y, 3, 3, False);
-     Result := WaitOption('ake', 200+Random(100));
+     Result := R_WaitOption('ake Raw', 200+Random(100));
      If Result then
      begin
        r_Debug('Picking up meat..', 'Forester');
@@ -194,10 +195,16 @@ begin
   If Not Result then
     Exit;
 
-  If Not r_FindForester then
-    Exit;
+  iTime := GetSystemTime;
+  Repeat
+    If Not r_FindForester then
+      Exit
+    else
+      FWants := r_ForesterWants;
+  Until(FWants > 0)or(GetSystemTime - iTime > 60000);
 
-  FWants := r_ForesterWants;
+  If (FWants < 1) then
+    Exit;
 
   iTime := GetSystemTime;
   Repeat

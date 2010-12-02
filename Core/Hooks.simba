@@ -217,8 +217,8 @@ const
 
 {Class Item}
     class_Item = 'cf'; //632
-    hook_item_GetID = 'l'; //632
-    hook_item_GetStack = 'k'; //632
+    hook_item_GetID = 'k'; //632
+    hook_item_GetStack = 'l'; //632
 
 {Class NodeListCache}
     class_NodeListCache = 'hb'; //632
