@@ -398,7 +398,7 @@ Description: Solves the random.
 *******************************************************************************}
 function R_SolvePrison: Boolean;
 var
-  t, timePrison, PrisonPhase, SolveAttempts, ModelObtained: Integer;
+  timePrison, PrisonPhase, SolveAttempts, ModelObtained: Integer;
   PrisonOutOfTime: Boolean;
   AnimalIDsToPop, BalloonArrayData: TIntegerArray;
 begin
