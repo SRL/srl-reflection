@@ -1,4 +1,8 @@
-// So far it looks like the prison is only in one location
+// Need a global variable for mouse speed so we can reset it later on.
+var
+  g_MouseSpeedBeforePrisonRandom: Integer;
+
+// Random constants
 const
   PRISON_PETENAME = 'Prison Pete';
   PRISON_PETEID = 3118;
@@ -16,6 +20,7 @@ const
   PRISON_DEPOSITBOXID = 32924;
   PRISON_NPCPOPNAME = 'Pop Balloon animal';
   PRISON_EXITDOORFINAL = 'Open Unlocked door';
+  PRISON_NPCMOUSESPEED = 50;
 
   // Phase setup
   PRISON_PHASE_TALKTOPETEATSTART = 0;
@@ -149,6 +154,36 @@ begin
 end;
 
 {*******************************************************************************
+procedure R_PrisonLookForCrapText;
+By: Cstrike
+Description: Gets rid of crap text that no one wants.
+*******************************************************************************}
+procedure R_PrisonLookForCrapText;
+var
+  ExitLoop: Boolean;
+  t: Integer;
+begin
+  if not LoggedIn then
+    Exit;
+  MarkTime(t);
+  repeat
+    ExitLoop := True;
+    if FindNPCText ('held captive by')
+      or FindNPCText ('these balloon animals have')
+        or FindNPCText ('then pop that sort of')
+          or FindNPCText ('me any keys you get')
+            or FindNPCText ('before that cat notices') // After random solved
+              or FindNPCText ('a lot for your help') then // After random finished
+              begin
+                R_Debug('Found useless text, clicking continue...','Prison');
+                ClickToContinue;
+                ExitLoop := False;
+              end;
+    Wait (300+random(600));
+  until (ExitLoop) or (TimeFromMark(t) > 10000)
+end;
+
+{*******************************************************************************
 function R_PrisonPullLever: Boolean;
 By: Cstrike
 Description: Pulls the lever.
@@ -158,23 +193,35 @@ var
   Lever: TRSObject;
   TP: TPoint;
   i, x, y: Integer;
+  FindLeverBlind: Boolean;
 begin
   if not LoggedIn then
     Exit;
   Result := False;
+  FindLeverBlind := False;
+  MakeCompass ('s');
+
+  // Check for lever
   Lever := GetObjectByID(PRISON_LEVERID, OBJECT_TYPE_INTERACTABLE, 25);
   if (Lever = NULL_RSOBJECT) then
   begin
-    R_Debug('Warning, NULL_RSOBJECT (no lever) found!', 'Prison');
-    Exit;
+    R_Debug('Lever is considered a NULL_RSOBJECT... attempting blind-find', 'Prison');
+    FindLeverBlind := True; // Obsolete
+    Lever.Tile := Tile(PRISON_PETE_TILE_X - 1, PRISON_PETE_TILE_Y);
+  end;
+
+  // Lever finding time
+  if not TileOnMS (Lever.Tile, 0) then
+  begin
+    R_Debug('Lever not on MS, moving towards it...','Prison');
+    WalkToTile (Lever.Tile, 2, 0);
   end;
   if TileOnMS (Lever.Tile, 0) then
   begin
-    MakeCompass ('s');
     wait (200+random(300));
     for i:=1 to 3 do
     begin
-      R_Debug('Attempt '+ToStr(i)+'of 3 in pulling prison lever', 'Prison');
+      R_Debug('Attempt '+ToStr(i)+' of 3 in pulling prison lever', 'Prison');
       TP := TileToMSEx(Lever.Tile, 0.5, 0.0, 500);
       MMouse (TP.X, TP.Y, 1, 2);
       if R_IsUpTextMulti (['ull', 'ever']) then
@@ -186,14 +233,15 @@ begin
           R_Debug('Lever pulled', 'Prison');
           Result := True;
           Exit;
-        end;
-      end;
-      wait (250+random(500));
+        end else R_Debug('Lever R_ChooseOptionMulti failed', 'Prison');
+      end else R_Debug('Lever R_IsUpTextMulti failed', 'Prison');
+      wait (850+random(800));
     end;
     R_Debug('Failed to find lever and/or pull it', 'Prison');
-  end else R_Debug('Lever is not on MS somehow..', 'Prison');
+  end else R_Debug('Lever is still not on MS somehow...!', 'Prison');
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonWaitForNPCScreen(TimeoutMs: Integer): Boolean;
 By: Cstrike
@@ -215,6 +263,7 @@ begin
     R_Debug('PRISON_MODELINTERFACE timed out', 'Prison');
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonHowDoIGetOutOfHere : Boolean;
 By: Cstrike
@@ -234,6 +283,29 @@ begin
 end;
 
 {*******************************************************************************
+procedure R_PrisonCloseModelInterface;
+By: Cstrike
+Description: Closes the interface
+*******************************************************************************}
+procedure R_PrisonCloseModelInterface;
+var
+  t: Integer;
+begin
+  if not LoggedIn or not (ValidInterface(PRISON_MODELINTERFACE)) then
+    Exit;
+  MarkTime(t);
+  repeat
+    Mouse (498, 22, 2, 2, true);
+    wait (800+random(800));
+  until not (ValidInterface(PRISON_MODELINTERFACE)) or (TimeFromMark(t) > 5000)
+  if not TimeFromMark(t) > 5000 then
+    R_Debug('Closed model interface successfully','Prison')
+  else
+    R_Debug('Timed out closing model','Prison');
+end;
+
+// WORKS!
+{*******************************************************************************
 function R_PrisonReturnModelToPopID: Integer;
 By: Cstrike
 Description: Selects that option.
@@ -249,7 +321,7 @@ begin
   else
     R_Debug ('Prison popping interface was not valid', 'Prison');
   R_Debug ('Model ID obtained: '+ToStr(Result), 'Prison');
-  Mouse (498, 22, 2, 2, true);
+  R_PrisonCloseModelInterface;
   wait (500+random(500));
 end;
 
@@ -406,14 +478,13 @@ begin
     Exit;
   Result := False;
   PrisonOutOfTime := False;
+  g_MouseSpeedBeforePrisonRandom := MouseSpeed;
   SolveAttempts := 0;
   AnimalIDsToPop := [];
   BalloonArrayData := [];
   MakeCompass('s');
 
   // Remove this crap later
-  Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');
-  Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');
   Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');
 
   // Phase style solving
@@ -425,7 +496,7 @@ begin
     if not R_InPrison then
     begin
       R_Debug('R_InPrison returned as false, exiting random solver','Prison');
-      Exit;
+      Break;
     end;
 
     // Initiate phase solving
@@ -596,12 +667,22 @@ begin
     if PrisonPhase = PRISON_PHASE_SOLVEDRANDOM then
       Break;
 
-  until (Result) or (TimeFromMark(timePrison) > 15*60*1000) or (PrisonPhase = PRISON_PHASE_TERMINATERANDOM) or (PrisonPhase = PRISON_PHASE_SOLVEDRANDOM)
-  if (TimeFromMark(timePrison) > 15*60*1000) then
-    R_Debug ('Error: Solver timed out', 'Prison');
+  until (Result)
+    or (TimeFromMark(timePrison) > 15*60*1000)
+      or (PrisonPhase = PRISON_PHASE_TERMINATERANDOM)
+        or (PrisonPhase = PRISON_PHASE_SOLVEDRANDOM)
+          or not (LoggedIn)
+
+  if (TimeFromMark(timePrison) > 15*60*1000) or not LoggedIn then
+    R_Debug ('Error: Solver timed out or logged out', 'Prison');
+
   // Remove this crap also later
   Writeln ('[IMPORTANT] ATTEMPTED PRISON SOLVE DONE [IMPORTANT]');
-  Writeln ('[IMPORTANT] ATTEMPTED PRISON SOLVE DONE [IMPORTANT]');
-  Writeln ('[IMPORTANT] ATTEMPTED PRISON SOLVE DONE [IMPORTANT]');
   wait (2000+random(2000));
+
+  // Restore mouse speed if we haven't for whatever reason yet
+  MouseSpeed := g_MouseSpeedBeforePrisonRandom;
+
+  // If we succeed... :)
+  Result := (PrisonPhase = PRISON_PHASE_SOLVEDRANDOM) and (PrisonOutOfTime = False);
 end;

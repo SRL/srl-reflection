@@ -1,9 +1,19 @@
 {*******************************************************************************
-procedure TalkToMaster;
+function R_InQuizMaster : Boolean;
+By: Drags11
+Description: Returns true if in random.
+*******************************************************************************}
+function R_InQuizMaster : Boolean;
+begin
+  Result := ValidNPC('Quiz Master');
+end;
+
+{*******************************************************************************
+procedure R_QuizTalkToMaster;
 By: Drags111
 Description: Talks to the quiz master.
 *******************************************************************************}
-procedure TalkToMaster;
+procedure R_QuizTalkToMaster;
 var
   qx, qy: integer;
 begin
@@ -22,11 +32,11 @@ begin
 end;
 
 {*******************************************************************************
-function SlotToID(i: integer): integer;
+function R_QuizSlotToID(i: integer): integer;
 By: Drags111
 Description: Converts slot number to the ID at the slot number.
 *******************************************************************************}
-function SlotToID(i: integer): integer;
+function R_QuizSlotToID(i: integer): integer;
 begin
   case i of
     1: Result := GetModelZoom(191, 6);
@@ -36,37 +46,26 @@ begin
 end;
 
 {*******************************************************************************
-function IDToSlot(id: integer): integer;
+function R_QuizIDToSlot(id: integer): integer;
 By: Drags111
 Description: Reverse of SlotToID
 *******************************************************************************}
-function IDToSlot(id: integer): integer;
+function R_QuizIDToSlot(id: integer): integer;
 begin
-  if (SlotToID(1) = id) then Result := 1
-    else if (SlotToID(2) = id) then Result := 2
-      else if (SlotToID(3) = id) then Result := 3
+  if (R_QuizSlotToID(1) = id) then Result := 1
+    else if (R_QuizSlotToID(2) = id) then Result := 2
+      else if (R_QuizSlotToID(3) = id) then Result := 3
         else Result := -1;
 end;
 
-function inQuizMaster: Boolean;
-var
-  QuizMaster: TNPC;
-begin
-  Result := FindNPC('Quiz Master', QuizMaster);
-end;
-
-function R_InQuiz : Boolean;
-begin
-  Result := inQuizMaster;
-end;
-
 {*******************************************************************************
-function ReturnGroup(id: integer): String;
+function R_QuizReturnGroup(id: integer): String;
 By: Drags111
-Description: Returns the group name of the ID.
+Description: R_QuizReturns the group name of the ID.
 *******************************************************************************}
-function ReturnGroup(id: integer): String;
+function R_QuizReturnGroup(id: integer): String;
 begin
+  Result := 'NULL';
   case id of
     1715, 1414, 1753, 1383: Result := 'Fish';
     640, 1062, 793, 856: Result := 'Jewelry';
@@ -76,11 +75,11 @@ begin
 end;
 
 {*******************************************************************************
-function StrInArrayCount(Str: String; Arr: TStringArray): integer;
+function R_QuizStrInArrayCount(Str: String; Arr: TStringArray): integer;
 By: Drags111
 Description: Counts how many times a string is found in an array.
 *******************************************************************************}
-function StrInArrayCount(Str: String; Arr: TStringArray): integer;
+function R_QuizStrInArrayCount(Str: String; Arr: TStringArray): integer;
 var
   i: integer;
 begin
@@ -89,33 +88,33 @@ begin
 end;
 
 {*******************************************************************************
-function ReturnOddGroup(Groups: TStringArray): integer;
+function R_QuizReturnOddGroup(Groups: TStringArray): integer;
 By: Drags111
 Description: Returns the odd group out.
 *******************************************************************************}
-function ReturnOddGroup(Groups: TStringArray): integer;
+function R_QuizReturnOddGroup(Groups: TStringArray): integer;
 var
   i: integer;
 begin
-  for i := 0 to High(Groups) do
-    if (StrInArrayCount(Groups[i], Groups) = 1) then
-      Result := i+1;
+  for i:=0 to High(Groups) do
+    if (R_QuizStrInArrayCount(Groups[i], Groups) = 1) then
+      Result := i + 1;
   R_Debug('Odd Group Out: '+inttostr(Result), 'Quiz');
 end;
 
 {*******************************************************************************
-function AnswerQuestion: boolean;
+function R_QuizAnswerQuestion: boolean;
 By: Drags111
 Description: Answers the questions he asks.
 *******************************************************************************}
-procedure AnswerQuestion;
+procedure R_QuizAnswerQuestion;
 var
   Groups: TStringArray;
   OddGroup, t: integer;
   Slot: TBox;
 begin
-  Groups := [ReturnGroup(SlotToID(1)), ReturnGroup(SlotToID(2)), ReturnGroup(SlotToID(3))];
-  OddGroup := ReturnOddGroup(Groups);
+  Groups := [R_QuizReturnGroup(R_QuizSlotToID(1)), R_QuizReturnGroup(R_QuizSlotToID(2)), R_QuizReturnGroup(R_QuizSlotToID(3))];
+  OddGroup := R_QuizReturnOddGroup(Groups);
   case OddGroup of
     1: Slot := IntToBox(48, 419, 123, 446);
     2: Slot := IntToBox(221, 418, 296, 446);
@@ -140,22 +139,24 @@ function R_SolveQuizMaster: boolean;
 var
   t: Integer;
 begin
-  if not inQuizMaster then Exit;
+  if not R_InQuizMaster then Exit;
 
   // Move mouse away safely so it doesnt block the "Click to continue"
   MMouse (50, 50, 500, 200);
   wait (250+random(880));
+
+  // Solve random
   MarkTime(t);
-  while inQuizMaster do
+  while R_InQuizMaster do
   begin
-    TalkToMaster;
-    if (SlotToID(1) > -1) then
-      AnswerQuestion;
-    if (TimeFromMark(t) > 60000) then Break;
+    R_QuizTalkToMaster;
+    if (R_QuizSlotToID(1) > -1) then
+      R_QuizAnswerQuestion;
+      wait (500+random(500));
+    if (TimeFromMark(t) > 70000) then Break;
     wait (1000+random(1500));
   end;
   wait (2200+random(3000));
   if LoggedIn then
     Result := True;
 end;
-

@@ -152,7 +152,7 @@ begin
   begin
     RandName := 'Quiz';
     Music := 'the quiz master';
-    InRandom := @R_InQuiz;
+    InRandom := @R_InQuizMaster;
     SolveRandom := @R_SolveQuizMaster;
   end;
 
