@@ -565,7 +565,6 @@ begin
             R_Debug('Leo Phase 4: Talk to Leo at end', 'Leo');
             if R_TalkToLeoEnd then
             begin
-              R_Debug('Leo solved!', 'Leo');
               Wait(3000+Random(2000));
               result := True;
               Exit;
