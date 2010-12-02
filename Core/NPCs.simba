@@ -301,6 +301,42 @@ begin
 end;
 
 {*******************************************************************************
+function GetNullNPC(theVar: Variant; Sort: Boolean):TNPC;
+By: Drags111/Cstrike
+Description: Returns the null npc by the varient (name or ID).
+*******************************************************************************}
+function GetNullNPC(theVar: Variant; Sort: Boolean):TNPC;
+var
+  NPCs: TNPCArray;
+  i, vType, Hi: Integer;
+  B: Boolean;
+begin
+  Result := NULL_NPC;
+  vType := VarType(TheVar);
+  if (vType = varString) then
+    TheVar := LowerCase(TheVar);
+  if Sort then
+    NPCs := SortNPCS(GetNPCsNull)
+  else
+    NPCs := GetNPCsNull;
+  Hi := High(NPCs);
+  for i := Hi downto 0 do
+  begin
+    case (vType) of
+      varInteger: B := NPCs[i].ID = TheVar;
+      varString: B := (Pos(TheVar, LowerCase(NPCs[i].Name)) > 0);
+      else Continue;
+    end;
+    if (B) then
+    begin
+      Result := NPCs[i];
+      Exit;
+    end;
+  end;
+end;
+
+
+{*******************************************************************************
 function GetNPCsAt(T: TTile): TNPCArray;
 By:
 Description: Returns an array of the NPCs at the given tile
