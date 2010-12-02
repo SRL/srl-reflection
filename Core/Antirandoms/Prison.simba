@@ -126,6 +126,7 @@ begin
   if Result then R_Debug('Successfully clicked to talk to Prison Pete', 'Prison');
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonByPassText(Text: String; ParentI, ChildI, TimeoutMs: Integer): Boolean;
 By: Cstrike
@@ -325,6 +326,7 @@ begin
   wait (500+random(500));
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonDetermineNPCToPop(ModelID: Integer; var BalloonID: Integer; var BalloonDataArray : TIntegerArray): Boolean;
 By: Cstrike
@@ -377,11 +379,20 @@ begin
   if not LoggedIn then
     Exit;
   Result := False;
+
+  // If we haven't already...
+  R_PrisonCloseModelInterface;
+
+  // Find IDs to pop
   if high(IDsToPop) < 0 then
   begin
     R_Debug('Warning: IDsToPop has no values in it...', 'Prison');
     Exit;
   end;
+
+  MouseSpeed := 50; // Set mouse speed for popping the SOB's
+
+  // Begin popfest
   MarkTime(t);
   R_Debug ('Beginning popping attempt...', 'Prison');
   repeat
@@ -451,15 +462,13 @@ begin
     if not FailedPrison then
     begin
       R_Debug ('FREEEEDDDDOOOOOOOOMMMMM', 'Prison');
-      Result := True;
+      Result := True; // Be more efficient later on w/ this
     end else
     begin
       R_Debug ('Leaving prison with head in shame', 'Prison');
       Result := True;
     end;
     Wait (500+random(500));
-
-    Exit;
   end else R_Debug ('Somehow failed to open the door, wtf!', 'Prison');
 end;
 
@@ -567,6 +576,8 @@ begin
           end else
             R_Debug('PRISON_PHASE_ANALYZEANIMAL gone wrong due to wrong model number (less than 0)','Prison');
         end;
+        // Ensure the screen is closed
+        R_PrisonCloseModelInterface;
         // Check if terminated
         wait (500+random(1000));
         if R_PrisonPreTerminated then
