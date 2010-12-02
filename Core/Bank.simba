@@ -99,6 +99,8 @@ var
   I, T : Integer;
   Item : TInvItem;
 begin
+  if not R_BankScreen then
+    Exit;
   for I := 1 to 28 do
   begin
     Item := GetInvItemAt(I);
