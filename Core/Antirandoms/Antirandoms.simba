@@ -1,6 +1,10 @@
 const
   r_RandomCount = 18;
 
+  Result_Randoms_All = 0;
+  Result_Randoms_Failed = 1;
+  Result_Randoms_Solved = 2;
+
 type
   r_Random = Record
     RandName, Music: String;
@@ -245,8 +249,6 @@ begin
 
       Players[CurrentPlayer].Rand := '';
       Inc(RandSolved[I]);
-
-      R_FindRewardBoxes;
       Exit;
     end;
 
@@ -261,6 +263,8 @@ Description: Calls the random checks.
 function R_FindRandoms: Boolean;
 begin
   Result := R_SolveNonTalkingRandoms;
+  R_FindRewardBoxes;
+
   if (Result) then
   begin
     if (SRL_Procs[srl_OnFindRandom] <> nil) then
@@ -295,4 +299,46 @@ function R_OnFindRandomCall(var Cont : boolean) : boolean;
 begin
   Result := R_FindRandoms;
   Cont := not Result;
+end;
+
+{*******************************************************************************
+function RandomsResult(Which: Integer): TStringArray;
+Description:
+  Result_Randoms_All = Solved + Failed
+  Result_Randoms_Failed = Failed
+  Result_Randoms_Solved = Solved
+
+Results the randoms solving in a TStringArray, example  ['[S] 1 Maze', '[F] 2 Forester']
+[S] = Solved
+[F] = Failed
+*******************************************************************************}
+function RandomsResult(Res: Integer): TStringArray;
+var
+  I, arrC: Integer;
+
+begin
+  If Not r_RandomVarSet then
+    r_SetupRandoms;
+
+  SetArrayLength(Result, 36);
+
+  If(Res = Result_Randoms_Solved)or(Res = Result_Randoms_All)then
+  begin
+    For I:=0 to r_RandomCount-1 do
+      If Not (RandSolved[I] = 0)then
+      begin
+        Result[arrC] := '[S] ' + ToStr(RandSolved[I]) + ' ' + r_RandomArr[I].RandName;
+        Inc(arrC);
+      end;
+  end;
+
+  If(Res = Result_Randoms_Failed)or(Res = Result_Randoms_All)then
+    For I:=0 to r_RandomCount-1 do
+      If Not (RandFailed[I] = 0)then
+      begin
+        Result[arrC] := '[F] ' + ToStr(RandSolved[I]) + ' ' + r_RandomArr[I].RandName;
+        Inc(arrC);
+      end;
+
+  SetArrayLength(Result, arrC);
 end;

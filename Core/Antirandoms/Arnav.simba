@@ -165,7 +165,7 @@ begin
         PT := Tile(NPC.Tile.x-1, NPC.Tile.y+2);
         P := TileToMS(PT, 30);
         Mouse(p.x, p.y, 3, 3, false);
-        Result := WaitOption('nter', 200+Random(100));
+        Result := r_WaitOption('nter', 200+Random(100));
         while(R_InArnav and (TimeFromMark(t) < 8000))do
           wait(100+Random(100));
       end;
