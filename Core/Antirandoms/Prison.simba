@@ -429,9 +429,12 @@ begin
     begin
       if InIntArray(IDsToPop, NPCs[i].ID) then // If it's a valid balloon then do the hard stuff
       begin
-        NPCIDToHunt := NPCs[i].ID;
-        R_Debug ('Hunting NPC ID: '+ToStr(NPCIDToHunt),'Prison');
-        Break;
+        if not TileInBox(IntToBox(PRISON_PETE_TILE_X - 3, PRISON_PETE_TILE_Y - 1, PRISON_PETE_TILE_Y + 6, PRISON_PETE_TILE_Y - 3), NPCs[i].Tile) then
+        begin
+          NPCIDToHunt := NPCs[i].ID;
+          R_Debug ('Hunting NPC ID: '+ToStr(NPCIDToHunt),'Prison');
+          Break;
+        end else R_Debug ('Ignoring NPC due to it being outside the gate [lol]','Prison');
       end else R_Debug (ToStr(NPCs[i].ID)+' is not in IDsToPop!','Prison');
     end;
 
