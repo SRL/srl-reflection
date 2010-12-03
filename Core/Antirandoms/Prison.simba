@@ -184,6 +184,7 @@ begin
   until (ExitLoop) or (TimeFromMark(t) > 10000)
 end;
 
+// WORKS!
 {*******************************************************************************
 function R_PrisonPullLever: Boolean;
 By: Cstrike
@@ -216,6 +217,7 @@ begin
   begin
     R_Debug('Lever not on MS, moving towards it...','Prison');
     WalkToTile (Lever.Tile, 2, 0);
+    wait (250+random(250));
   end;
   if TileOnMS (Lever.Tile, 0) then
   begin
@@ -340,29 +342,39 @@ begin
   Result := False;
   BalloonNPCIDs := [];
   BalloonDataArray := [];
+
+  // Date of me running NullNPCGrabber on all the NPCIDs: ~Dec 1st or 2nd
   case ModelID of
-    10749: begin // Skinny bend @ tail
-             BalloonNPCIDs := [13091, 13093, 13096, 13098]; //13091, 13092]; //BalloonID := 3119;
+    10749: begin // Long tail
+             BalloonNPCIDs := [13098, 11238, 11239, 11240];
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 36, 37, 37, 37, 38, 38, 39, 39, 40, 40, 22, 41, 41, 42, 43, 44, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 48, 48, 49, 49, 50, 50, 51, 51, 52, 53, 53, 54, 54, 49, 49, 55, 55, 52, 52, 56, 56, 57, 22, 22, 61, 62, 63, 59, 60, 66, 66, 66, 66, 66, 67, 67, 67, 67, 67, 67, 67, 67, 68, 68, 69, 69, 70, 70, 43, 71, 71, 72, 72, 68, 68, 73, 73, 43, 43, 74, 74, 75, 76, 76, 80, 81, 82, 78, 79, 85, 85, 85, 85, 85, 86, 86, 86, 87, 87, 88, 88, 89, 89, 90, 91, 91, 92, 43, 93, 96, 96, 96, 96, 96, 97, 97, 97, 98, 98, 99, 99, 100, 100, 5, 101, 101, 102, 103, 104, 107, 107, 107, 107, 107, 108, 108, 108, 109, 109, 110, 110, 111, 111, 103, 112, 112, 113, 114, 115];
              Result := True;
            end;
-    10750: begin // Skinny tail, no bend, nobble @ end (is that a word?)
-             BalloonNPCIDs := [11237, 13095, 13097, 13100];//11241, 11238, 11237, 11236, 11239, 11240]; //BalloonID := 3120;
+    10750: begin // Bubble tail ID
+             BalloonNPCIDs := [13100, 11236, 13094, 13099];
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 37, 37, 38, 38, 39, 22, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 43, 43, 44, 44, 45, 45, 46, 46, 47, 48, 48, 49, 49, 44, 44, 50, 50, 47, 47, 51, 51, 52, 22, 22, 56, 57, 58, 54, 55, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 64, 64, 65, 65, 38, 66, 66, 67, 67, 63, 63, 68, 68, 38, 38, 69, 69, 70, 71, 71, 75, 76, 77, 73, 74, 80, 80, 80, 80, 80, 81, 81, 81, 82, 82, 82, 83, 83, 83, 84, 84, 5, 85, 85, 86, 86, 87, 87, 88, 89, 89, 90, 90, 92, 93, 96, 96, 96, 96, 97, 97, 98, 98, 99, 100, 103, 103, 103, 103, 104, 104, 105, 105, 106, 107];
              Result := True;
            end;
-    10751: begin // Fat one (aka: Cartman)
-             BalloonNPCIDs := [11236, 11239, 11241, 13099];//13095, 13096, 13094, 13093]; //BalloonID := 3121;
+    10751: begin // Fatass(aka: Cartman)
+             BalloonNPCIDs := [11237, 13091, 13092, 13093];
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 36, 37, 37, 37, 38, 38, 39, 39, 40, 40, 41, 42, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 46, 46, 47, 47, 48, 48, 49, 49, 50, 51, 51, 52, 52, 47, 47, 53, 53, 50, 50, 54, 54, 55, 22, 22, 59, 60, 61, 57, 58, 64, 64, 64, 64, 64, 65, 65, 65, 65, 65, 65, 65, 65, 66, 66, 67, 67, 68, 68, 43, 69, 69, 70, 70, 66, 66, 71, 71, 43, 43, 72, 72, 73, 74, 74, 78, 79, 80, 76, 77, 83, 83, 83, 83, 83, 84, 84, 84, 85, 85, 86, 86, 87, 87, 89, 90, 92, 92, 92, 92, 93, 93, 94, 94, 95, 5, 98, 98, 98, 98, 98, 99, 99, 99, 22, 22, 100, 100, 101, 101, 101, 102, 102, 103, 103, 103, 104, 105, 106, 106, 107, 107, 108, 109, 110, 110, 113, 113, 113, 113, 113, 114, 114, 114, 22, 22, 115, 115, 116, 116, 116, 117, 117, 118, 118, 118, 119, 120, 121, 121, 122, 122, 123, 124, 125, 125, 128, 128, 128, 128, 128, 129, 129, 129, 22, 22, 130, 130, 131, 131, 131, 132, 132, 133, 133, 133, 134, 135, 136, 136, 137, 137, 138, 32, 139, 139];
              Result := True;
            end;
     10752: begin // Horns
-             BalloonNPCIDs := [11238, 11240, 13092, 13094];//13089, 13098, 13097]; //BalloonID := 3122;
+             BalloonNPCIDs := [13096, 13095, 11238, 13097, 11241];
              BalloonDataArray := [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 2, 2, 8, 8, 5, 5, 9, 9, 10, 11, 11, 15, 16, 17, 13, 14, 20, 20, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 24, 24, 24, 25, 25, 26, 26, 26, 27, 28, 29, 29, 30, 30, 31, 32, 33, 33, 36, 36, 36, 36, 36, 37, 37, 37, 38, 38, 39, 39, 40, 40, 22, 41, 41, 42, 43, 44, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 48, 48, 49, 49, 50, 50, 51, 51, 52, 53, 53, 54, 54, 49, 49, 55, 55, 52, 52, 56, 56, 57, 22, 22, 61, 62, 63, 59, 60, 66, 66, 66, 66, 66, 67, 67, 67, 67, 67, 67, 67, 67, 68, 68, 69, 69, 70, 70, 43, 71, 71, 72, 72, 68, 68, 73, 73, 43, 43, 74, 74, 75, 76, 76, 80, 81, 82, 78, 79, 85, 85, 85, 85, 85, 86, 86, 86, 87, 87, 88, 88, 89, 89, 90, 91, 91, 92, 43, 93, 96, 96, 96, 96, 97, 97, 98, 98, 99, 5, 102, 102, 102, 102, 102, 102, 103, 103, 103, 103, 104, 104, 105, 105, 106, 106, 106, 107, 107, 108, 109, 109, 110, 110, 110, 111, 112, 113, 117, 115, 119, 119, 119, 119, 119, 119, 120, 120, 120, 120, 121, 121, 122, 122, 123, 123, 123, 124, 124, 125, 126, 126, 127, 127, 127, 128, 129, 130, 134, 132, 136, 136, 136, 136, 136, 137, 137, 137, 22, 22, 138, 138, 139, 139, 139, 140, 140, 141, 141, 141, 142, 143, 144, 144, 145, 145, 146, 147, 148, 148, 151, 151, 151, 151, 151, 152, 152, 152, 22, 22, 153, 153, 154, 154, 154, 155, 155, 156, 156, 156, 157, 158, 159, 159, 160, 160, 161, 162, 163, 163];
              Result := True;
            end;
   end;
-  R_Debug('Balloon ID returned = '+ToStr(BalloonNPCIDs), 'Prison');
+
+  // Debug for us
+  if Result then
+    R_Debug('Balloon ID returned from model "'+ToStr(ModelID)+'" = '+ToStr(BalloonNPCIDs),'Prison')
+  else
+  begin
+    R_Debug('Bad data array from bad ModelID ('+ToStr(ModelID)+'), returning all models','Prison');
+    BalloonNPCIDs := [13096, 13095, 11238, 13097, 11241, 11237, 13091, 13092, 13093, 13100, 11236, 13094, 13099, 13098, 11238, 11239, 11240];
+  end;
 end;
 
 {*******************************************************************************
@@ -372,9 +384,10 @@ Description: Searches for the balloon and pops it until I gets the key.
 *******************************************************************************}
 function R_PrisonFindAndPopNPC(IDsToPop: TIntegerArray): Boolean;
 var
-  i, t: Integer;
-  NPCs : TNPCArray;
+  i, t, t2, NPCCount, NPCIDToHunt: Integer;
+  NPCs: TNPCArray;
   TP: TPoint;
+  NPCToHunt: TNPC;
 begin
   if not LoggedIn then
     Exit;
@@ -383,6 +396,8 @@ begin
   // If we haven't already...
   R_PrisonCloseModelInterface;
 
+  NPCIDToHunt := -1; // Useless?
+
   // Find IDs to pop
   if high(IDsToPop) < 0 then
   begin
@@ -390,54 +405,86 @@ begin
     Exit;
   end;
 
+  // Set variables
   MouseSpeed := 50; // Set mouse speed for popping the SOB's
+  NPCCount := high(IDsToPop)+1; // Set which NPC we want to hunt // NOT USED?
 
   // Begin popfest
   MarkTime(t);
   R_Debug ('Beginning popping attempt...', 'Prison');
   repeat
-    NPCs := SortNPCs(GetNPCsNull);
+
+    // Get NPCs
+    NPCs := GetNPCsNull;
+
+    // If error...
     if high(NPCs) < 0 then
     begin
-      R_Debug ('There are no null NPCs or regular NPCs apparently...', 'Prison');
+      R_Debug ('There are no null NPCs, which means no balloons...WTF!?', 'Prison');
       Exit;
     end;
-    wait (500+random(500));
-    for i:=0 to high(NPCs) do
-    begin
-      if InIntArray(IDsToPop, NPCs[i].ID) then
-      begin
-        if not TileOnMS(NPCs[i].Tile, 0) then
-          Break;//WalkToTile(NPCs[i].Tile, 2, 0);
-        wait (100+random(50));
-        if (TileOnMS(NPCs[i].Tile, 0)) then
-        begin
-          TP := TileToMS(NPCs[i].Tile, 0);
-          Mouse (TP.X, TP.Y, 2, 2, false);
-          wait (340+random(230));
-          if R_ChooseOptionMulti (['nimal', 'alloon']) then
-          begin
-            R_Debug ('Successfully popped a balloon', 'Prison');
-            Result := True;
-            Wait (1000+random(500));
-            Exit;
-          end else R_Debug ('Couldn''t find balloon at spot', 'Prison');
-        end;
-      end;
-    end;
-  until (TimeFromMark(t) > 25000)
-end;
 
-{*******************************************************************************
-function R_PrisonBobSaysYouGotKeysRight: Boolean;
-By: Cstrike
-Description: If it's time to leave, it's time to leave ;)
-*******************************************************************************}
-function R_PrisonBobSaysItsTimeToLeave: Boolean;
-begin
-  if not LoggedIn then
-    Exit;
-  Result := False;
+    // Find valid NPC to hunt
+    for i:=0 to high(NPCs) do // Search all NPCs
+    begin
+      if InIntArray(IDsToPop, NPCs[i].ID) then // If it's a valid balloon then do the hard stuff
+      begin
+        NPCIDToHunt := NPCs[i].ID;
+        R_Debug ('Hunting NPC ID: '+ToStr(NPCIDToHunt),'Prison');
+        Break;
+      end else R_Debug (ToStr(NPCs[i].ID)+' is not in IDsToPop!','Prison');
+    end;
+
+    // Hunt it ruthlessly!
+    MarkTime(t2);
+    repeat // So we KNOW the balloon is here somewhere, lets hunt that fucker
+      NPCToHunt := GetNPCNull(NPCIDToHunt);
+
+      // If error
+      if NPCToHunt.Tile = NULL_TILE then
+      begin
+        R_Debug('NPCToHunt is apparently null now, exiting...','Prison');
+        Break;
+      end;
+
+      // If not on screen
+      if not TileOnMS(NPCToHunt.Tile, 0) then
+      begin
+        WalkToTile(NPCToHunt.Tile, 2, 0);
+        NPCs := GetNPCsNull; // Reload NPCs, should upgrade tiles... after
+      end else
+      // Else if we see him, get him
+      begin
+        TP := TileToMS (NPCToHunt.Tile, 0);
+        Mouse (TP.X - 1, TP.Y - 1, 2, 2, false);
+        wait (100+random(350));
+        if R_ChooseOptionMulti (['nimal', 'alloon']) then
+        begin
+          R_Debug ('Selected balloon to pop...', 'Prison');
+          Result := True;
+          Wait (3000+random(1500));
+          if R_CountItemID (PRISON_KEYID) > 0 then
+          begin
+            R_Debug ('Got a key!', 'Prison');
+            Result := True;
+            MouseSpeed := g_MouseSpeedBeforePrisonRandom;
+            Exit;
+          end else
+            R_Debug ('We don''t have the key yet? Waiting...', 'Prison');
+          // Try again
+          Wait (3000+random(1500));
+          if R_CountItemID (PRISON_KEYID) > 0 then
+          begin
+            R_Debug ('Got a key!', 'Prison');
+            Result := True;
+            MouseSpeed := g_MouseSpeedBeforePrisonRandom;
+            Exit;
+          end else R_Debug ('Wow still no key? We messed up or lag.', 'Prison');
+          R_Debug ('Failed getting key', 'Prison');
+        end else R_Debug ('Couldn''t find balloon at spot', 'Prison');
+      end;
+    until (TimeFromMark(t2) > 12000) // Time out of finding that specific NPC
+  until (TimeFromMark(t) > 24000)
 end;
 
 // WORKS!
@@ -479,7 +526,7 @@ Description: Solves the random.
 *******************************************************************************}
 function R_SolvePrison: Boolean;
 var
-  timePrison, PrisonPhase, SolveAttempts, ModelObtained: Integer;
+  i, timePrison, PrisonPhase, SolveAttempts, ModelObtained: Integer;
   PrisonOutOfTime: Boolean;
   AnimalIDsToPop, BalloonArrayData: TIntegerArray;
 begin
@@ -492,9 +539,6 @@ begin
   AnimalIDsToPop := [];
   BalloonArrayData := [];
   MakeCompass('s');
-
-  // Remove this crap later
-  Writeln ('[IMPORTANT] ATTEMPTING TO SOLVE PRISON [IMPORTANT]');
 
   // Phase style solving
   PrisonPhase := PRISON_PHASE_TALKTOPETEATSTART;
@@ -531,9 +575,18 @@ begin
       begin
         if R_PrisonHowDoIGetOutOfHere then
         begin
-          wait (1000+random(1000));
-          ClickToContinue;
-          PrisonPhase := PRISON_PHASE_PULLLEVER;
+          if not R_PrisonPreTerminated then
+          begin
+            wait (1000+random(1000));
+            //--FIX ME LATER PLZ--\\
+            for i:=1 to 5 do
+            begin
+              ClickToContinue;
+              wait (200+random(200));
+            end;
+            //--END OF FIX ME LATER--\\
+            PrisonPhase := PRISON_PHASE_PULLLEVER;
+          end;
         end;
         // Check if terminated
         if R_PrisonPreTerminated then
@@ -550,7 +603,7 @@ begin
         if R_PrisonPullLever then
           PrisonPhase := PRISON_PHASE_ANALYZEANIMAL;
         // Check if terminated
-        wait (500+random(1000));
+        wait (2500+random(3000)); // Need better failsafe for waiting for interface
         if R_PrisonPreTerminated then
         begin
           R_Debug ('R_PrisonPreTerminated returned true, we ran out of time [or logged into a terminated session]', 'Prison');
@@ -572,7 +625,8 @@ begin
             begin
               R_Debug('Animal IDs to pop: '+ToStr(AnimalIDsToPop),'Prison');
               PrisonPhase := PRISON_PHASE_POPANIMAL;
-            end;
+            end else
+              R_Debug ('','Prison');
           end else
             R_Debug('PRISON_PHASE_ANALYZEANIMAL gone wrong due to wrong model number (less than 0)','Prison');
         end;
@@ -596,9 +650,13 @@ begin
           wait (800+random(1200));
           if R_CountItemID (PRISON_KEYID) > 0 then
           begin
-            R_Debug ('Popped ID and got a key', 'Prison');
+            R_Debug('Popped ID and got a key', 'Prison');
             PrisonPhase := PRISON_PHASE_CHECKIFWENEEDMOREKEYS;
-          end else R_Debug ('Lag while getting key?', 'Prison');
+          end else R_Debug('Lag while getting key?', 'Prison');
+        end else
+        begin
+          R_Debug('R_PrisonFindAndPopNPC failed, could not pop NPC and get key in time, going back to lever phase','Prison');
+          PrisonPhase := PRISON_PHASE_PULLLEVER;
         end;
         // Check if terminated
         wait (500+random(1000));
@@ -614,21 +672,33 @@ begin
       PRISON_PHASE_CHECKIFWENEEDMOREKEYS:
       begin
         // Deal with Pete's crap
-        R_Debug ('Got key, looking for "can try it on"', 'Prison');
-        if R_PrisonByPassText('can try it on', 242, 5, 7500) then
+        R_Debug('Got key, looking for "can try it on"', 'Prison');
+        if R_PrisonByPassText('can try it on', 242, 5, 5500) then
         begin
-          R_Debug ('Got key, looking for "the right one"', 'Prison');
-          if R_PrisonByPassText('the right one', 241, 4, 7500) then
+          R_Debug('Got key, looking for "the right one"', 'Prison');
+          if R_PrisonByPassText('the right one', 241, 4, 5500) then
           begin
-            R_Debug ('Waiting for Petes response to see if we succeeded or not...', 'Prison');
+            R_Debug('Waiting for Petes response to see if we succeeded or not...', 'Prison');
             wait (6500+random(3300));
+
             // If we solved the random
             if R_PrisonByPassText('the keys right', 242, 5, 2500) then
             begin
-              R_Debug ('We solved the prison! All the keys are right', 'Prison');
-              ClickToContinue;
+              R_Debug('We solved the prison! All the keys are right', 'Prison');
+              //--FIX ME LATER PLZ--\\
+              for i:=1 to 5 do
+              begin
+                ClickToContinue;
+                wait (200+random(200));
+              end;
+              //--END OF FIX ME LATER--\\
               PrisonPhase := PRISON_PHASE_EXITTHROUGHDOOR;
             end;
+
+            // Else if we have the wrong key...
+            if R_PrisonByPassText('wrong key', 243, 4, 800) then // Check me quickly
+              R_Debug ('We got the wrong key :(','Prison');
+
             // If we need more keys
             if PrisonPhase <> PRISON_PHASE_EXITTHROUGHDOOR then
             begin
@@ -639,9 +709,10 @@ begin
               end;
               ClickToContinue;
             end else ClickToContinue;
-          end;
-        end;
-        R_Debug ('Checking "if we need more keys" termination...', 'Prison');
+
+          end else R_Debug ('Failed: R_PrisonByPassText #2','Prison');
+        end else R_Debug ('Failed: R_PrisonByPassText #1','Prison');
+        R_Debug ('Checking "if we need more keys" function termination...','Prison');
         // Check if terminated
         wait (500+random(1000));
         if R_PrisonPreTerminated then
@@ -679,7 +750,7 @@ begin
       Break;
 
   until (Result)
-    or (TimeFromMark(timePrison) > 15*60*1000)
+    or (TimeFromMark(timePrison) > 17*60*1000)
       or (PrisonPhase = PRISON_PHASE_TERMINATERANDOM)
         or (PrisonPhase = PRISON_PHASE_SOLVEDRANDOM)
           or not (LoggedIn)
@@ -688,7 +759,6 @@ begin
     R_Debug ('Error: Solver timed out or logged out', 'Prison');
 
   // Remove this crap also later
-  Writeln ('[IMPORTANT] ATTEMPTED PRISON SOLVE DONE [IMPORTANT]');
   wait (2000+random(2000));
 
   // Restore mouse speed if we haven't for whatever reason yet
