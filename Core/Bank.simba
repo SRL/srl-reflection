@@ -47,7 +47,7 @@ end;
 
 {*******************************************************************************
 Function R_DepositAll: Boolean;
-By: Camero
+By: Camero (Camaro?), Updated by: Traveler
 Description: Deposits the whole inventory either by
   -Fast clicks the button
   -Fast = false deposits each item
@@ -58,7 +58,6 @@ var
 begin
   if not R_BankScreen then
     Exit;
-
   if(fast)then
     DepositAll
   else
@@ -69,23 +68,32 @@ begin
       begin
         MouseItem(I, False);
         Wait(40 + random(40));
-        R_ChooseOption('All');
+        if (OptionExists('All')) then
+        begin
+          R_ChooseOption('All');
+        end
+        else
+        begin
+          R_ChooseOption('Deposit');
+        end;
         MarkTime(FS);
         while (R_ItemExists(I) and (TimeFromMark(FS) < 2500)) do
           Wait(44 + random(44));
       end;
     end;
-
 end;
 
 {*******************************************************************************
 function R_DepositAllID(ID : Integer): Boolean;
-By: Zyt3x
+By: Zyt3x,  updated by: Traveler
 Description: Deposits all the items with the specified ID
 *******************************************************************************}
 function R_DepositAllID(ID : Integer): Boolean;
 begin
-  Result := R_ClickItemID(ID, false, 'All');
+  if(R_CountItemID(ID) = 1) then
+    Result := R_ClickItemID(ID, False, 'Deposit')
+  else
+    Result := R_ClickItemID(ID, False, 'All');
 end;
 
 {*******************************************************************************
@@ -105,10 +113,15 @@ begin
   begin
     Item := GetInvItemAt(I);
     if(InIntArray(IDs, Item.ID))then Continue;
-    R_ClickItem(I, False, 'Deposit-All');
+    if(not R_ItemExists(I)) then Continue;
+    MouseItem(I, False);
+    if(OptionExists('All')) then
+      R_ChooseOption('All')
+    else
+      R_ChooseOption('Deposit');
     T := GetSystemTime;
-    while(R_ItemExists(I)) and (GetSystemTime-T<6000) do
-      wait(100+random(100));
+    while(R_ItemExists(I)) and (GetSystemTime - T < 6000) do
+      Wait(100+random(100));
   end;
 end;
 
