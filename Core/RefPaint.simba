@@ -1,0 +1,218 @@
+{*******************************************************************************
+procedure EnableSmartCanvas;
+by: Cstrike
+Description: Enables canvas for drawing on.
+*******************************************************************************}
+procedure EnableSmartCanvas;
+begin
+{$IFDEF SMART}
+  SmartSetDebug(true);
+{$ELSE}
+  Writeln ('[R_EnableSmartCanvas] SMART not defined.');
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure DisableSmartCanvas;
+by: Cstrike
+Description: Disables canvas.
+*******************************************************************************}
+procedure DisableSmartCanvas;
+begin
+{$IFDEF SMART}
+  SmartSetDebug(false);
+{$ELSE}
+  Writeln ('[R_DisableSmartCanvas] SMART not defined.');
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure ClearSmartCanvas;
+by: Shuttleu (IIRC)
+Description: Clears canvas.
+*******************************************************************************}
+procedure ClearSmartCanvas;
+{$IFDEF SMART}
+var
+  drawing : TBitmap;
+begin
+  drawing := TBitmap.Create;
+  drawing.canvas.handle := SmartGetDebugDC;
+  ClearRSCanvas(drawing.canvas);
+  try
+    FreeBitmap(drawing);
+  except end;
+{$ELSE}
+begin
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure SMART_DrawTrapezoidEx(Clear: boolean; TL, TR, BL, BR: TPoint; color: TColor);
+Contributors: Sir R. Magician, caused, mastaraymond, modded by Cstrike
+Description: Draws a trapezoid onto the SMART Debug canvas
+*******************************************************************************}
+procedure SMART_DrawTrapezoidEx(Clear: boolean; TL, TR, BL, BR: TPoint; color: TColor);
+{$IFDEF SMART}
+var
+  drawing : TBitmap;
+begin
+  drawing := TBitmap.Create;
+  drawing.canvas.handle := SmartGetDebugDC;
+  drawing.canvas.Pen.Color := color;
+  if Clear then ClearRSCanvas(drawing.canvas);
+  drawing.canvas.moveto(TL.x,TL.y);
+  drawing.canvas.LineTo(TR.x,TR.y);
+  drawing.canvas.LineTo(BR.x,BR.y);
+  drawing.canvas.LineTo(BL.x,BL.y);
+  drawing.canvas.LineTo(TL.x,TL.y);
+  try
+    FreeBitmap(drawing);
+  except end;
+{$ELSE}
+begin
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure SMART_DrawTrapezoid(TL, TR, BL, BR: TPoint);
+Contributors: Cstrike
+Description: New version from drawing it.
+*******************************************************************************}
+procedure SMART_DrawTrapezoid(TL, TR, BL, BR: TPoint);
+{$IFDEF SMART}
+begin
+  SMART_DrawTrapezoidEx(True, TL, TR, BL, BR, clRed);
+{$ELSE}
+begin
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure R_DebugObjects(ObjType: Integer; ClearDebug: Boolean; Color: TColor);
+by: Bad Boy JH
+Description: Draws all the objects on your screen.
+*******************************************************************************}
+procedure R_DebugObjects(ObjType: Integer; ClearDebug: Boolean; Color: TColor);
+{$IFDEF SMART}
+var
+  I, X, Y, height: integer;
+  Temp, tpa: tpointarray;
+  MyPos: TTile;
+  TheObject: TRSObject;
+  ScreenPoint: TPoint;
+begin
+  MyPos := GetMyPos;
+  for X := MyPos.x - 7 to MyPos.x + 7 do
+    for Y := MyPos.y - 7 to MyPos.y + 7 do
+      if TileOnMS(Tile(X, Y), 0) then
+      begin
+        ScreenPoint := TileToMS(Tile(X, Y), 0);
+        TheObject := GetObjectAt(Tile(X, Y), ObjType);
+        if TheObject = NULL_RSObject then
+          Continue;
+        Temp := LoadTextTPA('. ' + IntToStr(TheObject.ID), UpChars, height);
+        for i:= 0 to High(temp) do
+        begin
+          Temp[i].x := Temp[i].x + ScreenPoint.x - Height;
+          Temp[i].y := Temp[i].y + ScreenPoint.y - Height;
+        end;
+        TPA := CombineTPA(TPA, Temp);
+      end;
+  SMART_DrawDotsEx(ClearDebug, TPA, Color);
+{$ELSE}
+begin
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure R_DebugNPCs(ClearDebug: Boolean);
+by: Copied from Bad Boy JH and modded by Cstrike
+Description: Draws all the NPCs on your screen. Only gets first NPC on a tile.
+*******************************************************************************}
+procedure R_DebugNPCs(ClearDebug: Boolean);
+{$IFDEF SMART}
+var
+  I, X, Y, height: integer;
+  Temp, tpa: tpointarray;
+  MyPos: TTile;
+  TheNPCArray: TNPCArray;
+  TheNPC: TNPC;
+  ScreenPoint: TPoint;
+begin
+  MyPos := GetMyPos;
+  for X := MyPos.x - 7 to MyPos.x + 7 do
+    for Y := MyPos.y - 7 to MyPos.y + 7 do
+      if TileOnMS(Tile(X, Y), 0) then
+      begin
+        ScreenPoint := TileToMS(Tile(X, Y), 0);
+        TheNPCArray := GetNPCsAt(Tile(X, Y));
+        if (high(TheNPCArray) < 0) then
+          Continue;
+        TheNPC := TheNPCArray[0]; // Only gets first one
+        if TheNPC = NULL_NPC then
+          Continue;
+        Temp := LoadTextTPA('. ' + ToStr(TheNPC.ID), UpChars, height);
+        for i:= 0 to High(temp) do
+        begin
+          Temp[i].x := Temp[i].x + ScreenPoint.x - Height;
+          Temp[i].y := Temp[i].y + ScreenPoint.y - Height;
+        end;
+        TPA := CombineTPA(TPA, Temp);
+      end;
+  SMART_DrawDotsEx(ClearDebug, TPA, clRed);
+{$ELSE}
+begin
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure R_DrawTile (Tile: TTile; ClearScreen: Boolean; Color: TColor);
+by: Cstrike
+Description: Draws tile on your screen.
+*******************************************************************************}
+procedure R_DrawTile (Tile: TTile; ClearScreen: Boolean; Color: TColor);
+{$IFDEF SMART}
+var
+  CornerTL, CornerBR: TPoint;
+  newTPA: TPointArray;
+begin
+  if not TileOnMS(Tile, 0) or not R_LoggedIn then
+    Exit;
+  CornerBR := TileToMSEx(Tile, 1.0, 0.0, 0);
+  CornerTL := TileToMSEx(Tile, 0.0, 1.0, 0);
+  FindTPAEdgesWrap(TPAFromBox(IntToBox(CornerTL.X, CornerTL.Y, CornerBR.X, CornerBR.Y)), newTPA);
+  SMART_DrawDotsEx(ClearScreen, newTPA, Color);
+{$ELSE}
+begin
+{$ENDIF}
+end;
+
+{*******************************************************************************
+procedure R_DrawTileHeight (Tile: TTile; Height: Integer; ClearScreen: Boolean; ColorBase, ColorHeight: TColor);
+by: Cstrike
+Description: Draws tile on your screen.
+*******************************************************************************}
+procedure R_DrawTileHeight (Tile: TTile; Height: Integer; ClearScreen: Boolean; ColorBase, ColorHeight: TColor);
+{$IFDEF SMART}
+var
+  CornerTL, CornerBR: TPoint;
+  newTPA: TPointArray;
+  i: Integer;
+begin
+  if not TileOnMS(Tile, 0) or not R_LoggedIn then
+    Exit;
+  for i:=0 to 1 do
+  begin
+    CornerBR := TileToMSEx(Tile, 1.0, 0.0, Height*i);
+    CornerTL := TileToMSEx(Tile, 0.0, 1.0, Height*i);
+    FindTPAEdgesWrap(TPAFromBox(IntToBox(CornerTL.X, CornerTL.Y, CornerBR.X, CornerBR.Y)), newTPA);
+    if i = 0 then
+      SMART_DrawDotsEx(ClearScreen, newTPA, ColorBase)
+    else
+      SMART_DrawDotsEx(False, newTPA, ColorHeight);
+  end;
+{$ELSE}
+begin
+{$ENDIF}
+end;
