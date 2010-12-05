@@ -39,10 +39,11 @@ Description: Converts slot number to the ID at the slot number.
 function R_QuizSlotToID(i: integer): integer;
 begin
   case i of
-    1: Result := GetModelZoom(191, 6);
-    2: Result := GetModelZoom(191, 7);
-    3: Result := GetModelZoom(191, 8);
+    1: Result := GetInterfaceComponentID(191, 6); // Cstrike: Edited to compID
+    2: Result := GetInterfaceComponentID(191, 7);
+    3: Result := GetInterfaceComponentID(191, 8);
   end;
+  R_Debug ('R_QuizSlotToID returned slot #'+ToStr(i)+' as ComponentID: '+ToStr(Result), 'Quiz');
 end;
 
 {*******************************************************************************
@@ -56,6 +57,7 @@ begin
     else if (R_QuizSlotToID(2) = id) then Result := 2
       else if (R_QuizSlotToID(3) = id) then Result := 3
         else Result := -1;
+  R_Debug ('R_QuizIDToSlot returned ID #'+ToStr(id)+' to slot: '+ToStr(Result), 'Quiz');
 end;
 
 {*******************************************************************************
@@ -66,12 +68,21 @@ Description: R_QuizReturns the group name of the ID.
 function R_QuizReturnGroup(id: integer): String;
 begin
   Result := 'NULL';
+  { // Outdated models
   case id of
     1715, 1414, 1753, 1383: Result := 'Fish';
     640, 1062, 793, 856: Result := 'Jewelry';
     1510, 1218, 1331, 1996: Result := 'Weapons';
     908, 1280: Result := 'Farming';
   end;
+  }
+  case id of
+    6189, 6190: Result := 'Fish';
+    6197, 6198: Result := 'Jewelry';
+    6191, 6192, 6193, 6194: Result := 'Weapons';
+    6195, 6196: Result := 'Farming';
+  end;
+  R_Debug ('Id: '+ToStr(id)+' was found to be: '+Result, 'Quiz');
 end;
 
 {*******************************************************************************
@@ -83,6 +94,10 @@ function R_QuizStrInArrayCount(Str: String; Arr: TStringArray): integer;
 var
   i: integer;
 begin
+  if High(Arr) < 0 then
+  begin
+    R_Debug ('Warning: Array count was zero, aborting R_QuizStrInArrayCount', 'Quiz');
+  end;
   for i := 0 to High(Arr) do
     if Arr[i] = Str then Inc(Result);
 end;
