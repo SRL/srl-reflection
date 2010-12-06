@@ -120,6 +120,13 @@ begin
   //Writeln('MenuY: '+ToStr(SmartGetFieldInt(0, hook_static_MenuY)));
   MenuOptions := GetMenuText;
 
+  // Cstrike added this block
+  if (high(MenuOptions) < 0) or (high(Options) < 0) then
+  begin
+    Writeln('Warning: High array size for MenuOptions/Options is < 0, aborting R_ChooseOptionMulti to prevent crash');
+    Exit;
+  end;
+
   for i := 0 to High(MenuOptions) do
   begin
     for i2 := 0 to High(Options) do
@@ -169,7 +176,16 @@ var
   i: integer;
   MenuOptions: TStringArray;
 begin
+  Result := False;
   MenuOptions := GetMenuText;
+
+  // Cstrike added this block
+  if (high(MenuOptions) < 0) then
+  begin
+    Writeln('Warning: High array size for MenuOptions is < 0, aborting R_ChooseOption to prevent crash');
+    Exit;
+  end;
+
   for i := High(MenuOptions) downto 0 do
   begin
     Result := (Pos(Option, MenuOptions[i]) > 0);
