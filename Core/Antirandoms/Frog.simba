@@ -44,8 +44,8 @@ begin
   begin
     Writeln ('[Reflection] Already talking to frog herald.');
     While r_ClickToContinue do
-      Wait(1000+Random(1000));
-
+      Wait(2000+Random(2000));
+    r_ClickToContinue; // One last time :)
   end else
   begin
     NPCs := GetNPCsNull;
@@ -97,6 +97,7 @@ begin
          begin
            Wait(400+Random(200));
            Flag;
+           MarkTime(NPCTime);
            repeat
             wait (100+random(100));
              if (GetInterfaceText (243,3) = 'Frog Princess')or(GetInterfaceText (243,3) = 'Frog Prince') then
@@ -106,7 +107,6 @@ begin
                Exit;
              end;
            until (TimeFromMark(NPCTime) > 10000)
-
            Writeln('[Reflection] Took too long interact with the frog');
          end;
        end else
@@ -114,9 +114,7 @@ begin
          WalkToTile(NPCs[I].Tile, 0, 0);
          Continue;
        end;
-
      end;
-
   until (TimeFromMark(iTime) > 60000)
   writeln ('[Reflection] Error finding frog! Time > 1 min');
 end;
