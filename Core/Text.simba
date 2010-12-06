@@ -166,6 +166,75 @@ begin
 end;
 
 {*******************************************************************************
+function R_ChooseOptionDual(AboveOptionFragment, BelowOptionFragment: String; ChooseAboveOption: Boolean): Boolean;
+By: Cstrike, copied mainly from Drags111
+Description: Checks for two paired text that should be next to each other.
+Useful for fishing when you have Net/Harpoon versus Cage/Harpoon and you are
+trying to 'harpoon'. If the texts aren't next to each other, will return false.
+ChooseTopOption = true means it will choose AboveOption, false = BelowOption.
+*******************************************************************************}
+function R_ChooseOptionDual(AboveOptionFragment, BelowOptionFragment: String; ChooseAboveOption: Boolean): Boolean;
+var
+  i, xOff, yOff, t: Integer;
+  P : TPoint;
+  MenuOptions: TStringArray;
+begin
+  Result := False;
+  if not IsMenuOpen then
+  begin
+    MarkTime(t);
+    while (TimeFromMark(t) < 1000) do
+      wait (50);
+    if not IsMenuOpen then Exit;
+  end;
+  P := Point(SmartGetFieldInt(0, hook_static_MenuX) + 4, SmartGetFieldInt(0, hook_static_MenuY) + 4);
+  MenuOptions := GetMenuText;
+  if (high(MenuOptions) < 1) then
+  begin
+    Writeln('MenuOptions size is not large enough (<2 options), returning false and exiting R_ChooseOptionDual');
+    Exit;
+  end;
+  if ChooseAboveOption then // Choose top option
+  begin
+    for i := 0 to High(MenuOptions) - 1 do
+    begin
+      if (Pos(Lowercase(AboveOptionFragment), Lowercase(MenuOptions[i])) <> 0) and (pos(Lowercase(BelowOptionFragment), Lowercase(MenuOptions[(i+1)])) <> 0) then
+      begin
+        xOff := RandomRange(4, 4 + Random(Length(MenuOptions[i]) * 4 - 4));
+        yOff := 21 + (16 * i) + RandomRange(2, 10);
+        Mouse(P.x + xOff, P.y + yOff, 0, 0, True);
+        Wait(RandomRange(80, 100));
+        Result := not IsMenuOpen;
+        Exit;
+      end;
+    end;
+  end else // Else choose bottom option
+  begin
+    for i := 1 to High(MenuOptions) do
+    begin
+      if (Pos(Lowercase(BelowOptionFragment), Lowercase(MenuOptions[i])) <> 0) and (pos(Lowercase(AboveOptionFragment), Lowercase(MenuOptions[(i-1)])) <> 0) then
+      begin
+        xOff := RandomRange(4, 4 + Random(Length(MenuOptions[i]) * 4 - 4));
+        yOff := 21 + (16 * i) + RandomRange(2, 10);
+        Mouse(P.x + xOff, P.y + yOff, 0, 0, True);
+        Wait(RandomRange(80, 100));
+        Result := not IsMenuOpen;
+        Exit;
+      end;
+    end;
+  end;
+  // If it falls through...
+  case Random(2) of
+    0: R_ChooseOptionMulti(['Cancel']);
+    1: while IsMenuOpen do
+       begin
+         MMouse(Random(MSX2), Random(MSY2), 0, 0);
+         Wait(RandomRange(100, 200));
+       end;
+  end;
+end;
+
+{*******************************************************************************
 function OptionExists(option: string): Boolean;
 By: Drags111
 Description: Returns true if an option exists in the choose option menu. Choose
