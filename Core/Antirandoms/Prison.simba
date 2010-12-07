@@ -177,7 +177,7 @@ begin
               or FindNPCText ('a lot for your help') then // After random finished
               begin
                 R_Debug('Found useless text, clicking continue...','Prison');
-                ClickToContinue;
+                R_ClickToContinue;
                 ExitLoop := False;
               end;
     Wait (300+random(600));
@@ -475,7 +475,7 @@ begin
           end else
             R_Debug ('We don''t have the key yet? Waiting...', 'Prison');
           // Try again
-          Wait (3000+random(1500));
+          Wait (3000+random(2500));
           if R_CountItemID (PRISON_KEYID) > 0 then
           begin
             R_Debug ('Got a key!', 'Prison');
@@ -584,7 +584,7 @@ begin
             //--FIX ME LATER PLZ--\\
             for i:=1 to 5 do
             begin
-              ClickToContinue;
+              R_ClickToContinue;
               wait (200+random(200));
             end;
             //--END OF FIX ME LATER--\\
@@ -691,7 +691,7 @@ begin
               //--FIX ME LATER PLZ--\\
               for i:=1 to 5 do
               begin
-                ClickToContinue;
+                R_ClickToContinue;
                 wait (200+random(200));
               end;
               //--END OF FIX ME LATER--\\
@@ -700,7 +700,12 @@ begin
 
             // Else if we have the wrong key...
             if R_PrisonByPassText('wrong key', 243, 4, 800) then // Check me quickly
-              R_Debug ('We got the wrong key :(','Prison');
+            begin
+              R_Debug ('We got the wrong key :( Sorry...','Prison');
+              while (R_ClickToContinue) do
+                Wait (1000+random(1000));
+              PrisonPhase := PRISON_PHASE_PULLLEVER;
+            end;
 
             // If we need more keys
             if PrisonPhase <> PRISON_PHASE_EXITTHROUGHDOOR then
@@ -710,8 +715,8 @@ begin
                 R_Debug ('Need to pop more balloons', 'Prison');
                 PrisonPhase := PRISON_PHASE_PULLLEVER;
               end;
-              ClickToContinue;
-            end else ClickToContinue;
+              R_ClickToContinue;
+            end else R_ClickToContinue;
 
           end else R_Debug ('Failed: R_PrisonByPassText #2','Prison');
         end else R_Debug ('Failed: R_PrisonByPassText #1','Prison');
