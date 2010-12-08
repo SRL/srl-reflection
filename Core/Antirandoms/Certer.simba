@@ -299,7 +299,7 @@ var
 begin
   if not LoggedIn then Exit;
   Result := False;
-
+  MakeCompass('n');
   if R_InCerter then
   begin
     for i := 1 to 3 do // 3 chances
