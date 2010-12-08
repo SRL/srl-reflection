@@ -170,7 +170,7 @@ begin
         Tiles := [Point(3091,3245), Point(3091,3243), Point(3091,3242)];
     'al kharid', 'akb':
         Tiles := [Point(3268,3168), Point(3268,3167), Point(3268,3166),
-                  Point(3268,3165), Point(3268,3164)];
+                  Point(3268,3169), Point(3268,3164)];
     'seb', 'seers':
         Tiles := [Point(2729,3494), Point(2728,3494), Point(2727,3494),
                   Point(2724,3494), Point(2722,3494)];
