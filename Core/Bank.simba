@@ -173,7 +173,7 @@ begin
                   Point(3268,3169), Point(3268,3164)];
     'seb', 'seers':
         Tiles := [Point(2729,3494), Point(2728,3494), Point(2727,3494),
-                  Point(2724,3494), Point(2722,3494)];
+                  Point(2724,3494), Point(2722,3494), Point(2721,3494)];
 
     'ctb', 'catherby':
         Tiles := [Point(2807,3442), Point(2809,3442), Point(2810,3442),
