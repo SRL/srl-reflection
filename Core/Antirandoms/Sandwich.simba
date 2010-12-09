@@ -27,7 +27,7 @@ begin
   Case lowercase(S) of
     'doughnut': Result := 45666;
     'baguette': Result := 10726;
-    'roll': Result := 10727;
+    'bread roll', 'roll': Result := 10727;
     'chocolate bar': Result := 10728;
     'meat pie', 'pie': Result := 10730;
     'square sandwich', 'square': Result := 10731;
