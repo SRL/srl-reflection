@@ -66,7 +66,7 @@ begin
       R_TalkToArnav;
 
     While ClickToContinue do
-      Wait(7000+Random(5000));
+      Wait(3000+Random(3000));
 
     if(FindNPCChatText('ready', ClickLeft))then
     begin
