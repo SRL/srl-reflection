@@ -271,107 +271,107 @@ begin
 end;
 
 {*******************************************************************************
-function GetObjectsByID(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObjectArray;
-By: Drags111
-Description: Returns an array of all objects with the IDs. Sorted from closest
-            to your character to farthest.
+function SortedCircleTPA(Center: TPoint; Radius: Integer): TPointArray;
+By: mormonman
+Description: Returns an array of all TPoints inside the circle. Sorted from
+            closest to the Center.
+*******************************************************************************}
+function SortedCircleTPA(Center: TPoint; Radius: Integer): TPointArray;
+var
+  X, Y: Integer;
+begin
+  for X := Center.x - Radius to Center.x + Radius do
+    for Y := Center.y - Radius to Center.y + Radius do
+      if Distance(X, Y, Center.x, Center.y) < Radius then
+        Result := CombineTPA(Result, [Point(X, Y)]);
+  SortTPAFrom(Result, Center);
+end;
+
+{*******************************************************************************
+function GetObjectsByIDEx(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObjectArray;
+By: mormonman
+Description: Returns an array of all objects within the MaxDist with the IDs.
+            Sorted from closest to the your player.
             MaxDist: This is the maximum distance from your player you wish to
                      search. The smaller the number, the faster the search is
                      completed. The maximum is 52.
 *******************************************************************************}
-function GetObjectsByID(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObjectArray;
+function GetObjectsByIDEx(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObjectArray;
 var
-   Dir, tLength, f, X, Y, resCount: Integer;
+   f, resCount: Integer;
    TP: TTile;
    TileObject: TRSObject;
+   TPA: TPointArray;
 begin
   SetLength(Result, 104*104);
   resCount := 0;
   TP := GetMyPos;
-  X := TP.X;
-  Y := TP.Y;
-  Dir := 0;
-  tLength := 1;
-  while (tLength < MaxDist) do
+  TPA := SortedCircleTPA(TileToPoint(TP), MaxDist);
+  if length(TPA) < 1 then Exit;
+  for f := 0 to High(TPA) do
   begin
-    for F := 0 to tLength - 1 do
+    TileObject := GetObjectAt(Tile(TPA[f].x, TPA[f].y), objType);
+    if (not (TileObject = NULL_RSOBJECT) and InIntArray(IDs, TileObject.ID)) then
     begin
-      case Dir of
-        0: Dec(Y);
-        1: Inc(X);
-        2: Inc(Y);
-        3: Dec(X);
-      end;
-      TileObject := GetObjectAt(Tile(x, y), objType);
-      if (not (TileObject = NULL_RSOBJECT) and InIntArray(IDs, TileObject.ID))then
-      begin
-        Result[resCount] := TileObject;
-        Inc(resCount);
-      end;
+      Result[resCount] := TileObject;
+      Inc(resCount);
     end;
-    Inc(Dir);
-    dir := dir mod 4;
-    if Dir mod 2 = 0 then
-      Inc(tLength);
   end;
   SetLength(Result, resCount);
 end;
 
 {*******************************************************************************
+function GetObjectsByID(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObjectArray;
+By: mormonman
+Description: Returns an array of all objects within the MaxDist with the ID.
+            Sorted from closest to the your player.
+            MaxDist: This is the maximum distance from your player you wish to
+                     search. The smaller the number, the faster the search is
+                     completed. The maximum is 52.
+*******************************************************************************}
+function GetObjectsByID(ID: Integer; objType, MaxDist: Integer): TRSObjectArray;
+begin
+  Result := GetObjectsByIDEx([ID], objType, MaxDist);
+end;
+
+{*******************************************************************************
 function GetObjectByIDEx(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObject;
-By: Drags111
-Description: Returns the nearest object with one of the IDs. Sorted from closest
-            to your character to farthest.
+By: mormonman
+Description: Returns the closest object within the MaxDist with the IDs.
             MaxDist: This is the maximum distance from your player you wish to
                      search. The smaller the number, the faster the search is
                      completed. The maximum is 52.
 *******************************************************************************}
 function GetObjectByIDEx(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObject;
 var
-   Dir, tLength, f, X, Y: Integer;
+   f: Integer;
    TP: TTile;
    TileObject: TRSObject;
+   TPA: TPointArray;
 begin
-  Result := NULL_RSOBJECT;
   TP := GetMyPos;
-  X := TP.X;
-  Y := TP.Y;
-  Dir := 0;
-  tLength := 1;
-  while (tLength < MaxDist) do
+  TPA := SortedCircleTPA(TileToPoint(TP), MaxDist);
+  if length(TPA) < 1 then Exit;
+  for f := 0 to High(TPA) do
   begin
-    for F := 0 to tLength - 1 do
+    TileObject := GetObjectAt(Tile(TPA[f].x, TPA[f].y), objType);
+    if (not (TileObject = NULL_RSOBJECT) and InIntArray(IDs, TileObject.ID)) then
     begin
-      case Dir of
-        0: Dec(Y);
-        1: Inc(X);
-        2: Inc(Y);
-        3: Dec(X);
-      end;
-      TileObject := GetObjectAt(Tile(x, y), objType);
-      if (not (TileObject = NULL_RSOBJECT) and InIntArray(IDs, TileObject.ID)) then
-      begin
-        Result := TileObject;
-        Exit;
-      end;
+      Result := TileObject;
+      Exit;
     end;
-    Inc(Dir);
-    dir := dir mod 4;
-    if Dir mod 2 = 0 then
-      Inc(tLength);
   end;
 end;
 
 {*******************************************************************************
-function GetObjectByID(ID: Integer; objType, MaxDist: Integer): TRSObject;
-By: Drags111
-Description: Returns the nearest object with the ID. Sorted from closest
-            to your character to farthest.
+function GetObjectByID(IDs: TIntegerArray; objType, MaxDist: Integer): TRSObject;
+By: mormonman
+Description: Returns the closest object within the MaxDist with the ID.
             MaxDist: This is the maximum distance from your player you wish to
                      search. The smaller the number, the faster the search is
                      completed. The maximum is 52.
 *******************************************************************************}
-function GetObjectByID(ID: Integer; objType, MaxDist: Integer): TRSObject;
+function GetObjectByID(ID, objType, MaxDist: Integer): TRSObject;
 begin
   Result := GetObjectByIDEx([ID], objType, MaxDist);
 end;

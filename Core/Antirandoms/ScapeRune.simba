@@ -314,7 +314,7 @@ begin
     begin
       R_Debug('Searching for proper fishing pool attempt #'+inttostr(j), 'ScapeRune');
       wait (6500+random(3200)); // Let camera calibrate to pause
-      FishObj := GetObjectsByID([R_EVILBOB_FISHINGSPOT], OBJECT_TYPE_INTERACTABLE, 52);
+      FishObj := GetObjectsByIDEx([R_EVILBOB_FISHINGSPOT], OBJECT_TYPE_INTERACTABLE, 52);
 
       // If we found more than 4 fish pools or none, we have a problem
       if (high(FishObj) < 0) then
@@ -494,7 +494,7 @@ begin
   begin
     R_Debug('Attempt '+ToStr(k)+'/3 of cooking fish', 'ScapeRune');
     R_ScapeRuneWalkToCenter;
-    CookPots := GetObjectsByID ([R_EVILBOB_COOKINGPOT], OBJECT_TYPE_INTERACTABLE, 52);
+    CookPots := GetObjectsByIDEx ([R_EVILBOB_COOKINGPOT], OBJECT_TYPE_INTERACTABLE, 52);
 
     // Failsafe
     if high(CookPots) < 0 then

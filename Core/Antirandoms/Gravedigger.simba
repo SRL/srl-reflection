@@ -296,7 +296,7 @@ begin
 
   Result := False;
   // Failsafe below
-  ObjCasket := GetObjectsByID ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52);
+  ObjCasket := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52);
   if high(ObjCasket) < 0 then
   begin
     R_Debug('We have all the coffins', 'Leo');
@@ -308,7 +308,7 @@ begin
   SetAngle(True);
   R_Debug('Grabbing coffins', 'Leo');
   repeat
-    ObjCasketUpdated := GetObjectsByID ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52); // Allows for dynamic stuff
+    ObjCasketUpdated := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52); // Allows for dynamic stuff
 
     if high(ObjCasketUpdated) < 0 then
       Break;
