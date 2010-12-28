@@ -213,7 +213,7 @@ begin
     'bankbooth', 'bank booth', 'bank_booth', 'booth', 'bank':
     begin
       BankBoothIDs := I_ReturnBankBoothIDs;
-      BankerObjects := GetObjectsByID (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
+      BankerObjects := GetObjectsByIDEx (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
       if high(BankerObjects) < 0 then Exit;
       SetArrayLength (TileArray, high(BankerObjects)+1);
       for i:=0 to high(BankerObjects) do
@@ -268,7 +268,7 @@ begin
     'chest', 'bank chest':
     begin
       ChestIDs := I_ReturnBankChestIDs;
-      BankerObjects := GetObjectsByID (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
+      BankerObjects := GetObjectsByIDEx (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
       if high(BankerObjects) < 0 then Exit;
       SetArrayLength (TileArray, high(BankerObjects)+1);
       for i:=0 to high(BankerObjects) do
@@ -295,7 +295,7 @@ begin
     'deposit', 'deposit box', 'deposit_box', 'dep', 'box':
     begin
       DepositBoxIDs := I_ReturnBankDepositBoxIDs;
-      BankerObjects := GetObjectsByID (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
+      BankerObjects := GetObjectsByIDEx (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
       if high(BankerObjects) < 0 then Exit;
       SetArrayLength (TileArray, high(BankerObjects)+1);
       for i:=0 to high(BankerObjects) do
@@ -346,7 +346,7 @@ begin
   // Check bank booth
   Writeln ('[Infinity: Banking] Looking for bank booths');
   BankBoothIDs := I_ReturnBankBoothIDs;
-  BankerObjects := GetObjectsByID (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
+  BankerObjects := GetObjectsByIDEx (BankBoothIDs, OBJECT_TYPE_INTERACTABLE, I_Minimap_Radius);
   if not (high(BankerObjects) < 0) then
   begin
     for i:=0 to high(BankerObjects) do

@@ -1,10 +1,14 @@
 const
   R_FORESTERID = 2458;
 
-  R_ONETAIL = 2459;
-  R_TWOTAIL = 2460;
-  R_THREETAIL = 2461;
-  R_FOURTAIL = 2462;
+  R_ONETAIL_1 = 4277;
+  R_ONETAIL_2 = 7445;
+  R_TWOTAIL_1 = 13246;
+  R_TWOTAIL_2 = 7446;
+  R_THREETAIL_1 = 13248;
+  R_THREETAIL_2 = 13247;
+  R_FOURTAIL_1 = 13249;
+  R_FOURTAIL_2 = 13250;
 
   R_MEATID = 6178;
 
@@ -15,21 +19,29 @@ begin
   Result := ValidNPCNull(R_FORESTERID);
 end;
 
-Function r_ForesterWants: Integer;
+Function r_ForesterWants: TIntegerArray;
 var
   S: String;
 begin
-  Result := -1;
+  Result := [-1];
 
-  S := GetInterfaceText(242, 4);
+  while ClickContinue(False, False) do
+  begin
+
+    S := GetInterfaceText(242, 4);
+    if Pos('kill', S) > 0 then
+      Break;
+    ClickContinue(True, True);
+  end;
+
   Delete(S, 1, Pos('kill a', S)+6);
   Delete(S, Pos('-', S), Length(S));
 
   Case S of
-    'one': Result := R_ONETAIL;
-    'two': Result := R_TWOTAIL;
-    'three': Result := R_THREETAIL;
-    'four': Result := R_FOURTAIL;
+    'one': Result := [R_ONETAIL_1, R_ONETAIL_2];
+    'two': Result := [R_TWOTAIL_1, R_TWOTAIL_2];
+    'three': Result := [R_THREETAIL_1, R_THREETAIL_2];
+    'four': Result := [R_FOURTAIL_1, R_FOURTAIL_2];
   end;
   r_Debug('Going to look for ' + S + ' tailed pheasant!', 'Forester');
   ClickToContinue;
@@ -80,30 +92,47 @@ begin
   until Result or (GetSystemTime > T);
 end;
 
-Function r_ForesterKill(Seekfor: Integer): Boolean;
+function r_GetNPC(IDs: TIntegerArray):TNPC;
 var
   NPCs: TNPCArray;
+  i, Hi: Integer;
+  B: Boolean;
+begin
+  Result := NULL_NPC;
+  NPCs := SortNPCS(GetNPCs);
+  Hi := High(NPCs);
+  for i := Hi downto 0 do
+  begin
+    if InIntArray(IDs, NPCs[i].ID) then
+    begin
+      Result := NPCs[i];
+      Exit;
+    end;
+  end;
+end;
+
+Function r_ForesterKill(SeekFor: TIntegerArray): Boolean;
+var
+  NPC: TNPC;
   C: TPoint;
-  iTime, P, iTimeEx: Integer;
+  iTime, iTimeEx: Integer;
 begin
   r_Debug('Finding pheasant..', 'Forester');
-
-  P := Seekfor;
   iTime := GetSystemTime;
   Repeat
-    NPCs := SortNPCs(GetNPCsBy(P));
+    NPC := r_GetNPC(SeekFor);
 
-    If (GetArrayLength(NPCs) = 0) then
+    If (NPC = NULL_NPC) then
       Exit;
 
-    If Not TileOnMS(NPCs[0].Tile, 0)then
+    If Not TileOnMS(NPC.Tile, 0)then
     begin
-      r_Debug('Tile not on MS' + ToStr(NPCs[0].Tile) + ', walking there.', 'Forester');
-      WalkToTile(NPCs[0].Tile, 0, 0);
+      r_Debug('Tile not on MS' + ToStr(NPC.Tile) + ', walking there.', 'Forester');
+      WalkToTile(NPC.Tile, 0, 0);
       Exit;
     end;
 
-    C := TileToMS(NPCs[0].Tile, 0);
+    C := TileToMS(NPC.Tile, 0);
     Mouse(C.X, C.Y, 5, 5, False);
     Result := WaitOption('tack', 200+Random(100));
 
@@ -124,30 +153,6 @@ begin
       Wait(3000+Random(500));
     end;
   until(Result)or(GetSystemTime-iTime > 60000)
-end;
-
-Function r_ForesterPickup: Boolean;
-var
-  G: TGroundItemArray;
-  I: Integer;
-  C: TPoint;
-begin
-  G := GetItemsNear(6);
-  For I:=0 to High(G) do
-   If (G[I].ID = R_MEATID)then
-   begin
-     r_Debug('Found meat' + ToStr(G[I].Tile), 'Forester');
-     C := TileToMS(G[I].Tile, 0);
-     Mouse(C.X, C.Y, 3, 3, False);
-     Result := R_WaitOption('ake Raw', 200+Random(100));
-     If Result then
-     begin
-       r_Debug('Picking up meat..', 'Forester');
-       Wait(1000+Random(500));
-       Flag;
-       Exit;
-     end;
-   end;
 end;
 
 Function r_ForesterLastTalk: Boolean;
@@ -189,7 +194,7 @@ end;
 Function r_SolveForester: Boolean;
 var
   iTime: Integer;
-  FWants: Integer;
+  FWants: TIntegerArray;
 begin
   Result := r_InForester;
   If Not Result then
@@ -201,9 +206,9 @@ begin
       Exit
     else
       FWants := r_ForesterWants;
-  Until(FWants > 0)or(GetSystemTime - iTime > 60000);
+  Until(Length(FWants) > 0)or(GetSystemTime - iTime > 60000);
 
-  If (FWants < 1) then
+  If (FWants[0] < 1) then
     Exit;
 
   iTime := GetSystemTime;
@@ -214,7 +219,7 @@ begin
       r_Debug('Took more than one minute to recive food!', 'Forester');
       Exit;
     end;
-  Until(r_ForesterPickup);
+  Until(R_CountItemID(R_MEATID) > 0);
 
   If Not r_FindForester then
     Exit;
