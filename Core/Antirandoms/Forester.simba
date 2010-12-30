@@ -10,7 +10,7 @@ const
   R_FOURTAIL_1 = 13249;
   R_FOURTAIL_2 = 13250;
 
-  R_MEATID = 6178;
+  R_MEAT_NAME = 'heasant';
 
   R_FORESTERPORTALID = 8972;
 
@@ -219,7 +219,7 @@ begin
       r_Debug('Took more than one minute to recive food!', 'Forester');
       Exit;
     end;
-  Until(R_CountItemID(R_MEATID) > 0);
+  Until(R_CountItemName(R_MEAT_NAME) > 0);
 
   If Not r_FindForester then
     Exit;
