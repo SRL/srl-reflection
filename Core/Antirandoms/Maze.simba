@@ -211,8 +211,8 @@ begin
     begin
       r_Debug('Loading green path', 'Maze');
 
-      SetArrayLength(Result.Tiles, 17);
-      SetArrayLength(Result.Dir, 17);
+      SetArrayLength(Result.Tiles, 18);
+      SetArrayLength(Result.Dir, 18);
 
       Result.Tiles[0] := Tile(2903, 4555);
       Result.Dir[0] := 's';
