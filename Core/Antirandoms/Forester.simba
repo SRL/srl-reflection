@@ -12,7 +12,7 @@ const
 
   R_MEAT_NAME = 'heasant';
 
-  R_FORESTERPORTALID = 8972;
+  R_FORESTERPORTALID = 15645;
 
 Function r_InForester: Boolean;
 begin
