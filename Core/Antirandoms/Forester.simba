@@ -16,7 +16,7 @@ const
 
 Function r_InForester: Boolean;
 begin
-  Result := ValidNPCNull(R_FORESTERID);
+  Result := ValidNullNPC(R_FORESTERID);
 end;
 
 Function r_ForesterWants: TIntegerArray;
@@ -57,7 +57,7 @@ begin
 
   iTime := GetSystemTime;
   Repeat
-    NPC := GetNPCNull(R_FORESTERID);
+    NPC := GetNullNPC(R_FORESTERID);
 
     If Not TileOnMS(NPC.Tile, 0)then
     begin
@@ -92,25 +92,6 @@ begin
   until Result or (GetSystemTime > T);
 end;
 
-function r_GetNPC(IDs: TIntegerArray):TNPC;
-var
-  NPCs: TNPCArray;
-  i, Hi: Integer;
-  B: Boolean;
-begin
-  Result := NULL_NPC;
-  NPCs := SortNPCS(GetNPCs);
-  Hi := High(NPCs);
-  for i := Hi downto 0 do
-  begin
-    if InIntArray(IDs, NPCs[i].ID) then
-    begin
-      Result := NPCs[i];
-      Exit;
-    end;
-  end;
-end;
-
 Function r_ForesterKill(SeekFor: TIntegerArray): Boolean;
 var
   NPC: TNPC;
@@ -120,7 +101,7 @@ begin
   r_Debug('Finding pheasant..', 'Forester');
   iTime := GetSystemTime;
   Repeat
-    NPC := r_GetNPC(SeekFor);
+    NPC := GetNPCMulti(SeekFor);
 
     If (NPC = NULL_NPC) then
       Exit;

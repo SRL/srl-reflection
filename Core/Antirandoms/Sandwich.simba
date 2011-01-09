@@ -10,7 +10,7 @@ Description: Checks if in this random.
 *******************************************************************************}
 function R_InSandwichLadyRandom: Boolean;
 begin
-  Result := ValidNPCNull(R_SANDWICHLADY_ID);
+  Result := ValidNullNPC(R_SANDWICHLADY_ID);
 end;
 
 {*******************************************************************************
@@ -124,7 +124,7 @@ begin
 
   // NPC Method #2
   R_Debug('Attempt 2 of 2 (Portal exit relative to NPC)', 'Sandwichlady');
-  NPC := GetNPCNull(R_SANDWICHLADY_ID);
+  NPC := GetNullNPC(R_SANDWICHLADY_ID);
   If Not TileOnMS(NPC.Tile, 0) then
    If Not WalkToTile(NPC.Tile, 0, 0)then
    begin

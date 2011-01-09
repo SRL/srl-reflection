@@ -8,7 +8,7 @@ Description: Checks if in Mime Random.
 *******************************************************************************}
 function R_InMime: Boolean;
 begin
-  Result := ValidNPCNull(R_MIMEID);
+  Result := ValidNullNPC(R_MIMEID);
 end;
 
 {*******************************************************************************

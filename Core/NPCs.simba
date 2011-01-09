@@ -90,11 +90,12 @@ begin
 end;
 
 {*******************************************************************************
-function GetNPCs: TNPCArray;
+function GetNPCs(Null: Boolean): TNPCArray;
 By: Drags111
-Description: Stores all the loaded NPCs into an array of TNPC;
+Description: Stores all the loaded NPCs into an array of TNPC. If Null = True
+then it will include Null NPCs.
 *******************************************************************************}
-function GetNPCs:array of TNPC;
+function GetAllNPCs(Null: Boolean):array of TNPC;
 var
   i, c, NumNPCs, Index, TheNPC, TheNPCDef, TheBytes, TheNPCNode: integer;
 begin
@@ -109,7 +110,7 @@ begin
     TheNPCDef := SmartGetFieldObject(TheNPC, hook_npc_NPCDef);
     TheBytes := SmartGetFieldObject(TheNPCDef, hook_npcdef_GetName);
 
-    if(lowercase(trim(GetJavaString(TheBytes, 255))) = 'null')then
+    if((not Null) and (lowercase(trim(GetJavaString(TheBytes, 255))) = 'null'))then
       continue;
     Result[c].Index := Index;
     Result[c].ID := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetID);
@@ -140,201 +141,152 @@ begin
 end;
 
 {*******************************************************************************
-function GetNPCsNull: TNPCArray;
-By: Drags111
-Description: Stores all the loaded NPCs into an array of TNPC including nulls;
-One line was taken out of the original.
+function GetNullNPCsByMulti(TheVarArr: TVariantArray):TNPCArray;
+: Drags111/Naike/mormonman
+Description: Returns the npc array by TheVarArr(IDs and names). Includes Null
+npcs.
 *******************************************************************************}
-function GetNPCsNull : array of TNPC;
+function GetNullNPCsMulti(TheVarArr: TVariantArray):TNPCArray;
 var
-  i, c, NumNPCs, Index, TheNPC, TheNPCDef, TheBytes, TheNPCNode: integer;
-begin
-  NumNPCs := SmartGetFieldInt(0,hook_static_NPCCount);
-  if (NumNPCs < 1) then Exit;
-  SetArrayLength(Result,NumNPCs);
-  for i := 0 to (NumNPCs-1) do
-  try
-    Index := SmartGetFieldArrayInt(0, hook_static_NPCIndexArray, i);
-    TheNPCNode := SmartGetFieldArrayObject(0, hook_static_NPCNodes, i);
-    TheNPC := SmartGetFieldObject(TheNPCNode, hook_npcnode_GetNPC);
-    TheNPCDef := SmartGetFieldObject(TheNPC, hook_npc_NPCDef);
-    TheBytes := SmartGetFieldObject(TheNPCDef, hook_npcdef_GetName);
-
-    //if (lowercase(trim(GetJavaString(TheBytes, 255))) = 'null') then continue;
-    Result[c].Index := Index;
-    Result[c].ID := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetID);
-    Result[c].Name := GetJavaString(TheBytes, 255);
-    Result[c].Actions := _GetNPCActionArray(TheNPCDef);
-    Result[c].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
-    Result[c].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
-    Result[c].Pixel.X := SmartGetFieldInt(TheNPC, hook_animable_PixelX) mod 512;
-    Result[c].Pixel.Y := SmartGetFieldInt(TheNPC, hook_animable_PixelY) mod 512;
-    Result[c].Moving := (SmartGetFieldInt(TheNPC, hook_character_Motion)>0);
-    Result[c].Animation := SmartGetFieldInt(TheNPC, hook_character_Animation);
-    Result[c].Height := iabs(SmartGetFieldInt(TheNPC, hook_character_GetHeight));
-    Result[c].HPRatio := SmartGetFieldInt(TheNPC, hook_character_HPRatio) * 100 / $FF;
-    Result[c].Fighting := (SmartGetFieldInt(TheNPC, hook_character_LoopCycleStatus) >
-                              SmartGetFieldInt(0, hook_static_LoopCycle));
-    Result[c].Orientation := Round(FixD(180 + (SmartGetFieldInt(TheNPC, hook_character_Orientation)* 45) / 2048));
-    Result[c].Level := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetLevel);
-    Result[c].Interacting := SmartGetFieldInt(TheNPC, hook_character_GetInteracting);
-    Inc(c);
-
-  finally
-    SmartFreeObject(TheNPCNode);
-    SmartFreeObject(TheNPC);
-    SmartFreeObject(TheNPCDef);
-    SmartFreeObject(TheBytes);
-  end;
-  SetLength(Result, c);
-end;
-
-{*******************************************************************************
-function ValidNPCNull(ID: Integer): Boolean;
-By: Drags111/Naike
-Description: Returns the npc by the ID.
-*******************************************************************************}
-function ValidNPCNull(ID: Integer): Boolean;
-var
+  vType, i, resCounter, Hi, Hig, h: Integer;
   NPCs: TNPCArray;
-  i, Hi: Integer;
+  b: boolean;
 begin
-  NPCs := SortNPCS(GetNPCsNull);
+  NPCs := SortNPCs(GetAllNPCs(True));
+  SetLength(Result, Length(NPCs));
+  Hig := High(TheVarArr);
   Hi := High(NPCs);
-  for i := Hi downto 0 do
-  begin
-    Result := (NPCs[i].ID = ID);
-    if Result then
-      Exit;
-  end;
+  for i := 0 to Hi do
+    for h := 0 to Hig do
+    begin
+      vType := VarType(TheVarArr[h]);
+      if (vType = varString) then
+        TheVarArr[h] := LowerCase(Trim(TheVarArr[h]));
+      case vType of
+        varInteger: B := NPCs[i].ID = TheVarArr[h];
+        varString: B := (Pos(TheVarArr[h], LowerCase(Trim(NPCs[i].Name))) > 0);
+        else Exit;
+      end;
+      if not B then
+        Continue;
+      Result[resCounter] := NPCs[i];
+      inc(resCounter);
+    end;
+
+  SetLength(Result, resCounter);
 end;
 
 {*******************************************************************************
-function GetNPCNull(ID: Integer):TNPC;
-By: Drags111/Naike
-Description: Returns the npc by the ID.
+function GetNullNPCs(TheVar: Variant):TNPCArray;
+By: Drags111/Naike/mormonman
+Description: Returns the npc array by TheVar(ID or name). Includes Null npcs.
 *******************************************************************************}
-function GetNPCNull(ID: Integer):TNPC;
+function GetNullNPCs(TheVar: Variant):TNPCArray;
+begin
+  Result := GetNullNPCsMulti([TheVar]);
+end;
+
+{*******************************************************************************
+function GetNullNPCMulti(TheVarArr: TVariantArray):TNPC;
+By: Drags111/Naike/mormonman
+Description: Returns the npc by TheVarArr(IDs or names). Includes Null npcs.
+*******************************************************************************}
+function GetNullNPCMulti(TheVarArr: TVariantArray):TNPC;
 var
   NPCs: TNPCArray;
-  i, Hi: Integer;
 begin
   Result := NULL_NPC;
-  NPCs := SortNPCS(GetNPCsNull);
-  Hi := High(NPCs);
-  for i := Hi downto 0 do
-   if (NPCs[i].ID = ID) then
-   begin
-     Result := NPCs[i];
-     Exit;
-   end;
+  NPCs := GetNullNPCsMulti(TheVarArr);
+  if Length(NPCs) < 1 then Exit;
+  Result := NPCs[0];
 end;
 
 {*******************************************************************************
-function GetNPCsBy(TheVar: Variant): array of TNPC;
-By: Widget, lordsaturn, Narcle and Nava2
-Description: Returns all the currently loaded NPCs using TheVar, which will
-             take either a string or an Integer. The String is a part of the NPC
+function GetNullNPC(TheVar: Variant):TNPC;
+By: Drags111/Naike/mormonman
+Description: Returns the npc by TheVar(ID or name). Includes Null npcs.
+*******************************************************************************}
+function GetNullNPC(TheVar: Variant):TNPC;
+begin
+  Result := GetNullNPCMulti([TheVar]);
+end;
+
+{*******************************************************************************
+function GetNPCsMulti(TheVarArr: TVariantArray): TNPCArray;
+By: Widget, lordsaturn, Narcle, Nava2 and mormonman
+Description: Returns all the currently loaded NPCs using TheVarArr, which will
+             take either strings or Integers. The String is a part of the NPC
              name, and an Integer is the NPCType (ID).
 *******************************************************************************}
-function GetNPCsBy(TheVar: Variant): TNPCArray;
+function GetNPCsMulti(TheVarArr: TVariantArray): TNPCArray;
 var
-  vType, i, resCounter, Hi: Integer;
+  vType, i, resCounter, Hi, Hig, h: Integer;
   NPCs: TNPCArray;
   b: boolean;
 begin
   {
     Initialize the result array, setup for looping.
   }
-  NPCs := SortNPCs(GetNPCs);
+  NPCs := SortNPCs(GetAllNPCs(False));
   SetLength(Result, Length(NPCs));
-  vType := VarType(TheVar);
-  if (vType = varString) then
-    TheVar := LowerCase(Trim(TheVar));
+  Hig := High(TheVarArr);
   Hi := High(NPCs);
-  for i := Hi downto 0 do
-  begin
-    case vType of
-      varInteger: B := NPCs[i].ID = TheVar;
-      varString: B := (Pos(TheVar, LowerCase(Trim(NPCs[i].Name))) > 0);
-      else Exit;
+  for i := 0 to Hi do
+    for h := 0 to Hig do
+    begin
+      vType := VarType(TheVarArr[h]);
+      if (vType = varString) then
+        TheVarArr[h] := LowerCase(Trim(TheVarArr[h]));
+      case vType of
+        varInteger: B := NPCs[i].ID = TheVarArr[h];
+        varString: B := (Pos(TheVarArr[h], LowerCase(Trim(NPCs[i].Name))) > 0);
+        else Exit;
+      end;
+      if not B then
+        Continue;
+      Result[resCounter] := NPCs[i];
+      inc(resCounter);
     end;
-    if not B then
-      Continue;
-    Result[resCounter] := NPCs[i];
-    inc(resCounter);
-  end;
 
   SetLength(Result, resCounter);
 end;
 
 {*******************************************************************************
-function GetNPC(theVar: Variant):TNPC;
-By: Drags111
-Description: Returns the npc by the varient (name or ID).
+function GetNPCs(TheVar: Variant): TNPCArray;
+By: Widget, lordsaturn, Narcle, Nava2 and mormonman
+Description: Returns all the currently loaded NPCs using TheVar, which will
+             take either a string or an Integer. The String is a part of the NPC
+             name, and an Integer is the NPCType (ID).
 *******************************************************************************}
-function GetNPC(theVar: Variant):TNPC;
-var
-  NPCs: TNPCArray;
-  i, vType, Hi: Integer;
-  B: Boolean;
+function GetNPCs(TheVar: Variant): TNPCArray;
 begin
-  Result := NULL_NPC;
-  vType := VarType(TheVar);
-  if (vType = varString) then
-    TheVar := LowerCase(TheVar);
-  NPCs := SortNPCS(GetNPCs);
-  Hi := High(NPCs);
-  for i := Hi downto 0 do
-  begin
-    case (vType) of
-      varInteger: B := NPCs[i].ID = TheVar;
-      varString: B := (Pos(TheVar, LowerCase(NPCs[i].Name)) > 0);
-      else Continue;
-    end;
-    if (B) then
-    begin
-      Result := NPCs[i];
-      Exit;
-    end;
-  end;
+  Result := GetNPCsMulti([TheVar]);
 end;
 
 {*******************************************************************************
-function GetNullNPC(theVar: Variant; Sort: Boolean):TNPC;
-By: Drags111/Cstrike
-Description: Returns the null npc by the varient (name or ID).
+function GetNPCMulti(TheVarArr: TVariantArray):TNPC;
+By: Drags111/mormonman
+Description: Returns the npc by TheVarArr (names or IDs).
 *******************************************************************************}
-function GetNullNPC(theVar: Variant; Sort: Boolean):TNPC;
+function GetNPCMulti(TheVarArr: TVariantArray):TNPC;
 var
   NPCs: TNPCArray;
-  i, vType, Hi: Integer;
-  B: Boolean;
 begin
   Result := NULL_NPC;
-  vType := VarType(TheVar);
-  if (vType = varString) then
-    TheVar := LowerCase(TheVar);
-  if Sort then
-    NPCs := SortNPCS(GetNPCsNull)
-  else
-    NPCs := GetNPCsNull;
-  Hi := High(NPCs);
-  for i := Hi downto 0 do
-  begin
-    case (vType) of
-      varInteger: B := NPCs[i].ID = TheVar;
-      varString: B := (Pos(TheVar, LowerCase(NPCs[i].Name)) > 0);
-      else Continue;
-    end;
-    if (B) then
-    begin
-      Result := NPCs[i];
-      Exit;
-    end;
-  end;
+  NPCs := GetNPCsMulti(TheVarArr);
+  if Length(NPCs) < 1 then Exit;
+  Result := NPCs[0];
 end;
 
+{*******************************************************************************
+function GetNPC(TheVar: Variant):TNPC;
+By: Drags111/mormonman
+Description: Returns the npc by TheVar (name or ID).
+*******************************************************************************}
+function GetNPC(TheVar: Variant):TNPC;
+begin
+  Result := GetNPCMulti([TheVar]);
+end;
 
 {*******************************************************************************
 function GetNPCsAt(T: TTile): TNPCArray;
@@ -356,10 +308,10 @@ begin
     TheNPCNode := SmartGetFieldArrayObject(0, hook_static_NPCNodes, i);
     TheNPC := SmartGetFieldObject(TheNPCNode, hook_npcnode_GetNPC);
     tmp_tile := Tile(
-		   SmartGetFieldInt(0,hook_static_BaseX) +
-			SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512,
-		   SmartGetFieldInt(0,hook_static_BaseY) +
-			SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512);
+           SmartGetFieldInt(0,hook_static_BaseX) +
+            SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512,
+           SmartGetFieldInt(0,hook_static_BaseY) +
+            SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512);
 
     if (tmp_tile = t) then
     begin
@@ -390,27 +342,100 @@ begin
 end;
 
 {*******************************************************************************
-function FindNPC(theVar: Variant; var NPC: TNPC): Boolean;
-By: lordsaturn
-Description: If the NPC is found according to theVar, the NPC is placed in the
-NPC variable. Results true if found; false otherwise.
+function FindNPCsMulti(TheVarArr: Variant; var NPCs: TNPCArray): Boolean;
+By: lordsaturn/mormonman
+Description: If any NPC is found according to TheVarArr, the NPCs are placed in
+the NPCs array. Results true if found; false otherwise.
 *******************************************************************************}
-function FindNPC(theVar: Variant; var NPC: TNPC): Boolean;
+function FindNPCsMulti(TheVarArr: Variant; var NPCs: TNPCArray): Boolean;
 begin
-  NPC := GetNPC(theVar);
+  NPCs := GetNPCsMulti(TheVarArr);
+  if Length(NPCs) < 1 then Exit;
+  Result := NPCs[0].ID > -1;
+end;
+
+{*******************************************************************************
+function FindNPCs(TheVar: Variant; var NPCs: TNPCArray): Boolean;
+By: lordsaturn/mormonman
+Description: If the NPC is found according to TheVar, the NPC is placed in the
+NPCs array. Results true if found; false otherwise.
+*******************************************************************************}
+function FindNPCs(TheVar: Variant; var NPCs: TNPCArray): Boolean;
+begin
+  Result := FindNPCsMulti([TheVar], NPCs);
+end;
+
+{*******************************************************************************
+function FindNPCMulti(TheVarArr: Variant; var NPC: TNPC): Boolean;
+By: lordsaturn/mormonman
+Description: If the NPC is found according to TheVarArr, the NPC is placed in
+the NPC variable. Results true if found; false otherwise.
+*******************************************************************************}
+function FindNPCMulti(TheVarArr: Variant; var NPC: TNPC): Boolean;
+begin
+  NPC := GetNPCMulti(TheVarArr);
   Result := NPC.ID > -1;
 end;
 
 {*******************************************************************************
-function ValidNPC(theVar: Variant): Boolean;
+function FindNPC(TheVar: Variant; var NPC: TNPC): Boolean;
+By: lordsaturn/mormonman
+Description: If the NPC is found according to TheVar, the NPC is placed in the
+NPC variable. Results true if found; false otherwise.
+*******************************************************************************}
+function FindNPC(TheVar: Variant; var NPC: TNPC): Boolean;
+begin
+  Result := FindNPCMulti([TheVar], NPC);
+end;
+
+{*******************************************************************************
+function ValidNullNPCMulti(TheVarArr: TVariantArray): Boolean;
+By: Drags111/Naike/mormonman
+Description: Returns true if npc designated by TheVarArr(names or IDs) is found.
+*******************************************************************************}
+function ValidNullNPCMulti(TheVarArr: TVariantArray): Boolean;
+var
+  vType, i, Hi, Hig, h: Integer;
+  NPCs: TNPCArray;
+begin
+  NPCs := SortNPCS(GetAllNPCs(True));
+  Hi := High(NPCs);
+  Hig := High(TheVarArr);
+  for i := 0 to Hi do
+    for h := 0 to Hig do
+    begin
+      vType := VarType(TheVarArr[h]);
+      if (vType = varString) then
+        TheVarArr[h] := LowerCase(Trim(TheVarArr[h]));
+      case vType of
+        varInteger: Result := NPCs[i].ID = TheVarArr[h];
+        varString: Result := (Pos(TheVarArr[h], LowerCase(Trim(NPCs[i].Name))) > 0);
+        else Exit;
+      end;
+      if Result then Exit;
+    end;
+end;
+
+{*******************************************************************************
+function ValidNullNPC(ID: Integer): Boolean;
+By: Drags111/Naike/mormonman
+Description: Returns true if npc designated by TheVar(name or ID) is found.
+*******************************************************************************}
+function ValidNullNPC(TheVar: Variant): Boolean;
+begin
+  Result := ValidNullNPCMulti([TheVar]);
+end;
+
+{*******************************************************************************
+function ValidNPC(TheVar: Variant): Boolean;
 By: lordsaturn
 Description: Results true if the npc is found
 *******************************************************************************}
-function ValidNPC(theVar: Variant): Boolean;
+function ValidNPC(TheVar: Variant): Boolean;
 var
   NPC: TNPC;
 begin
-  Result := FindNPC(theVar, NPC);
+  Result := FindNPC(TheVar, NPC);
 end;
 
 {*******************************************************************************

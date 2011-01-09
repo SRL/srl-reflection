@@ -43,9 +43,9 @@ Description: Checks if in this random. Don't know if hes null or not.
 *******************************************************************************}
 function R_InPrison : Boolean;
 begin
-  Result := ValidNPC (PRISON_PETEID);
+  Result := ValidNPC(PRISON_PETEID);
   if not Result then
-    Result := ValidNPCNull (PRISON_PETEID);
+    Result := ValidNullNPC(PRISON_PETEID);
 end;
 
 // WORKS!
@@ -86,10 +86,10 @@ begin
   Result := False;
 
   // Make sure NPC is valid
-  if ValidNPCNull (PRISON_PETEID) then
-    PrisonPeteNPCList := GetNPCsNull
+  if ValidNullNPC(PRISON_PETEID) then
+    PrisonPeteNPCList := GetAllNPCs(True)
   else
-    PrisonPeteNPCList := GetNPCs;
+    PrisonPeteNPCList := GetAllNPCs(False);
   // Failsafe
   if high(PrisonPeteNPCList) < 0 then
   begin
@@ -415,7 +415,7 @@ begin
   repeat
 
     // Get NPCs
-    NPCs := GetNPCsNull;
+    NPCs := GetAllNPCs(True);
 
     // If error...
     if high(NPCs) < 0 then
@@ -441,7 +441,7 @@ begin
     // Hunt it ruthlessly!
     MarkTime(t2);
     repeat // So we KNOW the balloon is here somewhere, lets hunt that fucker
-      NPCToHunt := GetNPCNull(NPCIDToHunt);
+      NPCToHunt := GetNullNPC(NPCIDToHunt);
 
       // If error
       if NPCToHunt.Tile = NULL_TILE then
@@ -454,7 +454,7 @@ begin
       if not TileOnMS(NPCToHunt.Tile, 0) then
       begin
         WalkToTile(NPCToHunt.Tile, 2, 0);
-        NPCs := GetNPCsNull; // Reload NPCs, should upgrade tiles... after
+        NPCs := GetAllNPCs(True); // Reload NPCs, should upgrade tiles... after
       end else
       // Else if we see him, get him
       begin

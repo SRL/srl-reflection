@@ -48,7 +48,7 @@ begin
     r_ClickToContinue; // One last time :)
   end else
   begin
-    NPCs := GetNPCsNull;
+    NPCs := GetAllNPCs(True);
     if high (NPCs) < 0 then
     begin
       Writeln ('[Reflection] No frog herald found...')
@@ -83,7 +83,7 @@ begin
   MarkTime(iTime);
   SetAngle(True);
   repeat
-    NPCs := GetNPCsNull;
+    NPCs := GetAllNPCs(True);
     for I:=0 to high(NPCs) do
      if (NPCs[I].Height = 278) then
      begin

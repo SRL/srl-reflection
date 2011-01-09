@@ -219,7 +219,7 @@ begin
   Result := False; // If we are clearly not talking to him then... now try to talk to him
 
   // Regular NPCs
-  NPCs := GetNPCs;
+  NPCs := GetAllNPCs(False);
   if high(NPCs) > -1 then // We have a match in this case
     for j:=0 to high(NPCs) do
     begin
@@ -239,7 +239,7 @@ begin
     end;
 
   // Null NPC's if Jagex wants to screw with us
-  NPCs := GetNPCsNull;
+  NPCs := GetAllNPCs(True);
   if high(NPCs) > -1 then // We have a match in this case
     for k:=0 to high(NPCs) do
     begin

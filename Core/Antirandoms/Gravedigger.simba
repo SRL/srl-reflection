@@ -95,7 +95,7 @@ begin
 
   if (not ValidInterface(242)) and (not ValidInterface(241)) and (not ValidInterface(243)) and (not ValidInterface(64)) then
   begin
-    NPCs := SortNPCs(GetNPCs);
+    NPCs := SortNPCs(GetAllNPCs(False));
     if Not TileOnMS(NPCs[0].Tile, 0)then
       R_LeoWalkToCenter;
 
@@ -240,7 +240,7 @@ begin
     Exit;
 
   Result := Tile(0,0); // Failsafe
-  NPCs := SortNPCs(GetNPCs);
+  NPCs := SortNPCs(GetAllNPCs(False));
   LeoTile := NPCs[0].Tile;
 
   case i of // TL, TR, BL, BM, Bottom Right [BR]
@@ -267,7 +267,7 @@ begin
     Exit;
 
   Result := Tile(0,0);
-  NPCs := SortNPCs(GetNPCs);
+  NPCs := SortNPCs(GetAllNPCs(False));
   LeoTile := NPCs[0].Tile;
 
   case i of // TL, TR, BL, BM, Bottom Right [BR]
@@ -498,7 +498,7 @@ begin
 
   if (not ValidInterface(241)) and (not ValidInterface(64)) then
   begin
-    NPCs := SortNPCs(GetNPCs);
+    NPCs := SortNPCs(GetAllNPCs(False));
     if not TileOnMS(NPCs[0].Tile, 0) then
     begin
       WalkToTile(NPCs[0].Tile, 0, 0);

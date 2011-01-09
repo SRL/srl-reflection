@@ -12,7 +12,7 @@ Description: Results true if the Drill Demon is found.
 *******************************************************************************}
 function R_InDemon : Boolean;
 begin
-  Result := ValidNPCNull(R_RANDOM_DEMON_ID);
+  Result := ValidNullNPC(R_RANDOM_DEMON_ID);
 end;
 
 {*******************************************************************************
