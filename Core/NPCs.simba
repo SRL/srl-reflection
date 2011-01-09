@@ -347,7 +347,7 @@ By: lordsaturn/mormonman
 Description: If any NPC is found according to TheVarArr, the NPCs are placed in
 the NPCs array. Results true if found; false otherwise.
 *******************************************************************************}
-function FindNPCsMulti(TheVarArr: Variant; var NPCs: TNPCArray): Boolean;
+function FindNPCsMulti(TheVarArr: TVariantArray; var NPCs: TNPCArray): Boolean;
 begin
   NPCs := GetNPCsMulti(TheVarArr);
   if Length(NPCs) < 1 then Exit;
