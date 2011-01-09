@@ -371,7 +371,7 @@ By: lordsaturn/mormonman
 Description: If the NPC is found according to TheVarArr, the NPC is placed in
 the NPC variable. Results true if found; false otherwise.
 *******************************************************************************}
-function FindNPCMulti(TheVarArr: Variant; var NPC: TNPC): Boolean;
+function FindNPCMulti(TheVarArr: TVariantArray; var NPC: TNPC): Boolean;
 begin
   NPC := GetNPCMulti(TheVarArr);
   Result := NPC.ID > -1;
