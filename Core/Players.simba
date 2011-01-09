@@ -316,3 +316,35 @@ begin
   Player := GetPlayer(PIdx);
   Result := (Player.Name = Me.Name);
 end;
+
+{*******************************************************************************
+function AreWeInteracting(var NPC: TNPC): Boolean;
+By: mormonman
+Description: Returns true if we are interacting. If we are, then it returns npc
+we are interacting with.
+*******************************************************************************}
+function AreWeInteracting(var NPC: TNPC): Boolean;
+var
+  i, index : integer;
+  npcs : TNPCArray;
+  Me : TMe;
+  Player : TPlayer;
+begin
+  NPC := NULL_NPC;
+  Me := GetMe;
+  npcs := GetAllNPCs(False);
+    for i := 0 to length(npcs)-1 do
+    begin
+      index := npcs[i].Interacting - 32768;
+      if index > 0 then
+      begin
+        Player := GetPlayer(index);
+        Result := Player.Name = Me.Name;
+        if Result then
+        begin
+          NPC := npcs[i];
+          Exit;
+        end;
+      end;
+    end;
+end;
