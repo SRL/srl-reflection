@@ -101,7 +101,7 @@ begin
   r_Debug('Finding pheasant..', 'Forester');
   iTime := GetSystemTime;
   Repeat
-    NPC := GetNPCMulti(SeekFor);
+    NPC := GetNPCMulti([SeekFor[0], SeekFor[1]]);
 
     If (NPC = NULL_NPC) then
       Exit;
@@ -215,6 +215,16 @@ begin
     end;
   Until(r_ForesterPortal);
 
-  Wait(1000+Random(2000));
-  Result := (Not r_InForester)and(LoggedIn);
+  iTime := GetSystemTime;
+
+  repeat
+    If (GetSystemTime - iTime > 15000)then
+    begin
+      r_Debug('Took more than 15 secs to teleport out!', 'Forester');
+      Exit;
+    end;
+  until (Not r_InForester)and(LoggedIn);
+
+  Result := True;
+
 end;
