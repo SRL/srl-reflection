@@ -6,6 +6,11 @@ const
   LEO_CASKET3 = 12723;
   LEO_CASKET4 = 12724;
   LEO_CASKET5 = 12725;
+  LEO_EMPTY_GRAVE1 = 12726;
+  LEO_EMPTY_GRAVE2 = 12727;
+  LEO_EMPTY_GRAVE3 = 12728;
+  LEO_EMPTY_GRAVE4 = 12729;
+  LEO_EMPTY_GRAVE5 = 12730;
   LEO_INVENTORY_CASKET1 = 7587;
   LEO_INVENTORY_CASKET2 = 7588;
   LEO_INVENTORY_CASKET3 = 7589;
@@ -243,11 +248,11 @@ begin
   NPCs := SortNPCs(GetAllNPCs(False));
   LeoTile := NPCs[0].Tile;
 
-  case i of // TL, TR, BL, BM, Bottom Right [BR]
-    0: result := Tile(LeoTile.x-2,LeoTile.y-4);
-    1: result := Tile(LeoTile.x+2,LeoTile.y-4);
-    2: result := Tile(LeoTile.x-4,LeoTile.y-7);
-    3: result := Tile(LeoTile.x-0,LeoTile.y-7);
+  case i of // BL, TL, BM, TR, Bottom Right [BR]
+    0: result := Tile(LeoTile.x-4,LeoTile.y-7);
+    1: result := Tile(LeoTile.x-2,LeoTile.y-4);
+    2: result := Tile(LeoTile.x-0,LeoTile.y-7);
+    3: result := Tile(LeoTile.x+2,LeoTile.y-4);
     4: result := Tile(LeoTile.x+4,LeoTile.y-7);
   end;
 end;
@@ -270,11 +275,11 @@ begin
   NPCs := SortNPCs(GetAllNPCs(False));
   LeoTile := NPCs[0].Tile;
 
-  case i of // TL, TR, BL, BM, Bottom Right [BR]
-    0: result := Tile(LeoTile.x-2,LeoTile.y-2);
-    1: result := Tile(LeoTile.x+2,LeoTile.y-2);
-    2: result := Tile(LeoTile.x-4,LeoTile.y-5);
-    3: result := Tile(LeoTile.x-0,LeoTile.y-5);
+  case i of // BL, TL, BM, TR, Bottom Right [BR]
+    0: result := Tile(LeoTile.x-4,LeoTile.y-5);
+    1: result := Tile(LeoTile.x-2,LeoTile.y-2);
+    2: result := Tile(LeoTile.x-0,LeoTile.y-5);
+    3: result := Tile(LeoTile.x+2,LeoTile.y-2);
     4: result := Tile(LeoTile.x+4,LeoTile.y-5);
   end;
 end;
@@ -296,7 +301,7 @@ begin
 
   Result := False;
   // Failsafe below
-  ObjCasket := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52);
+  ObjCasket := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 12);
   if high(ObjCasket) < 0 then
   begin
     R_Debug('We have all the coffins', 'Leo');
@@ -308,7 +313,7 @@ begin
   SetAngle(True);
   R_Debug('Grabbing coffins', 'Leo');
   repeat
-    ObjCasketUpdated := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 52); // Allows for dynamic stuff
+    ObjCasketUpdated := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 12); // Allows for dynamic stuff
 
     if high(ObjCasketUpdated) < 0 then
       Break;
@@ -346,10 +351,10 @@ begin
       'pickaxe': IDToFind := LEO_PICKAXEID;
      'chef hat': IDToFind := LEO_CHEFHATID;
       'hatchet': IDToFind := LEO_HATCHETID;
-       'shears': IDToFind := LEO_SHEARSID;
+    'watertank': IDToFind := LEO_SHEARSID;
   end;
 
-  for i:=7587 to 7591 do
+  for i:=LEO_INVENTORY_CASKET1 to LEO_INVENTORY_CASKET5 do
   begin
     R_ClickItemID(i, True, 'open');
     Wait(2000+random(1500));
@@ -369,116 +374,103 @@ begin
 end;
 
 {*******************************************************************************
+function R_LeoFindEmptyGrave : Integer;
+By: mormonman
+Description: Finds an empty grave and returns its gravestone number.
+*******************************************************************************}
+function R_LeoFindEmptyGrave: Integer;
+var
+  EmptyArr, FullArr: TIntegerArray;
+  obj: TRSObject;
+  i, Hi: Integer;
+begin
+  Result := -1;
+  if not LoggedIn then
+    Exit;
+  EmptyArr := [LEO_EMPTY_GRAVE1, LEO_EMPTY_GRAVE2, LEO_EMPTY_GRAVE3,
+              LEO_EMPTY_GRAVE4, LEO_EMPTY_GRAVE5];
+  for i := 0 to 4 do
+  begin
+    obj := GetObjectAt(R_LeoGraveTiles(i), OBJECT_TYPE_INTERACTABLE);
+    if obj.ID = EmptyArr[i] then
+    begin
+      Result := i;
+      R_Debug('Empty Grave Index: ' + ToStr(i), 'Leo');
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
 function R_LeoSolveGraves : Boolean;
-By: Cstrike
+By: Cstrike/mormonman
 Description: This is the big procedure that solves the graves. False = failed.
 *******************************************************************************}
 function R_LeoSolveGraves : Boolean;
 var
-  i, j, t, texID, CasketID : Integer;
+  i, j, t, texID, CasketID, CurGrave, iTime : Integer;
   GStoneTile : TTile;
   TP : TPoint;
+  texName: String;
 begin
   Result := False;
   if not LoggedIn then
     Exit;
 
-  for i:=4 downto 0 do // START AT BOTTOM RIGHT since thats where you got your last casket
-  begin
-    GStoneTile := R_LeoGravestoneTiles(i);
-    if not TileOnMS(GStoneTile, 0) then
-      R_LeoWalkToCenter;
+  MarkTime(iTime);
 
-    TP := TileToMS(GStoneTile, 0);
-    Mouse(TP.x, TP.y, 3, 3, True);
-    MarkTime(t);
-
-    repeat
-      Wait(50);
-    until(ValidInterface(143))or(TimeFromMark(t) > 10000)
-
-    if ValidInterface(143) then
+  repeat
+    CurGrave := R_LeoFindEmptyGrave;
+    if (CurGrave > -1) then
     begin
-      for j:=0 to 3 do // Search the 3x3 item square
+      R_Debug('Starting on grave[' +ToStr(CurGrave)+ ']', 'Leo');
+      GStoneTile := R_LeoGravestoneTiles(CurGrave);
+      if not TileOnMS(GStoneTile, 0) then
+        R_LeoWalkToCenter;
+
+      TP := TileToMS(GStoneTile, 0);
+      Mouse(TP.x, TP.y, 3, 3, True);
+      MarkTime(t);
+
+      repeat
+        Wait(500);
+      until(ValidInterface(143))or(TimeFromMark(t) > 10000);
+
+
+      if ValidInterface(143) then
       begin
-        texID := R_LeoComponentID(143, j);
-        case texID of
-          7614: begin
-                  R_Debug('Found hatchet model (ID Found: '+inttostr(texID)+')', 'Leo');
-                  Wait(800+random(2200)); // Seem human I guess?
-                  Mouse(491, 29, 3, 3, True);
-                  Wait(100+random(500)); // Exits the model view
-                  CasketID := R_LeoFindCasket('hatchet');
-                  R_Debug('Casket ID found = '+inttostr(casketID), 'Leo');
-                  if R_ClickItemID(CasketID, false, 'use') then
-                  begin
-                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
-                    Mouse (TP.x, TP.y, 3, 3, True);
-                    R_LeoInvDecrease(1, 12000);
-                  end;
-                end;
-          7615: begin
-                  R_Debug('Found chef hat model (ID Found: '+inttostr(texID)+')', 'Leo');
-                  Wait(800+random(2200)); // Seem human I guess?
-                  Mouse(491, 29, 3, 3, True);
-                  Wait(100+random(500)); // Exits the model view
-                  CasketID := R_LeoFindCasket('chef hat');
-                  R_Debug('Casket ID found = '+inttostr(casketID), 'Leo');
-                  if R_ClickItemID(CasketID, false, 'use') then
-                  begin
-                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
-                    Mouse (TP.x, TP.y, 3, 3, True);
-                    R_LeoInvDecrease(1, 12000);
-                  end;
-                end;
-          7616: begin
-                  R_Debug('Found pickaxe model (ID Found: '+inttostr(texID)+')', 'Leo');
-                  Wait(640+random(1800)); // Seem human I guess?
-                  Mouse(491, 29, 3, 3, True);
-                  Wait(100+random(500)); // Exits the model view
-                  CasketID := R_LeoFindCasket('pickaxe');
-                  R_Debug('Casket ID found = '+inttostr(casketID), 'Leo');
-                  if R_ClickItemID(CasketID, false, 'use') then
-                  begin
-                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
-                    Mouse (TP.x, TP.y, 3, 3, True);
-                    R_LeoInvDecrease(1, 12000);
-                  end;
-                end;
-          7617: begin
-                  R_Debug('Found watertank model (ID Found: '+inttostr(texID)+')', 'Leo');
-                  Wait(11100+random(1100)); // Seem human I guess?
-                  Mouse(491, 29, 3, 3, True);
-                  Wait(100+random(500)); // Exits the model view
-                  CasketID := R_LeoFindCasket('shears');
-                  R_Debug('Casket ID found = '+inttostr(casketID), 'Leo');
-                  if R_ClickItemID(CasketID, false, 'use') then
-                  begin
-                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
-                    Mouse (TP.x, TP.y, 3, 3, True);
-                    R_LeoInvDecrease(1, 12000);
-                  end;
-                end;
-          7618: begin
-                  R_Debug('Found flowerpot model (ID Found: '+inttostr(texID)+')', 'Leo');
-                  Wait(1100+random(2000)); // Seem human I guess?
-                  Mouse(491, 29, 3, 3, True);
-                  Wait(100+random(500)); // Exits the model view
-                  CasketID := R_LeoFindCasket('flowerpot');
-                  R_Debug('Casket ID found = '+inttostr(casketID), 'Leo');
-                  if R_ClickItemID(CasketID, false, 'use') then
-                  begin
-                    TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
-                    Mouse (TP.x, TP.y, 3, 3, True);
-                    R_LeoInvDecrease(1, 12000);
-                  end;
-                end;
+        for j:=0 to 3 do // Search the 3x3 item square
+        begin
+          texID := R_LeoComponentID(143, j);
+          case texID of
+            7614: texName := 'hatchet';
+            7615: texName := 'chef hat';
+            7616: texName := 'pickaxe';
+            7617: texName := 'watertank';
+            7618: texName := 'flowerpot';
+          end;
+
+          R_Debug('Found '+texName+' model (ID Found: '+inttostr(texID)+')', 'Leo');
+          Wait(1100+random(1100)); // Seem human I guess?
+          Mouse(491, 29, 3, 3, True);
+          Wait(100+random(500)); // Exits the model view
+          CasketID := R_LeoFindCasket(texName);
+          R_Debug('Casket ID found = '+inttostr(casketID), 'Leo');
+          if R_ClickItemID(CasketID, false, 'use') then
+          begin
+            TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
+            Mouse (TP.x, TP.y, 3, 3, True);
+            R_LeoInvDecrease(1, 12000);
+          end;
+
         end;
       end;
-    end;
-    Wait(1000+Random(1000)); // More Wait here, must replace thsi later on
-  end;
-  result := True; // Fix me failsafe :(
+      Wait(1000+Random(1000)); // More Wait here, must replace thsi later on
+    end else R_Debug('CurGrave is -1', 'Leo');
+  until (R_LeoFindEmptyGrave = -1) or (TimeFromMark(iTime) > 300000);//5 minutes to solve
+  Result := (TimeFromMark(iTime) < 300000) and LoggedIn
+            and (R_CountItemIDEx([LEO_INVENTORY_CASKET1, LEO_INVENTORY_CASKET2,
+            LEO_INVENTORY_CASKET3, LEO_INVENTORY_CASKET4, LEO_INVENTORY_CASKET5]) < 1);
 end;
 
 {*******************************************************************************

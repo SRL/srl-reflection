@@ -1,3 +1,13 @@
+const
+  PINBALL_TOWER1 = 15000;
+  PINBALL_TOWER2 = 15002;
+  PINBALL_TOWER3 = 15004;
+  PINBALL_TOWER4 = 15006;
+  PINBALL_TOWER5 = 15008;
+
+  PINBALL_EXIT = 15010;
+  PINBALL_TILT = 'Tilt';
+
 {*******************************************************************************
 function R_InPinball : Boolean;
 by: Drags111
@@ -5,7 +15,7 @@ Description: Checks if player is in Pinball Random.
 *******************************************************************************}
 function R_InPinball : Boolean;
 begin
-  Result := ValidNPC('Tilt');
+  Result := ValidNPC(PINBALL_TILT);
 end;
 {*******************************************************************************
 function Pinball_GetScore : Integer;
@@ -28,8 +38,40 @@ Description: Returns valid pinball tower ID's.
 *******************************************************************************}
 function Pinball_GetPillar: TRSObject;
 begin
-  Result := GetObjectByIDEx([15000, 15002, 15004, 15006, 15008], 0, 52);
+  Result := GetObjectByIDEx([PINBALL_TOWER1, PINBALL_TOWER2, PINBALL_TOWER3,
+                             PINBALL_TOWER4, PINBALL_TOWER5],
+                             OBJECT_TYPE_INTERACTABLE, 20);
 end;
+
+{*******************************************************************************
+function R_Pinball_WalkToTileMS(Tile:TTile): boolean;
+by: mormonman
+Description: Walks to a tile using the MS.
+             Returns false if the tile isn't on MS.
+*******************************************************************************}
+function R_Pinball_WalkToTileMS(Tile:TTile): boolean;
+var
+  P: TPoint;
+  x, y, t: Integer;
+begin
+  if not LoggedIn then
+    Exit;
+
+  if not TileOnMS(Tile, 100) then
+    Exit;
+
+  P := TileToMS(Tile, 50);
+  MMouse(P.x, P.y, 5, 5);
+  GetMousePos(x, y);
+  if WaitUptext('alk here', 300) then
+    Mouse(x, y, 0, 0, True) else
+      R_ChooseOption('Walk here');
+  Wait(RandomRange(120, 180));
+  t := getsystemtime;
+  R_Flag;
+  Result := (GetSystemTime - t) < 60000;
+end;
+
 
 {*******************************************************************************
 function Pinball_Leave: boolean;
@@ -39,20 +81,28 @@ Description: Leaves random.
 function Pinball_Leave: boolean;
 var
   TheExit: TRSObject;
-  P: TPoint;
-  T: TTile;
-  time: integer;
+  P, MidP, MeP: TPoint;
+  T, NewT: TTile;
+  time, i: integer;
 begin
-  TheExit := GetObjectByID(15010, 0, 52);
+  TheExit := GetObjectByID(PINBALL_EXIT, OBJECT_TYPE_INTERACTABLE, 20);
   if (TheExit = NULL_RSOBJECT)then Exit;
   MakeCompass('s');
   SetAngle(false);
   T := TheExit.Tile;
+  MarkTime(time);
   if not TileOnMS(T, 100)then
   begin
-    if not WalkToTile(t, 0, 0)then
-      Exit;
-    if not TileOnMs(t, 100)then Exit;
+    MidP := TileToPoint(t);
+    repeat
+      if TileOnMS(T, 100) then
+        Break;
+      MeP := TileToPoint(GetMyPos);
+      MidP := MiddleTPA([MidP, MeP]);
+      NewT := PointToTile(MidP);
+      if TileOnMs(NewT, 100)then R_Pinball_WalkToTileMS(NewT);
+      Inc(i);
+    until (i > 4) or (TimeFromMark(time) > 20000);
   end;
   P := TileToMS(T, 100);
   Mouse(P.x, P.y, 3, 3, false);
@@ -62,7 +112,7 @@ begin
     MarkTime(time);
     while(R_InPinball and (TimeFromMark(time) < 10000))do
     begin
-      if(charactermoving)then
+      if(CharacterMoving)then
         MarkTime(time);
       Wait(100+Random(500));
     end;
@@ -82,7 +132,7 @@ var xnew, ynew : Integer;
 begin
   xnew := GetCamPosX;
   ynew := GetCamPosY;
-  if (iAbs(x - xnew) > xMax) or (iAbs(y - ynew) > yMax) then result := true else result := false;
+  Result := (iAbs(x - xnew) > xMax) or (iAbs(y - ynew) > yMax);
 end;
 
 {*******************************************************************************
