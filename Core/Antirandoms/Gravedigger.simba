@@ -21,6 +21,11 @@ const
   LEO_CHEFHATID = 7601;
   LEO_HATCHETID = 7603;
   LEO_SHEARSID = 7610;
+  LEO_STONE_HATCHETID = 7614;
+  LEO_STONE_CHEFHATID = 7615;
+  LEO_STONE_PICKAXEID = 7616;
+  LEO_STONE_SHEARSID = 7617;
+  LEO_STONE_FLOWERPOTID = 7618;
 
 {*******************************************************************************
 function R_LeoComponentID (ParentI, ChildI : Integer) : Integer;
@@ -74,13 +79,20 @@ Description: Moves us above middle grave so everything is in sight.
 *******************************************************************************}
 procedure R_LeoWalkToCenter;
 var
-  GraveStone: TRSObject;
   TP: TPoint;
+  NPCs : TNPCArray;
+  LeoTile : TTile;
 begin
-  GraveStone := GetObjectByID (LEO_GRAVESTONE_MIDDLE, OBJECT_TYPE_INTERACTABLE, 52);
-  TP := TileToMM(Tile(GraveStone.Tile.X, GraveStone.Tile.Y+1));
+  if not LoggedIn then
+    Exit;
+
+  NPCs := SortNPCs(GetAllNPCs(False));
+  LeoTile := NPCs[0].Tile;
+
+  TP := TileToMM(Tile(LeoTile.X, LeoTile.Y-5));
   Mouse (TP.X, TP.Y, 1, 1, True);
-  Wait (3000+Random(1200));
+  if WaitToMove(3000) then
+    R_Flag;
 end;
 
 {*******************************************************************************
@@ -171,7 +183,7 @@ begin
     result[0] := myTile.x;
     result[1] := myTile.y;
 
-    for i:=28 downto 0 do // If there is that 'destroy crap' for whatever, then this will probably skip it... thus downto 0
+    for i:=28 downto 1 do // If there is that 'destroy crap' for whatever, then this will probably skip it... thus downto 0
     begin
       if R_InvCount < 24 then
         Exit;
@@ -286,51 +298,61 @@ end;
 
 {*******************************************************************************
 function R_GraveObjectCoffinCollect : Boolean;
-By: Cstrike
+By: Cstrike/mormonman
 Description: Collects all the coffins. Returns True if successful.
 *******************************************************************************}
-// 12718 = middle gravestone
 function R_GraveObjectCoffinCollect: Boolean;
 var
-  ObjCasket, ObjCasketUpdated : TRSObjectArray;
-  t, InviCount : Integer;
+  ObjCasket : TRSObject;
+  CasketArr, EmptyArr : TIntegerArray;
+  PickupTime, CasketTime, i, InviCount : Integer;
+  CurTile : TTile;
   TP : TPoint;
 begin
   if not LoggedIn then
     Exit;
 
   Result := False;
+  EmptyArr := [LEO_EMPTY_GRAVE1, LEO_EMPTY_GRAVE2, LEO_EMPTY_GRAVE3,
+              LEO_EMPTY_GRAVE4, LEO_EMPTY_GRAVE5];
   // Failsafe below
-  ObjCasket := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 12);
-  if high(ObjCasket) < 0 then
+  for i := 0 to 4 do
   begin
-    R_Debug('We have all the coffins', 'Leo');
-    Result := True;
-    Exit;
+    CurTile := R_LeoGraveTiles(i);
+    ObjCasket := GetObjectAt(CurTile, OBJECT_TYPE_INTERACTABLE);
+    if ObjCasket.ID = EmptyArr[i] then
+    begin
+      R_Debug('Casket[' + ToStr(i) + '] already taken', 'Leo');
+      Continue;
+    end;
+
+    // Main part of script
+    SetAngle(True);
+    R_Debug('Grabbing Casket[' + ToStr(i) + ']', 'Leo');
+    MarkTime(CasketTime);
+    repeat
+
+      if not TileOnMS(ObjCasket.Tile, 0) then
+        R_LeoWalkToCenter;
+
+      TP := TileToMS (ObjCasket.Tile, 0);
+      Mouse (TP.x, TP.y, 2, 3, True);
+
+      InviCount := R_InvCount;
+      MarkTime(PickupTime);
+      repeat
+        Wait(250);
+      until (R_InvCount > InviCount) or (TimeFromMark(PickupTime) > 10000);
+
+      if not (TimeFromMark(PickupTime) > 10000) then Break;
+
+    until (TimeFromMark(CasketTime) > 30000);
+
   end;
 
-  // Main part of script
-  SetAngle(True);
-  R_Debug('Grabbing coffins', 'Leo');
-  repeat
-    ObjCasketUpdated := GetObjectsByIDEx ([LEO_CASKET1, LEO_CASKET2, LEO_CASKET3, LEO_CASKET4, LEO_CASKET5], OBJECT_TYPE_INTERACTABLE, 12); // Allows for dynamic stuff
-
-    if high(ObjCasketUpdated) < 0 then
-      Break;
-
-    if not TileOnMS(ObjCasketUpdated[0].Tile, 0) then
-      R_LeoWalkToCenter;
-
-    TP := TileToMS (ObjCasketUpdated[0].Tile, 0);
-    Mouse (TP.x, TP.y, 2, 3, True);
-    InviCount := R_InvCount;
-    MarkTime(t);
-    repeat
-      Wait(50);
-    until (R_InvCount > InviCount) or (TimeFromMark(t) > 10000)
-
-  until (high(ObjCasketUpdated) < 0)
-  if (R_CountItemID(LEO_INVENTORY_CASKET1) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET2) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET3) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET4) = 1) and (R_CountItemID(LEO_INVENTORY_CASKET5) = 1) then result := True;
+  Result := (R_CountItemIDEx([LEO_INVENTORY_CASKET1, LEO_INVENTORY_CASKET2,
+                              LEO_INVENTORY_CASKET3, LEO_INVENTORY_CASKET4,
+                              LEO_INVENTORY_CASKET5]) = 5);
 end;
 
 {*******************************************************************************
@@ -357,13 +379,14 @@ begin
   for i:=LEO_INVENTORY_CASKET1 to LEO_INVENTORY_CASKET5 do
   begin
     R_ClickItemID(i, True, 'open');
+    R_Debug('Checking Casket[' + ToStr(i) + ']', 'Leo');
     Wait(2000+random(1500));
     for j:=3 to 11 do // Search interfaces for ID to find
     begin
       Wait(50+random(50)); // More human like waiting
       if (R_LeoComponentID (141, j) = IDToFind) then // 141 is the ID
       begin
-        R_Debug('Found proper casket for grave', 'Leo');
+        R_Debug('Found: ' + name + ' in Casket[' + ToStr(i) + ']', 'Leo');
         Result := i;
         Mouse(493, 27, 3, 3, True);
         Wait(700+random(500));
@@ -380,9 +403,9 @@ Description: Finds an empty grave and returns its gravestone number.
 *******************************************************************************}
 function R_LeoFindEmptyGrave: Integer;
 var
-  EmptyArr, FullArr: TIntegerArray;
+  EmptyArr: TIntegerArray;
   obj: TRSObject;
-  i, Hi: Integer;
+  i: Integer;
 begin
   Result := -1;
   if not LoggedIn then
@@ -408,7 +431,7 @@ Description: This is the big procedure that solves the graves. False = failed.
 *******************************************************************************}
 function R_LeoSolveGraves : Boolean;
 var
-  i, j, t, texID, CasketID, CurGrave, iTime : Integer;
+  j, t, texID, CasketID, CurGrave, iTime : Integer;
   GStoneTile : TTile;
   TP : TPoint;
   texName: String;
@@ -436,22 +459,24 @@ begin
         Wait(500);
       until(ValidInterface(143))or(TimeFromMark(t) > 10000);
 
+      Wait(1100+random(1100));
 
       if ValidInterface(143) then
       begin
         for j:=0 to 3 do // Search the 3x3 item square
         begin
           texID := R_LeoComponentID(143, j);
+          texName := '';
           case texID of
-            7614: texName := 'hatchet';
-            7615: texName := 'chef hat';
-            7616: texName := 'pickaxe';
-            7617: texName := 'watertank';
-            7618: texName := 'flowerpot';
+            LEO_STONE_HATCHETID:   texName := 'hatchet';
+            LEO_STONE_CHEFHATID:   texName := 'chef hat';
+            LEO_STONE_PICKAXEID:   texName := 'pickaxe';
+            LEO_STONE_SHEARSID:    texName := 'watertank';
+            LEO_STONE_FLOWERPOTID: texName := 'flowerpot';
           end;
-
-          R_Debug('Found '+texName+' model (ID Found: '+inttostr(texID)+')', 'Leo');
-          Wait(1100+random(1100)); // Seem human I guess?
+          if not (texName = '') then Break;
+        end;
+          R_Debug('Found: ' +texName+ ' model (ID Found: '+inttostr(texID)+')', 'Leo');
           Mouse(491, 29, 3, 3, True);
           Wait(100+random(500)); // Exits the model view
           CasketID := R_LeoFindCasket(texName);
@@ -462,10 +487,8 @@ begin
             Mouse (TP.x, TP.y, 3, 3, True);
             R_LeoInvDecrease(1, 12000);
           end;
-
-        end;
       end;
-      Wait(1000+Random(1000)); // More Wait here, must replace thsi later on
+      Wait(1000+Random(1000)); // More Wait here, must replace this later on
     end else R_Debug('CurGrave is -1', 'Leo');
   until (R_LeoFindEmptyGrave = -1) or (TimeFromMark(iTime) > 300000);//5 minutes to solve
   Result := (TimeFromMark(iTime) < 300000) and LoggedIn
@@ -542,7 +565,11 @@ begin
       R_Debug('Leo Phase 1: Talk to Leo at start', 'Leo');
       if R_TalkToLeoStart then
       begin
-        if R_InvCount > 23 then
+        if ((R_InvCount - R_CountItemIDEx([LEO_INVENTORY_CASKET1,
+                                           LEO_INVENTORY_CASKET2,
+                                           LEO_INVENTORY_CASKET3,
+                                           LEO_INVENTORY_CASKET4,
+                                           LEO_INVENTORY_CASKET5])) > 23)then
           ItemDropData := R_LeoDropInv; // Declared it here so it can pick it up later
 
         R_Debug('Leo Phase 2: Collect graves', 'Leo');
