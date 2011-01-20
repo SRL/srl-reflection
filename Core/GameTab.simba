@@ -12,7 +12,7 @@ function R_GetMMLevels(Which: string): Integer;
 begin
   Result := -1;
   case LowerCase(Which) of
-    'hitpoints', 'hp': Result := StrToInt(GetInterfaceText(748, 8));
+    'hitpoints', 'hp', 'lp', 'lifepoints': Result := StrToInt(GetInterfaceText(748, 8));
     'prayer', 'pp'   : Result := StrToInt(GetInterfaceText(749, 4));
     'run', 'energy'  : Result := StrToInt(GetInterfaceText(750, 5));
     else SRL_Warn('R_GetMMLevels', 'Invaild string.', -3);
