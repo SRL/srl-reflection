@@ -177,10 +177,12 @@ Description: Gets command from Demon.
 *******************************************************************************}
 function R_GetCommand: String;
 var
-  i: integer;
+  i, Hi: integer;
   temp: String;
+  commands: TStringArray;
 begin
-  for i := 0 to High(INTERFACE_TALKS)do
+  Hi := High(INTERFACE_TALKS);
+  for i := 0 to Hi do
     //if(Pos('get back to', GetInterfaceText(INTERFACE_TALKS[i], 4)) > 0)then
     if(ValidInterface(INTERFACE_TALKS[i]))then
     begin
@@ -189,30 +191,18 @@ begin
       Break;
     end;
   Temp := GetInterfaceText(148, 1);
-  if(Pos('push ups', temp)>0)then
-  begin
-    Result := 'push ups';
-    Exit;
-  end;
-  if(Pos('sit ups', temp)>0)then
-  begin
-    Result := 'sit ups';
-    Exit;
-  end;
-  if(Pos('jumps', temp)>0)then
-  begin
-    Result := 'jumps';
-    Exit;
-  end;
-  if(Pos('jog on', temp)>0)then
-  begin
-    Result := 'jog';
-    Exit;
-  end;
+  commands := ['push ups', 'sit ups', 'jumps', 'jog on'];
+  Hi := High(commands)
+  for i := 0 to Hi do
+    if(Pos(commands[i], temp)>0)then
+    begin
+      Result := commands[i];
+      Exit;
+    end;
 end;
 
 {*******************************************************************************
-function R_SolveDemon : Boolean;
+function R_Jump : Boolean;
 by: ??? (Probably Drags111)
 Description: Does action specified by name.
 *******************************************************************************}
@@ -256,7 +246,7 @@ begin
 end;
 
 {*******************************************************************************
-function R_SolveDemon : Boolean;
+function R_PushUps : Boolean;
 by: ??? (Probably Drags111)
 Description: Does action specified by name.
 *******************************************************************************}
@@ -299,7 +289,7 @@ begin
 end;
 
 {*******************************************************************************
-function R_SolveDemon : Boolean;
+function R_SitUps : Boolean;
 by: ??? (Probably Drags111)
 Description: Does action specified by name.
 *******************************************************************************}
@@ -347,7 +337,7 @@ begin
 end;
 
 {*******************************************************************************
-function R_SolveDemon : Boolean;
+function R_Jog : Boolean;
 by: ??? (Probably Drags111)
 Description: Does action specified by name.
 *******************************************************************************}

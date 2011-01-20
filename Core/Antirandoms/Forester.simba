@@ -146,7 +146,7 @@ var
   Obj: TRSObject;
   C: TPoint;
 begin
-  Obj := GetObjectByIDEx([R_FORESTERPORTALID], OBJECT_TYPE_INTERACTABLE, 40);
+  Obj := GetObjectByIDEx([R_FORESTERPORTALID], OBJECT_TYPE_INTERACTABLE, 30);
   If Not (Obj.ID = R_FORESTERPORTALID)then
   begin
     r_Debug('Problem finding leaving portal, result = false', 'Forester');

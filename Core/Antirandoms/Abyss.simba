@@ -86,7 +86,7 @@ begin
 
   for I:=1 to 3 do // Try 3x
   begin
-    LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 52); //Get the object data
+    LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 20); //Get the object data
 
     if Not TileOnMS(LeverObj.Tile, 0) then //If Object not on screen then
     begin

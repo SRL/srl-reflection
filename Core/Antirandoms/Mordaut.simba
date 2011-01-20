@@ -333,7 +333,7 @@ begin
     else R_Debug('INVALID DOOR COLOR', 'Mordaut');
   end;
 
-  Door := GetObjectByID(ID, OBJECT_TYPE_WALLOBJECT, 40);
+  Door := GetObjectByID(ID, OBJECT_TYPE_WALLOBJECT, 25);
   If (Door.ID < 1)then
   begin
     R_Debug('Failed exiting mordaut', 'Mordaut');

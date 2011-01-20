@@ -304,7 +304,7 @@ Description: Collects all the coffins. Returns True if successful.
 function R_GraveObjectCoffinCollect: Boolean;
 var
   ObjCasket : TRSObject;
-  CasketArr, EmptyArr : TIntegerArray;
+  EmptyArr : TIntegerArray;
   PickupTime, CasketTime, i, InviCount : Integer;
   CurTile : TTile;
   TP : TPoint;

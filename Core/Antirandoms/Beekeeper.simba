@@ -1,6 +1,14 @@
+const
+  R_BEEKEEPER_ID = 8649;
+
 function R_InBeekeeper: boolean;
 begin
-  Result := ValidNPC('Bee keeper');
+  Result := ValidNPC(R_BEEKEEPER_ID);
+  if Result then
+  begin
+    Wait(1000);
+    Result := ValidNPC(R_BEEKEEPER_ID);
+  end;
 end;
 
 function BuildInterfaceUp: boolean;

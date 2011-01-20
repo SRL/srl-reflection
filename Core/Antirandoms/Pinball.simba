@@ -85,7 +85,7 @@ var
   T, NewT: TTile;
   time, i: integer;
 begin
-  TheExit := GetObjectByID(PINBALL_EXIT, OBJECT_TYPE_INTERACTABLE, 20);
+  TheExit := GetObjectByID(PINBALL_EXIT, OBJECT_TYPE_INTERACTABLE, 25);
   if (TheExit = NULL_RSOBJECT)then Exit;
   MakeCompass('s');
   SetAngle(false);
