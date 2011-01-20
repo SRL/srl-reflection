@@ -11,7 +11,7 @@ type
     Orientation: integer;// SOUTH = 0; NORTH = 180; CLOCKWISE.
     Tile: TTile;
     Name: String;
-    Moving: boolean;
+    Moving, Fighting: boolean;
   end;
 
 {Array of TPlayer}
@@ -40,6 +40,7 @@ begin
   Result.Name := NULL_STRING;
   Result.Tile := NULL_TILE;
   Result.Moving := False;
+  Result.Fighting := False;
   Result.Animation := NULL_INT;
   Result.Height := NULL_INT;
   Result.HPRatio := NULL_INT;
@@ -140,11 +141,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetPlayers: array of TPlayer;
+function GetAllPlayers: array of TPlayer;
 By: Widget edited by lordsaturn and drags111
 Description: Returns all the players on the minimap
 *******************************************************************************}
-function GetPlayers: array of TPlayer;
+function GetAllPlayers: TPlayerArray;
 var
   i, IndexPos, Count, Player, theName, L: integer;
 begin
@@ -162,6 +163,8 @@ begin
     Result[L].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) / 512));
     Result[L].Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight));
     Result[L].Animation := SmartGetFieldInt(Player, hook_character_Animation);
+    Result[L].Fighting := (SmartGetFieldInt(Player, hook_character_LoopCycleStatus) >
+                              SmartGetFieldInt(0, hook_static_LoopCycle));
     Result[L].Moving := (SmartGetFieldInt(Player, hook_character_Motion)>0);
     Result[L].HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
     Result[L].Level := SmartGetFieldInt(Player, hook_player_GetLevel);
@@ -199,67 +202,184 @@ begin
 end;
 
 {*******************************************************************************
-function GetPlayersBy(TheVar: Variant): TPlayerArray;
-By: Drags111
-Description: Returns all the players by the variant. (Name or Index);
+function GetPlayersMulti(TheVarArr: TVariantArray): TPlayerArray;
+By: Drags111/mormonman
+Description: Returns all the players by the variants. (Names or Indexes)
 *******************************************************************************}
-function GetPlayersBy(TheVar: Variant): TPlayerArray;
+function GetPlayersMulti(TheVarArr: TVariantArray): TPlayerArray;
 var
-  vType, i, resCounter, Hi: Integer;
+  vType, i, h, resCounter, Hi, Hig: Integer;
   Players: TPlayerArray;
   b: boolean;
 begin
-  Players := SortPlayers(GetPlayers);
+  Players := SortPlayers(GetAllPlayers);
   SetLength(Result, Length(Players));
-  vType := VarType(TheVar);
-  if (vType = varString) then
-    TheVar := LowerCase(Trim(TheVar));
+  Hig := High(TheVarArr);
   Hi := High(Players);
-  for i := Hi downto 0 do
-  begin
-    case vType of
-      varInteger: B := Players[i].Index = TheVar;
-      varString: B := (Pos(TheVar, LowerCase(Trim(Players[i].Name))) > 0);
-      else Exit;
+  for i := 0 to Hi do
+    for h := 0 to Hig do
+    begin
+      vType := VarType(TheVarArr[h]);
+      if (vType = varString) then
+        TheVarArr[h] := LowerCase(Trim(TheVarArr[h]));
+      case vType of
+        varInteger: B := Players[i].Index = TheVarArr[h];
+        varString: B := (Pos(TheVarArr[h], LowerCase(Trim(Players[i].Name))) > 0);
+        else Exit;
+      end;
+      if not B then
+        Continue;
+      Result[resCounter] := Players[i];
+      inc(resCounter);
     end;
-    if not B then
-      Continue;
-    Result[resCounter] := Players[i];
-    inc(resCounter);
-  end;
 
   SetLength(Result, resCounter);
 end;
 
 {*******************************************************************************
-function GetPlayer(theVar: Variant):TPlayer;
-By: Drags111
-Description: Gets the closest player that matches the argument
+function GetPlayers(TheVar: Variant): TPlayerArray;
+By: Drags111/mormonman
+Description: Returns all the players by the variant. (Name or Index)
 *******************************************************************************}
-function GetPlayer(theVar: Variant):TPlayer;
+function GetPlayers(TheVar: Variant): TPlayerArray;
+begin
+  Result := GetPlayersMulti([TheVar]);
+end;
+
+{*******************************************************************************
+function GetPlayerMulti(TheVarArr: TVariantArray):TPlayer;
+By: Drags111/mormonman
+Description: Gets the closest player that matches the arguments.
+*******************************************************************************}
+function GetPlayerMulti(TheVarArr: TVariantArray):TPlayer;
 var
   Players: TPlayerArray;
-  i, vType, Hi: Integer;
+  i, h, vType, Hi, Hig: Integer;
   B: Boolean;
 begin
   Result := NULL_PLAYER;
-  vType := VarType(TheVar);
-  if (vType = varString) then
-    TheVar := LowerCase(TheVar);
-  Players := SortPlayers(GetPlayers);
+  Players := SortPlayers(GetAllPlayers);
   Hi := High(Players);
-  for i := Hi downto 0 do
-  begin
-    case (vType) of
-      varInteger: B := Players[i].Index = TheVar;
-      varString: B := (Pos(TheVar, LowerCase(Players[i].Name)) > 0);
-      else Continue;
-    end;
-    if (B) then
+  Hig := High(TheVarArr);
+  for i := 0 to Hi do
+    for h := 0 to Hig do
     begin
-      Result := Players[i];
-      Exit;
+      vType := VarType(TheVarArr[h]);
+      if (vType = varString) then
+        TheVarArr[h] := LowerCase(TheVarArr[h]);
+      case (vType) of
+        varInteger: B := Players[i].Index = TheVarArr[h];
+        varString: B := (Pos(TheVarArr[h], LowerCase(Players[i].Name)) > 0);
+        else Continue;
+      end;
+      if (B) then
+      begin
+        Result := Players[i];
+        Exit;
+      end;
     end;
+end;
+
+{*******************************************************************************
+function GetPlayer(TheVar: Variant):TPlayer;
+By: Drags111/mormonman
+Description: Gets the closest player that matches the argument.
+*******************************************************************************}
+function GetPlayer(TheVar: Variant):TPlayer;
+begin
+  Result := GetPlayerMulti([TheVar]);
+end;
+
+{*******************************************************************************
+function GetPlayersByLevelEx(Levels: TIntegerArray): TPlayerArray;
+By: mormonman
+Description: Returns all players with the defined Levels.
+  *Note - Levels = Combat Levels
+*******************************************************************************}
+function GetPlayersByLevelEx(Levels: TIntegerArray): TPlayerArray;
+var
+  i, h, Hi, Hig, resCounter : Integer;
+  Players : TPlayerArray;
+begin
+  Players := SortPlayers(GetAllPlayers);
+  SetLength(Result, Length(Players));
+  Hi := High(Players);
+  Hig := High(Levels);
+  for i := 0 to Hi do
+    for h := 0 to Hig do
+      if Players[i].Level = Levels[h] then
+      begin
+        Result[resCounter] := Players[i];
+        inc(resCounter);
+      end;
+  SetLength(Result, resCounter);
+end;
+
+{*******************************************************************************
+function GetPlayersByLevel(Level: Integer): TPlayerArray;
+By: mormonman
+Description: Returns all players with the defined Level.
+*******************************************************************************}
+function GetPlayersByLevel(Level: Integer): TPlayerArray;
+begin
+  Result := GetPlayersByLevelEx([Level]);
+end;
+
+{*******************************************************************************
+function GetPlayerByLevelEx(Levels: TIntegerArray): TPlayer;
+By: mormonman
+Description: Gets the closest player that is one of the Levels.
+*******************************************************************************}
+function GetPlayerByLevelEx(Levels: TIntegerArray): TPlayer;
+var
+  i, h, Hi, Hig : Integer;
+  Players : TPlayerArray;
+begin
+  Result := NULL_PLAYER;
+  Players := SortPlayers(GetAllPlayers);
+  Hi := High(Players);
+  Hig := High(Levels);
+  for i := 0 to Hi do
+    for h := 0 to Hig do
+      if Players[i].Level = Levels[h] then
+      begin
+        Result := Players[i];
+      end;
+end;
+
+{*******************************************************************************
+function GetPlayerByLevel(Level: Integer): TPlayer;
+By: mormonman
+Description: Gets the closest player that is the Level
+*******************************************************************************}
+function GetPlayerByLevel(Level: Integer): TPlayer;
+begin
+  Result := GetPlayerByLevelEx([Level]);
+end;
+
+{*******************************************************************************
+procedure DumpPlayers(Players: TPlayerArray);
+By: Drags111
+Description: Prints out the array of Players. Mainly for debugging purposes.
+*******************************************************************************}
+procedure DumpPlayers(Players: TPlayerArray);
+var
+  i, Hi: integer;
+begin
+  Hi := High(Players);
+  for i := 0 to Hi do
+  begin
+    Writeln('Player: '+Players[i].Name);
+    Writeln('    '+'Index: '+ ToStr(Players[i].Index));
+    Writeln('    '+'Tile: '+ ToStr(Players[i].Tile));
+    Writeln('    '+'Animation: '+ ToStr(Players[i].Animation));
+    Writeln('    '+'Height: '+ ToStr(Players[i].Height));
+    Writeln('    '+'IsMoving: '+ ToStr(Players[i].Moving));
+    Writeln('    '+'Fighting: '+ ToStr(Players[i].Fighting));
+    Writeln('    '+'HPRatio: '+ ToStr(Players[i].HPRatio));
+    Writeln('    '+'Level: '+ ToStr(Players[i].Level));
+    Writeln('    '+'Orientation: '+ ToStr(Players[i].Orientation));
+    Writeln('    '+'Interacting: '+ ToStr(Players[i].Interacting));
   end;
 end;
 
