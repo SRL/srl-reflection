@@ -6,7 +6,7 @@ begin
   Result := ValidNPC(R_BEEKEEPER_ID);
   if Result then
   begin
-    Wait(1000);
+    Wait(6000);
     Result := ValidNPC(R_BEEKEEPER_ID);
   end;
 end;
