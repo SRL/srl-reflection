@@ -111,11 +111,9 @@ begin
     next := SmartGetFieldObject(cur, hook_node_Next);
     SmartFreeObject(cur);
     cur := next;
-    SmartFreeObject(next);
   end;
 
   // free objects we're finished with
-  SmartFreeObject(next);
   SmartFreeObject(cur);
   SmartFreeObject(tail);
 
@@ -140,11 +138,9 @@ begin
     next := SmartGetFieldObject(cur, hook_node_Next);
     SmartFreeObject(cur);
     cur := next;
-    SmartFreeObject(next);
   end;
 
   // free remaining objects
-  SmartFreeObject(next);
   SmartFreeObject(cur);
   SmartFreeObject(tail);
   SmartFreeObject(list);
