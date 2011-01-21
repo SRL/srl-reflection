@@ -1,19 +1,43 @@
 const
   R_BEEKEEPER_ID = 8649;
+  R_BEEKEEPER_BOXID = 16168;
+  R_BEEKEEPER_BOXNUMBER = 9;
+  R_BEEKEEPER_BUILDINTERFACE = 420;
+
+  R_BEEKEEPER_LID = 16036;
+  R_BEEKEEPER_TOP = 16025;
+  R_BEEKEEPER_BOTTOM = 16022;
+  R_BEEKEEPER_LEGS = 16034;
+
+  R_BEEKEEPER_SLOT1 = 25;
+  R_BEEKEEPER_SLOT2 = 22;
+  R_BEEKEEPER_SLOT3 = 23;
+  R_BEEKEEPER_SLOT4 = 21;
+
+  R_BEEKEEPER_ORIGIN1 = 12;
+  R_BEEKEEPER_ORIGIN2 = 13;
+  R_BEEKEEPER_ORIGIN3 = 14;
+  R_BEEKEEPER_ORIGIN4 = 15;
+
+  R_BEEKEEPER_DEST1 = 16;
+  R_BEEKEEPER_DEST2 = 17;
+  R_BEEKEEPER_DEST3 = 18;
+  R_BEEKEEPER_DEST4 = 19;
+
+  R_BEEKEEPER_NPCTEXT1 = 'click here to';
+  R_BEEKEEPER_NPCTEXT2 = 'yeah, let me';
 
 function R_InBeekeeper: boolean;
 begin
   Result := ValidNPC(R_BEEKEEPER_ID);
   if Result then
-  begin
-    Wait(6000);
-    Result := ValidNPC(R_BEEKEEPER_ID);
-  end;
+    Result := Length(GetObjectsByID(R_BEEKEEPER_BOXID,
+                        OBJECT_TYPE_INTERACTABLE, 8)) = R_BEEKEEPER_BOXNUMBER;
 end;
 
 function BuildInterfaceUp: boolean;
 begin
-  Result := ValidInterface(420);
+  Result := ValidInterface(R_BEEKEEPER_BUILDINTERFACE);
 end;
 
 function TalkToKeeper: boolean;
@@ -22,7 +46,7 @@ var
   P: TPoint;
   t: integer;
 begin
-  if not FindNPC('Bee keeper', NPC)then Exit;
+  if not FindNPC(R_BEEKEEPER_ID, NPC)then Exit;
   if not TileOnMS(NPC.Tile, NPC.Height * 2 / 3)then
   begin
     SetAngle(true);
@@ -36,7 +60,7 @@ begin
   if Result then
   begin
     MarkTime(t);
-    While ((not FindNPCText('click here to')) and (TimeFromMArk(t) < 5000))do
+    While ((not FindNPCText(R_BEEKEEPER_NPCTEXT1)) and (TimeFromMArk(t) < 5000))do
     begin
       if charactermoving then
         MarkTime(t);
@@ -54,11 +78,11 @@ begin
   if Result then Exit;
   While not BuildInterfaceUp do
   begin
-    if not FindNPC('Bee keeper', Keeper)then Exit;
-    if not(InteractingWithMe(keeper))then
+    if not FindNPC(R_BEEKEEPER_ID, Keeper)then Exit;
+    if not(InteractingWithMe(Keeper))then
       TalkToKeeper;
     ClickToContinue;
-    if(FindNPCText('yeah, let me'))then
+    if(FindNPCText(R_BEEKEEPER_NPCTEXT2))then
     begin
       Mouse(260, 444, 15, 3, true);
       wait(800+Random(2000));
@@ -69,10 +93,10 @@ end;
 function GetSlotChild(slot: integer): Integer;
 begin
   case Slot of
-    1: Result := 25;
-    2: Result := 22;
-    3: Result := 23;
-    4: Result := 21;
+    1: Result := R_BEEKEEPER_SLOT1;
+    2: Result := R_BEEKEEPER_SLOT2;
+    3: Result := R_BEEKEEPER_SLOT3;
+    4: Result := R_BEEKEEPER_SLOT4;
     else
     begin
       r_Debug('Invalid slot number.', 'Beekeeper');
@@ -83,8 +107,8 @@ end;
 
 function GetPieceIDAt(Slot: Integer): Integer;
 begin
-  if not ValidInterface(420)then Exit;
-  Result := GetModelID(420, GetSlotChild(Slot));
+  if not BuildInterfaceUp then Exit;
+  Result := GetModelID(R_BEEKEEPER_BUILDINTERFACE, GetSlotChild(Slot));
 end;
 
 procedure MovePiece(From, toSlot: Integer);
@@ -92,24 +116,24 @@ var
   IFace, Child, EndChild, x, y: Integer;
   TL, BR, P: TPoint; //Top left, Bottom right
 begin
-  if not ValidInterface(420) then Exit;
+  if not BuildInterfaceUp then Exit;
   r_Debug('Moving peice!', 'Beekeeper');
 
   case From of
-    1: Child := 12;
-    2: Child := 13;
-    3: Child := 14;
-    4: Child := 15;
+    1: Child := R_BEEKEEPER_ORIGIN1;
+    2: Child := R_BEEKEEPER_ORIGIN2;
+    3: Child := R_BEEKEEPER_ORIGIN3;
+    4: Child := R_BEEKEEPER_ORIGIN4;
   end;
   case toSlot of
-    1: EndChild := 16;
-    2: EndChild := 17;
-    3: EndChild := 18;
-    4: EndChild := 19;
+    1: EndChild := R_BEEKEEPER_DEST1;
+    2: EndChild := R_BEEKEEPER_DEST2;
+    3: EndChild := R_BEEKEEPER_DEST3;
+    4: EndChild := R_BEEKEEPER_DEST4;
   end;
 
   //Clicking component slot.
-  IFace := GetInterface(420, Child);
+  IFace := GetInterface(R_BEEKEEPER_BUILDINTERFACE, Child);
   TL.x := SmartGetFieldInt(IFace, hook_interface_GetX);
   TL.y := SmartGetFieldInt(IFace, hook_interface_GetY);
 
@@ -123,7 +147,7 @@ begin
   SmartFreeObject(IFace);
 
   //Moving mouse to destination slot.
-  IFace := GetInterface(420, EndChild);
+  IFace := GetInterface(R_BEEKEEPER_BUILDINTERFACE, EndChild);
   TL.x := SmartGetFieldInt(IFace, hook_interface_GetX);
   TL.y := SmartGetFieldInt(IFace, hook_interface_GetY);
 
@@ -154,10 +178,10 @@ begin
       begin
         ID := GetPieceIDAt(i);
         case ID of
-          16036: MovePiece(i, 1);
-          16025: MovePiece(i, 2);
-          16022: MovePiece(i, 3);
-          16034: MovePiece(i, 4);
+          R_BEEKEEPER_LID    : MovePiece(i, 1);
+          R_BEEKEEPER_TOP    : MovePiece(i, 2);
+          R_BEEKEEPER_BOTTOM : MovePiece(i, 3);
+          R_BEEKEEPER_LEGS   : MovePiece(i, 4);
         end;
         wait(300+Random(1000));
       end;
