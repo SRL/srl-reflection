@@ -407,12 +407,12 @@ begin
       ClickToContinue;
     end;
     R_SetSigns;
-    r_Debug('Doing order '+order, 'Demon');
+    r_Debug('Doing order: '+order, 'Demon');
     case order of
       'jumps': R_Jump;
       'push ups': R_Pushups;
       'sit ups': R_Situps;
-      'jog': R_Jog;
+      'jog on': R_Jog;
     end;
     neworder := order;
     while ((neworder = order) and (TimeFromMArk(t) < 20000))do
