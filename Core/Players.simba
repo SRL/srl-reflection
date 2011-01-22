@@ -12,6 +12,7 @@ type
     Tile: TTile;
     Name: String;
     Moving, Fighting: boolean;
+    Equipment: array[0..11] of Integer;
   end;
 
 {Array of TPlayer}
@@ -26,9 +27,20 @@ type
     Name: string;
     InFight: boolean;
     Experience, Levels: array[0..24] of Integer;
-    Equipment: TIntegerArray;
+    Equipment: array[0..11] of Integer;
     Orientation: Integer; // SOUTH = 0; NORTH = 180; CLOCKWISE.
   end;
+
+const
+  EQUIPMENT_SLOT_HEAD = 0;
+  EQUIPMENT_SLOT_CAPE = 1;
+  EQUIPMENT_SLOT_NECK = 2;
+  EQUIPMENT_SLOT_WEAPON = 3;
+  EQUIPMENT_SLOT_BODY = 4;
+  EQUIPMENT_SLOT_SHIELD = 5;
+  EQUIPMENT_SLOT_LEGS = 7;
+  EQUIPMENT_SLOT_HANDS = 9;
+  EQUIPMENT_SLOT_BOOTS = 10;
 
 {*******************************************************************************
 function NULL_PLAYER: TPlayer;
@@ -147,7 +159,7 @@ Description: Returns all the players on the minimap
 *******************************************************************************}
 function GetAllPlayers: TPlayerArray;
 var
-  i, IndexPos, Count, Player, theName, L: integer;
+  i, h, IndexPos, Count, Player, pdef, theName, L: integer;
 begin
   Count := SmartGetFieldInt(0, hook_static_PlayerCount);
   SetArrayLength(result, Count);
@@ -156,6 +168,7 @@ begin
   try
     IndexPos := SmartGetFieldArrayInt(0, hook_static_PlayerIndexArray, i);
     Player := SmartGetFieldArrayObject(0, hook_static_GetPlayers, IndexPos);
+    pdef := SmartGetFieldObject(Player, hook_player_PlayerDef);
     theName := SmartGetFieldObject(Player, hook_player_GetName);
     Result[L].Index := IndexPos;
     Result[L].Name := GetJavaString(theName, 255);
@@ -170,6 +183,8 @@ begin
     Result[L].Level := SmartGetFieldInt(Player, hook_player_GetLevel);
     Result[L].Orientation := Round(FixD(180 + (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048));
     Result[L].Interacting := SmartGetFieldInt(Player, hook_character_GetInteracting);
+    for h := 0 to 11 do
+      Result[L].Equipment[h] := SmartGetFieldArrayInt(pdef, hook_playerdef_GetEquipment, h);
     Inc(L);
   finally
     SmartFreeObject(Player);
@@ -380,6 +395,7 @@ begin
     Writeln('    '+'Level: '+ ToStr(Players[i].Level));
     Writeln('    '+'Orientation: '+ ToStr(Players[i].Orientation));
     Writeln('    '+'Interacting: '+ ToStr(Players[i].Interacting));
+    Writeln('    '+'Equipment: '+ ToStr(Players[i].Equipment));
   end;
 end;
 
@@ -412,6 +428,8 @@ begin
       Result.Experience[i] := SmartGetFieldArrayInt(0, hook_static_GetSkillExperiences, i);
       Result.Levels[i] := SmartGetFieldArrayInt(0, hook_static_GetSkillLevels, i);
     end;
+    for i := 0 to 11 do
+      Result.Equipment[i] := SmartGetFieldArrayInt(pdef, hook_playerdef_GetEquipment, i);
   finally
     SmartFreeObject(theName);
     SmartFreeObject(Player);
