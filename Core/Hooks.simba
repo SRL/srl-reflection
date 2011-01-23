@@ -182,7 +182,7 @@ const
 
 {Class MenuGroupNode}
     class_MenuGroupNode = 'vq'; //634
-    hook_MenuGroupNode_getNodeSubList = 'E'; //634
+    hook_MenuGroupNode_getNodeSubListItems = 'E'; //634
 
 {Class Menu}
     class_Menu = 'db'; //634

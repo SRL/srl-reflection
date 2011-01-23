@@ -4,6 +4,7 @@
 {$i ./Core/Constants.simba}
 {$i ./Core/Hooks.simba}
 {$i ./Core/TileCore.simba}
+{$i ./Core/Nodes.simba}
 {$i ./Core/Text.simba}
 {$i ./Core/NPCs.simba}
 {$i ./Core/Players.simba}

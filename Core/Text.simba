@@ -50,6 +50,16 @@ begin
 end;
 
 {*******************************************************************************
+function IsMenuTabbed: boolean;
+By: pyroryan
+Description: Returns true if the menu is tabbed
+*******************************************************************************}
+function IsMenuTabbed: boolean;
+begin
+  Result := SmartGetFieldBoolean(0, hook_static_IsMenuTabbed);
+end;
+
+{*******************************************************************************
 function GetMenuCount: integer;
 By: BenLand100
 Description: Returns the number of menu items
@@ -57,6 +67,142 @@ Description: Returns the number of menu items
 function GetMenuCount: integer;
 begin
   Result := SmartGetFieldInt(0, hook_static_MenuOptionCount);
+end;
+
+{*******************************************************************************
+function GetMenuItemPart(part : Integer) : Integer;
+By: pyroryan
+Description: part 1 for Actions. part 2 for Options. Supports tabbed menus.
+             Tabbed menus: Generally, first part is actions (part 1)
+                           Second part is options (part 2)
+*******************************************************************************}
+function GetMenuItemPart(part : Integer) : TStringArray;
+var
+  itemsList : TStringArray;
+  item : String;
+  count, nodeSubList, groupNode, subMenu, menuItemNode : Integer;
+  last, lastTwo, nodeList, javaString : Integer;
+begin
+  count := GetMenuCount;
+  //R_Debug(ToStr(count), 'MenuCount');
+  SetLength(itemsList, count);
+  count := 0; //Prepare for use as index
+
+  if (IsMenuTabbed) then
+  begin
+    nodeSubList := SmartGetFieldObject(0, hook_static_getCollapsedMenuItems);
+    //R_Debug(ToStr(nodeSubList), 'nodeSubList');
+    groupNode := getNodeSubHead(nodeSubList);
+    //R_Debug(ToStr(groupNode), 'groupNode');
+    while (groupNode <> 0) do
+    begin
+      subMenu := SmartGetFieldObject(groupNode, hook_MenuGroupNode_getNodeSubListItems);
+      //R_Debug(ToStr(subMenu), 'subMenu');
+      if (subMenu = 0) then
+      begin
+        break;
+      end;
+      menuItemNode := getNodeSubHead(subMenu);
+      //R_Debug(ToStr(menuItemNode), 'menuItemNode');
+      while (menuItemNode <> 0) do
+      begin
+        if (part = 1) then
+        begin
+          javaString := SmartGetFieldObject(menuItemNode, hook_menu_Action);
+          if (javaString = 0) then
+          begin
+            //writeln('Stopping, the string is null');
+            break;
+          end;
+          item := GetJavaString(javaString, 256);
+          SmartFreeObject(javaString);
+          //R_Debug(item, 'Menu');
+          itemsList[count] := TrimHTML(item);
+          //R_Debug(ToStr(itemsList), 'itemsList');
+          count := count + 1;
+        end;
+        if (part = 2) then
+        begin
+          javaString := SmartGetFieldObject(menuItemNode, hook_menu_Option);
+          if (javaString = 0) then
+          begin
+            //writeln('Stopping, the string is null');
+            break;
+          end;
+          item := GetJavaString(javaString, 256);
+          SmartFreeObject(javaString);
+          //R_Debug(item, 'Menu');
+          itemsList[count] := TrimHTML(item);
+          //R_Debug(ToStr(itemsList), 'itemsList');
+          count := count + 1;
+        end;
+        //Count
+        lastTwo := menuItemNode;
+        menuItemNode := getNodeSubNext(lastTwo);
+        SmartFreeObject(lastTwo);
+        //R_Debug(ToStr(menuItemNode), 'nextNode');
+      end;
+      //Count
+      last := groupNode;
+      groupNode := getNodeSubNext(last);
+      SmartFreeObject(last);
+      //R_Debug(ToStr(groupNode), 'nextGroupNode');
+      SmartFreeObject(subMenu);
+      SmartFreeObject(menuItemNode);
+    end;
+    SmartFreeObject(groupNode);
+    SmartFreeObject(nodeSubList);
+  end else
+  begin //Not tabbed
+    nodeList := SmartGetFieldObject(0, hook_static_MenuNodeList);
+    //R_Debug(ToStr(nodeList), 'nodeList');
+    menuItemNode := getNodeHead(nodeList);
+    //R_Debug(ToStr(menuItemNode), 'menuItemNode');
+    while (menuItemNode <> 0) do
+    begin
+      if (part = 1) then
+      begin
+        javaString := SmartGetFieldObject(menuItemNode, hook_menu_Action);
+        //R_Debug(ToStr(javaString), 'javaString');
+        if (javaString = 0) then
+        begin
+          //writeln('Stopping, the string is null');
+          break;
+        end;
+        item := GetJavaString(javaString, 256);
+        SmartFreeObject(javaString);
+        //R_Debug(ToStr(item), 'item');
+        itemsList[count] := TrimHTML(item);
+        //R_Debug(ToStr(itemsList), 'itemsList');
+        count := count + 1;
+      end;
+      if (part = 2) then
+      begin
+        javaString := SmartGetFieldObject(menuItemNode, hook_menu_Option);
+        //R_Debug(ToStr(javaString), 'javaString');
+        if (javaString = 0) then
+        begin
+          //writeln('Stopping, the string is null');
+          break;
+        end;
+        item := GetJavaString(javaString, 256);
+        SmartFreeObject(javaString);
+        //R_Debug(ToStr(item), 'item');
+        itemsList[count] := TrimHTML(item);
+        //R_Debug(ToStr(itemsList), 'itemsList');
+        count := count + 1;
+      end;
+      //Count
+      last := menuItemNode;
+      menuItemNode := getNodeNext(last);
+      SmartFreeObject(last);
+      //R_Debug(ToStr(menuItemNode), 'nextNode');
+    end;
+    SmartFreeObject(menuItemNode);
+    SmartFreeObject(nodeList);
+  end;
+  SetLength(itemsList, count);
+  Result := itemsList;
 end;
 
 {*******************************************************************************

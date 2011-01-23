@@ -1,0 +1,83 @@
+//------------------------------------------------------------------\\
+//--                  Simba Reflection Library                    --||
+//--                        Nodes Wrapper                         --||
+//--            By: pyroryan (pyro.ryan1988@gmail.com)            --||
+//--              Also has some other random stuff                --||
+//------------------------------------------------------------------//
+
+{*******************************************************************************
+Function getNodes(nodeCache : Integer) : Integer;
+By: pyroryan
+Description:
+*******************************************************************************}
+function getNodes(nodeCache : Integer) : Integer;
+begin
+  Result := SmartGetFieldObject(nodeCache, hook_nodecache_GetNodes);
+end;
+
+function getNode(nodes, index : Integer) : Integer;
+var
+  node : Integer;
+begin
+  node := SmartGetFieldArrayObject(nodes, '', index);
+  Result := SmartGetFieldObject(node, hook_node_Next);
+  SmartFreeObject(node);
+end;
+
+function getNodeNext(node : Integer) : Integer;
+begin
+  Result := SmartGetFieldObject(node, hook_node_Next);
+end;
+
+function getNodePrevious(node : Integer) : Integer;
+begin
+  Result := SmartGetFieldObject(node, hook_node_Previous);
+end;
+
+function getNodeID(node : Integer) : Integer;
+begin
+  Result := SmartGetFieldLongL(node, hook_node_GetID);
+end;
+
+function getNodeHead(nodeList : Integer) : Integer;
+var
+  tail : Integer;
+begin
+  tail := SmartGetFieldObject(nodeList, hook_nodelist_Head);
+  Result := getNodeNext(tail);
+  SmartFreeObject(tail);
+end;
+
+
+
+//Random stuff
+function getArraySize(arrayObject : Integer) : Integer;
+begin
+  Result := SmartGetFieldArraySize(arrayObject, '', 1);
+end;
+
+
+
+//NodeList stuff
+function getNodeList(node : Integer) : Integer;
+begin
+  Result := SmartGetFieldObject(node, hook_nodelistcache_GetNodeList);
+end;
+
+
+
+
+//NodeSub stuff
+function getNodeSubNext(nodeSub : Integer) : Integer;
+begin
+  Result := SmartGetFieldObject(nodeSub, hook_nodesub_Next);
+end;
+
+function getNodeSubHead(nodeSubList : Integer) : Integer;
+var
+  tail : Integer;
+begin
+  tail := SmartGetFieldObject(nodeSubList, hook_nodesublist_getHead);
+  Result := getNodeSubNext(tail);
+  SmartFreeObject(tail);
+end;
