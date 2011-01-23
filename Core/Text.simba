@@ -70,13 +70,13 @@ begin
 end;
 
 {*******************************************************************************
-function GetMenuItemPart(part : Integer) : Integer;
+function GetMenuItemsPart(part : Integer) : Integer;
 By: pyroryan
 Description: part 1 for Actions. part 2 for Options. Supports tabbed menus.
              Tabbed menus: Generally, first part is actions (part 1)
                            Second part is options (part 2)
 *******************************************************************************}
-function GetMenuItemPart(part : Integer) : TStringArray;
+function GetMenuItemsPart(part : Integer) : TStringArray;
 var
   itemsList : TStringArray;
   item : String;
