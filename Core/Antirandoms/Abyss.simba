@@ -70,12 +70,22 @@ begin
   end;
 end;
 
+function R_AbyssGetLeverTile(LeverNumber: Integer; T: TTile): TTile;
+begin
+  case LeverNumber of
+    R_ABYSS_LEVER_N: Result := Tile(T.x, T.y + 1);
+    R_ABYSS_LEVER_S: Result := Tile(T.x, T.y - 1);
+    R_ABYSS_LEVER_E: Result := Tile(T.x + 1, T.y);
+    R_ABYSS_LEVER_W: Result := Tile(T.x - 1, T.y);
+  end;
+end;
+
 function R_AbyssPullLever(LeverNumber: Integer): Boolean;
 var
   i, x, y: Integer;
   LeverObj: TRSObject;
   TP: TPoint;
-  AbyssCenter: TTile;
+  AbyssCenter, LeverTile: TTile;
 begin
   Result := False;
   if not LoggedIn then
@@ -88,14 +98,16 @@ begin
   begin
     LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 20); //Get the object data
 
-    if Not TileOnMS(LeverObj.Tile, 0) then //If Object not on screen then
+    LeverTile := R_AbyssGetLeverTile(LeverNumber, LeverObj.Tile);
+
+    if Not TileOnMS(LeverTile, 300) then //If Object not on screen then
     begin
       R_Debug('Tile not found on MS, moving near it', 'Abyss');
       case LeverNumber of
-        R_ABYSS_LEVER_N: AbyssCenter := Tile(LeverObj.Tile.x, LeverObj.Tile.y - 4);
-        R_ABYSS_LEVER_S: AbyssCenter := Tile(LeverObj.Tile.x, LeverObj.Tile.y + 4);
-        R_ABYSS_LEVER_E: AbyssCenter := Tile(LeverObj.Tile.x - 4, LeverObj.Tile.y);
-        R_ABYSS_LEVER_W: AbyssCenter := Tile(LeverObj.Tile.x + 4, LeverObj.Tile.y);
+        R_ABYSS_LEVER_N: AbyssCenter := Tile(LeverTile.x, LeverTile.y - 4);
+        R_ABYSS_LEVER_S: AbyssCenter := Tile(LeverTile.x, LeverTile.y + 4);
+        R_ABYSS_LEVER_E: AbyssCenter := Tile(LeverTile.x - 4, LeverTile.y);
+        R_ABYSS_LEVER_W: AbyssCenter := Tile(LeverTile.x + 4, LeverTile.y);
       end;
 
       if not WalkToTile(AbyssCenter, 0, 0)then //Walk to center!
@@ -111,13 +123,17 @@ begin
         R_ABYSS_LEVER_W: MakeCompass ('e');
     end;
 
-    TP := TileToMS(LeverObj.Tile, 300);
+    R_Flag;
 
-    if SpiralMouseMulti(X, Y, TP.X-20, TP.Y-20, TP.X+20, TP.Y+20, ['Operate', 'Appendage'], 10, 10) then
+    TP := TileToMS(LeverTile, 300);
+    MMouse(TP.x, TP.y, 10, 10);
+
+    if WaitUpTextMulti(['perate', 'ppendage'], 1000) then
     begin
+      GetMousePos(X, Y);
       R_Debug('Found proper lever! Pulling...', 'Abyss');
       Mouse(X, Y, 0, 0, False);
-      Result := r_WaitOptionMulti(['Operate', 'Appendage'], 200+Random(100));
+      Result := true;//r_WaitOptionMulti(['Operate', 'Appendage'], 200+Random(100));
       Exit;
     end
 
@@ -125,7 +141,9 @@ begin
 end;
 
 function R_SolveAbyss : Boolean;
-var Direction : String;
+var
+  Direction : String;
+  t: Integer;
 begin
   if not LoggedIn then
     Exit;
@@ -145,4 +163,14 @@ begin
       'w': Result := R_AbyssPullLever(R_ABYSS_LEVER_W);
     end;
   end else R_Debug('Not in Abyss random!', 'Abyss');
+  MarkTime(t);
+  if Result then
+  begin
+    while (R_InAbyss and (TimeFromMark(t) < 8000)) do
+      Wait(500);
+    Wait(2500);
+  end;
+  ClickToContinue;
+  Wait(4000+Random(2000));
+  Result := not R_InAbyss;
 end;

@@ -11,7 +11,8 @@ var
   RS_RMordaut: TNPC;
   RS_MRanged, RS_MCooking, RS_MFishing, RS_MCombat, RS_MFarming,
   RS_MMagic, RS_MFiremaking, RS_MHats, RS_MDrinks, RS_MWoodcutting,
-  RS_MBoots, RS_MCrafting, RS_MMining, RS_MSmithing: TIntegerArray;
+  RS_MBoots, RS_MCrafting, RS_MMining, RS_MSmithing, RS_MJewellery,
+  RS_MPirate: TIntegerArray;
   RS_MItems: array of TIntegerArray;
   RS_MQuestions: array of TStringArray;
   RS_MDoor, RS_MDir: String;
@@ -27,28 +28,27 @@ begin
 
   RS_MRanged    := [11539, 11540, 11541, 11614, 11615, 11633];
 
-  RS_MCooking   := [11526, 11529, 11545, 11549, 11550, 11555,
-                    11560, 11563, 11564, 11607, 11608, 11616,
-                    11620, 11621, 11622, 11623, 11628, 11629,
-                          11634, 11639, 11641, 11649, 11624];
+  RS_MCooking   := [11526, 11529, 11545, 11549, 11550, 11555, 11560,
+                    11563, 11564, 11607, 11608, 11616, 11620, 11621,
+                    11622, 11623, 11628, 11629, 11634, 11639, 11641,
+                    11649, 11624];
 
-  RS_MFishing   := [11527, 11574, 11578, 11580, 11599, 11600,
-                    11601, 11602, 11603, 11604, 11605, 11606,
-                    11625];
+  RS_MFishing   := [11527, 11574, 11578, 11580, 11599, 11600, 11601,
+                    11602, 11603, 11604, 11605, 11606, 11625];
 
-  RS_MCombat    := [11528, 11531, 11536, 11537, 11579, 11591,
-                    11592, 11593, 11597, 11627, 11631, 11635,
-                    11636, 11638, 11642, 11648];
+  RS_MCombat    := [11528, 11531, 11536, 11537, 11579, 11591, 11592,
+                    11593, 11597, 11627, 11631, 11635, 11636, 11638,
+                    11642, 11648, 11617];
 
-  RS_MFarming   := [11530, 11532, 11547, 11548, 11554, 11556,
-                    11571, 11581, 11586, 11610, 11645];
+  RS_MFarming   := [11530, 11532, 11547, 11548, 11554, 11556, 11571,
+                    11581, 11586, 11610, 11645];
 
   RS_MMagic     := [11533, 11534, 11538, 11562, 11567, 11582];
 
   RS_MFiremaking:= [11535, 11551, 11552, 11559, 11646];
 
-  RS_MHats      := [11540, 11557, 11558, 11560, 11570, 11619,
-                    11626, 11630, 11632, 11637, 11654];
+  RS_MHats      := [11540, 11557, 11558, 11560, 11570, 11619, 11626,
+                    11630, 11632, 11637, 11654];
 
   RS_MDrinks    := [11542, 11543, 11544, 11644, 11647];
 
@@ -56,24 +56,29 @@ begin
 
   RS_MBoots     := [11561, 11618, 11650, 11651];
 
-  RS_MCrafting  := [11546, 11553, 11565, 11566, 11568, 11569,
-                    11572, 11575, 11576, 11577, 11581, 11583,
-                    11584, 11585, 11643, 11652, 11653];
-  RS_MMining    := [11587, 11588, 11594, 11596, 11598, 11609,
-                    11610];
+  RS_MCrafting  := [11546, 11553, 11565, 11566, 11568, 11569, 11572,
+                    11575, 11576, 11577, 11581, 11583, 11584, 11585,
+                    11643, 11652, 11653];
+
+  RS_MMining    := [11587, 11588, 11594, 11596, 11598, 11609, 11610];
+
   RS_MSmithing  := [11611, 11612, 11613];
+
+  RS_MPirate    := [11570, 11626, 11558];
+
+  RS_MJewellery  := [11572, 11576, 11652];
 
   RS_MItems := [RS_MRanged, RS_MCooking, RS_MFishing, RS_MCombat, RS_MFarming,
   RS_MMagic, RS_MFiremaking, RS_MHats, RS_MDrinks, RS_MWoodcutting,
-  RS_MBoots, RS_MCrafting, RS_MMining, RS_MSmithing];
+  RS_MBoots, RS_MCrafting, RS_MMining, RS_MSmithing, RS_MPirate, RS_MJewellery];
 
-  SetLength(RS_MQuestions, 52);
+  SetLength(RS_MQuestions, 55);
   RS_MQuestions[0] := ['I''m feeling dehydrated','Drinks'];
   RS_MQuestions[1] := ['quenched my thirst','Drinks'];
   RS_MQuestions[2] := ['light my fire','Firemaking'];
   RS_MQuestions[3] := ['fishy','Fishing'];
   RS_MQuestions[4] := ['fishing for answers','Fishing'];
-  RS_MQuestions[5] := ['I feel like a fish out of water!', 'Fishing'];
+  RS_MQuestions[5] := ['I feel like a fish out of water!', 'Drinks'];
   RS_MQuestions[6] := ['fish out of water','Drinks'];
   RS_MQuestions[7] := ['strange headgear','Hats'];
   RS_MQuestions[8] := ['tip my hat','Hats'];
@@ -85,8 +90,8 @@ begin
   RS_MQuestions[14] := ['shall unmask','Hats'];
   RS_MQuestions[15] := ['hand-to-hand','Combat'];
   RS_MQuestions[16] := ['melee weapon','Combat'];
-  RS_MQuestions[17] := ['me hearties','Hats'];
-  RS_MQuestions[18] := ['mighty pirate','Drinks']
+  RS_MQuestions[17] := ['me hearties','Pirate'];
+  RS_MQuestions[18] := ['mighty pirate','Pirate']
   RS_MQuestions[19] := ['mighty archer','Ranged'];
   RS_MQuestions[20] := ['shiny things','Crafting'];
   RS_MQuestions[21] := ['range','Ranged'];
@@ -119,7 +124,11 @@ begin
   RS_MQuestions[48] := ['fire','Firemaking'];
   RS_MQuestions[49] := ['sparks from','Firemaking'];
   RS_MQuestions[50] := ['thirsty','Drinks'];
-  RS_MQuestions[51] := ['igniting my brain', 'Hats'];
+  RS_MQuestions[51] := ['igniting', 'Firemaking'];
+  RS_MQuestions[52] := ['some sort of jewellery', 'Jewellery'];
+  RS_MQuestions[53] := ['no better feeling', 'Jewellery'];
+  RS_MQuestions[54] := ['disguised','Hats'];
+
 end;
 
 {*******************************************************************************
@@ -180,6 +189,8 @@ begin
     11: Result := 'Crafting';
     12: Result := 'Mining';
     13: Result := 'Smithing';
+    14: Result := 'Pirate';
+    15: Result := 'Jewellery';
     else Result := 'Error 2.';
   end;
 end;
