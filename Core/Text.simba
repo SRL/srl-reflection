@@ -73,8 +73,8 @@ end;
 function GetMenuItemsPart(part : Integer) : Integer;
 By: pyroryan
 Description: part 1 for Actions. part 2 for Options. Supports tabbed menus.
-             Tabbed menus: First part is octions (part 2)
-                           Second part is actions (part 1)
+             Tabbed menus: First part is options (part = 2)
+                           Second part is actions (part = 1)
 *******************************************************************************}
 function GetMenuItemsPart(part : Integer) : TStringArray;
 var
