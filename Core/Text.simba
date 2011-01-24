@@ -254,6 +254,10 @@ function clickMenuIndex(index : Integer) : Integer;
 By: pyroryan
 Description:
 *******************************************************************************}
+var
+  allItems : TStringArray;
+  item : String;
+  nodeSubList, groupNode, subMenu, menuItemNode, last, lastTwo, javaString : Integer;
 function clickMenuIndex(index : Integer) : Boolean;
 begin
   allItems := GetMenuText;
@@ -302,9 +306,10 @@ begin
     SmartFreeObject(groupNode);
     SmartFreeObject(nodeSubList);
   end else //Not Tabbed
+  begin
     //TODO add clicking stuff
   end;
-end;
+end; 
 
 {*******************************************************************************
 function R_ChooseOptionMulti(Options : TStringArray) : Boolean;
