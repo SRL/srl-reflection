@@ -19,10 +19,13 @@
 
 const
     ClientVersion = 634;
-    HookRev = 6;
+    HookRev = 7;
 
 {Static Hooks}
     hook_static_LoginIndex = 'ta.c'; //634
+    hook_static_getFriendsList = 'lc.b'; //634
+    hook_static_getFriendsWorlds = 'ha.r'; //634
+    hook_static_CameraYaw = 'jk.K'; //634
     hook_static_MyPlayer = 'nr.c'; //634
     hook_static_BaseX = 'cu.u'; //634
     hook_static_BaseY = 'bc.f'; //634
