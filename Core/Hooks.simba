@@ -19,10 +19,13 @@
 
 const
     ClientVersion = 634;
-    HookRev = 5;
+    HookRev = 7;
 
 {Static Hooks}
     hook_static_LoginIndex = 'ta.c'; //634
+    hook_static_getFriendsList = 'lc.b'; //634
+    hook_static_getFriendsWorlds = 'ha.r'; //634
+    hook_static_CameraYaw = 'jk.K'; //634
     hook_static_MyPlayer = 'nr.c'; //634
     hook_static_BaseX = 'cu.u'; //634
     hook_static_BaseY = 'bc.f'; //634
@@ -64,7 +67,6 @@ const
     hook_static_IsMenuTabbed = 'nk.w'; //634
     hook_static_getCollapsedMenuItems = 'sn.h'; //634
 
-
 {Class Animable}
     class_Animable = 'ga'; //634
     hook_animable_PixelX = 'j'; //634
@@ -90,6 +92,22 @@ const
     hook_character_HPRatio = 'Ic'; //634
     hook_character_GetInteracting = 'oc'; //634
     hook_character_Orientation = 'vc'; //634
+
+{Class AnimableNode}
+    class_AnimableNode = 'oga'; //634
+    hook_AnimableNode_GetAnimable = 'd'; //634
+    hook_AnimableNode_GetNext = 'b'; //634
+
+{Class AnimableEntity}
+    class_AnimableEntity = 'jb'; //634
+    hook_animableentity_getAreaX1 = 'D'; //634
+    hook_animableentity_getAreaX2 = 'M'; //634
+    hook_animableentity_getAreaY1 = 'L'; //634
+    hook_animableentity_getAreaY2 = 'H'; //634
+
+{Class PlayerDef}
+    class_PlayerDef = 'oo'; //634
+    hook_playerdef_GetEquipment = 'c'; //634
 
 {Class NPC}
     class_NPC = 'ff'; //634
@@ -148,6 +166,10 @@ const
     hook_sdtoolkit_xScale = 'Y'; //634
     hook_sdtoolkit_yScale = 'eb'; //634
 
+{Class SDPlane}
+    class_SDPlane = 's'; //634
+    hook_sdplane_TileHeights = 'a'; //634
+
 {Class SDModel}
     class_SDModel = 'jga'; //634
     hook_sdmodel_getIndices1 = 'u'; //634
@@ -156,10 +178,6 @@ const
     hook_sdmodel_getPointsX = 'hb'; //634
     hook_sdmodel_getPointsY = 'J'; //634
     hook_sdmodel_getPointsZ = 'p'; //634
-
-{Class SDPlane}
-    class_SDPlane = 's'; //634
-    hook_sdplane_TileHeights = 'a'; //634
 
 {Class NodeList}
     class_NodeList = 'uh'; //634
@@ -172,31 +190,22 @@ const
     hook_node_GetID = 'g'; //634
     hook_node_Previous = 'k'; //634
 
-{Class NodeSub}
-    class_NodeSub = 'vl'; //634
-    hook_nodesub_Next = 'u'; //634
+{Class MenuGroupNode}
+    class_MenuGroupNode = 'vq'; //634
+    hook_MenuGroupNode_getNodeSubListItems = 'E'; //634
 
 {Class NodeSubList}
     class_NodeSubList = 'mn'; //634
     hook_nodesublist_getHead = 'f'; //634
 
-{Class MenuGroupNode}
-    class_MenuGroupNode = 'vq'; //634
-    hook_MenuGroupNode_getNodeSubListItems = 'E'; //634
+{Class NodeSub}
+    class_NodeSub = 'vl'; //634
+    hook_nodesub_Next = 'u'; //634
 
 {Class Menu}
     class_Menu = 'db'; //634
     hook_menu_Action = 'w'; //634
     hook_menu_Option = 'F'; //634
-
-{Class PlayerDef}
-    class_PlayerDef = 'oo'; //634
-    hook_playerdef_GetEquipment = 'c'; //634
-
-{Class AnimableNode}
-    class_AnimableNode = 'oga'; //634
-    hook_AnimableNode_GetAnimable = 'd'; //634
-    hook_AnimableNode_GetNext = 'b'; //634
 
 {Class ObjectInterface}
     class_ObjectInterface = 'at'; //634
@@ -217,15 +226,6 @@ const
     hook_interface_GetParentID = 'hd'; //634
     hook_interface_IsHidden = 'Mc'; //634
 
-{Class Ground}
-    class_Ground = 'es'; //634
-    hook_ground_AnimableList = 'e'; //634
-    hook_ground_WallObject1 = 'l'; //634
-    hook_ground_WallObject2 = 'o'; //634
-    hook_ground_WallDecoration1 = 'p'; //634
-    hook_ground_WallDecoration2 = 'd'; //634
-    hook_ground_FloorDecoration = 'k'; //634
-
 {Class NodeCache}
     class_NodeCache = 'eq'; //634
     hook_nodecache_GetNodes = 'a'; //634
@@ -243,26 +243,14 @@ const
     class_SettingArray = 'pia'; //634
     hook_settingarray_GetData = 'b'; //634
 
-{
-  /////////////// HOOKS BELOW HERE ARE *OUTDATED* AS OF 14 July 2010 (Client 614) ////////////////////////
-  These hooks all need to be added to the updater.
-}
-
- //Some work actually. You're welcome. Updated as much as I could. (Thanks to TRiLeZ and pyroryan.)
-
-{Class InteractiveObject}
-    class_InteractiveObject = 'dm'; //634
-    hook_interactiveobject_GetID = 'ub'; //634
-    hook_interactiveobject_GetModel = 'qb'; //634
-
-{Class InteractiveObject2}
-    class_InteractiveObject2 = 'fea'; //634
-    hook_interactiveobject2_GetObjectData = 'Y'; //634
-
-{Class SecondLevelObject}
-    class_SecondLevelObject = 'bv'; //634
-    hook_secondlevelobject_GetID = 'n'; //634
-    hook_secondlevelobject_GetModel = 'j'; //634
+{Class Ground}
+    class_Ground = 'es'; //634
+    hook_ground_AnimableList = 'e'; //634
+    hook_ground_WallObject1 = 'l'; //634
+    hook_ground_WallObject2 = 'o'; //634
+    hook_ground_WallDecoration1 = 'p'; //634
+    hook_ground_WallDecoration2 = 'd'; //634
+    hook_ground_FloorDecoration = 'k'; //634
 
 //WallObjectData, WallDecorationData, FloorDecorationData updated -pyroryan
 {Class WallObjectData}
@@ -282,3 +270,18 @@ const
     hook_FloorDecorationData_GetID = 'db'; //634
     hook_FloorDecorationData_GetModel = 'fb'; //634
     hook_FloorDecorationData_GetOrientation = 'S'; //634
+
+ //Some work actually. You're welcome. Updated as much as I could. (Thanks to TRiLeZ and pyroryan.)
+{Class InteractiveObject}
+    class_InteractiveObject = 'dm'; //634
+    hook_interactiveobject_GetID = 'ub'; //634
+    hook_interactiveobject_GetModel = 'qb'; //634
+
+{Class InteractiveObject2}
+    class_InteractiveObject2 = 'fea'; //634
+    hook_interactiveobject2_GetObjectData = 'Y'; //634
+
+{Class SecondLevelObject}
+    class_SecondLevelObject = 'bv'; //634
+    hook_secondlevelobject_GetID = 'n'; //634
+    hook_secondlevelobject_GetModel = 'j'; //634
