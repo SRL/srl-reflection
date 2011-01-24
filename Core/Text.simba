@@ -73,8 +73,8 @@ end;
 function GetMenuItemsPart(part : Integer) : Integer;
 By: pyroryan
 Description: part 1 for Actions. part 2 for Options. Supports tabbed menus.
-             Tabbed menus: Generally, first part is actions (part 1)
-                           Second part is options (part 2)
+             Tabbed menus: First part is octions (part 2)
+                           Second part is actions (part 1)
 *******************************************************************************}
 function GetMenuItemsPart(part : Integer) : TStringArray;
 var
@@ -112,6 +112,7 @@ begin
           if (javaString = 0) then
           begin
             //writeln('Stopping, the string is null');
+            SmartFreeObject(javaString);
             break;
           end;
           item := GetJavaString(javaString, 256);
@@ -127,6 +128,7 @@ begin
           if (javaString = 0) then
           begin
             //writeln('Stopping, the string is null');
+            SmartFreeObject(javaString);
             break;
           end;
           item := GetJavaString(javaString, 256);
@@ -167,6 +169,7 @@ begin
         if (javaString = 0) then
         begin
           //writeln('Stopping, the string is null');
+          SmartFreeObject(javaString);
           break;
         end;
         item := GetJavaString(javaString, 256);
@@ -183,6 +186,7 @@ begin
         if (javaString = 0) then
         begin
           //writeln('Stopping, the string is null');
+          SmartFreeObject(javaString);
           break;
         end;
         item := GetJavaString(javaString, 256);
@@ -223,6 +227,12 @@ begin
   SetLength(result,count);
   repeat
     javaString:= SmartGetFieldObject(next, hook_menu_Action);
+    if (javaString = 0) then
+    begin
+      //writeln('Stopping, the string is null');
+      SmartFreeObject(javaString);
+      break;
+    end;
     item:= GetJavaString(javaString,256);
     SmartFreeObject(javaString);
     javaString:= SmartGetFieldObject(next, hook_menu_Option);
@@ -237,6 +247,63 @@ begin
   SmartFreeObject(next);
   SmartFreeObject(head);
   SmartFreeObject(nodeList);
+end;
+
+{*******************************************************************************
+function clickMenuIndex(index : Integer) : Integer;
+By: pyroryan
+Description:
+*******************************************************************************}
+function clickMenuIndex(index : Integer) : Boolean;
+begin
+  allItems := GetMenuText;
+  if (length(allItems) < index) then
+  begin
+    result := false;
+  end;
+
+  if (IsMenuTabbed) then
+  begin
+    nodeSubList := SmartGetFieldObject(0, hook_static_getCollapsedMenuItems);
+    //R_Debug(ToStr(nodeSubList), 'nodeSubList');
+    groupNode := getNodeSubHead(nodeSubList);
+    //R_Debug(ToStr(groupNode), 'groupNode');
+    while (groupNode <> 0) do
+    begin
+      subMenu := SmartGetFieldObject(groupNode, hook_MenuGroupNode_getNodeSubListItems);
+      //R_Debug(ToStr(subMenu), 'subMenu');
+      if (subMenu = 0) then
+      begin
+        break;
+      end;
+      menuItemNode := getNodeSubHead(subMenu);
+      //R_Debug(ToStr(menuItemNode), 'menuItemNode');
+      while (menuItemNode <> 0) do
+      begin
+
+
+        //TODO add clicking stuff
+
+
+        //Count
+        lastTwo := menuItemNode;
+        menuItemNode := getNodeSubNext(lastTwo);
+        SmartFreeObject(lastTwo);
+        //R_Debug(ToStr(menuItemNode), 'nextNode');
+      end;
+      //Count
+      last := groupNode;
+      groupNode := getNodeSubNext(last);
+      SmartFreeObject(last);
+      //R_Debug(ToStr(groupNode), 'nextGroupNode');
+      SmartFreeObject(subMenu);
+      SmartFreeObject(menuItemNode);
+    end;
+    SmartFreeObject(groupNode);
+    SmartFreeObject(nodeSubList);
+  end else //Not Tabbed
+    //TODO add clicking stuff
+  end;
 end;
 
 {*******************************************************************************
