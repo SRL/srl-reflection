@@ -133,7 +133,7 @@ begin
       GetMousePos(X, Y);
       R_Debug('Found proper lever! Pulling...', 'Abyss');
       Mouse(X, Y, 0, 0, False);
-      Result := true;//r_WaitOptionMulti(['Operate', 'Appendage'], 200+Random(100));
+      Result := r_WaitOptionMulti(['Operate', 'Appendage'], 200+Random(100));
       Exit;
     end
 

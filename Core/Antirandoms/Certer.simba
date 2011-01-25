@@ -21,21 +21,34 @@ function R_InCerter : Boolean;
 By: Cstrike
 Description: Checks if in this random.
 *******************************************************************************}
-function R_InCerter : Boolean;
+function R_PORTALOBJECT(T: TTile): TRSObject;
 begin
-  Result := (ValidNPC (CERTER_NPCNAME1)) or (ValidNPC (CERTER_NPCNAME2)) or (ValidNPC (CERTER_NPCNAME3));
+  Result := NewObject(CERTER_PORTALID, OBJECT_TYPE_INTERACTABLE, T);
+end;
+
+function R_InCerter : Boolean;
+var
+  NPC: TNPC;
+  T: TTile;
+begin
+  Result := FindNPCMulti([CERTER_NPCNAME1, CERTER_NPCNAME2, CERTER_NPCNAME3], NPC);
+  if Result then
+  begin
+    T := Tile(NPC.Tile.x + 8, NPC.Tile.y);
+    Result := FindRSObject(R_PORTALOBJECT(T));
+  end;
 end;
 
 // Inheritance
-function R_CerterGetChildCompID (ParentI, ChildI, CompI: Integer) : Integer;
+function R_CerterGetChildCompID(ParentI, ChildI, CompI: Integer) : Integer;
 begin
-  Result := GetChildComponentID (ParentI, ChildI, CompI);
+  Result := GetChildComponentID(ParentI, ChildI, CompI);
 end;
 
 // Inheritance
 function R_CerterGetComponentText(ParentI, ChildI, CompI: Integer) : String;
 begin
-  Result := GetChildComponentText (ParentI, ChildI, CompI);
+  Result := GetChildComponentText(ParentI, ChildI, CompI);
 end;
 
 {*******************************************************************************
@@ -78,8 +91,8 @@ begin
       if ValidInterface(i) then
       begin
         Mouse(303, 452, 72, 7, True);
-        MMouse (203, 352, 80, 50);
-        wait (1000+random(2000));
+        MMouse(203, 352, 80, 50);
+        wait(1000+random(2000));
       end;
     end;
 
@@ -92,7 +105,7 @@ begin
         Break;
       end;
     end;
-    wait (500+random(350));
+    wait(500+random(350));
 
     if not ChatActive then Break;
     ChatActive := False; // If we come around again it will be set true if were still talking
@@ -131,7 +144,7 @@ begin
   // These line up with one another for what to look for
   CerterIDArr := [2807, 8828, 8829, 8832, 8833, 8834, 8835, 8836, 8837];
   CerterNameArr := ['bowl', 'battleaxe', 'fish', 'shield', 'helmet', 'ring', 'shears', 'sword', 'spade'];
-  ModelIDNumber := GetChildComponentModelID (CERTER_MODELINTERFACE, CERTER_MODELCHILD, CERTER_MODELCOMP);
+  ModelIDNumber := GetChildComponentModelID(CERTER_MODELINTERFACE, CERTER_MODELCHILD, CERTER_MODELCOMP);
 
   // Search for index
   for i := 0 to high (CerterIDArr) do
@@ -141,7 +154,7 @@ begin
   end;
 
   // If we max out the array and dont find it, then we failed...
-  if (i = high (CerterIDArr)) and (ModelIDNumber <> CerterIDArr[high (CerterIDArr)]) then
+  if (i = high(CerterIDArr)) and (ModelIDNumber <> CerterIDArr[high(CerterIDArr)]) then
   begin
     r_Debug('Warning, ID number not known (Random gave us model ID #'+ToStr(ModelIDNumber)+')', 'Certer');
     Exit;
@@ -178,15 +191,15 @@ begin
   end;
 
   // Seem human while making decision
-  wait (1000+random(2500));
+  wait(1000+random(2500));
 
   // Move mouse to answer [based off of answerletter
-  Mouse (120, (55 + (AnswerLetter*35)), 40, 3, true);
+  Mouse(120, (55 + (AnswerLetter*35)), 40, 3, true);
 
   // Wait for response to see if we succeeded
   MarkTime(t);
   repeat
-    wait (50);
+    wait(50);
   until (not ValidInterface(CERTER_MODELINTERFACE)) or (TimeFromMark(t) > 15000)
   if not ValidInterface(CERTER_MODELINTERFACE) then
   begin
@@ -213,7 +226,7 @@ begin
   if ValidInterface(CERTER_MODELINTERFACE) then Exit;
 
   // If were talking to him, skip...
-  for i:=0 to high (INTERFACE_TALKS) do
+  for i:=0 to high(INTERFACE_TALKS) do
     if ValidInterface(INTERFACE_TALKS[i]) then Exit;
 
   Result := False; // If we are clearly not talking to him then... now try to talk to him
@@ -223,16 +236,16 @@ begin
   if high(NPCs) > -1 then // We have a match in this case
     for j:=0 to high(NPCs) do
     begin
-      if TileOnMS (NPCs[j].Tile, 0) then
+      if TileOnMS(NPCs[j].Tile, 0) then
       begin
-        TP := TileToMS (NPCs[j].Tile, 0);
-        Mouse (TP.X, TP.Y, 2, 2, false);
-        wait (500+random(500));
-        if R_ChooseOptionMulti (['iles', 'alk-to']) then
+        TP := TileToMS(NPCs[j].Tile, 0);
+        Mouse(TP.X, TP.Y, 2, 2, false);
+        wait(500+random(500));
+        if R_ChooseOptionMulti(['iles', 'alk-to']) then
         begin
           r_Debug('Selected talk to NPC since we weren''t talking to him', 'Certer');
           Result := True;
-          wait (2000+random(2000));
+          wait(2000+random(2000));
           Exit;
         end;
       end;
@@ -243,16 +256,16 @@ begin
   if high(NPCs) > -1 then // We have a match in this case
     for k:=0 to high(NPCs) do
     begin
-      if TileOnMS (NPCs[k].Tile, 0) then
+      if TileOnMS(NPCs[k].Tile, 0) then
       begin
-        TP := TileToMS (NPCs[k].Tile, 0);
+        TP := TileToMS(NPCs[k].Tile, 0);
         Mouse (TP.X, TP.Y, 2, 2, false);
-        wait (500+random(500));
-        if R_ChooseOptionMulti (['iles', 'alk-to']) then
+        wait(500+random(500));
+        if R_ChooseOptionMulti(['iles', 'alk-to']) then
         begin
           r_Debug('Selected talk to NPC since we weren''t talking to him', 'Certer');
           Result := True;
-          wait (2000+random(2000));
+          wait(2000+random(2000));
           Exit;
         end;
       end;
@@ -267,23 +280,23 @@ Description: Exits through portal.
 *******************************************************************************}
 function R_CerterExitCerter : Boolean;
 var
-  PortalObj : TRSObject;
-  TP : TPoint;
+  PortalObj: TRSObject;
+  TP: TPoint;
 begin
   if not LoggedIn then Exit;
   Result := False;
-  PortalObj := GetObjectByID(CERTER_PORTALID, OBJECT_TYPE_INTERACTABLE, 20);
-  if PortalObj = NULL_RSOBJECT then Exit;
-  if TileOnMS (PortalObj.Tile, 0) then
+  PortalObj := GetObjectByID(CERTER_PORTALID, OBJECT_TYPE_INTERACTABLE, 13);
+  if (PortalObj = NULL_RSOBJECT) then Exit;
+  if TileOnMS(PortalObj.Tile, 0) then
   begin
-    TP := TileToMS (PortalObj.Tile, 0);
-    Mouse (TP.x, TP.y, 3, 3, false);
-    if R_ChooseOptionMulti (['nte', 'orta']) then
+    TP := TileToMS(PortalObj.Tile, 0);
+    Mouse(TP.x, TP.y, 3, 3, false);
+    if R_ChooseOptionMulti(['nte', 'orta']) then
     begin
       Result := True;
-      wait (1000+random(2000));
+      R_Flag;
     end;
-    wait (500+random(500));
+    wait(500+random(500));
   end;
 
 end;
@@ -295,7 +308,7 @@ Description: Solves certer.
 *******************************************************************************}
 function R_SolveCerter : Boolean;
 var
-  i : Integer;
+  i, t: Integer;
 begin
   if not LoggedIn then Exit;
   Result := False;
@@ -306,22 +319,22 @@ begin
     begin
       if R_CerterClickContinueIfTalking then
       begin
-        wait (200+random(200));
+        wait(200+random(200));
         if R_CerterTalkToNPC then
         begin
-          wait (300+random(300));
+          wait(300+random(300));
           if R_CerterClickContinueIfTalking then
           begin
-            wait (250+random(270));
+            wait(250+random(270));
             if R_CerterSelectAnswer then
             begin
-              wait (400+random(210));
+              wait(400+random(210));
               if R_CerterClickContinueIfTalking then
               begin
-                wait (600+random(250));
+                wait(600+random(250));
                 if R_CerterExitCerter then
                 begin
-                  wait (400+random(700));
+                  wait(400+random(700));
                   r_Debug('Certer portal exiting completed.', 'Certer');
                   Result := True;
                   Break;
@@ -331,10 +344,14 @@ begin
           end else r_Debug('Error: Had trouble while talking to certer', 'Certer');
         end else r_Debug('Error: Had trouble with certer interaction', 'Certer');
       end else r_Debug('Error: Had trouble while talking to certer', 'Certer');
-      wait (1000+random(2000));
+      wait(1000+random(2000));
     end; // End 3 chances
   end else r_Debug('Warning: Not in certer random', 'Certer');
-
-  Result := R_LoggedIn;
-  if not Result then r_Debug('Failed solving certer.', 'Certer');
+  MarkTime(t);
+  if R_InCerter then
+    while R_InCerter and (TimeFromMark(t) < 8000) do
+      wait(350);
+  Result := (R_LoggedIn and (not R_InCerter));
+  if not Result then r_Debug('Failed solving certer.', 'Certer')
+    else Wait(1500 + random(1500));
 end;
