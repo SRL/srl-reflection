@@ -537,7 +537,7 @@ Description: Gives that stupid cat it's crap and leaves
 *******************************************************************************}
 function R_ScapeRuneFinishRandom : Boolean;
 var
-  t, i : Integer;
+  t, i, TX, TY : Integer;
   TP, TPPortal : TPoint;
   Portal : TRSObject;
 begin
