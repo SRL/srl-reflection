@@ -569,6 +569,13 @@ begin
       wait (400+random(400));
       if R_ChooseOption ('Enter Portal') then
       begin
+        R_Flag;
+
+        Wait(1300 + Random(1000));
+
+        if FindColor(TX, TY, 2070783, 234, 46, 254, 56) then
+          Mouse(172, 199, 100, 4, True);
+
         R_Debug('Entering exit portal to finish random...', 'ScapeRune');
         Result := True;
         Exit;
