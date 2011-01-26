@@ -22,6 +22,8 @@ end;
 Function r_ForesterWants: TIntegerArray;
 var
   S: String;
+  i, Hi: Integer;
+  strArr: TStringArray;
 begin
   Result := [-1];
 
@@ -34,8 +36,14 @@ begin
     ClickContinue(True, True);
   end;
 
-  Delete(S, 1, Pos('kill a', S)+6);
-  Delete(S, Pos('-', S), Length(S));
+  strArr := ['one', 'two', 'three', 'four'];
+  Hi := High(strArr);
+  for i := 0 to Hi do
+    if Pos(strArr[i], S) > 0 then
+    begin
+      S := strArr[i];
+      break;
+    end;
 
   Case S of
     'one': Result := [R_ONETAIL_1, R_ONETAIL_2];
