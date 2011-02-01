@@ -25,7 +25,7 @@ const
     hook_static_LoginIndex = 'fha.l'; //635
     hook_static_getFriendsList = 'op.l'; //635
     hook_static_getFriendsWorlds = 'sm.I'; //635
-    hook_static_CameraYaw = '';
+    hook_static_CameraYaw = 'rn.l'; //635
     hook_static_MyPlayer = 'qk.n'; //635
     hook_static_BaseX = 'uga.l'; //635
     hook_static_BaseY = 'uha.t'; //635
@@ -48,8 +48,10 @@ const
     hook_static_MenuY2 = '';
     hook_static_MenuWidth2 = '';
     hook_static_MenuHeight2 = '';
-    hook_static_MenuOpen = '';
-    hook_static_MenuNodeList = '';
+    hook_static_MenuOpen = 'faa.l'; //635
+    hook_static_MenuNodeList = 'daa.a'; //635
+    hook_static_IsMenuTabbed = 'jp.a'; //635
+    hook_static_getCollapsedMenuItems = 'vj.b'; //635
     hook_static_LoopCycle = 'wi.f'; //635
     hook_static_PlayerCount = 'ln.n'; //635
     hook_static_PlayerIndexArray = 'kd.c'; //635
@@ -61,11 +63,9 @@ const
     hook_static_ValidInterfaces = 'rl.n'; //635
     hook_static_GetSettings = 'la.O'; //635
     hook_static_GroundItemCache = 'pv.b'; //635
-    hook_static_CamPosX = '';
-    hook_static_CamPosY = '';
+    hook_static_CamPosX = 'ak.i'; //635
+    hook_static_CamPosY = 'eca.k'; //635
     hook_static_GetCrossHairColor = 'fn.b'; //635
-    hook_static_IsMenuTabbed = '';
-    hook_static_getCollapsedMenuItems = '';
 
 {Class Animable}
     class_Animable = 'ov'; //635
