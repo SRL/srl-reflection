@@ -84,7 +84,7 @@ const
     class_Character = 'pe'; //635
     hook_character_GetHitDamges = 'Cb'; //635
     hook_character_Animation = 'Pc'; //635
-    hook_character_Motion = '';
+    hook_character_Motion = 'ad'; //635
     hook_character_WalkQueueX = 'Yc'; //635
     hook_character_WalkQueueY = 'Wc'; //635
     hook_character_GetHeight = 'db'; //635
@@ -218,7 +218,7 @@ const
     hook_interface_GetTextureID = 'Eb'; //635
     hook_interface_GetTextColor = 'Db'; //635
     hook_interface_GetModelID = 'Bb'; //635
-    hook_interface_GetModelZoom = ''; //635
+    hook_interface_GetModelZoom = 'eb'; //635
     hook_interface_GetName = 'Jc'; //635
     hook_interface_GetChildren = 'Ic'; //635
     hook_interface_GetID = 'Bc'; //635
