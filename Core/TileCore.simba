@@ -348,35 +348,30 @@ end;
 
 {*******************************************************************************
 function TileInBox(Bounds: TBox; Tile: TTile): boolean;
-By: Drags111
-Description: Results true if the tile is in the box. TOP LEFT TO BOTTOM RIGHT.
+By: mormonman
+Description: Results true if the tile is in the box.
 *******************************************************************************}
 function TileInBox(Bounds: TBox; T: TTile): boolean;
 var
-  tx, ty, x1, y1, x2, y2: integer;
+  tx, ty, maxx, maxy, minx, miny: integer;
 begin
-  x1 := Bounds.X1; y1 := Bounds.Y1;
-  x2 := Bounds.X2; y2 := Bounds.Y2;
+  maxx := Max(Bounds.X1, Bounds.X2); maxy := Max(Bounds.Y1, Bounds.Y2);
+  minx := Min(Bounds.X1, Bounds.X2); miny := Min(Bounds.Y1, Bounds.Y2);
   tx := T.X; ty := T.Y;
-  Result := ((tx >= x1) and (tx <= x2) and (ty <= y1) and (ty >= y2));
+  Result := ((tx >= minx) and (tx <= maxx) and (ty <= maxy) and (ty >= miny));
 end;
 
 {*******************************************************************************
 function MeInBox(Bounds: TBox): boolean;
-By: Drags111
-Description: Results true if your char is in the box of tiles. TOP LEFT TO
-          BOTTOM RIGHT.
+By: mormonman
+Description: Results true if your char is in the box of tiles.
 *******************************************************************************}
 function MeInBox(Bounds: TBox): boolean;
 var
-  tx, ty, x1, y1, x2, y2: integer;
   T: TTile;
 begin
   T := GetMyPos;
-  x1 := Bounds.X1; y1 := Bounds.Y1;
-  x2 := Bounds.X2; y2 := Bounds.Y2;
-  tx := T.X; ty := T.Y;
-  Result := ((tx >= x1) and (tx <= x2) and (ty <= y1) and (ty >= y2));
+  Result := TileInBox(Bounds, T);
 end;
 
 

@@ -168,12 +168,12 @@ Description: Returns a the Name of the item in the slot.
 *******************************************************************************}
 function GetEquippedNameAt(spot: integer): String;
 var
-  Equipmnt: TEquipmentSet;
+  Equipment: TEquipmentSet;
 begin
-  Equipmnt := GetEquipment;
-  if(Equipmnt.Items[spot] = NULL_EQUIPMENT)then
+  Equipment := GetEquipment;
+  if(Equipment.Items[spot] = NULL_EQUIPMENT)then
       Exit;
-  Result := Equipmnt.Items[spot].name;
+  Result := Equipment.Items[spot].name;
 end;
 
 {*******************************************************************************
@@ -183,10 +183,10 @@ Description: Returns true if there is an item equipped at the slot.
 *******************************************************************************}
 function HasItemEquipped(spot: integer): boolean;          // rename..
 var
-  Equipmnt: TEquipmentSet;
+  Equipment: TEquipmentSet;
 begin
-  Equipmnt := GetEquipment;
-  Result := (Equipmnt.Items[spot].ID <> NULL_INT);
+  Equipment := GetEquipment;
+  Result := (Equipment.Items[spot].ID <> NULL_INT);
 end;
 
 {*******************************************************************************
