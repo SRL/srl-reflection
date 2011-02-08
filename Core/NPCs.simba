@@ -9,7 +9,7 @@ type
   TNPC = record
     Index, ID, Level, Animation, Height, HPRatio, Interacting,
     Orientation: integer;// SOUTH = 0; NORTH = 180; CLOCKWISE.
-    Tile: TTile;
+    Tile, RealTile: TTile;
     Pixel: TPoint;//Pixel position on tile
     Name: String;
     Actions: TStringArray;
@@ -31,6 +31,7 @@ begin
   Result.Name := NULL_STRING;
   Result.Actions := [];
   Result.Tile := NULL_TILE;
+  Result.RealTile := NULL_TILE;
   Result.Moving := False;
   Result.Animation := NULL_INT;
   Result.Height := NULL_INT;
@@ -98,6 +99,7 @@ then it will include Null NPCs.
 function GetAllNPCs(Null: Boolean):array of TNPC;
 var
   i, c, NumNPCs, Index, TheNPC, TheNPCDef, TheBytes, TheNPCNode: integer;
+  Base: TTile;
 begin
   NumNPCs := SmartGetFieldInt(0,hook_static_NPCCount);
   if (NumNPCs < 1) then Exit;
@@ -116,8 +118,12 @@ begin
     Result[c].ID := SmartGetFieldInt(TheNPCDef, hook_npcdef_GetID);
     Result[c].Name := GetJavaString(TheBytes, 255);
     Result[c].Actions := _GetNPCActionArray(TheNPCDef);
-    Result[c].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
-    Result[c].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
+    Base.X := SmartGetFieldInt(0, hook_static_BaseX);
+    Base.Y := SmartGetFieldInt(0, hook_static_BaseY)
+    Result[c].Tile.X := (Base.X + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
+    Result[c].Tile.Y := (Base.Y + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
+    Result[c].RealTile.X := (Base.X + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
+    Result[c].RealTile.Y := (Base.Y + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
     Result[c].Pixel.X := SmartGetFieldInt(TheNPC, hook_animable_PixelX) mod 512;
     Result[c].Pixel.Y := SmartGetFieldInt(TheNPC, hook_animable_PixelY) mod 512;
     Result[c].Moving := (SmartGetFieldInt(TheNPC, hook_character_Motion)>0);
@@ -455,6 +461,7 @@ begin
     Writeln('    '+'ID: '+ToStr(NPCs[i].ID));
     Writeln('    '+'Actions: '+ ToStr(NPCs[i].Actions));
     Writeln('    '+'Tile: '+ ToStr(NPCs[i].Tile));
+    Writeln('    '+'RealTile: '+ ToStr(NPCs[i].RealTile));
     Writeln('    '+'Animation: '+ ToStr(NPCs[i].Animation));
     Writeln('    '+'Height: '+ ToStr(NPCs[i].Height));
     Writeln('    '+'Fighting: '+ ToStr(NPCs[i].Fighting));

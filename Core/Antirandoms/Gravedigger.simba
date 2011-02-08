@@ -233,7 +233,7 @@ begin
       begin
         TP := TileToMS(Tile(TIA[0],TIA[1]), 0);
         Mouse(TP.x, TP.y, 2, 2, True);
-        Wait (500+random(250));
+        R_Flag;
       end;
     until (high(GIA) < 0) or (TimeFromMark(t) > 15000)
 

@@ -24,6 +24,63 @@ const
   INTERFACE_BANK_ITEM_MEMBERS_COUNT                     = 25;
   INTERFACE_BANK_ITEM_MEMBERS_MAX                       = 26;
   INTERFACE_BANK_SCROLLBAR                              = 114;
+  INTERFACE_BANK_TAB_ACTIVE                             = 1419;
+  INTERFACE_BANK_TAB_ADD_TEXTURE                        = 1435;
+  INTERFACE_BANK_MAXSLOTS                               = 515;
+  INTERFACE_BANK_SLOTS                                  = 93;
+
+Type
+  TBankItem = Record
+    ID, Slot, StackSize: Integer;
+    Name: String;
+  end;
+
+  TBankItemArray = array of TBankItem;
+
+{*******************************************************************************
+function NULL_TBANKITEM: TBankItem;
+By: mormonman
+Description: Checks to see if the bank is open.
+*******************************************************************************}
+function NULL_TBANKITEM: TBankItem;
+begin
+  Result.ID := NULL_INT;
+  Result.Slot := NULL_INT;
+  Result.StackSize := NULL_INT;
+  Result.Name := NULL_STRING;
+end;
+
+{*******************************************************************************
+function NewTBankItem: TBankItem;
+By: mormonman
+Description: Checks to see if the bank is open.
+*******************************************************************************}
+function NewTBankItem(IDa, S, SS: Integer; N: String): TBankItem;
+begin
+  Result.ID := IDa;
+  Result.Slot := S;
+  Result.StackSize := SS;
+  Result.Name := N;
+end;
+
+{*******************************************************************************
+procedure DebugTBankItemArray(TBIA: TBankItemArray);
+By: mormonman
+Description: Dumps info for TBankItemArray.
+*******************************************************************************}
+procedure DebugTBankItemArray(TBIA: TBankItemArray);
+var
+  i, Hi: Integer;
+begin
+  Hi := High(TBIA);
+  for i := 0 to Hi do
+  begin
+    Writeln('BankItem: '+TBIA[i].Name);
+    Writeln('    '+'ID: '+ ToStr(TBIA[i].ID));
+    Writeln('    '+'Slot: '+ ToStr(TBIA[i].Slot));
+    Writeln('    '+'StackSize: '+ ToStr(TBIA[i].StackSize));
+  end;
+end;
 
 {*******************************************************************************
 Function R_BankScreen: Boolean;
@@ -133,6 +190,524 @@ Description: Deposits all items but the items with the specified ID to the bank.
 procedure R_DepositAllButID(ID : Integer);
 begin
   R_DepositAllButIDEx([ID]);
+end;
+
+{*******************************************************************************
+function R_NumberOfBankTabs: Integer;
+By: mormonman
+Description: Returns how many bank tabs you have.
+*******************************************************************************}
+function R_NumberOfBankTabs: Integer;
+var
+  arr: TIntegerArray;
+  tmpArr: TStringArray;
+  i, Hi: Integer;
+begin
+  arr := [62, 60, 58, 56, 54, 52, 50, 48, 46];
+  Hi := High(arr);
+  for i := Hi downto 0 do
+  begin
+    tmpArr := GetInterfaceComponentActions(INTERFACE_BANK, arr[i]);
+    if (Length(tmpArr) < 1) then Continue;
+    if(Pos('all', tmpArr[0]) > 0) then
+    begin
+      Result := 1;
+      Exit;
+    end;
+    if(Pos(ToStr(i+1), tmpArr[0]) > 0) then Break;
+  end;
+  Result := i+1;
+end;
+
+{*******************************************************************************
+function R_BankTabExists(TabNum: Integer): Boolean;
+By: Shuttleu
+Description: Checks if the bank tab exists.
+*******************************************************************************}
+function R_BankTabExists(TabNum: Integer): Boolean;
+begin
+  Result := (TabNum <= R_NumberOfBankTabs) and (TabNum > 0);
+end;
+
+{*******************************************************************************
+function R_BankTabID(TabNum: Integer): Integer;
+By: Shuttleu
+Description: Returns the interface component id for the tab number.
+*******************************************************************************}
+function R_BankTabID(TabNum: Integer): Integer;
+begin
+  case TabNum of
+    1: Result := 63;
+    2: Result := 61;
+    3: Result := 59;
+    4: Result := 57;
+    5: Result := 55;
+    6: Result := 53;
+    7: Result := 51;
+    8: Result := 49;
+    9: Result := 47;
+  end;
+end;
+
+{*******************************************************************************
+function R_CurrentBankTab: Integer;
+By: Shuttleu
+Description: Returns which tab you are currntly on.
+*******************************************************************************}
+function R_CurrentBankTab: Integer;
+var
+  i, x: Integer;
+begin
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_CurrentBankTab');
+    Exit;
+  end;
+  for i := 62 downto 45 do
+  begin
+    x := GetInterfaceComponentTextureID(INTERFACE_BANK, i);
+    if (x = INTERFACE_BANK_TAB_ACTIVE) then break;
+  end;
+  if InIntArrayEx([62, 60, 58, 56, 54, 52, 50, 48, 46], x, i) then
+    Result:= (x + 1) else Result := -1;
+end;
+
+{*******************************************************************************
+function R_BankTab(TabNum: Integer): Boolean;
+By: Shuttleu/mormonman
+Description: Clicks on the bank tab if it exists.
+*******************************************************************************}
+function R_BankTab(TabNum: Integer): Boolean;
+var
+  ID, time: Integer;
+  Position: TBox;
+begin
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_BankTab');
+    Exit;
+  end;
+  if not R_BankTabExists(TabNum) then
+  begin
+    R_Debug('Tab does not exist', 'R_BankTab');
+    Exit;
+  end;
+  if (R_CurrentBankTab = TabNum) then
+  begin
+    R_Debug('Tab already open', 'R_BankTab');
+    Result := True;
+    Exit;
+  end;
+
+  ID := R_BankTabID(TabNum);
+  Position:= GetInterfaceComponentRelativePosition(INTERFACE_BANK, ID);
+  Mouse(RandomRange(Position.x1, Position.x2), RandomRange(Position.y1, Position.y2)
+          , 0, 0, True);
+  MarkTime(time);
+  while not (R_CurrentBankTab = TabNum) do
+  begin
+    Wait(250);
+    if (TimeFromMark(time) > 8000) then
+      Exit;
+  end;
+  Result:= (R_CurrentBankTab = TabNum);
+  Wait(500 + Random(500));
+end;
+
+{*******************************************************************************
+Function ReadyToTypeBank: Boolean;
+By: Shuttleu
+Description: Returns true if it is on the item search screen.
+*******************************************************************************}
+function ReadyToTypeBank: Boolean;
+begin
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'ReadyToTypeBank');
+    Exit;
+  end;
+  Result:= not GetInterfaceComponentIsHidden(752, 3);
+end;
+
+{*******************************************************************************
+function R_GetAllBankItems: TBankItemArray;
+By: mormonman
+Description: Returns all Bank Items.
+*******************************************************************************}
+function R_GetAllBankItems: TBankItemArray;
+var
+  rCount, slot, tmpID, tmpSS: Integer;
+  tmpName: String;
+begin
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_ItemsExistInBankMulti');
+    Exit;
+  end;
+  SetLength(Result, INTERFACE_BANK_MAXSLOTS + 1);
+  for slot := 0 to INTERFACE_BANK_MAXSLOTS do
+  begin
+    tmpID := GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot);
+    if (tmpID > 0) then
+    begin
+      //R_Debug('#' +ToStr(slot), 'Slot');
+      tmpName := TrimHTML(GetChildComponentName(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot));
+      tmpSS := GetChildComponentStack(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot);
+      Result[rCount] := NewTBankItem(tmpID, slot, tmpSS, tmpName);;
+      inc(rCount);
+    end;
+  end;
+  SetLength(Result, rCount);
+end;
+
+{*******************************************************************************
+function R_ItemsExistInBankEx(TheVarArr: TVariantArray; var ItemArray: TBankItemArray): Boolean;
+By: mormonman
+Description: Returns true if one of the items exists in bank.
+             It also returns the array of Items.
+*******************************************************************************}
+function R_ItemsExistInBankEx(TheVarArr: TVariantArray; var ItemArray: TBankItemArray): Boolean;
+var
+  i, Hi, h, vType, resCounter, Hig: Integer;
+  B: Boolean;
+  BItems: TBankItemArray;
+begin
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_ItemsExistInBank');
+    Exit;
+  end;
+  BItems := R_GetAllBankItems;
+  Hig := High(BItems);
+  resCounter := 0;
+  SetLength(ItemArray, Hig + 1);
+  for i := 0 to Hig do
+  begin
+    Hi := High(TheVarArr);
+    for h := 0 to Hi do
+    begin
+      vType := VarType(TheVarArr[h]);
+      if (vType = varString) then
+        TheVarArr[h] := LowerCase(Trim(TheVarArr[h]));
+      case vType of
+        varInteger: B := (BItems[i].ID = TheVarArr[h]);
+        varString: B := (Pos(TheVarArr[h], LowerCase(Trim(BItems[i].Name))) > 0);
+        else Exit;
+      end;
+      if not B then
+        Continue;
+      ItemArray[resCounter] := NewTBankItem(BItems[i].ID, BItems[i].Slot, BItems[i].StackSize, BItems[i].Name);
+      inc(resCounter);
+    end;
+  end;
+  SetLength(ItemArray, resCounter);
+  Result := (Length(ItemArray) > 0);
+end;
+
+{*******************************************************************************
+function R_ItemExistsInBankEx(TheVarArr: TVariantArray; var Item: TBankItem): Boolean;
+By: mormonman
+Description: Returns true if one of the items exists in bank.
+             It also returns the first Item.
+*******************************************************************************}
+function R_ItemExistsInBankEx(TheVarArr: TVariantArray; var Item: TBankItem): Boolean;
+var
+  IA: TBankItemArray;
+begin
+  Item := NULL_TBANKITEM;
+  Result := R_ItemsExistInBankEx(TheVarArr, IA);
+  if Result then
+    Item := IA[0];
+end;
+
+{*******************************************************************************
+function R_ItemExistsInBank(TheVar: Variant; var Item: TBankItem): Boolean;
+By: mormonman
+Description: Returns true if the item exists in bank also returns the Item.
+*******************************************************************************}
+function R_ItemExistsInBank(TheVar: Variant; var Item: TBankItem): Boolean;
+begin
+  Result := R_ItemExistsInBankEx([TheVar], Item);
+end;
+
+{*******************************************************************************
+function R_GetItemAtBankSlot(BankSlot: Integer): TBankItem;
+By: mormonman
+Description: Returns the item of the given slot.
+*******************************************************************************}
+function R_GetItemAtBankSlot(BankSlot: Integer): TBankItem;
+begin
+  Result := NULL_TBANKITEM;
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_GetItemIDAtBankSlot');
+    Exit;
+  end;
+  if (GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, BankSlot) > 0) then
+  begin
+    Result.ID := GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, BankSlot);
+    Result.Name := TrimHTML(GetChildComponentName(INTERFACE_BANK, INTERFACE_BANK_SLOTS, BankSlot));
+    Result.Slot := BankSlot;
+    Result.StackSize := GetChildComponentStack(INTERFACE_BANK, INTERFACE_BANK_SLOTS, BankSlot);
+  end;
+end;
+
+{*******************************************************************************
+function R_FirstTabItem: TBankItem;
+By: mormonman
+Description: Returns what tab the ItemSlot is on.
+*******************************************************************************}
+function R_FirstTabItem: Integer;
+var
+  slot, tmpID: Integer;
+begin
+  Result := NULL_INT;
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_FirstTabItem');
+    Exit;
+  end;
+  for slot := 0 to INTERFACE_BANK_MAXSLOTS do
+  begin
+    tmpID := GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot);
+    if (tmpID > 0) then
+    begin
+      //R_Debug('#' +ToStr(slot), 'Slot');
+      if (GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot) = 5) then
+        Result := tmpID;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_TabSlotIsOn(ItemSlot: Integer): Integer;
+By: mormonman
+Description: Returns what tab the ItemSlot is on.
+*******************************************************************************}
+function R_TabSlotIsOn(ItemSlot: Integer): Integer;
+var
+  BankTabItemIDs: TIntegerArray;
+  I, Tabs, FItem: Integer;
+  Item: TBankItem;
+begin
+  Result := -1;
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_TabItemIsOn');
+    Exit;
+  end;
+
+  Tabs := R_NumberOfBankTabs;
+  if (Tabs < 2) then
+  begin
+    Result := 1;
+  end;
+
+  SetLength(BankTabItemIDs, Tabs);
+  for I := 0 to High(BankTabItemIDs) do
+    BankTabItemIDs[I] := GetInterfaceComponentID(INTERFACE_BANK, R_BankTabID(I+1));
+  //writeln(banktabitemids);
+  FItem := R_FirstTabItem;writeln(fitem);
+  BankTabItemIDs[0] := FItem;
+  for I := ItemSlot downto 0 do
+  begin
+    Item := R_GetItemAtBankSlot(I);
+    if InIntArrayEx(BankTabItemIDs, Result, Item.ID) then
+    begin
+      Inc(Result);
+      Exit;
+    end;
+  end;
+end;
+
+{*******************************************************************************
+function R_WithdrawItemEx(TheVar: Variant; Amount: Integer; var Index: Integer; FirstTab: Boolean): Boolean;
+By: Bad Boy JH/mormonman
+Description: Withdraws amount of item. Returns the bankslot to Index.
+      * 0  = withdraw all
+      * -1 = Withdraw all but one
+*******************************************************************************}
+function R_WithdrawItemEx(TheVar: Variant; Amount: Integer; var Index: Integer; FirstTab: Boolean): Boolean;
+var
+  WhichBankTab, Mark, InvCou, CountTime: Integer;
+  RelPoint: TPoint;
+  ItemBox: TBox;
+  Item: TBankItem;
+begin
+  if not R_BankScreen then
+  begin
+    R_Debug('Bank not open', 'R_WithdrawItemIDEx');
+    Exit;
+  end;
+  if FirstTab then R_BankTab(1);
+  if not R_ItemExistsInBank(TheVar, Item) then
+  begin
+    R_Debug('Item not in bank', 'R_WithdrawItemIDEx');
+    Exit;
+  end;
+  Index := Item.Slot;
+  writeln(index);
+
+  RelPoint.x := GetChildComponentRelativeX(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
+  RelPoint.y := GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
+  R_Debug(ToStr(RelPoint), 'RelPoint');
+  if not PointInBox(RelPoint, MSBOX) then
+  //this checks if its on the current tab, if its not the Relative Point will be 0
+  begin
+    R_BankTab(1);
+    writeln(index);
+    R_Debug('Item not in current tab, switching tabs', 'R_WithdrawItemIDEx');
+    WhichBankTab := R_TabSlotIsOn(Index);
+    //This then clicks the correct Bank Tab
+    R_Debug('Item in Tab: ' + ToStr(WhichBankTab), 'R_WithdrawItemIDEx');
+    R_BankTab(WhichBankTab);
+    RelPoint.x := GetChildComponentRelativeX(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
+    RelPoint.y := GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
+    R_Debug(ToStr(RelPoint), 'RelPoint');
+    if not PointInBox(RelPoint, MSBOX) then
+    begin
+      R_Debug('Item not in tab', 'R_WithdrawItemIDEx');
+      Exit;
+    end;
+  end;
+
+  //this then gets the box of the Item we want to withdraw.
+  ItemBox.x1 := RelPoint.x + GetInterfaceComponentRelativeX(INTERFACE_BANK, INTERFACE_BANK_SLOTS) + 4;
+  ItemBox.y1 := RelPoint.y + GetInterfaceComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS) + 4;
+  ItemBox.x2 := ItemBox.x1 + GetChildComponentWidth(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
+  ItemBox.y2 := ItemBox.y1 + GetChildComponentHeight(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
+
+  //then it withdraws the items
+  if Amount = 1 then
+  begin
+    MouseBox(ItemBox.x1, ItemBox.y1, ItemBox.x2, ItemBox.y2, 1);
+    Result := True;
+    Exit;
+  end;
+  MouseBox(ItemBox.x1, ItemBox.y1, ItemBox.x2, ItemBox.y2, 2);
+  MarkTime(CountTime);
+  InvCou := R_CountItemID(Item.ID);
+  if Amount = 0 then
+    Result := R_ChooseOption('Withdraw-All ' + Item.Name) else
+  if Amount = -1 then
+    Result := R_ChooseOption('Withdraw-All but one ' + Item.Name) else
+  if OptionExists('Withdraw-' + IntToStr(Amount)) then
+    Result := R_ChooseOption('Withdraw-' + IntToStr(Amount) + ' ' + Item.Name)
+  else
+    begin
+      if R_ChooseOption('Withdraw-X ' + Item.Name) then
+      begin
+        MarkTime(Mark);
+        while not ReadyToTypeBank do
+        begin
+          Wait(RandomRange(100, 250));
+          if (TimeFromMark(Mark) > 10000) then
+          begin
+            Result := False;
+            R_Debug('ReadyToTypeBank timed-out', 'R_WithdrawItemIDEx');
+            Exit;
+          end;
+        end;
+        Wait(1000 + Random(1000));
+        TypeSend(IntToStr(Amount));
+        Result := True;
+      end;
+    end;
+
+  if not Result then
+  begin
+    R_Debug('Tried to withdraw wrong item', 'R_WithdrawItemIDEx');
+    Exit;
+  end;
+
+  //failsafe
+  while (R_CountItemID(Item.ID) = InvCou) do
+  begin
+    if (TimeFromMark(CountTime) > 8000) then
+    begin
+      R_Debug('Item withdraw timed-out', 'R_WithdrawItemIDEx');
+      Result := False;
+      Exit;
+    end;
+    Wait(500);
+  end;
+end;
+
+{*******************************************************************************
+function R_WithdrawItem(TheVar: Variant; Amount: Integer): Boolean;
+By: Bad Boy JH/mormonman
+Description: Withdraws amount of item.
+      * 0  = withdraw all
+      * -1 = Withdraw all but one
+*******************************************************************************}
+function R_WithdrawItem(TheVar: Variant; Amount: Integer): Boolean;
+var
+  i: Integer;
+begin
+  Result := R_WithdrawItemEx(TheVar, Amount, i, True);
+end;
+
+{*******************************************************************************
+function R_WithdrawItemIDSearch(ID, HowMany: Integer; Name: String): Boolean;
+By: Shuttleu
+Description: Withdraws item ID using the search button.
+*******************************************************************************}
+{function R_WithdrawItemIDSearch(ID, HowMany: Integer; Name: String): Boolean;
+var
+  i, Slot : Integer;
+  SearchLoc, ItemPos: TBox;
+begin
+  if (not(R_BankScreen)) then Exit;
+  if (not(R_ItemExistsInBank(ID, Slot))) then Exit;
+  SearchLoc := GetInterfaceComponentRelativePosition(INTERFACE_BANK, 17);
+  Mouse(RandomRange(SearchLoc.x1, SearchLoc.x2), RandomRange(SearchLoc.y1, SearchLoc.y2),
+        0, 0, True);
+  repeat
+    Wait(100 + Random(50));
+    Inc(i);
+  until ((i > 4) or ReadyToTypeBank);
+  if ReadyToTypeBank then
+  begin
+    TypeSend(Name);
+    Wait(300 + Random(300));
+    R_ItemExistsInBank(ID, Slot);
+    ItemPos := GetChildComponentScreenPosition(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Slot);
+    if (HowMany = 1) then
+    begin
+      Mouse(RandomRange(ItemPos.x1, ItemPos.x2), RandomRange(ItemPos.y1, ItemPos.y2),
+            0, 0, True);
+      Result := True;
+      Exit;
+    end else
+    begin
+      Mouse(RandomRange(ItemPos.x1, ItemPos.x2), RandomRange(ItemPos.y1, ItemPos.y2),
+            0, 0, False);
+      Wait(100 + Random(200));
+      case HowMany of
+        5, 10: if R_ChooseOption('Withdraw-'+IntToStr(HowMany)) then
+               begin
+                 Result := True;
+                 Exit;
+               end;
+        0: if R_ChooseOption('Withdraw-All') then
+           begin
+             Result := True;
+             Exit;
+           end;
+        else
+          if R_ChooseOption('Withdraw-X') then
+          begin
+            Wait(100 + Random(200));
+            if ReadyToTypeBank then
+            begin
+              TypeSend(IntToStr(HowMany));
+              Result := True;
+              Exit;
+            end;
+          end;
+      end;
+    end;
+  end;
 end;
 
 {*******************************************************************************

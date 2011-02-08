@@ -1,4 +1,4 @@
-{**	
+{**
  *  Copyright 2010 by Benjamin J. Land (a.k.a. BenLand100)
  *
  *  This file is part of the SMART Minimizing Autoing Resource Thing (SMART)
@@ -225,6 +225,7 @@ const
     hook_interface_GetStack = 'g'; //636
     hook_interface_GetParentID = 'nb'; //636
     hook_interface_IsHidden = 'Sc'; //636
+    hook_interface_GetIndex = 'Ic'; //636
 
 {Class NodeCache}
     class_NodeCache = 'sga'; //636

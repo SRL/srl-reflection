@@ -216,3 +216,54 @@ begin
 begin
 {$ENDIF}
 end;
+
+{*******************************************************************************
+procedure R_DrawLine(Clear: Boolean; TP1, TP2: TPoint; Color: TColor);
+by: mormonman
+Description: Draws a line on your screen.
+*******************************************************************************}
+procedure R_DrawLine(Clear: Boolean; TP1, TP2: TPoint; Color: TColor);
+{$IFDEF SMART}
+var
+  drawing : TBitmap;
+begin
+
+  drawing := TBitmap.Create;
+  drawing.canvas.handle := SmartGetDebugDC;
+  drawing.canvas.Pen.Color := color;
+
+  if Clear then ClearRSCanvas(drawing.canvas);
+
+  drawing.canvas.moveto(TP1.x,TP1.y);
+  drawing.canvas.LineTo(TP2.x,TP2.y);
+
+
+  try
+    FreeBitmap(drawing);
+  except end;
+
+{$ELSE}
+begin
+{$ENDIF}
+
+end;
+
+{*******************************************************************************
+procedure R_DrawCircle(Clear: Boolean; Center, Radius: Integer; Color: TColor);
+by: mormonman
+Description: Draws a circle on your screen defined by center and radius.
+*******************************************************************************}
+procedure R_DrawCircle(Clear: Boolean; Center: TPoint; Radius: Integer; Color: TColor);
+{$IFDEF SMART}
+var
+  TPA: TPointArray;
+begin
+  TPA := SortedCircleTPA(Center, Radius);
+  if Length(TPA) < 1 then Exit;
+  R_Debug('l:' +tostr(Length(TPA)), 'TPALENGTH');
+  SMART_DrawDotsEx(Clear, TPA, Color);
+{$ELSE}
+begin
+{$ENDIF}
+
+end;

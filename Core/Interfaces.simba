@@ -111,7 +111,7 @@ function ValidInterfaceInArray (InterfaceArray : TIntegerArray): Boolean;
 By: Cstrike
 Description: Checks if any of the interface #'s in TIA are valid.
 *******************************************************************************}
-function ValidInterfaceInArray (InterfaceArray : TIntegerArray): Boolean;
+function ValidInterfaceInArray(InterfaceArray : TIntegerArray): Boolean;
 var
   i : Integer;
 begin
@@ -155,7 +155,7 @@ function GetValidInterfaceComponents (ParentI : Integer): TIntegerArray;
 By: pyroryan
 Description: Inheritance.
 *******************************************************************************}
-function GetValidInterfaceComponents (ParentI : Integer): TIntegerArray;
+function GetValidInterfaceComponents(ParentI : Integer): TIntegerArray;
 var
   Interfaces, IL, c: integer; //Children, i, iface,
 begin
@@ -177,20 +177,19 @@ end;
 
 {*******************************************************************************
 function GetValidChildrenComponents(ParentI, ChildI: Integer): TIntegerArray;
-By: pyroryan/Cstrike
+By: mormonman
 Description: Returns all the components in the parent-->child interface.
 *******************************************************************************}
-{
 function GetValidChildrenComponents(ParentI, ChildI: Integer): TIntegerArray;
 var
-  Interfaces, IL, c: integer; //Children, i, iface,
+  I, CL, c: Integer;
 begin
   try
-    Interfaces := SmartGetFieldObject(0, hook_static_GetInterfaces);
-    IL := SmartGetFieldArraySize(Interfaces, '', 1);
-    SmartFreeObject(Interfaces);
+    if SmartIsNull(GetInterface(ParentI, ChildI)) then Exit;
+    I := SmartGetFieldArray2DObject(0, hook_static_GetInterfaces, ParentI, ChildI);
+    CL := SmartGetFieldArraySize(I, hook_interface_GetChildren, 1);
     c := 0;
-    while not (SmartIsNull(GetInterface(index, c))) do
+    while not (SmartIsNull(SmartGetFieldArrayObject(I, hook_interface_GetChildren, c))) do
     begin
       SetArrayLength (Result, c+1);
       Result[c] := c;
@@ -198,24 +197,39 @@ begin
     end;
     SetLength(Result, c);
   finally
+    SmartFreeObject(I);
   end;
 end;
-}
 
 {*******************************************************************************
-function GetValidChildComponents (ParentI, ChildI: Integer): TIntegerArray;
-By:
-Description: Returns all the valid child components. UNDER DEVELOPMENT.
+function GetInterfaceComponentActions(ParentI, ChildI: Integer): TStringArray;
+By: mormonman
+Description: Get interface's component ID.
 *******************************************************************************}
-{
-function GetValidChildComponents (ParentI, ChildI: Integer): TIntegerArray;
+function GetInterfaceComponentActions(ParentI, ChildI: Integer): TStringArray;
+var
+  Child, CL, i, javaString: Integer;
 begin
-  result := [0];
+  Child := GetInterface(ParentI, ChildI);
+  CL := SmartGetFieldArraySize(Child, hook_interface_GetActions, 1);
+  if (CL < 1) then Exit;
+  SetLength(Result, CL);
+  for i := 0 to CL-1 do
+  begin
+    javaString := SmartGetFieldArrayObject(Child, hook_interface_GetActions, i);
+    if (javaString = 0) then
+    begin
+      SmartFreeObject(javaString);
+      break;
+    end;
+    Result[i]:= GetJavaString(javaString,256);
+    SmartFreeObject(javaString);
+  end;
+  SmartFreeObject(Child);
 end;
-}
 
 {*******************************************************************************
-function GetInterfaceID(ParentI, ChildI: Integer): Integer;
+function GetInterfaceComponentID(ParentI, ChildI: Integer): Integer;
 By: Cstrike
 Description: Get interface's component ID.
 *******************************************************************************}
@@ -248,9 +262,25 @@ function GetInterfaceComponentText (ParentI, ChildI: Integer): String;
 By: Cstrike
 Description: Inheritance
 *******************************************************************************}
-function GetInterfaceComponentText (ParentI, ChildI: Integer): String;
+function GetInterfaceComponentText(ParentI, ChildI: Integer): String;
 begin
   Result := GetInterfaceText (ParentI, ChildI);
+end;
+
+{*******************************************************************************
+function GetInterfaceComponentText (ParentI, ChildI: Integer): String;
+By: Cstrike
+Description: Inheritance
+*******************************************************************************}
+function GetInterfaceComponentName(ParentI, ChildI: Integer): String;
+var
+   Text, Child: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Text := SmartGetFieldObject(Child, hook_interface_GetName);
+  Result := GetJavaString(Text, 255);
+  SmartFreeObject(Text);
+  SmartFreeObject(Child);
 end;
 
 {*******************************************************************************
@@ -292,7 +322,7 @@ function GetInterfaceRelativeX (ParentI, ChildI : Integer): Integer;
 By: Cstrike
 Description: Gets relative X value.
 *******************************************************************************}
-function GetInterfaceComponentRelativeX (ParentI, ChildI : Integer): Integer;
+function GetInterfaceComponentRelativeX(ParentI, ChildI : Integer): Integer;
 var
    Child : Integer;
 begin
@@ -306,7 +336,7 @@ function GetInterfaceRelativeY (ParentI, ChildI : Integer): Integer;
 By: Cstrike
 Description: Gets relative X value.
 *******************************************************************************}
-function GetInterfaceComponentRelativeY (ParentI, ChildI : Integer): Integer;
+function GetInterfaceComponentRelativeY(ParentI, ChildI : Integer): Integer;
 var
    Child : Integer;
 begin
@@ -320,7 +350,7 @@ function GetInterfaceComponentWidth (ParentI, ChildI : Integer): Integer;
 By: Cstrike
 Description: Gets relative X value.
 *******************************************************************************}
-function GetInterfaceComponentWidth (ParentI, ChildI : Integer): Integer;
+function GetInterfaceComponentWidth(ParentI, ChildI : Integer): Integer;
 var
    Child : Integer;
 begin
@@ -334,7 +364,7 @@ function GetInterfaceComponentHeight (ParentI, ChildI : Integer): Integer;
 By: Cstrike
 Description: Gets relative X value.
 *******************************************************************************}
-function GetInterfaceComponentHeight (ParentI, ChildI : Integer): Integer;
+function GetInterfaceComponentHeight(ParentI, ChildI : Integer): Integer;
 var
    Child : Integer;
 begin
@@ -344,11 +374,25 @@ begin
 end;
 
 {*******************************************************************************
+function GetInterfaceComponentIsHidden(ParentI, ChildI: Integer): Boolean;
+By: mormonman
+Description: Gets parentID.
+*******************************************************************************}
+function GetInterfaceComponentIsHidden(ParentI, ChildI: Integer): Boolean;
+var
+   Child: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Result := SmartGetFieldBoolean(Child, hook_interface_IsHidden);
+  SmartFreeObject(Child);
+end;
+
+{*******************************************************************************
 function GetInterfaceRelativePoint (ParentI, ChildI : Integer): TPoint;
 By: Cstrike
 Description: Returns relative TPoint.
 *******************************************************************************}
-function GetInterfaceComponentRelativePoint (ParentI, ChildI : Integer): TPoint;
+function GetInterfaceComponentRelativePoint(ParentI, ChildI : Integer): TPoint;
 begin
   Result := Point (GetInterfaceComponentRelativeX(ParentI, ChildI), GetInterfaceComponentRelativeY(ParentI, ChildI));
 end;
@@ -358,7 +402,7 @@ function GetInterfaceAbsolutePointBase (ParentI : Integer): TPoint;
 By: Cstrike
 Description: Will get absolute position if applicable. UNDER DEVELOPMENT STILL!
 *******************************************************************************}
-function GetInterfaceAbsolutePointBase (ParentI : Integer): TPoint;
+function GetInterfaceAbsolutePointBase(ParentI : Integer): TPoint;
 begin
   case ParentI of
     241: Result := Point (7, 347);
@@ -366,11 +410,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildID (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentID(ParentI, ChildI, CompI: Integer): Integer;
 By: Cstrike
 Description: Gets child component ID.
 *******************************************************************************}
-function GetChildComponentID (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentID(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -416,11 +460,29 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildComponentTextureID (ParentI, ChildI: Integer): Integer;
+function GetChildComponentName(ParentI, ChildI, CompI: Integer): String;
+By: mormonman
+Description: Gets child component name.
+*******************************************************************************}
+function GetChildComponentName(ParentI, ChildI, CompI: Integer): String;
+var
+   Text, Child, Comp: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Comp := SmartGetFieldArrayObject(Child, hook_interface_GetChildren, compI);
+  Text := SmartGetFieldObject(Comp, hook_interface_GetName);
+  Result := GetJavaString(Text, 255);
+  SmartFreeObject(Text);
+  SmartFreeObject(Comp);
+  SmartFreeObject(Child);
+end;
+
+{*******************************************************************************
+function GetChildComponentTextureID(ParentI, ChildI: Integer): Integer;
 By: Cstrike
 Description: Get interface's component Texture ID.
 *******************************************************************************}
-function GetChildComponentTextureID (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentTextureID(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -432,11 +494,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildComponentModelID (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentModelID(ParentI, ChildI, CompI: Integer): Integer;
 By: Cstrike
 Description: Child model stuff.
 *******************************************************************************}
-function GetChildComponentModelID (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentModelID(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -448,11 +510,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildComponentModelZoom (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentModelZoom(ParentI, ChildI, CompI: Integer): Integer;
 By: Cstrike
 Description: Child model stuff.
 *******************************************************************************}
-function GetChildComponentModelZoom (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentModelZoom(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -464,11 +526,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildRelativeX (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildRelativeX(ParentI, ChildI, CompI: Integer): Integer;
 By: Cstrike
 Description: Gets relative X value.
 *******************************************************************************}
-function GetChildComponentRelativeX (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentRelativeX(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -480,11 +542,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildRelativeY (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildRelativeY(ParentI, ChildI, CompI: Integer): Integer;
 By: Cstrike
 Description: Gets relative X value.
 *******************************************************************************}
-function GetChildComponentRelativeY (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentRelativeY(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -496,11 +558,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildComponentWidth (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentWidth(ParentI, ChildI, CompI: Integer): Integer;
 By: Cstrike
 Description: Gets relative height.
 *******************************************************************************}
-function GetChildComponentWidth (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentWidth(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -512,11 +574,11 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildComponentHeight  (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentHeight(ParentI, ChildI, CompI: Integer): Integer;
 By: Cstrike
 Description: Gets relative height.
 *******************************************************************************}
-function GetChildComponentHeight (ParentI, ChildI, CompI: Integer): Integer;
+function GetChildComponentHeight(ParentI, ChildI, CompI: Integer): Integer;
 var
    Child, Comp: Integer;
 begin
@@ -528,32 +590,105 @@ begin
 end;
 
 {*******************************************************************************
-function GetChildRelativePoint (ParentI, ChildI, CompI: Integer): TPoint;
+function GetChildComponentParentID(ParentI, ChildI, CompI: Integer): Integer;
+By: mormonman
+Description: Gets parentID.
+*******************************************************************************}
+function GetChildComponentParentID(ParentI, ChildI, CompI: Integer): Integer;
+var
+   Child, Comp: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Comp := SmartGetFieldArrayObject(Child, hook_interface_GetChildren, compI);
+  Result := SmartGetFieldInt(Comp, hook_interface_GetParentID);
+  SmartFreeObject(Comp);
+  SmartFreeObject(Child);
+end;
+
+{*******************************************************************************
+function GetChildComponentIsHidden(ParentI, ChildI, CompI: Integer): Boolean;
+By: mormonman
+Description: Gets parentID.
+*******************************************************************************}
+function GetChildComponentIsHidden(ParentI, ChildI, CompI: Integer): Boolean;
+var
+   Child, Comp: Integer;
+begin
+  Child := GetInterface(ParentI, ChildI);
+  Comp := SmartGetFieldArrayObject(Child, hook_interface_GetChildren, compI);
+  Result := SmartGetFieldBoolean(Comp, hook_interface_IsHidden);
+  SmartFreeObject(Comp);
+  SmartFreeObject(Child);
+end;
+
+{*******************************************************************************
+function GetChildRelativePoint(ParentI, ChildI, CompI: Integer): TPoint;
 By: Cstrike
 Description: Returns relative TPoint.
 *******************************************************************************}
-function GetChildComponentRelativePoint (ParentI, ChildI, CompI: Integer): TPoint;
+function GetChildComponentRelativePoint(ParentI, ChildI, CompI: Integer): TPoint;
 begin
   Result := Point (GetChildComponentRelativeX(ParentI, ChildI, CompI), GetChildComponentRelativeY(ParentI, ChildI, CompI));
 end;
 
 {*******************************************************************************
-function GetChildAbsolutePointBase (ParentI : Integer): TPoint;
+function GetChildAbsolutePointBase(ParentI : Integer): TPoint;
 By: Cstrike
 Description: Returns absolute TPoint. UNDER DEVELOPMENT STILL.
 *******************************************************************************}
-function GetChildAbsolutePointBase (ParentI : Integer): TPoint;
+function GetChildAbsolutePointBase(ParentI : Integer): TPoint;
 begin
   Result := Point (0, 0);
 end;
 
+{*******************************************************************************
+function GetInterfaceComponentRelativePosition(ParentI, ChildI : Integer): TBox;
+By: Shuttleu
+Description: Returns relative box position.
+*******************************************************************************}
+function GetInterfaceComponentRelativePosition(ParentI, ChildI : Integer): TBox;
+begin
+  Result.x1 := GetInterfaceComponentRelativeX(ParentI, ChildI);
+  Result.y1 := GetInterfaceComponentRelativeY(ParentI, ChildI);
+  Result.x2 := Result.x1+GetInterfaceComponentWidth(ParentI, ChildI);
+  Result.y2 := Result.y1+GetInterfaceComponentHeight(ParentI, ChildI);
+end;
 
 {*******************************************************************************
-procedure ScavengeInterfaceComponentsFor (ParentI : Integer; DataValue : Integer; DataType : String);
+function GetChildComponentRelativePosition(ParentI, ChildI, CompI: Integer): TBox;
+By: Shuttleu
+Description: Returns relative TBox.
+*******************************************************************************}
+function GetChildComponentRelativePosition(ParentI, ChildI, CompI: Integer): TBox;
+begin
+  Result.x1 := GetChildComponentRelativeX(ParentI, ChildI, CompI);
+  Result.y1 := GetChildComponentRelativeY(ParentI, ChildI, CompI);
+  Result.x2 := Result.x1+GetChildComponentWidth(ParentI, ChildI, CompI);
+  Result.y2 := Result.y1+GetChildComponentHeight(ParentI, ChildI, CompI);
+end;
+
+{*******************************************************************************
+function GetChildComponentScreenPosition(ParentI, ChildI, CompI: Integer): TBox;
+By: Shuttleu
+Description: Returns Screen TBox.
+*******************************************************************************}
+function GetChildComponentScreenPosition(ParentI, ChildI, CompI: Integer): TBox;
+begin
+  Result.x1 := GetChildComponentRelativeX(ParentI, ChildI, CompI)
+               + GetInterfaceComponentRelativeX(ParentI, ChildI);
+  Result.y1 := GetChildComponentRelativeY(ParentI, ChildI, CompI)
+               + GetInterfaceComponentRelativeY(ParentI, ChildI);
+  Result.x2 := Result.x1 + GetChildComponentWidth(ParentI, ChildI, CompI);
+  Result.y2 := Result.y1 + GetChildComponentHeight(ParentI, ChildI, CompI);
+end;
+
+
+{*******************************************************************************
+procedure ScavengeInterfaceComponentsFor(ParentI : Integer; DataValue : Integer; DataType : String);
 By: Cstrike
 Description: Hunts interface components desired value. UNDER DEVELOPMENT STILL!
 *******************************************************************************}
-procedure ScavengeInterfaceComponentsFor (ParentI : Integer; DataValue : Integer; DataType : String);
+procedure ScavengeInterfaceComponentsFor(ParentI : Integer; DataValue : Integer; DataType : String);
 var
   i : Integer;
   InterfaceComp : TIntegerArray;
@@ -650,12 +785,12 @@ begin
 end;
 
 {*******************************************************************************
-procedure ScavengeInterfaceComponentsForText (ParentI : Integer; TextFragment : Integer);
+procedure ScavengeInterfaceComponentsForText(ParentI : Integer; TextFragment : Integer);
 By: Cstrike
 Description: Looks for text fragment in parent. Don't use this too often or
 Simba will crap out on you, try to use it to components with < 150 components.
 *******************************************************************************}
-procedure ScavengeInterfaceComponentsForText (ParentI : Integer; TextFragment : String);
+procedure ScavengeInterfaceComponentsForText(ParentI : Integer; TextFragment : String);
 var
   i : Integer;
   InterfaceComp : TIntegerArray;

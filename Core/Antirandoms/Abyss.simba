@@ -92,15 +92,11 @@ begin
     Exit;
 
   SetAngle(True);
+  AbyssCenter := GetMyPos; // Failsafe
 
   for I:=1 to 3 do // Try 3x
   begin
-    LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 22); //Get the object data
-    if (LeverObj = NULL_RSOBJECT) then
-    begin
-      R_Debug('LeverObj null', 'Abyss');
-      Continue;
-    end;
+    LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 20); //Get the object data
 
     LeverTile := R_AbyssGetLeverTile(LeverNumber, LeverObj.Tile);
 
@@ -108,10 +104,10 @@ begin
     begin
       R_Debug('Tile not found on MS, moving near it', 'Abyss');
       case LeverNumber of
-        R_ABYSS_LEVER_N: AbyssCenter := Tile(LeverTile.x, LeverTile.y - 3);
-        R_ABYSS_LEVER_S: AbyssCenter := Tile(LeverTile.x, LeverTile.y + 3);
-        R_ABYSS_LEVER_E: AbyssCenter := Tile(LeverTile.x - 3, LeverTile.y);
-        R_ABYSS_LEVER_W: AbyssCenter := Tile(LeverTile.x + 3, LeverTile.y);
+        R_ABYSS_LEVER_N: AbyssCenter := Tile(LeverTile.x, LeverTile.y - 4);
+        R_ABYSS_LEVER_S: AbyssCenter := Tile(LeverTile.x, LeverTile.y + 4);
+        R_ABYSS_LEVER_E: AbyssCenter := Tile(LeverTile.x - 4, LeverTile.y);
+        R_ABYSS_LEVER_W: AbyssCenter := Tile(LeverTile.x + 4, LeverTile.y);
       end;
 
       if not WalkToTile(AbyssCenter, 0, 0)then //Walk to center!
@@ -160,14 +156,11 @@ begin
     if Direction = '' then
       R_Debug('Failed getting proper appendage in Abyssal random. Please report this to reflection developers!', 'Abyss')
     else
-    begin
-      R_Debug('Lever Direction: ' + Direction, 'Abyss');
-      Case Direction of
-        'n': Result := R_AbyssPullLever(R_ABYSS_LEVER_N);
-        's': Result := R_AbyssPullLever(R_ABYSS_LEVER_S);
-        'e': Result := R_AbyssPullLever(R_ABYSS_LEVER_E);
-        'w': Result := R_AbyssPullLever(R_ABYSS_LEVER_W);
-      end;
+    Case Direction of
+      'n': Result := R_AbyssPullLever(R_ABYSS_LEVER_N);
+      's': Result := R_AbyssPullLever(R_ABYSS_LEVER_S);
+      'e': Result := R_AbyssPullLever(R_ABYSS_LEVER_E);
+      'w': Result := R_AbyssPullLever(R_ABYSS_LEVER_W);
     end;
   end else R_Debug('Not in Abyss random!', 'Abyss');
   MarkTime(t);

@@ -18,12 +18,41 @@ type
   TRSObject = record
     objType: integer;
     ID: Integer;
-    Tile: TTile;
+    Tile, RealTile: TTile;
+    Area: TBox;
   end;
 
 {Array of TRSObject}
   TRSObjectArray = array of TRSObject;
 
+ {*******************************************************************************
+function NULL_RSOBJECTEx: TRSObject;
+Description: Nulls a TRSObject
+*******************************************************************************}
+function NULL_RSOBJECTEx: TRSObject;
+begin
+  Result.ID := NULL_INT;
+  Result.objType := NULL_INT;
+  Result.Tile := NULL_TILE;
+  Result.Area := NULL_BOX;
+  Result.RealTile := NULL_TILE;
+end;
+
+
+
+{*******************************************************************************
+function NewObjectEx(ID, objType: integer; T, RT: TTile; A: TBox): TRSObject;
+By: Drags111
+Description: Returns a new TRSObject with the specified values.
+*******************************************************************************}
+function NewObjectEx(ID, objType: integer; T, RT: TTile; A: TBox): TRSObject;
+begin
+  Result.ID := ID;
+  Result.objType := objType;
+  Result.Tile := T;
+  Result.Area := A;
+  Result.RealTile := RT;
+end;
 
 {*******************************************************************************
 function NULL_RSOBJECT: TRSObject;
@@ -35,6 +64,8 @@ begin
   Result.objType := NULL_INT;
   Result.Tile := NULL_TILE;
 end;
+
+
 
 {*******************************************************************************
 function NewObject(ID, objType, Tile): TRSObject;
@@ -76,33 +107,49 @@ Description: Returns the objType Interactable ID at the given tile. Interactable
 function GetInteractableAt(T: TTile): TRSObject;
 var
   Plane, Ground, Node, Obj, ObjTemp, ID, LX, LY: integer;
+  TempBox: TBox;
+  TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECT;
-
+  Result := NULL_RSOBJECTEx;
   try
-    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
-    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Base.X := SmartGetFieldInt(0, hook_static_BaseX);
+    Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
+    L.X := T.X - Base.X;
+    L.Y := T.Y - Base.Y;
     Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
     Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
     Node := SmartGetFieldObject(Ground, hook_ground_AnimableList);
     while(node <> 0)do
     begin
+      TempBox := NULL_BOX;
       Obj := SmartGetFieldObject(Node, hook_AnimableNode_GetAnimable);
       if(Obj <> 0)then
       begin
         ID := SmartGetFieldShort(Obj, hook_InteractiveObject_GetID) and $FFFF;
+        TempBox.X1 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX1));
+        TempBox.Y1 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY1));
+        TempBox.X2 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX2));
+        TempBox.Y2 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY2));
+        TempTile.X := (Base.X + (SmartGetFieldInt(Obj, hook_animable_PixelX) / 512));
+        TempTile.Y := (Base.Y + (SmartGetFieldInt(Obj, hook_animable_PixelY) / 512));
         if((ID = -1) or ((ID) = 65535))then   // 65535 is an unsigned -1....
         begin
           ObjTemp := SmartGetFieldObject(Obj, hook_interactiveobject2_GetObjectData);
           if(ObjTemp <> 0) then
           begin
             ID := SmartGetFieldInt(ObjTemp, hook_secondlevelobject_GetID);
+            TempBox.X1 := (Base.X + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaX1));
+            TempBox.Y1 := (Base.Y + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaY1));
+            TempBox.X2 := (Base.X + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaX2));
+            TempBox.Y2 := (Base.Y + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaY2));
+            TempTile.X := (Base.X + (SmartGetFieldInt(ObjTemp, hook_animable_PixelX) / 512));
+            TempTile.Y := (Base.Y + (SmartGetFieldInt(ObjTemp, hook_animable_PixelY) / 512));
             if((ID = -1) or ((ID and $FFFF) = 65535))then
               Exit;
           end;
         end;
 
-        Result := NewObject(ID, OBJECT_TYPE_INTERACTABLE, T);
+        Result := NewObjectEx(ID, OBJECT_TYPE_INTERACTABLE, T, TempTile, TempBox);
         Exit;
       end;
       SmartFreeObject(obj);
@@ -127,15 +174,18 @@ Description: Returns the objType WallObject ID at the given tile. Wall objects
 *******************************************************************************}
 function GetWallObjectAt(T: TTile): TRSObject;
 var
-  Plane, Ground, Obj, ID, LX, LY: integer;
+  Plane, Ground, Obj, ID: integer;
+  TempBox: TBox;
+  TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECT;
-
+  Result := NULL_RSOBJECTEx;
   try
-    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
-    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Base.X := SmartGetFieldInt(0, hook_static_BaseX);
+    Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
+    L.X := T.X - Base.X;
+    L.Y := T.Y - Base.Y;
     Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, L.X, L.Y);
 
     Obj := SmartGetFieldObject(Ground, hook_ground_WallObject1);
     if(Obj = 0)then
@@ -148,7 +198,13 @@ begin
       ID := SmartGetFieldShort(Obj, hook_WallObjectData_GetID);
       if((ID = -1) or ((ID and $FFFF) = 65535))then
         Exit;
-      Result := NewObject(ID and $FFFF, OBJECT_TYPE_WALLOBJECT, T);
+      TempBox.X1 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX1));
+      TempBox.Y1 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY1));
+      TempBox.X2 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX2));
+      TempBox.Y2 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY2));
+      TempTile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Obj, hook_animable_PixelX) / 512));
+      TempTile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Obj, hook_animable_PixelY) / 512));
+      Result := NewObjectEx(ID and $FFFF, OBJECT_TYPE_WALLOBJECT, T, TempTile, TempBox);
     end;
 
   finally
@@ -164,15 +220,18 @@ Description: Returns the objType WallDecor ID at the given tile.
 *******************************************************************************}
 function GetWallDecorAt(T: TTile): TRSObject;
 var
-  Plane, Ground, Obj, ID, LX, LY: integer;
+  Plane, Ground, Obj, ID: integer;
+  TempBox: TBox;
+  TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECT;
-
+  Result := NULL_RSOBJECTEx;
   try
-    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
-    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Base.X := SmartGetFieldInt(0, hook_static_BaseX);
+    Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
+    L.X := T.X - Base.X;
+    L.Y := T.Y - Base.Y;
     Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, L.X, L.Y);
 
     Obj := SmartGetFieldObject(Ground, hook_ground_WallDecoration1);
     if(Obj = 0)then
@@ -185,7 +244,13 @@ begin
       ID := SmartGetFieldShort(Obj, hook_WallDecorationData_GetID);
       if((ID = -1) or ((ID and $FFFF) = 65535))then
         Exit;
-      Result := NewObject(ID and $FFFF, OBJECT_TYPE_WALLDECOR, T);
+      TempBox.X1 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX1));
+      TempBox.Y1 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY1));
+      TempBox.X2 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX2));
+      TempBox.Y2 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY2));
+      TempTile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Obj, hook_animable_PixelX) / 512));
+      TempTile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Obj, hook_animable_PixelY) / 512));
+      Result := NewObjectEx(ID and $FFFF, OBJECT_TYPE_WALLDECOR, T, TempTile, TempBox);
     end;
 
   finally
@@ -201,15 +266,18 @@ Description: Returns the objType FloorDecor ID at the given tile.
 *******************************************************************************}
 function GetFloorDecorAt(T: TTile): TRSObject;
 var
-  Plane, Ground, Obj, ID, LX, LY: integer;
+  Plane, Ground, Obj, ID: integer;
+  TempBox: TBox;
+  TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECT;
-
+  Result := NULL_RSOBJECTEx;
   try
-    LX := T.X - SmartGetFieldInt(0, hook_static_BaseX);
-    LY := T.Y - SmartGetFieldInt(0, hook_static_BaseY);
+    Base.X := SmartGetFieldInt(0, hook_static_BaseX);
+    Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
+    L.X := T.X - Base.X;
+    L.Y := T.Y - Base.Y;
     Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, L.X, L.Y);
 
     Obj := SmartGetFieldObject(Ground, hook_ground_FloorDecoration);
     if(Obj <> 0)then
@@ -217,7 +285,13 @@ begin
       ID := SmartGetFieldShort(Obj, hook_FloorDecorationData_GetID);
       if((ID = -1) or ((ID and $FFFF) = 65535))then
         Exit;
-      Result := NewObject(ID and $FFFF, OBJECT_TYPE_FLOORDECOR, T);
+      TempBox.X1 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX1));
+      TempBox.Y1 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY1));
+      TempBox.X2 := (Base.X + SmartGetFieldShort(Obj, hook_animableentity_getAreaX2));
+      TempBox.Y2 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY2));
+      TempTile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Obj, hook_animable_PixelX) / 512));
+      TempTile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Obj, hook_animable_PixelY) / 512));
+      Result := NewObjectEx(ID and $FFFF, OBJECT_TYPE_FLOORDECOR, T, TempTile, TempBox);
     end;
 
   finally
@@ -235,7 +309,7 @@ function GetObjectAt(T: TTile; objType: Integer): TRSObject;
 var
   objFuncts: array [0..3] of function(T: TTile):TRSObject;
 begin
-  Result := NULL_RSOBJECT;
+  Result := NULL_RSOBJECTEx;
 
   objFuncts[0] := @GetInteractableAt; objFuncts[1] := @GetWallObjectAt;
   objFuncts[2] := @GetWallDecorAt;    objFuncts[3] := @GetFloorDecorAt;
@@ -414,32 +488,18 @@ begin
         Result[i] := ObjArray[i2];
 end;
 
-{*******************************************************************************
-function R_OpenDoor (ClosedDoorID, MouseRandomness : Integer) : Boolean;
-By: Cstrike
-Description: Opens door with ID. Will be made better later, but for now will do.
-*******************************************************************************}
-function R_OpenDoor (ClosedDoorID, MouseRandomness : Integer) : Boolean;
+procedure DumpObjects(ObjArray: TRSObjectArray);
 var
-  Door : TRSObject;
-  TP : TPoint;
+  i, Hi: Integer;
 begin
-  if not LoggedIn then Exit;
-  Result := False;                                    // Minimap radius = 15
-  Door := GetObjectByID (ClosedDoorID, OBJECT_TYPE_INTERACTABLE, 15);
-  if Door = NULL_RSOBJECT then
+  Hi := High(ObjArray);
+  for i := 0 to Hi do
   begin
-    writeln ('[Reflection] Door not found, returning false');
-    Exit;
+    WriteLn('Obj['+ToStr(i)+']:');
+    WriteLn('   Type: ' + ToStr(ObjArray[i].objType));
+    WriteLn('   ID: ' + ToStr(ObjArray[i].ID));
+    WriteLn('   RealTile: ' + ToStr(ObjArray[i].RealTile));
+    WriteLn('   Tile: ' + ToStr(ObjArray[i].Tile));
+    WriteLn('   Area: ' + ToStr(ObjArray[i].Area));
   end;
-  if TileOnMS (Door.Tile, 0) then
-  begin
-    TP := TileToMS (Door.Tile, 0);
-    Mouse (TP.x, TP.y, MouseRandomness, MouseRandomness, false);
-    wait (400+random(700));
-    if R_ChooseOptionMulti (['pen ', 'oor']) then
-    begin
-      Result := True;
-    end else Writeln ('[Reflection] Open door menu text not found');
-  end else Writeln ('[Reflection] Door not on main screen');
 end;

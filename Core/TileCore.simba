@@ -67,6 +67,18 @@ type
   TTileArray = array of TTile;
 
 {*******************************************************************************
+function NULL_BOX: TBox;
+Description: Nulls a TBox
+*******************************************************************************}
+function NULL_BOX: TBox;
+begin
+  Result.X1 := NULL_INT;
+  Result.X2 := NULL_INT;
+  Result.Y1 := NULL_INT;
+  Result.Y2 := NULL_INT;
+end;
+
+{*******************************************************************************
 function Tile(X, Y: Integer): TTile;
 Description: Integers to a TTile
 *******************************************************************************}
@@ -257,8 +269,46 @@ begin
 end;
 
 {*******************************************************************************
+function World3DToScreen(xx, yy, zz: Extended): TPoint;
+By: Benland100/mormonman
+Description: Converts a RS 3D point to a coordinate on the screen.
+*******************************************************************************}
+function World3DToScreen(xx, yy, zz: Extended): TPoint;//modified TileToMSEx
+var
+  rd : TRenderData;
+  r : TRender;
+  x, y, z: extended;
+  tries: integer;
+label
+  ProcStart;
+begin;
+  ProcStart:
+  EmptyRenderInfo(r, rd);
+  x := 0;
+  y := 0;
+  z := 0;
+  Inc(tries);
+  result:= point(-1,-1);
+  UpdateRenderInfo(r,rd);
+  z:= rd.zOff + (rd.zX * xx + rd.zY * yy + rd.zZ * zz);
+  if ((z < r.zMin) or (z > r.zMax)) then
+    exit;
+  x:= r.xScale * (rd.xOff + (rd.xX * xx + rd.xY * yy + rd.xZ * zz)) / z;
+  y:= r.yScale * (rd.yOff + (rd.yX * xx + rd.yY * yy + rd.yZ * zz)) / z;
+  if ((x >= r.xMin) and (x <= r.xMax) and (y >= r.yMin) and (y <= r.yMax)) then
+  begin
+    result.x:= Round((x - r.xMin)+4);
+    result.y:= Round((y - r.yMin)+4);
+  end else
+  begin
+    if (tries > 30)then Exit;
+    goto ProcStart;
+  end;
+end;
+
+{*******************************************************************************
 function TileToMSEx(tile: TTile; offx, offy : extended; height : integer): TPoint;
-By: BenLand100
+By: BenLand100/mormonman
 Description: Converts the global tile position, a position on that tile in the
              range [(0,0), (1,1)] with (0.5, 0.5) being center and a height above
              ground level to a screen location on the main screen, taking camera
@@ -266,50 +316,16 @@ Description: Converts the global tile position, a position on that tile in the
 *******************************************************************************}
 function TileToMSEx(tile: TTile; offx, offy : extended; height : integer) : TPoint;
 var
-  rd : TRenderData;
-  r : TRender;
-  pixelX, pixelY, pixelZ, x, y, z: extended;
-  tries: integer;
-label
-  ProcStart;
-begin;
-  ProcStart:
-  EmptyRenderInfo(r, rd);
-  pixelX := 0;
-  PixelY := 0;
-  pixelZ := 0;
-  x := 0;
-  y := 0;
-  z := 0;
-  Inc(tries);
-  result:= point(-1,-1);
-  UpdateRenderInfo(r,rd);
+  pixelX, pixelY, pixelZ: extended;
+begin
   pixelX:= (tile.x - SmartGetFieldInt(0,hook_static_BaseX) + offX) * 512.0;
   pixelY:= GetTileHeight(tile) - height;
   pixelZ:= (tile.y - SmartGetFieldInt(0,hook_static_BaseY) + offY) * 512.0;
-  //Writeln('zX: '+ToStr(rd.zX));
-  //Writeln('zY: '+ToStr(rd.zY));
-  //Writeln('zZ: '+ToStr(rd.zZ));
-  z:= rd.zOff + (rd.zX * pixelX + rd.zY * pixelY + rd.zZ * pixelZ);
-  if ((z < r.zMin) or (z > r.zMax)) then
-    exit;
-  x:= r.xScale * (rd.xOff + (rd.xX * pixelX + rd.xY * pixelY + rd.xZ * pixelZ)) / z;
-  y:= r.yScale * (rd.yOff + (rd.yX * pixelX + rd.yY * pixelY + rd.yZ * pixelZ)) / z;
-  if ((x >= r.xMin) and (x <= r.xMax) and (y >= r.yMin) and (y <= r.yMax)) then
+  Result := World3DToScreen(pixelX, pixelY, pixelZ);
+  if not PointInBox(Result, IntToBox(MSX1, MSY1, MSX2, MSY2))then
   begin
-    result.x:= Round(x - r.xMin);
-    result.y:= Round(y - r.yMin);
-    if not PointInBox(Result, IntToBox(MSX1, MSY1, MSX2, MSY2))then
-    begin
-      Result.x := -1;
-      Result.y := -1;
-    end;
-  end else
-  begin
-    //Because sometimes the renderer is doing funny stuff, a single repeat will
-    //often fix this error, since it should work if it got this far.
-    if (tries > 30)then Exit;
-    goto ProcStart;
+    Result.x := -1;
+    Result.y := -1;
   end;
 end;
 
@@ -348,30 +364,35 @@ end;
 
 {*******************************************************************************
 function TileInBox(Bounds: TBox; Tile: TTile): boolean;
-By: mormonman
-Description: Results true if the tile is in the box.
+By: Drags111
+Description: Results true if the tile is in the box. TOP LEFT TO BOTTOM RIGHT.
 *******************************************************************************}
 function TileInBox(Bounds: TBox; T: TTile): boolean;
 var
-  tx, ty, maxx, maxy, minx, miny: integer;
+  tx, ty, x1, y1, x2, y2: integer;
 begin
-  maxx := Max(Bounds.X1, Bounds.X2); maxy := Max(Bounds.Y1, Bounds.Y2);
-  minx := Min(Bounds.X1, Bounds.X2); miny := Min(Bounds.Y1, Bounds.Y2);
+  x1 := Bounds.X1; y1 := Bounds.Y1;
+  x2 := Bounds.X2; y2 := Bounds.Y2;
   tx := T.X; ty := T.Y;
-  Result := ((tx >= minx) and (tx <= maxx) and (ty <= maxy) and (ty >= miny));
+  Result := ((tx >= x1) and (tx <= x2) and (ty <= y1) and (ty >= y2));
 end;
 
 {*******************************************************************************
 function MeInBox(Bounds: TBox): boolean;
-By: mormonman
-Description: Results true if your char is in the box of tiles.
+By: Drags111
+Description: Results true if your char is in the box of tiles. TOP LEFT TO
+          BOTTOM RIGHT.
 *******************************************************************************}
 function MeInBox(Bounds: TBox): boolean;
 var
+  tx, ty, x1, y1, x2, y2: integer;
   T: TTile;
 begin
   T := GetMyPos;
-  Result := TileInBox(Bounds, T);
+  x1 := Bounds.X1; y1 := Bounds.Y1;
+  x2 := Bounds.X2; y2 := Bounds.Y2;
+  tx := T.X; ty := T.Y;
+  Result := ((tx >= x1) and (tx <= x2) and (ty <= y1) and (ty >= y2));
 end;
 
 

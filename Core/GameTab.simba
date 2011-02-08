@@ -145,6 +145,28 @@ begin
 end;
 
 {*******************************************************************************
+function R_ExpToNextLevel(skill: variant): Integer;
+By: Shuttleu
+Description: Gets the Experience needed to get to the next level
+*******************************************************************************}
+function R_ExpToNextLevel(Skill: variant): Integer;
+var
+  Level, i, Index: Integer;
+begin
+  case VarType(skill) of
+    varString: Index := _SkillStringToInt(skill);
+    varInteger: Index := skill;
+    else
+      SRL_Warn('GetSkillLevel', 'Invalid var type passed.', warn_AllVersions);
+  end;
+  Level:= SmartGetFieldArrayInt(0, hook_static_GetSkillLevels, Index);
+  Result:= 0;
+  for i := 1 to Level do
+    Result := Result + floor(i + 300 * Pow(2.0, i / 7.0));
+  Result:= (Result/4) - SmartGetFieldArrayInt(0, hook_static_GetSkillExperiences, Index);
+end;
+
+{*******************************************************************************
 function R_GetTotalLevel: Integer;
 By: lordsaturn
 Description: Gets total level using reflection
