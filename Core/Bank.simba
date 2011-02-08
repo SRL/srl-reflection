@@ -555,7 +555,6 @@ begin
   //this checks if its on the current tab, if its not the Relative Point will be 0
   begin
     R_BankTab(1);
-    writeln(index);
     R_Debug('Item not in current tab, switching tabs', 'R_WithdrawItemIDEx');
     WhichBankTab := R_TabSlotIsOn(Index);
     //This then clicks the correct Bank Tab
