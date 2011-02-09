@@ -29,7 +29,7 @@ type
 function NULL_RSOBJECTEx: TRSObject;
 Description: Nulls a TRSObject
 *******************************************************************************}
-function NULL_RSOBJECTEx: TRSObject;
+function NULL_RSOBJECT: TRSObject;
 begin
   Result.ID := NULL_INT;
   Result.objType := NULL_INT;
@@ -45,38 +45,13 @@ function NewObjectEx(ID, objType: integer; T, RT: TTile; A: TBox): TRSObject;
 By: Drags111
 Description: Returns a new TRSObject with the specified values.
 *******************************************************************************}
-function NewObjectEx(ID, objType: integer; T, RT: TTile; A: TBox): TRSObject;
+function NewObject(ID, objType: integer; T, RT: TTile; A: TBox): TRSObject;
 begin
   Result.ID := ID;
   Result.objType := objType;
   Result.Tile := T;
   Result.Area := A;
   Result.RealTile := RT;
-end;
-
-{*******************************************************************************
-function NULL_RSOBJECT: TRSObject;
-Description: Nulls a TRSObject
-*******************************************************************************}
-function NULL_RSOBJECT: TRSObject;
-begin
-  Result.ID := NULL_INT;
-  Result.objType := NULL_INT;
-  Result.Tile := NULL_TILE;
-end;
-
-
-
-{*******************************************************************************
-function NewObject(ID, objType, Tile): TRSObject;
-By: Drags111
-Description: Returns a new TRSObject with the specified values.
-*******************************************************************************}
-function NewObject(ID, objType: integer; T: TTile): TRSObject;
-begin
-  Result.ID := ID;
-  Result.objType := objType;
-  Result.Tile := T;
 end;
 
 {*******************************************************************************
@@ -110,14 +85,14 @@ var
   TempBox: TBox;
   TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECTEx;
+  Result := NULL_RSOBJECT;
   try
     Base.X := SmartGetFieldInt(0, hook_static_BaseX);
     Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
     L.X := T.X - Base.X;
     L.Y := T.Y - Base.Y;
     Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
-    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, LX, LY);
+    Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, L.X, L.Y);
     Node := SmartGetFieldObject(Ground, hook_ground_AnimableList);
     while(node <> 0)do
     begin
@@ -149,7 +124,7 @@ begin
           end;
         end;
 
-        Result := NewObjectEx(ID, OBJECT_TYPE_INTERACTABLE, T, TempTile, TempBox);
+        Result := NewObject(ID, OBJECT_TYPE_INTERACTABLE, T, TempTile, TempBox);
         Exit;
       end;
       SmartFreeObject(obj);
@@ -178,7 +153,7 @@ var
   TempBox: TBox;
   TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECTEx;
+  Result := NULL_RSOBJECT;
   try
     Base.X := SmartGetFieldInt(0, hook_static_BaseX);
     Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
@@ -204,7 +179,7 @@ begin
       TempBox.Y2 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY2));
       TempTile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Obj, hook_animable_PixelX) / 512));
       TempTile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Obj, hook_animable_PixelY) / 512));
-      Result := NewObjectEx(ID and $FFFF, OBJECT_TYPE_WALLOBJECT, T, TempTile, TempBox);
+      Result := NewObject(ID and $FFFF, OBJECT_TYPE_WALLOBJECT, T, TempTile, TempBox);
     end;
 
   finally
@@ -224,7 +199,7 @@ var
   TempBox: TBox;
   TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECTEx;
+  Result := NULL_RSOBJECT;
   try
     Base.X := SmartGetFieldInt(0, hook_static_BaseX);
     Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
@@ -250,7 +225,7 @@ begin
       TempBox.Y2 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY2));
       TempTile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Obj, hook_animable_PixelX) / 512));
       TempTile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Obj, hook_animable_PixelY) / 512));
-      Result := NewObjectEx(ID and $FFFF, OBJECT_TYPE_WALLDECOR, T, TempTile, TempBox);
+      Result := NewObject(ID and $FFFF, OBJECT_TYPE_WALLDECOR, T, TempTile, TempBox);
     end;
 
   finally
@@ -270,7 +245,7 @@ var
   TempBox: TBox;
   TempTile, L, Base: TTile;
 begin
-  Result := NULL_RSOBJECTEx;
+  Result := NULL_RSOBJECT;
   try
     Base.X := SmartGetFieldInt(0, hook_static_BaseX);
     Base.Y := SmartGetFieldInt(0, hook_static_BaseY);
@@ -291,7 +266,7 @@ begin
       TempBox.Y2 := (Base.Y + SmartGetFieldShort(Obj, hook_animableentity_getAreaY2));
       TempTile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Obj, hook_animable_PixelX) / 512));
       TempTile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Obj, hook_animable_PixelY) / 512));
-      Result := NewObjectEx(ID and $FFFF, OBJECT_TYPE_FLOORDECOR, T, TempTile, TempBox);
+      Result := NewObject(ID and $FFFF, OBJECT_TYPE_FLOORDECOR, T, TempTile, TempBox);
     end;
 
   finally
@@ -309,7 +284,7 @@ function GetObjectAt(T: TTile; objType: Integer): TRSObject;
 var
   objFuncts: array [0..3] of function(T: TTile):TRSObject;
 begin
-  Result := NULL_RSOBJECTEx;
+  Result := NULL_RSOBJECT;
 
   objFuncts[0] := @GetInteractableAt; objFuncts[1] := @GetWallObjectAt;
   objFuncts[2] := @GetWallDecorAt;    objFuncts[3] := @GetFloorDecorAt;

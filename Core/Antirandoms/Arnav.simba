@@ -8,7 +8,7 @@ const
 
 function R_EXITPORTAL(Tile: TTile): TRSObject;
 begin
-  Result := NewObject(R_ARNAV_EXITPORTAL_ID, OBJECT_TYPE_INTERACTABLE, Tile);
+  Result := NewObject(R_ARNAV_EXITPORTAL_ID, OBJECT_TYPE_INTERACTABLE, Tile, Tile, PointToBox(Tile, Tile));
 end;
 
 function R_InArnav: boolean;

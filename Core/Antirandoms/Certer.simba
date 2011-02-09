@@ -23,7 +23,7 @@ Description: Checks if in this random.
 *******************************************************************************}
 function R_PORTALOBJECT(T: TTile): TRSObject;
 begin
-  Result := NewObject(CERTER_PORTALID, OBJECT_TYPE_INTERACTABLE, T);
+  Result := NewObject(CERTER_PORTALID, OBJECT_TYPE_INTERACTABLE, T, T, PointToBox(T,T));
 end;
 
 function R_InCerter : Boolean;

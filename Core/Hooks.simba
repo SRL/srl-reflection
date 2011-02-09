@@ -225,7 +225,6 @@ const
     hook_interface_GetStack = 'g'; //636
     hook_interface_GetParentID = 'nb'; //636
     hook_interface_IsHidden = 'Sc'; //636
-    hook_interface_GetIndex = 'Ic'; //636
 
 {Class NodeCache}
     class_NodeCache = 'sga'; //636

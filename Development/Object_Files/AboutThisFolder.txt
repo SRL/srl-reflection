@@ -1,5 +1,0 @@
-WORD WRAP ON:
-This folder contains all the object databases in text format.
-
-Thanks,
-Cstrike

@@ -89,6 +89,80 @@ begin
 end;
 
 {*******************************************************************************
+procedure R_DrawLine(Clear: Boolean; TP1, TP2: TPoint; Color: TColor);
+by: mormonman
+Description: Draws a line on your screen.
+*******************************************************************************}
+procedure R_DrawLine(Clear: Boolean; TP1, TP2: TPoint; Color: TColor);
+{$IFDEF SMART}
+var
+  drawing : TBitmap;
+begin
+
+  drawing := TBitmap.Create;
+  drawing.canvas.handle := SmartGetDebugDC;
+  drawing.canvas.Pen.Color := color;
+
+  if Clear then ClearRSCanvas(drawing.canvas);
+
+  drawing.canvas.moveto(TP1.x,TP1.y);
+  drawing.canvas.LineTo(TP2.x,TP2.y);
+
+
+  try
+    FreeBitmap(drawing);
+  except end;
+
+{$ELSE}
+begin
+{$ENDIF}
+
+end;
+
+{*******************************************************************************
+procedure R_DrawCircle(Clear: Boolean; Center, Radius: Integer; Color: TColor);
+by: mormonman
+Description: Draws a circle on your screen defined by center and radius.
+*******************************************************************************}
+procedure R_DrawCircle(Clear: Boolean; Center: TPoint; Radius: Integer; Color: TColor);
+{$IFDEF SMART}
+var
+  TPA: TPointArray;
+begin
+  TPA := SortedCircleTPA(Center, Radius);
+  if Length(TPA) < 1 then Exit;
+  R_Debug('l:' +tostr(Length(TPA)), 'TPALENGTH');
+  SMART_DrawDotsEx(Clear, TPA, Color);
+{$ELSE}
+begin
+{$ENDIF}
+
+end;
+
+{*******************************************************************************
+procedure R_DrawPolygonEx(Clear: Boolean; Points: TPointArray; Border:Boolean; color: TColor);
+by: mormonman
+Description: Fills Polygon.
+*******************************************************************************}
+procedure R_DrawPolygonEx(Clear: Boolean; Points: TPointArray; Border:Boolean; color: TColor);
+{$IFDEF SMART}
+var
+  tmp: TPointArray;
+  i, Hi: Integer;
+begin
+  if Clear then ClearSmartCanvas;
+  tmp := Points;
+  if length(tmp) < 2 then Exit;
+  Hi := High(tmp);
+  for i := 0 to Hi - 1 do
+    R_DrawLine(False, tmp[i], tmp[i+1], color);
+  R_DrawLine(False, tmp[Hi], tmp[0], color);
+{$ELSE}
+begin
+{$ENDIF}
+end;
+
+{*******************************************************************************
 procedure R_DebugObjects(ObjType: Integer; ClearDebug: Boolean; Color: TColor);
 by: Bad Boy JH
 Description: Draws all the objects on your screen.
@@ -96,13 +170,16 @@ Description: Draws all the objects on your screen.
 procedure R_DebugObjects(ObjType: Integer; ClearDebug: Boolean; Color: TColor);
 {$IFDEF SMART}
 var
-  I, X, Y, height: integer;
+  I, X, Y, height, c, Hi: integer;
+  atpa: T2DPointArray;
   Temp, tpa: tpointarray;
-  MyPos: TTile;
+  MyPos, T, A: TTile;
   TheObject: TRSObject;
-  ScreenPoint: TPoint;
+  ScreenPoint, P: TPoint;
 begin
   MyPos := GetMyPos;
+  c := 1;
+  if ClearDebug then ClearSmartCanvas;
   for X := MyPos.x - 7 to MyPos.x + 7 do
     for Y := MyPos.y - 7 to MyPos.y + 7 do
       if TileOnMS(Tile(X, Y), 0) then
@@ -111,6 +188,18 @@ begin
         TheObject := GetObjectAt(Tile(X, Y), ObjType);
         if TheObject = NULL_RSObject then
           Continue;
+        T := TheObject.RealTile;
+        A := Tile(X, Y);
+        if (T.x = A.x) and (T.y = A.y) then
+        else
+        begin
+          Inc(c);
+          SetLength(atpa, c);
+          SetLength(atpa[c-1], 2);
+          P := TileToMS(T, 0);
+          if PointInBox(P, MSBOX) then
+            R_DrawLine(False, ScreenPoint, P, clSilver);
+        end;
         Temp := LoadTextTPA('. ' + IntToStr(TheObject.ID), UpChars, height);
         for i:= 0 to High(temp) do
         begin
@@ -119,7 +208,7 @@ begin
         end;
         TPA := CombineTPA(TPA, Temp);
       end;
-  SMART_DrawDotsEx(ClearDebug, TPA, Color);
+  SMART_DrawDotsEx(False, TPA, Color);
 {$ELSE}
 begin
 {$ENDIF}
@@ -215,55 +304,4 @@ begin
 {$ELSE}
 begin
 {$ENDIF}
-end;
-
-{*******************************************************************************
-procedure R_DrawLine(Clear: Boolean; TP1, TP2: TPoint; Color: TColor);
-by: mormonman
-Description: Draws a line on your screen.
-*******************************************************************************}
-procedure R_DrawLine(Clear: Boolean; TP1, TP2: TPoint; Color: TColor);
-{$IFDEF SMART}
-var
-  drawing : TBitmap;
-begin
-
-  drawing := TBitmap.Create;
-  drawing.canvas.handle := SmartGetDebugDC;
-  drawing.canvas.Pen.Color := color;
-
-  if Clear then ClearRSCanvas(drawing.canvas);
-
-  drawing.canvas.moveto(TP1.x,TP1.y);
-  drawing.canvas.LineTo(TP2.x,TP2.y);
-
-
-  try
-    FreeBitmap(drawing);
-  except end;
-
-{$ELSE}
-begin
-{$ENDIF}
-
-end;
-
-{*******************************************************************************
-procedure R_DrawCircle(Clear: Boolean; Center, Radius: Integer; Color: TColor);
-by: mormonman
-Description: Draws a circle on your screen defined by center and radius.
-*******************************************************************************}
-procedure R_DrawCircle(Clear: Boolean; Center: TPoint; Radius: Integer; Color: TColor);
-{$IFDEF SMART}
-var
-  TPA: TPointArray;
-begin
-  TPA := SortedCircleTPA(Center, Radius);
-  if Length(TPA) < 1 then Exit;
-  R_Debug('l:' +tostr(Length(TPA)), 'TPALENGTH');
-  SMART_DrawDotsEx(Clear, TPA, Color);
-{$ELSE}
-begin
-{$ENDIF}
-
 end;
