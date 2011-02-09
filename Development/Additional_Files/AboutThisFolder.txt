@@ -1,0 +1,7 @@
+WORD WRAP ON:
+Do not run these procedures/functions in your scripts, they are being converted over to reflection for the time being.
+Once they are in reflection's Core folder, use them as much as you want.
+Using a link to this folder will screw you over in the end because this folder WILL be removed. It is temporary.
+
+Thanks,
+Cstrike
