@@ -429,7 +429,7 @@ end;
 function FindRSObject(Obj: TRSObject): Boolean;
 By: Drags111
 Description: Returns true if the TRSObject is found. All params must line up
-            (Tile, objType, and ID must all be the same).
+            (Tile, objType, ID, RealTile, and Area must all be the same).
 *******************************************************************************}
 function FindRSObject(Obj: TRSObject): Boolean;
 var
@@ -439,6 +439,19 @@ begin
   Result := (Obj = Temp);
 end;
 
+{*******************************************************************************
+function FindRSObjectSimple(Obj: TRSObject): Boolean;
+By: mormonman
+Description: Returns true if the TRSObject is found.
+            (Tile, objType, and ID must all be the same).
+*******************************************************************************}
+function FindRSObjectSimple(Obj: TRSObject): Boolean;
+var
+  Temp: TRSObject;
+begin
+  Temp := GetObjectAt(Obj.Tile, Obj.objType);
+  Result := (Obj.ID = Temp.ID) and (Obj.objType = Temp.objType) and (Obj.Tile = Temp.Tile);
+end;
 
 {*******************************************************************************
 function SortObjects(ObjArray : TRSObjectArray): TRSObjectArray;

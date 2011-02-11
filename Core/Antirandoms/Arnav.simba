@@ -19,7 +19,7 @@ begin
   Result := FindNPC(R_ARNAV_ID, NPC);
   PT := Tile(NPC.Tile.x-1, NPC.Tile.y+2);
   if Result then
-    Result := (GetInteractableAt(PT) = R_EXITPORTAL(PT));
+    Result := (FindRSObjectSimple(R_EXITPORTAL(PT)));
 end;
 
 function R_ChestOpen: boolean;

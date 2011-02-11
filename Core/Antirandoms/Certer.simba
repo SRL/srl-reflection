@@ -35,7 +35,7 @@ begin
   if Result then
   begin
     T := Tile(NPC.Tile.x + 8, NPC.Tile.y);
-    Result := FindRSObject(R_PORTALOBJECT(T));
+    Result := FindRSObjectSimple(R_PORTALOBJECT(T));
   end;
 end;
 
