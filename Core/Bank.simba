@@ -3,7 +3,7 @@
 //--                    Bank Routines                             --||
 //------------------------------------------------------------------//
 
-//---                               Constants                               --//
+//---                   Interface Constants                      --//
 const
   INTERFACE_BANK                                        = 762;
   INTERFACE_DEPOSITBOX                                  = 11;
@@ -28,6 +28,31 @@ const
   INTERFACE_BANK_TAB_ADD_TEXTURE                        = 1435;
   INTERFACE_BANK_MAXSLOTS                               = 515;
   INTERFACE_BANK_SLOTS                                  = 93;
+//---                 Bank Constants                            --//
+  const
+  RBank_FE = 'feb'; // (Falador East Bank)
+  RBank_FW = 'fwb'; // (Falador West Bank)
+  RBank_VE = 'veb'; // (Varrock East Bank)
+  RBank_VW = 'vwb'; // (Varrock West Bank)
+  //RBank_GE = 'geb'; // (Varrock GE Bank)
+  RBank_DR = 'db' ; // (Draynor Bank)
+  RBank_AK = 'akb'; // (Al-Kharid Bank)
+  RBank_EV = 'eb' ; // (Edgeville Bank)
+  RBank_CT = 'ctb'; // (Catherby bank)
+  //RBank_CM = 'clt'; // (Camelot bank)
+  //RBank_NA = 'nab'; // (North Ardougne bank)
+  RBank_SA = 'asb'; // (South Ardougne bank)
+  RBank_YN = 'ynb'; // (Yanille bank)
+  //RBank_NG = 'ngb'; // (North gnome bank)
+  //RBank_SG = 'sgb'; // (South gnome bank)
+  //RBank_WG = 'wgb'; // (Warrior guild bank)
+  RBank_FG = 'fgb'; // (Fishing guild bank)
+  RBank_LB = 'lb' ; // (Lumbridge Bank)
+  RBank_SE = 'seb'; // (Seers Bank)
+  RBank_MC = 'mc' ; // (MoonClan Bank)
+  RBank_DA = 'da' ; // (Dual Arena Bank)
+  RBank_PC = 'pc' ; // (Pest Control Bank)
+
 
 Type
   TBankItem = Record
@@ -756,8 +781,6 @@ begin
     'eb', 'edgeville':
         Tiles := [Point(3095,3489), Point(3095,3491), Point(3095,3493),
                   Point(3097,3495)];
-    'cb', 'catherby':
-        Tiles := [Point(2807, 3442), Point(2809, 3442), Point(2810, 3442), Point(2811, 3442)];
     'fgb', 'fishing guild':
         Tiles := [Point(2584, 3423), Point(2584, 3422)];
     'mc', 'moonclan':
