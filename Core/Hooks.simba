@@ -63,7 +63,7 @@ const
     hook_static_GetInterfaces = 'km.b'; //637
     hook_static_ValidInterfaces = 'tp.eb'; //637
     hook_static_GetSettings = 'es.K'; //637
-    hook_static_GroundItemCache = 'sv.m'; //637
+    hook_static_GroundItemCache = 'ka.i'; //637
     hook_static_CamPosX = 'gga.U'; //637
     hook_static_CamPosY = 'jca.j'; //637
     hook_static_GetCrossHairColor = 'dq.l'; //637

@@ -31,7 +31,7 @@ begin
   begin
 
     S := GetInterfaceText(242, 4);
-    if Pos('kill', S) > 0 then
+    if Pos('Please kill a', S) > 0 then
       Break;
     ClickContinue(True, True);
   end;
