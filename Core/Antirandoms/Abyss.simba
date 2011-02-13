@@ -99,15 +99,16 @@ begin
     LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 20); //Get the object data
 
     LeverTile := R_AbyssGetLeverTile(LeverNumber, LeverObj.Tile);
+    R_Debug('LeverTile: ' + ToStr(LeverTile), 'Abyss');
 
     if Not TileOnMS(LeverTile, 300) then //If Object not on screen then
     begin
       R_Debug('Tile not found on MS, moving near it', 'Abyss');
       case LeverNumber of
-        R_ABYSS_LEVER_N: AbyssCenter := Tile(LeverTile.x, LeverTile.y - 4);
-        R_ABYSS_LEVER_S: AbyssCenter := Tile(LeverTile.x, LeverTile.y + 4);
-        R_ABYSS_LEVER_E: AbyssCenter := Tile(LeverTile.x - 4, LeverTile.y);
-        R_ABYSS_LEVER_W: AbyssCenter := Tile(LeverTile.x + 4, LeverTile.y);
+        R_ABYSS_LEVER_N: AbyssCenter := Tile(LeverTile.x, LeverTile.y - 1);
+        R_ABYSS_LEVER_S: AbyssCenter := Tile(LeverTile.x, LeverTile.y + 1);
+        R_ABYSS_LEVER_E: AbyssCenter := Tile(LeverTile.x - 1, LeverTile.y);
+        R_ABYSS_LEVER_W: AbyssCenter := Tile(LeverTile.x + 1, LeverTile.y);
       end;
 
       if not WalkToTile(AbyssCenter, 0, 0)then //Walk to center!
