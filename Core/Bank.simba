@@ -89,25 +89,6 @@ begin
 end;
 
 {*******************************************************************************
-procedure DebugTBankItemArray(TBIA: TBankItemArray);
-By: mormonman
-Description: Dumps info for TBankItemArray.
-*******************************************************************************}
-procedure DebugTBankItemArray(TBIA: TBankItemArray);
-var
-  i, Hi: Integer;
-begin
-  Hi := High(TBIA);
-  for i := 0 to Hi do
-  begin
-    Writeln('BankItem: '+TBIA[i].Name);
-    Writeln('    '+'ID: '+ ToStr(TBIA[i].ID));
-    Writeln('    '+'Slot: '+ ToStr(TBIA[i].Slot));
-    Writeln('    '+'StackSize: '+ ToStr(TBIA[i].StackSize));
-  end;
-end;
-
-{*******************************************************************************
 Function R_BankScreen: Boolean;
 By:
 Description: Checks to see if the bank is open.
@@ -128,15 +109,40 @@ begin
 end;
 
 {*******************************************************************************
+function R_DepositSlot(Slot: Integer): Boolean;
+By: mormonman
+Description: Deposits item in specified slot.
+*******************************************************************************}
+function R_DepositSlot(Slot: Integer): Boolean;
+var
+  T, A: Integer;
+begin
+  MarkTime(T);
+  while (R_ItemSlotExists(Slot) and (TimeFromMark(T) < 6000)) do
+  begin
+    MouseItem(Slot, False);
+    Wait(40 + random(40));
+    if (OptionExists('All')) then
+      R_ChooseOption('All')
+    else
+      R_ChooseOption('Deposit');
+    MarkTime(A);
+    while (R_ItemSlotExists(Slot) and (TimeFromMark(A) < 2500)) do
+      Wait(44 + random(44));
+  end;
+  Result := not R_ItemSlotExists(Slot);
+end;
+
+{*******************************************************************************
 Function R_DepositAll: Boolean;
-By: Camero (Camaro?), Updated by: Traveler
+By: Camaro, Updated by: Traveler
 Description: Deposits the whole inventory either by
   -Fast clicks the button
   -Fast = false deposits each item
 *******************************************************************************}
 procedure R_DepositAll(Fast: Boolean);
 var
-  I, Fs, MT: Integer;
+  I: Integer;
 begin
   if not R_BankScreen then
     Exit;
@@ -144,77 +150,70 @@ begin
     DepositAll
   else
     for I := 1 to 28 do
-    begin
-      MarkTime(MT);
-      while (R_ItemExists(I) and (TimeFromMark(mt) < 6000)) do
-      begin
-        MouseItem(I, False);
-        Wait(40 + random(40));
-        if (OptionExists('All')) then
-        begin
-          R_ChooseOption('All');
-        end
-        else
-        begin
-          R_ChooseOption('Deposit');
-        end;
-        MarkTime(FS);
-        while (R_ItemExists(I) and (TimeFromMark(FS) < 2500)) do
-          Wait(44 + random(44));
-      end;
-    end;
+      R_DepositSlot(I);
 end;
 
 {*******************************************************************************
-function R_DepositAllID(ID : Integer): Boolean;
-By: Zyt3x,  updated by: Traveler
-Description: Deposits all the items with the specified ID
+function R_DepositAllByEx(TheVarArr: TVariantArray): Boolean;
+By: mormonman
+Description: Deposits all the items with the specified IDs/Names.
 *******************************************************************************}
-function R_DepositAllID(ID : Integer): Boolean;
-begin
-  if(R_CountItemID(ID) = 1) then
-    Result := R_ClickItemID(ID, False, 'Deposit')
-  else
-    Result := R_ClickItemID(ID, False, 'All');
-end;
-
-{*******************************************************************************
-procedure R_DepositAllButIDEx(IDs : TIntegerArray);
-By: Zyt3x, updated by Traveler9559
-Description: Deposits all items but the items with one of the specified IDs to
-the bank.
-*******************************************************************************}
-procedure R_DepositAllButIDEx(IDs : TIntegerArray);
+function R_DepositAllByEx(TheVarArr: TVariantArray): Boolean;
 var
-  I, T : Integer;
+  i: Integer;
+  Items: TInvItemArray;
+begin
+  if not R_BankScreen then Exit;
+  if R_ItemExistsEx(TheVarArr, Items) then
+    for i := 0 to High(Items) do
+      R_DepositSlot(Items[i].Slot);
+  Result := not R_ItemExistsEx(TheVarArr, Items);
+end;
+
+{*******************************************************************************
+function R_DepositAllBy(TheVar: Variant): Boolean;
+By: mormonman
+Description: Deposits all the items with the specified ID/Name.
+*******************************************************************************}
+function R_DepositAllBy(TheVar: Variant): Boolean;
+begin
+  Result := R_DepositAllByEx([TheVar]);
+end;
+
+{*******************************************************************************
+procedure R_DepositAllButEx(TheVarArr: TVariantArray);
+By: mormonman
+Description: Deposits all items but the items with one of the specified IDs or
+             Names to the bank.
+*******************************************************************************}
+procedure R_DepositAllButEx(TheVarArr: TVariantArray);
+var
+  I, h, HiItems : Integer;
   Item : TInvItem;
+  Items: TInvItemArray;
 begin
   if not R_BankScreen then
     Exit;
+  if not R_ItemExistsEx(TheVarArr, Items) then R_DepositAll(True);
+  HiItems := High(Items);
   for I := 1 to 28 do
   begin
+    if(not R_ItemSlotExists(I)) then Continue;
     Item := GetInvItemAt(I);
-    if(InIntArray(IDs, Item.ID))then Continue;
-    if(not R_ItemExists(I)) then Continue;
-    MouseItem(I, False);
-    if(OptionExists('All')) then
-      R_ChooseOption('All')
-    else
-      R_ChooseOption('Deposit');
-    T := GetSystemTime;
-    while(R_ItemExists(I)) and (GetSystemTime - T < 6000) do
-      Wait(100+random(100));
+    for h := 0 to HiItems do
+      if Item = Items[h] then Continue;
+    R_DepositSlot(I);
   end;
 end;
 
 {*******************************************************************************
-procedure R_DepositAllButID(ID : Integer);
-By: Zyt3x
-Description: Deposits all items but the items with the specified ID to the bank.
+procedure R_DepositAllBut(TheVar : Variant);
+By: mormonman
+Description: Deposits all except items with the specified ID/Name to the bank.
 *******************************************************************************}
-procedure R_DepositAllButID(ID : Integer);
+procedure R_DepositAllBut(TheVar : Variant);
 begin
-  R_DepositAllButIDEx([ID]);
+  R_DepositAllButEx([TheVar]);
 end;
 
 {*******************************************************************************
@@ -478,7 +477,7 @@ begin
 end;
 
 {*******************************************************************************
-function R_FirstTabItem: TBankItem;
+function R_FirstTabItem: Integer;
 By: mormonman
 Description: Returns what tab the ItemSlot is on.
 *******************************************************************************}
@@ -497,7 +496,7 @@ begin
     tmpID := GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot);
     if (tmpID > 0) then
     begin
-      //R_Debug('#' +ToStr(slot), 'Slot');
+      R_Debug('#' +ToStr(slot), 'Slot');
       if (GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot) = 5) then
         Result := tmpID;
     end;
@@ -546,6 +545,18 @@ begin
 end;
 
 {*******************************************************************************
+function R_GetBankItemRelPoint(ItemSlot: Integer): TPoint;
+By: mormonman
+Description: Returns ItemSlot's RelPoint.
+*******************************************************************************}
+function R_GetBankItemRelPoint(ItemSlot: Integer): TPoint;
+begin
+  if not R_BankScreen then Exit;
+  Result.x := GetChildComponentRelativeX(INTERFACE_BANK, INTERFACE_BANK_SLOTS, ItemSlot);
+  Result.y := GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, ItemSlot);
+end;
+
+{*******************************************************************************
 function R_WithdrawItemEx(TheVar: Variant; Amount: Integer; var Index: Integer; FirstTab: Boolean): Boolean;
 By: Bad Boy JH/mormonman
 Description: Withdraws amount of item. Returns the bankslot to Index.
@@ -573,25 +584,29 @@ begin
   Index := Item.Slot;
   writeln(index);
 
-  RelPoint.x := GetChildComponentRelativeX(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
-  RelPoint.y := GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
-  R_Debug(ToStr(RelPoint), 'RelPoint');
+  RelPoint := R_GetBankItemRelPoint(Index);
+  //R_Debug(ToStr(RelPoint), 'RelPoint');
   if not PointInBox(RelPoint, MSBOX) then
   //this checks if its on the current tab, if its not the Relative Point will be 0
   begin
     R_BankTab(1);
-    R_Debug('Item not in current tab, switching tabs', 'R_WithdrawItemIDEx');
-    WhichBankTab := R_TabSlotIsOn(Index);
-    //This then clicks the correct Bank Tab
-    R_Debug('Item in Tab: ' + ToStr(WhichBankTab), 'R_WithdrawItemIDEx');
-    R_BankTab(WhichBankTab);
-    RelPoint.x := GetChildComponentRelativeX(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
-    RelPoint.y := GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, Index);
-    R_Debug(ToStr(RelPoint), 'RelPoint');
+    RelPoint := R_GetBankItemRelPoint(Index);
+    //R_Debug(ToStr(RelPoint), 'RelPoint');
     if not PointInBox(RelPoint, MSBOX) then
+    //this checks if its on the first tab, if its not the Relative Point will be 0
     begin
-      R_Debug('Item not in tab', 'R_WithdrawItemIDEx');
-      Exit;
+      R_Debug('Item not in first tab, switching tabs', 'R_WithdrawItemIDEx');
+      WhichBankTab := R_TabSlotIsOn(Index);
+      //This then clicks the correct Bank Tab
+      R_Debug('Item in Tab: ' + ToStr(WhichBankTab), 'R_WithdrawItemIDEx');
+      R_BankTab(WhichBankTab);
+      RelPoint := R_GetBankItemRelPoint(Index);
+      R_Debug(ToStr(RelPoint), 'RelPoint');
+      if not PointInBox(RelPoint, MSBOX) then
+      begin
+        R_Debug('Item not in tab', 'R_WithdrawItemIDEx');
+        Exit;
+      end;
     end;
   end;
 
@@ -610,7 +625,7 @@ begin
   end;
   MouseBox(ItemBox.x1, ItemBox.y1, ItemBox.x2, ItemBox.y2, 2);
   MarkTime(CountTime);
-  InvCou := R_CountItemID(Item.ID);
+  InvCou := R_CountItem(Item.ID);
   if Amount = 0 then
     Result := R_ChooseOption('Withdraw-All ' + Item.Name) else
   if Amount = -1 then
@@ -645,7 +660,7 @@ begin
   end;
 
   //failsafe
-  while (R_CountItemID(Item.ID) = InvCou) do
+  while (R_CountItem(Item.ID) = InvCou) do
   begin
     if (TimeFromMark(CountTime) > 8000) then
     begin
@@ -843,4 +858,32 @@ begin
         Result := R_BankScreen or R_PinScreen;
       until Result or (Tries > 40);
   end;
+end;
+
+{*******************************************************************************
+procedure R_DumpBankItemArray(Items: TBankItemArray);
+By: mormonman
+Description: Prints out the TBankItemArray nice and neatly.
+*******************************************************************************}
+procedure R_DumpBankItemArray(Items: TBankItemArray);
+var
+  i: integer;
+begin
+  for i := 0 to High(Items)do
+  begin
+    Writeln('Slot: '+ToStr(Items[i].Slot));
+    Writeln('   Name: '+Items[i].Name);
+    Writeln('   ID: '+ToStr(Items[i].ID));
+    Writeln('   Stack Size: '+ToStr(Items[i].StackSize));
+  end;
+end;
+
+{*******************************************************************************
+procedure R_DumpBank;
+By: mormonman
+Description: Prints out all bank items.
+*******************************************************************************}
+procedure R_DumpBank;
+begin
+  R_DumpBankItemArray(R_GetAllBankItems);
 end;
