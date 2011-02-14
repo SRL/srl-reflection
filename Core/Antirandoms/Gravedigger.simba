@@ -188,7 +188,7 @@ begin
       if R_InvCount < 24 then
         Exit;
 
-      if R_ItemExists(i) then
+      if R_ItemSlotExists(i) then
       begin
         result[arrPos] := GetItemIDAt(i);
         R_DropItem(i);
@@ -350,7 +350,7 @@ begin
 
   end;
 
-  Result := (R_CountItemIDEx([LEO_INVENTORY_CASKET1, LEO_INVENTORY_CASKET2,
+  Result := (R_CountItemEx([LEO_INVENTORY_CASKET1, LEO_INVENTORY_CASKET2,
                               LEO_INVENTORY_CASKET3, LEO_INVENTORY_CASKET4,
                               LEO_INVENTORY_CASKET5]) = 5);
 end;
@@ -378,7 +378,7 @@ begin
 
   for i:=LEO_INVENTORY_CASKET1 to LEO_INVENTORY_CASKET5 do
   begin
-    R_ClickItemID(i, True, 'open');
+    R_ClickItemBy(i, True, 'open');
     R_Debug('Checking Casket[' + ToStr(i) + ']', 'Leo');
     Wait(2000+random(1500));
     for j:=3 to 11 do // Search interfaces for ID to find
@@ -481,7 +481,7 @@ begin
           Wait(100+random(500)); // Exits the model view
           CasketID := R_LeoFindCasket(texName);
           R_Debug('Casket ID found = '+inttostr(casketID), 'Leo');
-          if R_ClickItemID(CasketID, false, 'use') then
+          if R_ClickItemBy(CasketID, false, 'use') then
           begin
             TP := TileToMS(Tile(GStoneTile.x, GStoneTile.y-1), 0);
             Mouse (TP.x, TP.y, 3, 3, True);
@@ -492,7 +492,7 @@ begin
     end else R_Debug('CurGrave is -1', 'Leo');
   until (R_LeoFindEmptyGrave = -1) or (TimeFromMark(iTime) > 300000);//5 minutes to solve
   Result := (TimeFromMark(iTime) < 300000) and LoggedIn
-            and (R_CountItemIDEx([LEO_INVENTORY_CASKET1, LEO_INVENTORY_CASKET2,
+            and (R_CountItemEx([LEO_INVENTORY_CASKET1, LEO_INVENTORY_CASKET2,
             LEO_INVENTORY_CASKET3, LEO_INVENTORY_CASKET4, LEO_INVENTORY_CASKET5]) < 1);
 end;
 
@@ -565,7 +565,7 @@ begin
       R_Debug('Leo Phase 1: Talk to Leo at start', 'Leo');
       if R_TalkToLeoStart then
       begin
-        if ((R_InvCount - R_CountItemIDEx([LEO_INVENTORY_CASKET1,
+        if ((R_InvCount - R_CountItemEx([LEO_INVENTORY_CASKET1,
                                            LEO_INVENTORY_CASKET2,
                                            LEO_INVENTORY_CASKET3,
                                            LEO_INVENTORY_CASKET4,

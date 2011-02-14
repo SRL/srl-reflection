@@ -52,10 +52,10 @@ begin
   DestroyArray := [R_EVILBOB_FISHID1, R_EVILBOB_FISHID2, R_EVILBOB_FISHIDUNCOOKED1, R_EVILBOB_FISHIDUNCOOKED2];
   for i:=0 to high(DestroyArray) do
   begin
-    if R_CountItemID(DestroyArray[i]) > 0 then
+    if R_CountItem(DestroyArray[i]) > 0 then
     begin
       R_Debug('Destroying improper fish.', 'ScapeRune');
-      R_ClickItemID (DestroyArray[i], false, 'Destroy');
+      R_ClickItem(DestroyArray[i], false, 'Destroy');
       wait (500+random(500));
       // Wait for interface to pop up
       MarkTime(t);
@@ -91,7 +91,6 @@ begin
   repeat
     if (GetInterfaceText (Int, Comp) = R_EVILBOB_CLICKCONT) then
       Mouse(303, 452, 72, 7, True);
-    Wait(500);
   until (not (GetInterfaceText (Int, Comp) = R_EVILBOB_CLICKCONT)) or (TimeFromMark(t) > 8000)
 end;
 
@@ -231,7 +230,7 @@ begin
   if not LoggedIn then Exit;
   Result := False;
 
-  if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0) then
+  if (R_CountItem(R_EVILBOB_SMALLFISHINGNET) > 0) then
   begin
     R_Debug('Fishing net is in inventory', 'ScapeRune');
     Result := True;
@@ -267,24 +266,19 @@ begin
     begin
       MarkTime (t);
       repeat
-        GroundItemArr := GetItemsAt(TileToGetItem);
-        if high (GroundItemArr) < 0 then
-        begin
-          R_Debug('GroundItemArr length = 0', 'ScapeRune');
-          Break;
-        end;
-        R_Debug('GIA = ' +ToStr(GroundItemArr), 'ScapeRune');
+        GroundItemArr := GetItemsAt (TileToGetItem);
+        if high (GroundItemArr) < 0 then Break;
         TP := TileToMS (TileToGetItem, 0);
         Mouse (TP.x, TP.y, 1, 1, true);
-        R_Flag;
-      until (TimeFromMark(t) > 10000) or (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0)
+        wait (2000+random(3000));
+      until (TimeFromMark(t) > 10000) or (R_CountItem(R_EVILBOB_SMALLFISHINGNET) > 0)
     end else
     begin
       R_Debug('Could not find fishing net at Tile('+inttostr(TileToGetItem.x)+','+inttostr(TileToGetItem.y)+')', 'ScapeRune');
     end;
 
     // If successful...
-    if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) > 0) then
+    if (R_CountItem(R_EVILBOB_SMALLFISHINGNET) > 0) then
     begin
       Result := true;
       R_Debug('Successfully obtained a fishing net to complete task with', 'ScapeRune');
@@ -365,7 +359,6 @@ begin
       Exit;
     end else
     begin
-      R_Debug('Fishing spot tile is "' + Direction + '"', 'ScapeRune');
       TP := Point (0,0); // Failsafe
       TileToArrive := Tile (0,0); // Failsafe
       case Direction of // Needs more randomness TBH
@@ -475,7 +468,7 @@ begin
     // Now that we are fishing, wait until we catch something
     MarkTime (t2);
     repeat
-      wait (500);
+      wait (50);
     until (TimeFromMark(t2) > 22000) or (InviCount < R_InvCount)
 
     if (InviCount < R_InvCount) then Result := True;
@@ -493,7 +486,7 @@ function R_ScapeRuneCookFish : Boolean;
 var
   CookPots : TRSObjectArray;
   TP : TPoint;
-  i, j, k, CookTime : Integer;
+  i, j, k : Integer;
 begin
   if not LoggedIn then Exit;
   Result := False;
@@ -515,7 +508,7 @@ begin
     begin
       for i:=0 to high(CookPots) do
       begin
-        R_ClickItemName ('Fish-like thing', false, 'Use');
+        R_ClickItemBy('Fish-like thing', false, 'Use');
         wait (500+random(500));
         if TileOnMS (CookPots[i].Tile, 0) then
         begin;
@@ -523,16 +516,13 @@ begin
           Mouse (TP.x, TP.y, 2, 2, true);
           if true then
           begin
-            R_Flag;
-            MarkTime(CookTime);
-            while TimeFromMark(CookTime) < 10000 do
-              if (R_CountItemName('Raw') > 0) then
-              begin
-                R_Debug('Successfully made proper uncooked fish!', 'ScapeRune');
-                Result := True;
-                Exit;
-              end;
-            R_Debug('Was unable to cook ', 'ScapeRune');
+            wait (4000+random(2200));
+            if (R_CountItem('Raw') > 0) then
+            begin
+              R_Debug('Successfully made proper uncooked fish!', 'ScapeRune');
+              Result := True;
+              Exit;
+            end else R_Debug('Was unable to cook ', 'ScapeRune');
           end else R_Debug('Error: ChooseOption Use was not present', 'ScapeRune');
         end else R_Debug('Pot #'+inttostr(i)+' not on MainScreen', 'ScapeRune');
       end;
@@ -554,11 +544,11 @@ begin
   if not LoggedIn then Exit;
   Result := False;
 
-  R_ClickItemName ('Raw fish-like', false, 'Use');
-  wait (500+random(500));
+  R_ClickItemBy('Raw fish-like', false, 'Use');
+  wait(500+random(500));
   MakeCompass('n');
-  TP := TileToMS (Tile(R_EVILBOB_MIDDLE_X-2, R_EVILBOB_MIDDLE_Y), 0);
-  Mouse (TP.x, TP.y, 1, 1, true); // Click bob, more failsafe here needed
+  TP := TileToMS(Tile(R_EVILBOB_MIDDLE_X-2, R_EVILBOB_MIDDLE_Y), 0);
+  Mouse(TP.x, TP.y, 1, 1, true); // Click bob, more failsafe here needed
 
   // Talk to bob
   MarkTime(t);
@@ -571,13 +561,13 @@ begin
   wait (500+random(500));
   for i:=1 to 3 do
   begin
-    Portal := GetObjectByID (R_EVILBOB_PORTAL, OBJECT_TYPE_INTERACTABLE, 20);
-    if TileOnMS (Portal.Tile, 0) then
+    Portal := GetObjectByID(R_EVILBOB_PORTAL, OBJECT_TYPE_INTERACTABLE, 20);
+    if TileOnMS(Portal.Tile, 0) then
     begin
       TPPortal := TileToMS (Portal.Tile, 0);
-      Mouse (TPPortal.x, TPPortal.y, 3, 3, false);
-      wait (400+random(400));
-      if R_ChooseOption ('Enter Portal') then
+      Mouse(TPPortal.x, TPPortal.y, 3, 3, false);
+      wait(400+random(400));
+      if R_ChooseOption('Enter Portal') then
       begin
         R_Flag;
 
@@ -602,7 +592,7 @@ Description: Solves Evil Bob's ScapeRune random.
 *******************************************************************************}
 function R_SolveScapeRune : Boolean;
 var
-  i, t : Integer;
+  i : Integer;
   FishingTile : TTile;
 begin
   if not LoggedIn then Exit;
@@ -610,7 +600,7 @@ begin
   FishingTile := Tile(0,0); // Failsafe
 
   // Inventory failsafe
-  if (R_CountItemID(R_EVILBOB_SMALLFISHINGNET) = 0) then R_ScapeRuneDepositItems(1);
+  if (R_CountItem(R_EVILBOB_SMALLFISHINGNET) = 0) then R_ScapeRuneDepositItems(1);
 
   R_ScapeRuneDestroyFish; // Cleans the plate
 
@@ -641,14 +631,4 @@ begin
     R_ScapeRuneDestroyFish; // Just incase
   end; // End of 3 tries
   if not Result then R_Debug (' Failed 3x the ScapeRune random, returning false...', 'ScapeRune');
-  MarkTime(t);
-  if Result then
-  begin
-    while (R_InScapeRune and (TimeFromMark(t) < 8000)) do
-      Wait(500);
-    Wait(2500);
-  end;
-  ClickToContinue;
-  Wait(2000+Random(2000));
-  Result := not R_InScapeRune;
 end;
