@@ -458,7 +458,7 @@ begin
       end else
       // Else if we see him, get him
       begin
-        TP := TileToMS (NPCToHunt.Tile, 0);
+        TP := TileToMS(NPCToHunt.Tile, 0);
         Mouse (TP.X - 1, TP.Y - 1, 2, 2, false);
         wait (100+random(350));
         if R_ChooseOptionMulti (['nimal', 'alloon']) then
@@ -466,7 +466,7 @@ begin
           R_Debug ('Selected balloon to pop...', 'Prison');
           Result := True;
           Wait (3000+random(1500));
-          if R_CountItemID (PRISON_KEYID) > 0 then
+          if R_CountItem(PRISON_KEYID) > 0 then
           begin
             R_Debug ('Got a key!', 'Prison');
             Result := True;
@@ -476,7 +476,7 @@ begin
             R_Debug ('We don''t have the key yet? Waiting...', 'Prison');
           // Try again
           Wait (3000+random(2500));
-          if R_CountItemID (PRISON_KEYID) > 0 then
+          if R_CountItem(PRISON_KEYID) > 0 then
           begin
             R_Debug ('Got a key!', 'Prison');
             Result := True;
@@ -651,7 +651,7 @@ begin
         if R_PrisonFindAndPopNPC(AnimalIDsToPop) then
         begin
           wait (800+random(1200));
-          if R_CountItemID (PRISON_KEYID) > 0 then
+          if R_CountItem(PRISON_KEYID) > 0 then
           begin
             R_Debug('Popped ID and got a key', 'Prison');
             PrisonPhase := PRISON_PHASE_CHECKIFWENEEDMOREKEYS;

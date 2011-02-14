@@ -194,7 +194,7 @@ begin
   wait(1000+random(2500));
 
   // Move mouse to answer [based off of answerletter
-  Mouse(120, (55 + (AnswerLetter*35)), 40, 3, true);
+  Mouse(130, (55 + (AnswerLetter*35)), 40, 3, true);
 
   // Wait for response to see if we succeeded
   MarkTime(t);

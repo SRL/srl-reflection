@@ -61,7 +61,7 @@ var
   I: Integer;
   P: TPoint;
 begin
-  Result:= R_ItemIDExistsEx([ID_REWARDBOX, ID_LAMP, ID_EXPBOOK, ID_MYSTERYBOX], Items);
+  Result:= R_ItemExistsEx([ID_REWARDBOX, ID_LAMP, ID_EXPBOOK, ID_MYSTERYBOX], Items);
   if not Result then
     Exit;
 
