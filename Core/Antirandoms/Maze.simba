@@ -99,8 +99,8 @@ begin
     begin
       r_Debug('Loading blue path', 'Maze');
 
-      SetArrayLength(Result.Tiles, 17);
-      SetArrayLength(Result.Dir, 17);
+      SetArrayLength(Result.Tiles, 16);
+      SetArrayLength(Result.Dir, 16);
 
       Result.Tiles[0] := Tile(2891, 4588);
       Result.Dir[0] := 'w';
@@ -145,10 +145,10 @@ begin
       Result.Dir[13] := 's';
 
       Result.Tiles[14] := Tile(2910, 4572);
-      Result.Dir[15] := 'n';
+      Result.Dir[14] := 'n';
 
-      Result.Tiles[16] := Tile(2910, 4576);
-      Result.Dir[16] := 'e';
+      Result.Tiles[15] := Tile(2910, 4576);
+      Result.Dir[15] := 'e';
     end;
 
     PATH_CYAN:
