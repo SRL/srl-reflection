@@ -90,7 +90,7 @@ begin
       str := GetJavaString(temp, 255);
       if not(str = NULL_STRING)then
       begin
-        Result[resCounter] := str;
+        Result[resCounter] := TrimHTML(str);
         Inc(resCounter);
       end;
     finally
@@ -499,7 +499,7 @@ begin
 end;
 
 {*******************************************************************************
-procedure R_DropItemsButIDEx(ids: TIntegerArray);
+procedure R_DropItemsButEx(TheVarArr: TVariantArray);
 By: mormonman
 Description: Drops all items in the inventory except those w/ the specified IDs.
 *******************************************************************************}
@@ -519,7 +519,7 @@ begin
 end;
 
 {*******************************************************************************
-procedure R_DropItemsButName(Name: String);
+procedure R_DropItemsBut(TheVar: Variant);
 By: mormonman
 Description: Drops all items in the inventory except those w/ the specified Name.
 *******************************************************************************}

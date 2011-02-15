@@ -120,12 +120,18 @@ begin
   MarkTime(T);
   while (R_ItemSlotExists(Slot) and (TimeFromMark(T) < 6000)) do
   begin
-    MouseItem(Slot, False);
-    Wait(40 + random(40));
     if (OptionExists('All')) then
+    begin
+      MouseItem(Slot, False);
+      Wait(40 + random(40));
       R_ChooseOption('All')
-    else
-      R_ChooseOption('Deposit');
+    end else
+      if random(10) = 1 then
+      begin
+        MouseItem(Slot, False);
+        Wait(40 + random(40));
+        R_ChooseOption('Deposit');
+      end else MouseItem(Slot, True);
     MarkTime(A);
     while (R_ItemSlotExists(Slot) and (TimeFromMark(A) < 2500)) do
       Wait(44 + random(44));
@@ -191,6 +197,7 @@ var
   I, h, HiItems : Integer;
   Item : TInvItem;
   Items: TInvItemArray;
+  B: Boolean;
 begin
   if not R_BankScreen then
     Exit;
@@ -200,8 +207,10 @@ begin
   begin
     if(not R_ItemSlotExists(I)) then Continue;
     Item := GetInvItemAt(I);
+    R_Debug('Item: ' + ToStr(Item), 'R_DepositAllButEx');
     for h := 0 to HiItems do
-      if Item = Items[h] then Continue;
+      B := Item.ID = Items[h].ID;
+    if B then Continue;
     R_DepositSlot(I);
   end;
 end;
