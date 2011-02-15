@@ -94,7 +94,7 @@ begin
   SetAngle(True);
   AbyssCenter := GetMyPos; // Failsafe
 
-  for I:=1 to 3 do // Try 3x
+  for I:=0 to 3 do // Try 4x
   begin
     LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 20); //Get the object data
 
@@ -134,8 +134,13 @@ begin
       GetMousePos(X, Y);
       R_Debug('Found proper lever! Pulling...', 'Abyss');
       Mouse(X, Y, 0, 0, False);
-      Result := r_WaitOptionMulti(['Operate', 'Appendage'], 200+Random(100));
-      Exit;
+      Result := r_WaitOptionMulti(['Operate', 'Appendage'], 400+Random(100));
+      if Result then
+      begin
+        R_Debug('Lever pulled. Waiting for exit', 'Abyss');
+        Exit;
+      end;
+      R_Debug('Lever not pulled. Trying again.', 'Abyss');
     end
 
   end;
