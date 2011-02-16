@@ -11,6 +11,36 @@ const
   INTERFACE_LOGIN_SCREEN = 596;
   INTERFACE_LOBBY_SCREEN = 907;
 
+//Used in antirandoms
+type
+  TDropItem = Record
+    ID, StackSize: Integer;
+    Tile: TTile;
+    Name: String;
+  end;
+
+function NULL_DROPITEM: TDropItem;
+begin
+  with Result do
+  begin
+    ID := NULL_INT;
+    StackSize := NULL_INT;
+    Tile := NULL_TILE;
+    Name := NULL_STRING;
+  end;
+end;
+
+function NewDropItem(IDa, SS: Integer; T: TTile; N: String): TDropItem;
+begin
+  with Result do
+  begin
+    ID := IDa;
+    StackSize := SS;
+    Tile := T;
+    Name := N;
+  end;
+end;
+
 {*******************************************************************************
 function GetSettingArray: TIntegerArray;
 By: Drags111

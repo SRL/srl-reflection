@@ -172,3 +172,26 @@ begin
 
   Result := t_GIA;
 end;
+
+{*******************************************************************************
+function FindGroundItem(Item: TGroundItem): Boolean;
+By: mormonman
+Description: Returns true if the TGroundItem is found.
+            (Tile, stacksize, and ID must all be the same).
+*******************************************************************************}
+function FindGroundItem(Item: TGroundItem): Boolean;
+var
+  Items: TGroundItemArray;
+  i: Integer;
+begin
+  if not LoggedIn then Exit;
+
+  Items := GetItemsAt(Item.Tile);
+  if Length(Items) < 1 then Exit;
+  for i := 0 to High(Items) do
+    if Items[i] = Item then
+    begin
+      Result := True;
+      Exit;
+    end;
+end;

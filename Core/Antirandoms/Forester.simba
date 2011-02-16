@@ -14,6 +14,8 @@ const
 
   R_FORESTERPORTALID = 15645;
 
+  R_FORESTER_DROPSLOT = 28;
+
 Function r_InForester: Boolean;
 begin
   Result := ValidNullNPC(R_FORESTERID);
@@ -152,7 +154,7 @@ end;
 Function r_ForesterPortal: Boolean;
 var
   Obj: TRSObject;
-  C: TPoint;
+  C, T: TPoint;
 begin
   Obj := GetObjectByIDEx([R_FORESTERPORTALID], OBJECT_TYPE_INTERACTABLE, 30);
   If Not (Obj.ID = R_FORESTERPORTALID)then
@@ -176,14 +178,76 @@ begin
   If Result then
   begin
     Wait(2000+Random(1000));
-    Flag;
+    R_Flag;
+
+    Wait(1300 + Random(1000));
+    if FindColor(T.X, T.Y, 2070783, 234, 46, 254, 56) then
+      Mouse(172, 199, 100, 4, True);
   end;
+end;
+
+function r_ForesterDropItem(var Item: TDropItem): Boolean;
+var
+  InvItem: TInvItem;
+  MeTile: TTile;
+begin
+  Result := False;
+  if not LoggedIn then Exit;
+  if not R_InvFull then Exit;
+
+  InvItem := GetInvItemAt(R_FORESTER_DROPSLOT);
+  if not (InvItem = NULL_INVITEM) then
+  begin
+    R_DropItem(InvItem.Slot);
+    if R_ItemSlotExists(InvItem.Slot) then
+    begin
+      Result := False;
+      R_Debug('Failed to drop item', 'Forester');
+      Exit;
+    end;
+    MeTile := GetMyPos;
+    Item := NewDropItem(InvItem.ID, InvItem.StackSize, MeTile, InvItem.Name);
+  end;
+  Result := not (Item = NULL_DROPITEM);
+end;
+
+function r_ForesterPickUp(Item: TDropItem): Boolean;
+var
+  T: TTile;
+  P: TPoint;
+begin
+  Result := False;
+  if not LoggedIn then Exit;
+
+  if not (Item = NULL_DROPITEM) then
+  begin
+    T := Item.Tile;
+    if not TileOnMS(T, 50) then
+      if r_WebWalk(T) then R_Flag;
+    P := TileToMS(T, 50);
+    MMouse(P.x, P.y, 3, 3);
+    Wait(RandomRange(80, 120));
+    if OptionExists('Take ' + Item.Name) then
+    begin
+      GetMousePos(P.x, P.y);
+      Mouse(P.x, P.y, 0, 0, False);
+      if(R_ChooseOption('Take ' + Item.Name)) then
+      begin
+        R_Debug('Picking up ' + Item.Name, 'Forester');
+        R_Flag;
+        Wait(500+Random(500));
+      end;
+    end;
+  end;
+  Result := R_ItemSlotExists(R_FORESTER_DROPSLOT);
 end;
 
 Function r_SolveForester: Boolean;
 var
   iTime: Integer;
   FWants: TIntegerArray;
+  Item: TDropItem;
+  Dropped: Boolean;
 begin
   Result := r_InForester;
   If Not Result then
@@ -200,6 +264,11 @@ begin
   If (FWants[0] < 1) then
     Exit;
 
+  Item := NULL_DROPITEM;
+  Dropped := r_ForesterDropItem(Item);
+  if Dropped then
+    R_Debug('Dropped: ' + Item.Name + ' at: ' + ToStr(Item.Tile), 'Forester');
+
   iTime := GetSystemTime;
   Repeat
     r_ForesterKill(FWants);
@@ -214,7 +283,20 @@ begin
     Exit;
 
   iTime := GetSystemTime;
+  repeat
+    if (GetSystemTime - iTime > 25000) then
+    begin
+      R_Debug('Failed to pickup: ' + Item.Name + ' at: ' + ToStr(Item.Tile), 'Forester');
+      Exit;
+    end;
+    if r_ForesterPickUp(Item) then
+    begin
+      Dropped := False;
+      R_Debug('Successfully picked up: ' + Item.Name + ' at: ' + ToStr(Item.Tile), 'Forester');
+    end;
+  until not Dropped;
 
+  iTime := GetSystemTime;
   Repeat
     If (GetSystemTime - iTime > 30000)then
     begin
