@@ -209,7 +209,7 @@ begin
     if (not R_ItemSlotExists(I)) then
       Continue;
     Item := GetInvItemAt(I);
-    R_Debug('Item: ' + IntToStr(Item), 'R_DepositAllButEx');
+    //R_Debug('Item: ' + IntToStr(Item), 'R_DepositAllButEx');
     B := False;
     for h := 0 to HiItems do
       B := B or Item.ID = Items[h].ID;
