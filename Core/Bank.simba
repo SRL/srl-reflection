@@ -194,23 +194,27 @@ Description: Deposits all items but the items with one of the specified IDs or
 *******************************************************************************}
 procedure R_DepositAllButEx(TheVarArr: TVariantArray);
 var
-  I, h, HiItems : Integer;
-  Item : TInvItem;
+  I, h, HiItems: Integer;
+  Item: TInvItem;
   Items: TInvItemArray;
   B: Boolean;
 begin
-  if not R_BankScreen then
+  if (not R_BankScreen) then
     Exit;
-  if not R_ItemExistsEx(TheVarArr, Items) then R_DepositAll(True);
+  if (not R_ItemExistsEx(TheVarArr, Items)) then
+    R_DepositAll(True);
   HiItems := High(Items);
   for I := 1 to 28 do
   begin
-    if(not R_ItemSlotExists(I)) then Continue;
+    if (not R_ItemSlotExists(I)) then
+      Continue;
     Item := GetInvItemAt(I);
-    R_Debug('Item: ' + ToStr(Item), 'R_DepositAllButEx');
+    R_Debug('Item: ' + IntToStr(Item), 'R_DepositAllButEx');
+    B := False;
     for h := 0 to HiItems do
-      B := Item.ID = Items[h].ID;
-    if B then Continue;
+      B := B or Item.ID = Items[h].ID;
+    if (B) then
+      Continue;
     R_DepositSlot(I);
   end;
 end;
