@@ -373,6 +373,26 @@ begin
 end;
 
 {*******************************************************************************
+function R_CountItemsButEx(TheVarArr: TVariantArray): Integer;
+By: mormonman
+Description: Returns the number of items in your inventory besides TheVarArr.
+*******************************************************************************}
+function R_CountItemsButEx(TheVarArr: TVariantArray): Integer;
+begin
+  Result := (R_InvCount - R_CountItemEx(TheVarArr));
+end;
+
+{*******************************************************************************
+function R_CountItemsBut(TheVar: Variant): Integer;
+By: mormonman
+Description: Returns the number of items in your inventory besides TheVarA.
+*******************************************************************************}
+function R_CountItemsBut(TheVar: Variant): Integer;
+begin
+  Result := R_CountItemsButEx([TheVar]);
+end;
+
+{*******************************************************************************
 function R_ClickItem(Slot: Integer; Left: Boolean; Action: String): boolean;
 By: Drags111
 Description: Clicks the slot in the inventory, and if left is
