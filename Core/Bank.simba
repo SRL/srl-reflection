@@ -120,6 +120,8 @@ begin
   MarkTime(T);
   while (R_ItemSlotExists(Slot) and (TimeFromMark(T) < 6000)) do
   begin
+    MMouseItem(Slot);
+    Wait(40 + random(40));
     if (OptionExists('All')) then
     begin
       MouseItem(Slot, False);
