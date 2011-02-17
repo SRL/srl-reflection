@@ -139,7 +139,7 @@ end;
 {*******************************************************************************
 function DistanceTile(T, TT: TTile): Integer;
 By: mormonman
-Description: Returns the distance two tiles.
+Description: Returns the distance between two tiles.
 *******************************************************************************}
 function DistanceTile(T, TT: TTile): Integer;
 begin
