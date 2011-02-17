@@ -81,7 +81,7 @@ Description: Returns the objType Interactable ID at the given tile. Interactable
 *******************************************************************************}
 function GetInteractableAt(T: TTile): TRSObject;
 var
-  Plane, Ground, Node, Obj, ObjTemp, ID, LX, LY: integer;
+  Plane, Ground, Node, Obj, ObjTemp, ID: integer;
   TempBox: TBox;
   TempTile, L, Base: TTile;
 begin

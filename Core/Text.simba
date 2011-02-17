@@ -396,7 +396,7 @@ function ClickMenuIndex(index: Integer): Boolean;
 var
   allItems: TStringArray;
   item: string;
-  nodeSubList, groupNode, subMenu, menuItemNode, last, lastTwo, javaString, xOff, yOff: Integer;
+  nodeSubList, groupNode, subMenu, menuItemNode, last, lastTwo, xOff, yOff: Integer;
   P: TPoint;
   t, mc, sc, sca: LongInt;
 begin

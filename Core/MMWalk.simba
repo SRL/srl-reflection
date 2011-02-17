@@ -137,6 +137,16 @@ begin
 end;
 
 {*******************************************************************************
+function DistanceTile(T, TT: TTile): Integer;
+By: mormonman
+Description: Returns the distance two tiles.
+*******************************************************************************}
+function DistanceTile(T, TT: TTile): Integer;
+begin
+  Result := Distance(T.x, T.y, TT.X, TT.Y);
+end;
+
+{*******************************************************************************
 function DistanceFrom(TheTile: TTile): Integer;
 By: Widget
 Description: Returns the distance between your player and the tile.  (Tiles)
@@ -146,7 +156,7 @@ var
   MyPos: TTile;
 begin
   MyPos := GetMyPos;
-  Result := Distance(MyPos.x, MyPos.y, TheTile.X, TheTile.Y);
+  Result := DistanceTile(MyPos, TheTile);
 end;
 
 {*******************************************************************************

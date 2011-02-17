@@ -32,6 +32,7 @@ type
   end;
 
 const
+  EQUIPMENT_CONSTANT = 1073741824;
   EQUIPMENT_SLOT_HEAD = 0;
   EQUIPMENT_SLOT_CAPE = 1;
   EQUIPMENT_SLOT_NECK = 2;
@@ -184,7 +185,7 @@ begin
     Result[L].Orientation := Round(FixD(180 + (SmartGetFieldInt(Player, hook_character_Orientation)* 45) / 2048));
     Result[L].Interacting := SmartGetFieldInt(Player, hook_character_GetInteracting);
     for h := 0 to 11 do
-      Result[L].Equipment[h] := SmartGetFieldArrayInt(pdef, hook_playerdef_GetEquipment, h);
+      Result[L].Equipment[h] := SmartGetFieldArrayInt(pdef, hook_playerdef_GetEquipment, h) - EQUIPMENT_CONSTANT;
     Inc(L);
   finally
     SmartFreeObject(Player);
@@ -429,7 +430,7 @@ begin
       Result.Levels[i] := SmartGetFieldArrayInt(0, hook_static_GetSkillLevels, i);
     end;
     for i := 0 to 11 do
-      Result.Equipment[i] := SmartGetFieldArrayInt(pdef, hook_playerdef_GetEquipment, i);
+      Result.Equipment[i] := SmartGetFieldArrayInt(pdef, hook_playerdef_GetEquipment, i) - EQUIPMENT_CONSTANT;
   finally
     SmartFreeObject(theName);
     SmartFreeObject(Player);
