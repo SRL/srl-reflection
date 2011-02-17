@@ -359,44 +359,49 @@ begin
       Exit;
     end else
     begin
-      TP := Point (0,0); // Failsafe
+      R_Debug('FishObjTile: ' + ToStr(FishObjTile) + ' Dir: ' + Direction, 'ScapeRune');
+      ClickContinue(True, True);
       TileToArrive := Tile (0,0); // Failsafe
       case Direction of // Needs more randomness TBH
         'n': begin
-                TP := TileToMM (Tile(FishObjTile.x, FishObjTile.y - 2));
                 TileToArrive := Tile(FishObjTile.x, FishObjTile.y - 2);
                 TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
                 MakeCompass ('s');
              end;
         'e': begin
-                TP := TileToMM (Tile(FishObjTile.x - 2, FishObjTile.y));
                 TileToArrive := Tile(FishObjTile.x - 2, FishObjTile.y);
                 TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
                 MakeCompass ('w');
              end;
         's': begin
-               TP := TileToMM (Tile(FishObjTile.x, FishObjTile.y + 2));
                TileToArrive := Tile(FishObjTile.x, FishObjTile.y + 2);
                TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
                MakeCompass ('n');
              end;
         'w': begin
-               TP := TileToMM (Tile(FishObjTile.x + 2, FishObjTile.y));
                TileToArrive := Tile(FishObjTile.x + 2, FishObjTile.y);
                TileToFishAt := Tile(FishObjTile.x, FishObjTile.y);
                MakeCompass ('e');
              end;
       end;
-      if (TP.x > 0) and (TileToArrive.x > 0) then
+      R_Debug('Direction and tiles set', 'ScapeRune');
+
+      for i := 0 to 2 do
       begin
-        Mouse (TP.x, TP.y, 2, 2, true);
-        MarkTime (t);
-        repeat
-          wait (50);
-        until (TimeFromMark(t) > 6000) or (DistanceFrom(TileToArrive) < 4)
-        if (TimeFromMark(t) > 6000) then R_Debug('Warning: Did timed out, did not get to TileToArrive', 'ScapeRune');
-        if (DistanceFrom(TileToArrive) < 4) then Result := True; // If we are near the spot then result = true
-      end else R_Debug('Error with walking to fishing spot', 'ScapeRune');
+        TP := TileToMM(TileToArrive);
+        if (TP.x > 0) and (TileToArrive.x > 0) then
+        begin
+          R_Debug('Walking attempt #' + ToStr(i), 'ScapeRune');
+          Mouse (TP.x, TP.y, 2, 2, true);
+          R_Flag;
+          if (DistanceFrom(TileToArrive) < 4) then
+          begin
+            Result := True; // If we are near the spot then result = true
+            R_Debug('Made it to: ' + ToStr(TileToArrive), 'ScapeRune');
+            Exit;
+          end;
+        end else R_Debug('Error with walking to fishing spot', 'ScapeRune');
+      end;
     end;
   end else R_Debug('Not in proper interface to get direction', 'ScapeRune');
 end;
@@ -630,5 +635,5 @@ begin
     end else R_Debug('Had trouble getting fishing net', 'ScapeRune');
     R_ScapeRuneDestroyFish; // Just incase
   end; // End of 3 tries
-  if not Result then R_Debug (' Failed 3x the ScapeRune random, returning false...', 'ScapeRune');
+  if not Result then R_Debug ('Failed 3x the ScapeRune random, returning false...', 'ScapeRune');
 end;
