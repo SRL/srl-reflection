@@ -597,7 +597,7 @@ Description: Solves Evil Bob's ScapeRune random.
 *******************************************************************************}
 function R_SolveScapeRune : Boolean;
 var
-  i : Integer;
+  i, t : Integer;
   FishingTile : TTile;
 begin
   if not LoggedIn then Exit;
@@ -635,5 +635,13 @@ begin
     end else R_Debug('Had trouble getting fishing net', 'ScapeRune');
     R_ScapeRuneDestroyFish; // Just incase
   end; // End of 3 tries
-  if not Result then R_Debug ('Failed 3x the ScapeRune random, returning false...', 'ScapeRune');
+  if not Result then R_Debug('Failed 3x the ScapeRune random, returning false...', 'ScapeRune');
+  MarkTime(t);
+  while (R_InScapeRune and (TimeFromMark(t) < 8000)) do
+      Wait(1500);
+  R_Debug('Out of ScapeRune', 'ScapeRune');
+  Wait(2500);
+  ClickToContinue;
+  Wait(4000+Random(2000));
+  Result := not R_InScapeRune;
 end;

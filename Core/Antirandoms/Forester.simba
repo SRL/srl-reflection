@@ -16,12 +16,14 @@ const
 
   R_FORESTER_DROPSLOT = 28;
 
+Function r_ForesterPortal: Boolean; forward;
+
 Function r_InForester: Boolean;
 begin
   Result := ValidNullNPC(R_FORESTERID);
 end;
 
-Function r_ForesterWants: TIntegerArray;
+Function r_ForesterWants: TVariantArray;
 var
   S: String;
   i, Hi: Integer;
@@ -36,6 +38,13 @@ begin
     if Pos('kill', S) > 0 then
       Break;
     ClickContinue(True, True);
+  end;
+
+  if Pos('leave', S) > 0 then
+  begin
+    R_Debug('Pheasant already killed', 'Forester');
+    r_ForesterPortal;
+    exit;
   end;
 
   strArr := ['one', 'two', 'three', 'four'];
@@ -102,7 +111,7 @@ begin
   until Result or (GetSystemTime > T);
 end;
 
-Function r_ForesterKill(SeekFor: TIntegerArray): Boolean;
+Function r_ForesterKill(SeekFor: TVariantArray): Boolean;
 var
   NPC: TNPC;
   C: TPoint;
@@ -111,7 +120,7 @@ begin
   r_Debug('Finding pheasant..', 'Forester');
   iTime := GetSystemTime;
   Repeat
-    NPC := GetNPCMulti([SeekFor[0], SeekFor[1]]);
+    NPC := GetNPCMulti(SeekFor);
 
     If (NPC = NULL_NPC) then
       Exit;
@@ -183,6 +192,7 @@ begin
     Wait(1300 + Random(1000));
     if FindColor(T.X, T.Y, 2070783, 234, 46, 254, 56) then
       Mouse(172, 199, 100, 4, True);
+    r_Debug('Successfully solved.', 'Forester');
   end;
 end;
 
@@ -245,7 +255,7 @@ end;
 Function r_SolveForester: Boolean;
 var
   iTime: Integer;
-  FWants: TIntegerArray;
+  FWants: TVariantArray;
   Item: TDropItem;
   Dropped: Boolean;
 begin

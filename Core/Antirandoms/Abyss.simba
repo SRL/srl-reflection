@@ -92,7 +92,6 @@ begin
     Exit;
 
   SetAngle(True);
-  AbyssCenter := GetMyPos; // Failsafe
 
   for I:=0 to 3 do // Try 4x
   begin
@@ -112,7 +111,8 @@ begin
       end;
 
       if not WalkToTile(AbyssCenter, 0, 0)then //Walk to center!
-        R_Debug('Failed to walk near appendage', 'Abyss');
+        R_Debug('Failed to walk near appendage', 'Abyss')
+          else R_Debug('Walked to appendage', 'Abyss');
 
     end else
       R_Debug('Desired lever is on mainscreen', 'Abyss');
@@ -126,10 +126,10 @@ begin
 
     R_Flag;
 
-    TP := TileToMS(LeverTile, 300);
+    TP := TileToMS(LeverTile, 150);
     MMouse(TP.x, TP.y, 10, 10);
 
-    if WaitUpTextMulti(['perate', 'ppendage'], 1000) then
+    if r_WaitUpTextMulti(['Operate', 'ppendage'], 1000) then
     begin
       GetMousePos(X, Y);
       R_Debug('Found proper lever! Pulling...', 'Abyss');
@@ -141,7 +141,8 @@ begin
         Exit;
       end;
       R_Debug('Lever not pulled. Trying again.', 'Abyss');
-    end
+    end else
+      R_Debug('Lever uptext not found', 'Abyss');
 
   end;
 end;
@@ -149,14 +150,21 @@ end;
 function R_SolveAbyss : Boolean;
 var
   Direction : String;
-  t: Integer;
+  t, Total: Integer;
 begin
   if not LoggedIn then
     Exit;
   Result := False;
   Direction := ''; // Failsafe
-  if R_InAbyss then
+  MarkTime(Total);
+  while R_InAbyss do
   begin
+    if (TimeFromMark(Total) > (1000 * 60 * 3)) then
+    begin
+      R_Debug('Solving Timed-Out', 'Abyss');
+      Result := False;
+      Exit;
+    end;
     R_AbyssDetermineLever (Direction);
 
     if Direction = '' then
@@ -168,12 +176,14 @@ begin
       'e': Result := R_AbyssPullLever(R_ABYSS_LEVER_E);
       'w': Result := R_AbyssPullLever(R_ABYSS_LEVER_W);
     end;
-  end else R_Debug('Not in Abyss random!', 'Abyss');
+    if Result then Break;
+  end;
   MarkTime(t);
   if Result then
   begin
     while (R_InAbyss and (TimeFromMark(t) < 8000)) do
-      Wait(500);
+      Wait(1500);
+    R_Debug('Out of Abyss', 'Abyss');
     Wait(2500);
   end;
   ClickToContinue;
