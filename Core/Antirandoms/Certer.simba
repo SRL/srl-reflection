@@ -275,7 +275,7 @@ end;
 
 {*******************************************************************************
 function R_CerterExitCerter : Boolean;
-By: Cstrike
+By: Cstrike edit by Dynamite
 Description: Exits through portal.
 *******************************************************************************}
 function R_CerterExitCerter : Boolean;
@@ -284,6 +284,7 @@ var
   TP: TPoint;
 begin
   if not LoggedIn then Exit;
+  SetAngle(True);
   Result := False;
   PortalObj := GetObjectByID(CERTER_PORTALID, OBJECT_TYPE_INTERACTABLE, 13);
   if (PortalObj = NULL_RSOBJECT) then Exit;
@@ -297,8 +298,24 @@ begin
       R_Flag;
     end;
     wait(500+random(500));
+  end else
+  begin
+    if TileOnMM(PortalObj.Tile) then
+    begin
+      WalkToTile(PortalObj.Tile, 0, 0);
+    if TileOnMS(PortalObj.Tile, 0) then
+    begin
+      TP := TileToMS(PortalObj.Tile, 0);
+      Mouse(TP.x, TP.y, 3, 3, false);
+      if R_ChooseOptionMulti(['nte', 'orta']) then
+      begin
+        Result := True;
+        R_Flag;
+      end;
+      wait(500+random(500));
+    end;
+    end;
   end;
-
 end;
 
 {*******************************************************************************
@@ -313,6 +330,7 @@ begin
   if not LoggedIn then Exit;
   Result := False;
   MakeCompass('n');
+  SetAngle(True);
   if R_InCerter then
   begin
     for i := 1 to 3 do // 3 chances

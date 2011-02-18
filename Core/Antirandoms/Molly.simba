@@ -1,3 +1,6 @@
+const
+  R_MOLLY_DOORID = 14982;
+
 var
   Molly, Twin: TNPC;
   TwinID: integer;
@@ -16,6 +19,31 @@ begin
 end;
 
 {*******************************************************************************
+function R_MollyInRoom(Which: Integer): boolean;
+By: Drags111
+Description: Results true if we are in the room "Which"
+  1: Molly's room
+  2: Claw room
+*******************************************************************************}
+function R_MollyInRoom(Which: Integer): boolean;
+var
+  Door: TRSObject;
+  P: TTile;
+begin
+  if not LoggedIn then Exit;
+  Door := GetObjectByID(R_MOLLY_DOORID, OBJECT_TYPE_WALLOBJECT, 15);
+  if not (Door = NULL_RSOBJECT) then
+  begin
+    P := GetMyPos;
+    //R_Debug('Me: ' + ToStr(P) + ' Door: ' + ToStr(Door.RealTile), 'Molly');
+    case Which of
+      1: Result := (P.x <= Door.RealTile.x);
+      2: Result := (P.x > Door.RealTile.x);
+    end;
+  end;
+end;
+
+{*******************************************************************************
 function WaitToTalkToMolly: boolean;
 By: Drags111
 Description: Waits until we are talking to Molly. If it takes to
@@ -27,6 +55,8 @@ var
   P: TPoint;
 begin
   if not R_InMolly then
+    Exit;
+  if R_MollyInRoom(2) then
     Exit;
 
   T := GetSystemTime;
@@ -51,7 +81,7 @@ begin
 
       Mouse(P.X, P.Y, 2, 2, False);
 
-      if WaitOption('alk', 200+Random(100))then
+      if R_WaitOption('Talk-to', 200+Random(100))then
       begin
         Wait(100+Random(100));
         While CharacterMoving do
@@ -78,6 +108,10 @@ function R_TalkToMolly: boolean;
 var
   qx, qy: integer;
 begin
+  if not LoggedIn then
+    Exit;
+  if R_MollyInRoom(2) then
+    Exit;
   While (FindColorTolerance(qx, qy, 8388608, 184, 425, 365, 457, 2)) or (FindColorTolerance(qx, qy, 16711680, 184, 425, 365, 457, 2)) do
   begin
     Result := True;
@@ -136,25 +170,33 @@ Description: Opens the door (which: integer). 1 = first time, 2 = second.
 function Molly_OpenDoor(which: integer): Boolean;
 var
   P: TPoint;
-  i: integer;
+  Door: TRSObject;
 begin
   if not R_InMolly then
     Exit;
 
+  Result := not R_MollyInRoom(which);
+  if Result then Exit;
+
   Wait(400+Random(400));
-  while R_InMolly do
+
+  Door := GetObjectByID(R_MOLLY_DOORID, OBJECT_TYPE_WALLOBJECT, 15);
+  if not (Door = NULL_RSOBJECT) then
+    MDoorTile := Door.RealTile
+  else
+  begin
+    R_Debug('Door Null', 'Molly');
+    Exit;
+  end;
+
+  while R_InMolly and R_MollyInRoom(which) do
   begin
     P := TileToMSEx(Tile(MDoorTile.x, MDoorTile.Y), 0.9, 0.5, 15);
     Mouse(P.x, P.y, 0, 0, false);
     if R_ChooseOption('Open')then
     begin
-      WaitToMove(1000);
-      While CharacterMoving do wait(100+Random(100));
-      case which of
-        1: i := MDoorTile.X+1;
-        2: i := MDoorTile.X;
-      end;
-      While (P.X <> i) and (P.Y <> MDoorTile.Y) do
+      R_Flag;
+      While R_MollyInRoom(which) do
       begin
         wait(100+Random(100));
         if R_TalkToMolly then
@@ -166,7 +208,8 @@ begin
         end;
         P := GetMyPos;
       end;
-      Result := True;
+
+      Result := not R_MollyInRoom(which);
       Exit;
     end;
   end;
@@ -180,10 +223,12 @@ Description: Opens the crane for use.
 function Molly_OpenCrane: Boolean;
 var
   P: TPoint;
+  NPC: TNPC;
 begin
   if not R_InMolly then
     Exit;
-
+  if FindNPC('Molly', NPC) then
+    Exit;
   Wait(400+Random(400));
   while R_InMolly do
   begin
