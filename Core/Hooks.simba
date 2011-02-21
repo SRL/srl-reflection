@@ -1,6 +1,6 @@
 const
-    ClientVersion = 639;
-    HookRev = 1;
+ClientVersion = 639;
+HookRev = 2;
 
 
 {Static Hooks}
@@ -36,7 +36,7 @@ hook_static_ValidInterfaces  = 'we.w';
 hook_static_IsMenuTabbed  = '';
 hook_static_getCollapsedMenuItems  = 'vfa.g';
 hook_static_getNPCNC  = 'mi.k';
-hook_static_getItemDefLoader  = '';
+hook_static_getItemDefLoader  = 'jo.ib';
 hook_static_GetSettings  = 'kca.b';
 hook_static_getObjectDefLoader  = 'kea.d';
 hook_static_GroundItemCache  = 'ma.I';
@@ -226,26 +226,26 @@ hook_item_GetID  = 'p';
 hook_item_GetStack  = 'm';
 
 {Class ItemDefLoader}
-class_ItemDefLoader  = '';
-hook_itemdefloader_getMRUNodes  = '';
+class_ItemDefLoader  = 'hp';
+hook_itemdefloader_getMRUNodes  = 'o';
 
 {Class ItemDef}
-class_ItemDef  = '';
-hook_itemdef_getLoader  = '';
-hook_itemdef_getGroundActions  = '';
-hook_itemdef_getActions  = '';
+class_ItemDef  = 'uo';
+hook_itemdef_getLoader  = 'z';
+hook_itemdef_getGroundActions  = 'M';
+hook_itemdef_getActions  = 'hb';
 
 {Class MRUNodes}
-class_MRUNodes  = '';
-hook_mrunodes_getNodeCache  = '';
+class_MRUNodes  = 'jt';
+hook_mrunodes_getNodeCache  = 'c';
 
 {Class SettingArray}
 class_SettingArray  = 'rm';
 hook_settingarray_GetData  = 'a';
 
 {Class ObjectDefLoader}
-class_ObjectDefLoader  = '';
-hook_objectdefloader_getMRUNodes  = '';
+class_ObjectDefLoader  = 'mk';
+hook_objectdefloader_getMRUNodes  = 'f';
 
 {Class Ground}
 class_Ground  = 'ffa';
