@@ -1,6 +1,6 @@
 const
 ClientVersion = 639;
-HookRev = 2;
+HookRev = 3;
 
 
 {Static Hooks}
@@ -25,15 +25,15 @@ hook_static_MenuX  = 'av.R';
 hook_static_MenuY  = 'dca.z';
 hook_static_MenuWidth  = 'of.e';
 hook_static_MenuHeight  = 'rd.e';
-hook_static_MenuX2  = '';
-hook_static_MenuY2  = '';
-hook_static_MenuWidth2  = '';
+hook_static_MenuX2  = 'gu.E';
+hook_static_MenuY2  = 'vt.Gb';
+hook_static_MenuWidth2  = 'ke.H';
 hook_static_MenuHeight2  = '';
 hook_static_MenuNodeList  = 'kr.b';
 hook_static_MenuOpen  = 'cga.F';
 hook_static_GetInterfaces  = 'vga.i';
 hook_static_ValidInterfaces  = 'we.w';
-hook_static_IsMenuTabbed  = '';
+hook_static_IsMenuTabbed  = 'fp.p';
 hook_static_getCollapsedMenuItems  = 'vfa.g';
 hook_static_getNPCNC  = 'mi.k';
 hook_static_getItemDefLoader  = 'jo.ib';
@@ -70,12 +70,12 @@ hook_player_PlayerDef  = 'fd';
 class_Character  = 'ns';
 hook_character_GetHitDamges  = 'ic';
 hook_character_Animation  = 'hc';
-hook_character_Motion  = '';
+hook_character_Motion  = 'Rc';
 hook_character_WalkQueueX  = 'ad';
 hook_character_WalkQueueY  = 'Uc';
 hook_character_GetHeight  = 'Fb';
-hook_character_LoopCycleStatus  = '';
-hook_character_HPRatio  = '';
+hook_character_LoopCycleStatus  = 'S';
+hook_character_HPRatio  = 'yc';
 hook_character_GetInteracting  = 'Mc';
 hook_character_Orientation  = 'Yb';
 
@@ -85,11 +85,11 @@ hook_AnimableNode_GetAnimable  = 'k';
 hook_AnimableNode_GetNext  = 'f';
 
 {Class AnimableEntity}
-class_AnimableEntity  = '';
-hook_animableentity_getAreaX1  = '';
-hook_animableentity_getAreaX2  = '';
-hook_animableentity_getAreaY1  = '';
-hook_animableentity_getAreaY2  = '';
+class_AnimableEntity  = 'oda';
+hook_animableentity_getAreaX1  = 'F';
+hook_animableentity_getAreaX2  = 'J';
+hook_animableentity_getAreaY1  = 'D';
+hook_animableentity_getAreaY2  = 'B';
 
 {Class PlayerDef}
 class_PlayerDef  = 'ah';
@@ -208,7 +208,7 @@ hook_interface_GetText  = 'Lc';
 hook_interface_GetTextureID  = 'qc';
 hook_interface_GetTextColor  = 'Bb';
 hook_interface_GetModelID  = 'kd';
-hook_interface_GetModelZoom  = '';
+hook_interface_GetModelZoom  = 'rd';
 hook_interface_GetName  = 'Vb';
 hook_interface_GetChildren  = 'ec';
 hook_interface_GetID  = 'sd';
