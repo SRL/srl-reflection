@@ -1,6 +1,6 @@
 const
 ClientVersion = 639;
-HookRev = 5;
+HookRev = 6;
 
 
 {Static Hooks}
@@ -28,7 +28,7 @@ hook_static_MenuHeight = 'rd.e';
 hook_static_MenuX2 = 'gu.E';
 hook_static_MenuY2 = 'vt.Gb';
 hook_static_MenuWidth2 = 'ke.H';
-hook_static_MenuHeight2 = '';
+hook_static_MenuHeight2 = 'qea.q';
 hook_static_MenuNodeList = 'kr.b';
 hook_static_MenuOpen = 'cga.F';
 hook_static_GetInterfaces = 'vga.i';
