@@ -40,7 +40,7 @@ const
   RBank_EV = 'eb' ; // (Edgeville Bank)
   RBank_CT = 'ctb'; // (Catherby bank)
   //RBank_CM = 'clt'; // (Camelot bank)
-  //RBank_NA = 'nab'; // (North Ardougne bank)
+  RBank_NA = 'anb'; // (North Ardougne bank)
   RBank_SA = 'asb'; // (South Ardougne bank)
   RBank_YN = 'ynb'; // (Yanille bank)
   //RBank_NG = 'ngb'; // (North gnome bank)
@@ -818,10 +818,13 @@ begin
     'yb', 'yanille':
         Tiles := [Point(2614, 3094), Point(2614, 3092), Point(2614, 3091)];
     'da', 'duel arena': Tiles := [Point(3381, 3269), Point(3382, 3270)];
-    'asb', 'ardougne south': Tiles := [Point(2656, 3286), Point(2656, 3283)];
     'pc', 'pest control':
         Tiles := [Point(2667, 2652), Point(2666, 2652), Point(2665, 2652),
                   Point(2668, 2652)];
+    'nab', 'ardougne north':
+        Tiles := [Point(2618, 3331), Point(2619, 3331), Point(2614, 3331)];
+    'nsb', 'ardougne south':
+        Tiles := [Point(2656, 3286), Point(2656, 3283), Point(2656, 3280)];
   else
     begin
       SRL_Warn('R_OpenBankBooth', 'Unsupported bank name.', -1);
