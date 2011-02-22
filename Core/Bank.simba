@@ -821,9 +821,9 @@ begin
     'pc', 'pest control':
         Tiles := [Point(2667, 2652), Point(2666, 2652), Point(2665, 2652),
                   Point(2668, 2652)];
-    'nab', 'ardougne north':
+    'anb', 'ardougne north':
         Tiles := [Point(2618, 3331), Point(2619, 3331), Point(2614, 3331)];
-    'nsb', 'ardougne south':
+    'asb', 'ardougne south':
         Tiles := [Point(2656, 3286), Point(2656, 3283), Point(2656, 3280)];
   else
     begin
