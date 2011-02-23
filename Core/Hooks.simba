@@ -1,6 +1,6 @@
 const
 ClientVersion = 639;
-HookRev = 7;
+HookRev = 8;
 
 
 {Static Hooks}
@@ -260,24 +260,25 @@ hook_ground_FloorDecoration = 'p';
 class_WallObjectData = 'tq';
 hook_WallObjectData_GetID = 'lb';
 hook_WallObjectData_GetModel = 'db';
-hook_WallObjectData_GetOrientation = '';
+hook_WallObjectData_GetOrientation = 'Q';
 
 {Class WallDecorationData}
 class_WallDecorationData = 'gs';
 hook_WallDecorationData_GetID = 'Q';
 hook_WallDecorationData_GetModel = 'ib';
-hook_WallDecorationData_GetOrientation = '';
+hook_WallDecorationData_GetOrientation = 'S';
 
 {Class FloorDecorationData}
 class_FloorDecorationData = 'rh';
 hook_FloorDecorationData_GetID = 'K';
 hook_FloorDecorationData_GetModel = 'nb';
-hook_FloorDecorationData_GetOrientation = '';
+hook_FloorDecorationData_GetOrientation = 'X';
 
 {Class InteractiveObject}
 class_InteractiveObject = 'dda';
 hook_interactiveobject_GetID = 'cb';
 hook_interactiveobject_GetModel = 'nb';
+hook_interactiveobject_GetOrientation = 'ob';
 
 {Class InteractiveObject2}
 class_InteractiveObject2 = 'ww';
@@ -287,6 +288,7 @@ hook_interactiveobject2_GetObjectData = 'cb';
 class_SecondLevelObject = 'qea';
 hook_secondlevelobject_GetID = 't';
 hook_secondlevelobject_GetModel = 'u';
+hook_secondlevelobject_GetOrientation = 'g';
 
 {Class WallObjectSub2}
 class_WallObjectSub2 = 'bda';
