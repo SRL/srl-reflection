@@ -1,6 +1,6 @@
 const
 ClientVersion = 639;
-HookRev = 8;
+HookRev = 9;
 
 
 {Static Hooks}
@@ -57,7 +57,7 @@ hook_static_GetCrossHairColor = 'wfa.d';
 class_Animable = 'vs';
 hook_animable_PixelX = 'p';
 hook_animable_PixelY = 'u';
-hook_animable_Plane = 'vs';
+hook_animable_Plane = 'v';
 
 {Class Player}
 class_Player = 'bs';
