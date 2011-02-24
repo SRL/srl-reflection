@@ -1,6 +1,6 @@
 const
 ClientVersion = 639;
-HookRev = 9;
+HookRev = 10;
 
 
 {Static Hooks}
@@ -103,7 +103,7 @@ hook_npc_NPCDef = 'Bd';
 class_NPCDef = 'ow';
 hook_npcdef_GetActions = 'F';
 hook_npcdef_GetName = 'W';
-hook_npcdef_GetLevel = 'Id';
+hook_npcdef_GetLevel = 'p';
 hook_npcdef_GetID = 'R';
 
 {Class NPCNode}
