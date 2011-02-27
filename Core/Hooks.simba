@@ -1,6 +1,6 @@
 const
 ClientVersion = 639;
-HookRev = 10;
+HookRev = 11;
 
 
 {Static Hooks}
@@ -251,7 +251,7 @@ hook_objectdefloader_getMRUNodes = 'f';
 class_Ground = 'ffa';
 hook_ground_AnimableList = 'b';
 hook_ground_WallObject1 = 'm';
-hook_ground_WallObject2 = 'ffa';
+hook_ground_WallObject2 = 'f';
 hook_ground_WallDecoration1 = 'd';
 hook_ground_WallDecoration2 = 'g';
 hook_ground_FloorDecoration = 'p';
