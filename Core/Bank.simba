@@ -818,7 +818,8 @@ begin
     'yb', 'yanille':
         Tiles := [Point(2614, 3094), Point(2614, 3092), Point(2614, 3091)];
     'da', 'duel arena': Tiles := [Point(3381, 3269), Point(3382, 3270)];
-    'asb', 'ardougne south': Tiles := [Point(2656, 3286), Point(2656, 3283)];
+    'anb', 'ardougne north': Tiles := [Point(2618, 3331), Point(2619, 3331), Point(2614, 3331)];
+    'asb', 'ardougne south': Tiles := [Point(2656, 3286), Point(2656, 3283), Point(2656, 3280)];
     'pc', 'pest control':
         Tiles := [Point(2667, 2652), Point(2666, 2652), Point(2665, 2652),
                   Point(2668, 2652)];
