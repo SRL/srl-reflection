@@ -219,34 +219,51 @@ var
   count, nodeList, head, next, last, javaString: Integer;
   item: string;
 begin
-  nodeList:= SmartGetFieldObject(0, hook_static_MenuNodeList);
-  head:= SmartGetFieldObject(nodeList, hook_nodelist_Head);
-  //for some reason, the head has null strings, so skip it
-  next:= SmartGetFieldObject(head, hook_node_Next);
-  count:= GetMenuCount;
-  SetLength(result,count);
-  repeat
-    javaString:= SmartGetFieldObject(next, hook_menu_Action);
-    if (javaString = 0) then
-    begin
-      //writeln('Stopping, the string is null');
+  try
+    nodeList:= SmartGetFieldObject(0, hook_static_MenuNodeList);
+    head:= SmartGetFieldObject(nodeList, hook_nodelist_Head);
+    //for some reason, the head has null strings, so skip it
+    next:= SmartGetFieldObject(head, hook_node_Next);
+    count:= GetMenuCount;
+    SetLength(result,count);
+    repeat
+      javaString:= SmartGetFieldObject(next, hook_menu_Action);
+      if (javaString = 0) then
+      begin
+        //writeln('Stopping, the string is null');
+        SmartFreeObject(javaString);
+        break;
+      end;
+      item:= GetJavaString(javaString,256);
       SmartFreeObject(javaString);
-      break;
+      javaString:= SmartGetFieldObject(next, hook_menu_Option);
+      item:= item + ' ' + GetJavaString(javaString,256);
+      SmartFreeObject(javaString);
+      result[count-1]:= TrimHTML(item);
+      last:= next;
+      next:= SmartGetFieldObject(last, hook_node_Next);
+      SmartFreeObject(last);
+      count:= count - 1;
+    until (count = 0);
+    SmartFreeObject(next);
+    SmartFreeObject(head);
+    SmartFreeObject(nodeList);
+  except
+    try
+      SmartFreeObject(next);
+    except
     end;
-    item:= GetJavaString(javaString,256);
-    SmartFreeObject(javaString);
-    javaString:= SmartGetFieldObject(next, hook_menu_Option);
-    item:= item + ' ' + GetJavaString(javaString,256);
-    SmartFreeObject(javaString);
-    result[count-1]:= TrimHTML(item);
-    last:= next;
-    next:= SmartGetFieldObject(last, hook_node_Next);
-    SmartFreeObject(last);
-    count:= count - 1;
-  until (count = 0);
-  SmartFreeObject(next);
-  SmartFreeObject(head);
-  SmartFreeObject(nodeList);
+    try
+      SmartFreeObject(head);
+    except
+    end;
+    try
+      SmartFreeObject(nodeList);
+    except
+    end;
+    wait(50);
+    Result := GetMenuText;
+  end;
 end;
 
 {*******************************************************************************
