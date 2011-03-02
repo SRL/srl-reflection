@@ -858,22 +858,6 @@ begin
   P := TileToMS(Tiles[0], 10);
   MMouse(p.x - 5, p.y - 5, 11, 11);
   Wait(RandomRange(200, 300));
-  if IsUpTextMultiCustom(['ank', 'hest']) then //one-click bank chests
-  begin
-    GetMousePos(P.x, P.y);
-    Mouse(P.x, P.y, 0, 0, true);
-    Wait(RandomRange(80, 110));
-    P.x := 0;
-    repeat
-      R_Flag;
-      Wait(RandomRange(50, 90));
-      Inc(Tries);
-      if (Length(Players) > 0) then
-        if Players[CurrentPlayer].Pin <> '' then
-          Result := InPin(Players[CurrentPlayer].Pin);
-      Result := R_BankScreen or R_PinScreen;
-    until Result or (Tries > 40);
-  end;
   if IsUpTextMultiCustom(['ank', 'ooth']) then
   begin
     GetMousePos(P.x, P.y);
@@ -890,6 +874,21 @@ begin
             Result := InPin(Players[CurrentPlayer].Pin);
         Result := R_BankScreen or R_PinScreen;
       until Result or (Tries > 40);
+  end else if IsUpTextMultiCustom(['ank', 'hest']) then //one-click bank chests
+  begin
+    GetMousePos(P.x, P.y);
+    Mouse(P.x, P.y, 0, 0, true);
+    Wait(RandomRange(80, 110));
+    P.x := 0;
+    repeat
+      R_Flag;
+      Wait(RandomRange(50, 90));
+      Inc(Tries);
+      if (Length(Players) > 0) then
+        if Players[CurrentPlayer].Pin <> '' then
+          Result := InPin(Players[CurrentPlayer].Pin);
+      Result := R_BankScreen or R_PinScreen;
+    until Result or (Tries > 40);
   end;
 end;
 
