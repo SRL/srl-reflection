@@ -380,7 +380,7 @@ var
 begin
   if not R_BankScreen then
   begin
-    R_Debug('Bank not open', 'R_ItemsExistInBankMulti');
+    R_Debug('Bank not open', 'R_GetAllBankItems');
     Exit;
   end;
   SetLength(Result, INTERFACE_BANK_MAXSLOTS + 1);
@@ -413,7 +413,7 @@ var
 begin
   if not R_BankScreen then
   begin
-    R_Debug('Bank not open', 'R_ItemsExistInBank');
+    R_Debug('Bank not open', 'R_ItemsExistInBankEx');
     Exit;
   end;
   BItems := R_GetAllBankItems;
@@ -479,7 +479,7 @@ begin
   Result := NULL_TBANKITEM;
   if not R_BankScreen then
   begin
-    R_Debug('Bank not open', 'R_GetItemIDAtBankSlot');
+    R_Debug('Bank not open', 'R_GetItemAtBankSlot');
     Exit;
   end;
   if (GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, BankSlot) > 0) then
@@ -532,7 +532,7 @@ begin
   Result := -1;
   if not R_BankScreen then
   begin
-    R_Debug('Bank not open', 'R_TabItemIsOn');
+    R_Debug('Bank not open', 'R_TabSlotIsOn');
     Exit;
   end;
 
@@ -587,13 +587,13 @@ var
 begin
   if not R_BankScreen then
   begin
-    R_Debug('Bank not open', 'R_WithdrawItemIDEx');
+    R_Debug('Bank not open', 'R_WithdrawItemEx');
     Exit;
   end;
   if FirstTab then R_BankTab(1);
   if not R_ItemExistsInBank(TheVar, Item) then
   begin
-    R_Debug('Item not in bank', 'R_WithdrawItemIDEx');
+    R_Debug('Item not in bank', 'R_WithdrawItemEx');
     Exit;
   end;
   Index := Item.Slot;
@@ -610,16 +610,16 @@ begin
     if not PointInBox(RelPoint, MSBOX) then
     //this checks if its on the first tab, if its not the Relative Point will be 0
     begin
-      R_Debug('Item not in first tab, switching tabs', 'R_WithdrawItemIDEx');
+      R_Debug('Item not in first tab, switching tabs', 'R_WithdrawItemEx');
       WhichBankTab := R_TabSlotIsOn(Index);
       //This then clicks the correct Bank Tab
-      R_Debug('Item in Tab: ' + ToStr(WhichBankTab), 'R_WithdrawItemIDEx');
+      R_Debug('Item in Tab: ' + ToStr(WhichBankTab), 'R_WithdrawItemEx');
       R_BankTab(WhichBankTab);
       RelPoint := R_GetBankItemRelPoint(Index);
       R_Debug(ToStr(RelPoint), 'RelPoint');
       if not PointInBox(RelPoint, MSBOX) then
       begin
-        R_Debug('Item not in tab', 'R_WithdrawItemIDEx');
+        R_Debug('Item not in tab', 'R_WithdrawItemEx');
         Exit;
       end;
     end;
@@ -658,7 +658,7 @@ begin
           if (TimeFromMark(Mark) > 10000) then
           begin
             Result := False;
-            R_Debug('ReadyToTypeBank timed-out', 'R_WithdrawItemIDEx');
+            R_Debug('ReadyToTypeBank timed-out', 'R_WithdrawItemEx');
             Exit;
           end;
         end;
@@ -670,7 +670,7 @@ begin
 
   if not Result then
   begin
-    R_Debug('Tried to withdraw wrong item', 'R_WithdrawItemIDEx');
+    R_Debug('Tried to withdraw wrong item', 'R_WithdrawItemEx');
     Exit;
   end;
 
@@ -679,7 +679,7 @@ begin
   begin
     if (TimeFromMark(CountTime) > 8000) then
     begin
-      R_Debug('Item withdraw timed-out', 'R_WithdrawItemIDEx');
+      R_Debug('Item withdraw timed-out', 'R_WithdrawItemEx');
       Result := False;
       Exit;
     end;
@@ -823,6 +823,7 @@ begin
     'pc', 'pest control':
         Tiles := [Point(2667, 2652), Point(2666, 2652), Point(2665, 2652),
                   Point(2668, 2652)];
+    'cw', 'castle wars': Tiles := [Point(2445, 3083)];
   else
     begin
       SRL_Warn('R_OpenBankBooth', 'Unsupported bank name.', -1);
@@ -857,6 +858,22 @@ begin
   P := TileToMS(Tiles[0], 10);
   MMouse(p.x - 5, p.y - 5, 11, 11);
   Wait(RandomRange(200, 300));
+  if IsUpTextMultiCustom(['ank', 'hest']) then //one-click bank chests
+  begin
+    GetMousePos(P.x, P.y);
+    Mouse(P.x, P.y, 0, 0, true);
+    Wait(RandomRange(80, 110));
+    P.x := 0;
+    repeat
+      R_Flag;
+      Wait(RandomRange(50, 90));
+      Inc(Tries);
+      if (Length(Players) > 0) then
+        if Players[CurrentPlayer].Pin <> '' then
+          Result := InPin(Players[CurrentPlayer].Pin);
+      Result := R_BankScreen or R_PinScreen;
+    until Result or (Tries > 40);
+  end;
   if IsUpTextMultiCustom(['ank', 'ooth']) then
   begin
     GetMousePos(P.x, P.y);
