@@ -6,6 +6,7 @@ const
   R_EVILBOB_SMALLFISHINGNET = 6209;
   R_EVILBOB_MIDDLE_X = 3422;
   R_EVILBOB_MIDDLE_Y = 4777;
+  R_EVILBOB_NPC_HEIGHT = 448;
   R_EVILBOB_SERVANTNAME = 'Servant';
   R_EVILBOB_EVILBOBNAME = 'Evil Bob';
   R_EVILBOB_DIRECTIONINTERFACE = 186;
@@ -40,22 +41,23 @@ end;
 
 {*******************************************************************************
 procedure R_ScapeRuneDestroyBadFish;
-by: Cstrike
+by: Cstrike, fixed by Harry
 Description: Destroys bad fish if we for whatever reason happen to get one.
 *******************************************************************************}
 procedure R_ScapeRuneDestroyFish;
 var
   DestroyArray : TIntegerArray;
+  DropThis: TInvItem;
   i, t : Integer;
 begin
   if not LoggedIn then Exit;
   DestroyArray := [R_EVILBOB_FISHID1, R_EVILBOB_FISHID2, R_EVILBOB_FISHIDUNCOOKED1, R_EVILBOB_FISHIDUNCOOKED2];
   for i:=0 to high(DestroyArray) do
   begin
-    if R_CountItem(DestroyArray[i]) > 0 then
+    if R_ItemExists(DestroyArray[i], DropThis) then
     begin
       R_Debug('Destroying improper fish.', 'ScapeRune');
-      R_ClickItem(DestroyArray[i], false, 'Destroy');
+      R_ClickItem(DropThis.slot, False, 'estroy');
       wait (500+random(500));
       // Wait for interface to pop up
       MarkTime(t);
@@ -63,6 +65,7 @@ begin
         wait (50);
       until (ValidInterface(94)) or (TimeFromMark(t) > 6000)
       // Click interface
+      Wait(42+Random(300));
       MarkTime(t);
       repeat
         wait (50);
@@ -271,7 +274,7 @@ begin
         TP := TileToMS (TileToGetItem, 0);
         Mouse (TP.x, TP.y, 1, 1, true);
         wait (2000+random(3000));
-      until (TimeFromMark(t) > 10000) or (R_CountItem(R_EVILBOB_SMALLFISHINGNET) > 0)
+      until (TimeFromMark(t) > 20000) or (R_CountItem(R_EVILBOB_SMALLFISHINGNET) > 0)
     end else
     begin
       R_Debug('Could not find fishing net at Tile('+inttostr(TileToGetItem.x)+','+inttostr(TileToGetItem.y)+')', 'ScapeRune');
@@ -537,14 +540,15 @@ end;
 
 {*******************************************************************************
 function R_ScapeRuneFinishRandom : Boolean;
-by: Cstrike
-Description: Gives that stupid cat it's crap and leaves
+by: Cstrike, fixed by Harry
+Description: Gives that stupid cat its crap and leaves
 *******************************************************************************}
 function R_ScapeRuneFinishRandom : Boolean;
 var
-  t, i, TX, TY : Integer;
+  t, i, TX, TY, ebobsrch, lx, ly : Integer;
   TP, TPPortal : TPoint;
   Portal : TRSObject;
+  EvilThingArr: TNPCArray;
 begin
   if not LoggedIn then Exit;
   Result := False;
@@ -552,8 +556,40 @@ begin
   R_ClickItemBy('Raw fish-like', false, 'Use');
   wait(500+random(500));
   MakeCompass('n');
-  TP := TileToMS(Tile(R_EVILBOB_MIDDLE_X-2, R_EVILBOB_MIDDLE_Y), 0);
-  Mouse(TP.x, TP.y, 1, 1, true); // Click bob, more failsafe here needed
+  SetLength(EvilThingArr, 0);
+  for ebobsrch := 0 to 3 do
+  begin
+    EvilThingArr := SortNPCs(GetNPCs('vil Bob'));
+    try
+      TP := TileToMS(EvilThingArr[0].Tile, R_EVILBOB_NPC_HEIGHT);
+    except
+      WriteLn('Failed to find Evil Bob?!');
+      Exit;
+    end;
+    MMouse(TP.X, TP.Y, 2, 2);
+    Wait(1+Random(42))
+    if R_IsUptext('vil Bob') then
+    begin
+      GetMousePos(lx,ly);
+      Mouse(lx,ly,0,0,True);
+      if r_WaitCrossHairColor(CROSSHAIR_RED, 500+Random(100)-Random(100)) then
+        Result := True
+      else
+        Result := False;
+      if (not Result) then
+      begin
+        Writeln('Bob Uptext failed, trying again.');
+        Wait(42+Random(300));
+      end
+      else
+      begin
+        if (R_FlagExists) then
+          R_Flag;
+        WriteLn('Bob clicked, proceed.');
+        Break;
+      end;
+    end;
+  end;
 
   // Talk to bob
   MarkTime(t);
