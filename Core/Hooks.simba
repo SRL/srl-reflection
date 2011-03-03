@@ -5,8 +5,8 @@ HookRev = 1;
 
 {Static Hooks}
 hook_static_LoginIndex = 'qk.f';
-hook_static_getFriendsList = '';
 hook_static_getFriendsWorlds = 'rca.a';
+hook_static_getFriendsList = 'gh.l';
 hook_static_CameraYaw = 'vk.H';
 hook_static_MyPlayer = 'vaa.x';
 hook_static_BaseX = 'eaa.f';
@@ -103,7 +103,7 @@ hook_npc_NPCDef = 'sd';
 class_NPCDef = 'pha';
 hook_npcdef_GetActions = 'U';
 hook_npcdef_GetName = 'ob';
-hook_npcdef_GetLevel = 'md';
+hook_npcdef_GetLevel = 'i';
 hook_npcdef_GetID = 'nb';
 
 {Class NPCNode}
@@ -230,10 +230,10 @@ class_ItemDefLoader = 'uq';
 hook_itemdefloader_getMRUNodes = 'i';
 
 {Class ItemDef}
-class_ItemDef = '';
-hook_itemdef_getLoader = '';
-hook_itemdef_getGroundActions = '';
-hook_itemdef_getActions = '';
+class_ItemDef = 'uo';
+hook_itemdef_getLoader = 'z';
+hook_itemdef_getGroundActions = 'M';
+hook_itemdef_getActions = 'hb';
 
 {Class MRUNodes}
 class_MRUNodes = 'qr';
