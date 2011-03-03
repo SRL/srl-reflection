@@ -656,10 +656,15 @@ var
   First: String;
 begin
   MenuOptions := GetMenuText;
-  First := Trim(MenuOptions[0]);
-  Result := First;
-  if (Length(MenuOptions) > 1) and (Result <> '') then
-    Result := Result+' / '+inttostr(Length(MenuOptions))+' more options';
+  try
+    First := Trim(MenuOptions[0]);
+    Result := First;
+    if (Length(MenuOptions) > 1) and (Result <> '') then
+      Result := Result+' / '+inttostr(Length(MenuOptions))+' more options';
+  except
+    WriteLn('R_GetUptext failed!');
+    Result := '';
+  end;
 end;
 
 {*******************************************************************************
