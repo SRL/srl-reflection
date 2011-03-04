@@ -556,38 +556,31 @@ begin
   R_ClickItemBy('Raw fish-like', false, 'Use');
   wait(500+random(500));
   MakeCompass('n');
+  wait(500+random(500))
   SetLength(EvilThingArr, 0);
-  for ebobsrch := 0 to 3 do
+  for ebobsrch := 1 to 4 do
   begin
     EvilThingArr := SortNPCs(GetNPCs('vil Bob'));
     try
       TP := TileToMS(EvilThingArr[0].Tile, R_EVILBOB_NPC_HEIGHT);
     except
-      WriteLn('Failed to find Evil Bob?!');
+      R_Debug('Failed to find Evil Bob?!','ScapeRune');
       Exit;
     end;
-    MMouse(TP.X, TP.Y, 2, 2);
-    Wait(1+Random(42))
-    if R_IsUptext('vil Bob') then
+    Mouse(TP.X, TP.Y, 2, 2, False);
+    Wait(10+Random(42))
+    if R_ChooseOption('vil Bob') then
     begin
-      GetMousePos(lx,ly);
-      Mouse(lx,ly,0,0,True);
-      if r_WaitCrossHairColor(CROSSHAIR_RED, 500+Random(100)-Random(100)) then
-        Result := True
-      else
-        Result := False;
-      if (not Result) then
-      begin
-        Writeln('Bob Uptext failed, trying again.');
-        Wait(42+Random(300));
-      end
-      else
-      begin
-        if (R_FlagExists) then
-          R_Flag;
-        WriteLn('Bob clicked, proceed.');
-        Break;
-      end;
+      Result := True;
+      if (R_FlagExists) then
+        R_Flag;
+      WriteLn('Bob clicked, proceed.');
+      Break;
+    end else
+    begin
+      R_Debug('Failed to give fish time '+toStr(ebobsrch)+'/4','ScapeRune');
+      MMouse(MIX1, MIY1, MIX2, MIY2);
+      Wait(42+Random(300));
     end;
   end;
 
