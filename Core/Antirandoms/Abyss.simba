@@ -188,5 +188,6 @@ begin
   end;
   ClickToContinue;
   Wait(4000+Random(2000));
+  MakeCompass('N'); // Really should get the current compass angle and set back to that, but this is better than nothing.
   Result := not R_InAbyss;
 end;
