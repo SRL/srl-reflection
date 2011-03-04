@@ -177,7 +177,7 @@ begin
               or FindNPCText ('a lot for your help') then // After random finished
               begin
                 R_Debug('Found useless text, clicking continue...','Prison');
-                R_ClickToContinue;
+                ClickToContinue;
                 ExitLoop := False;
               end;
     Wait (300+random(600));
@@ -529,7 +529,7 @@ Description: Solves the random.
 *******************************************************************************}
 function R_SolvePrison: Boolean;
 var
-  i, timePrison, PrisonPhase, SolveAttempts, ModelObtained: Integer;
+  i, timePrison, PrisonPhase, SolveAttempts, ModelObtained, hometeleblock: Integer;
   PrisonOutOfTime: Boolean;
   AnimalIDsToPop, BalloonArrayData: TIntegerArray;
 begin
@@ -584,7 +584,7 @@ begin
             //--FIX ME LATER PLZ--\\
             for i:=1 to 5 do
             begin
-              R_ClickToContinue;
+              ClickToContinue;
               wait (200+random(200));
             end;
             //--END OF FIX ME LATER--\\
@@ -691,7 +691,7 @@ begin
               //--FIX ME LATER PLZ--\\
               for i:=1 to 5 do
               begin
-                R_ClickToContinue;
+                ClickToContinue;
                 wait (200+random(200));
               end;
               //--END OF FIX ME LATER--\\
@@ -702,7 +702,7 @@ begin
             if R_PrisonByPassText('wrong key', 243, 4, 800) then // Check me quickly
             begin
               R_Debug ('We got the wrong key :( Sorry...','Prison');
-              while (R_ClickToContinue) do
+              while (ClickToContinue) do
                 Wait (1000+random(1000));
               PrisonPhase := PRISON_PHASE_PULLLEVER;
             end;
@@ -715,8 +715,8 @@ begin
                 R_Debug ('Need to pop more balloons', 'Prison');
                 PrisonPhase := PRISON_PHASE_PULLLEVER;
               end;
-              R_ClickToContinue;
-            end else R_ClickToContinue;
+              ClickToContinue;
+            end else ClickToContinue;
 
           end else R_Debug ('Failed: R_PrisonByPassText #2','Prison');
         end else R_Debug ('Failed: R_PrisonByPassText #1','Prison');
@@ -774,4 +774,34 @@ begin
 
   // If we succeed... :)
   Result := (PrisonPhase = PRISON_PHASE_SOLVEDRANDOM) and (PrisonOutOfTime = False);
+
+  if not Result then
+  begin
+    if Reincarnate then // SRL setting, default false - for scripts with deathwalk. Might be an issue if people misuse the var!
+    begin
+      if TabExists(Tab_Magic) then
+      begin
+        R_Debug('We can teleport home soon due to Reincarnate := True in SRL!','Prison');
+        MarkTime(hometeleblock);
+        repeat
+          if (DistanceFrom(Tile(3222, 3219)) < 15) then // Back at Lumby courtyard.
+          begin
+            Result := True;
+            R_Debug('Back at Lumbridge from Prison! Please deathwalk back to where you were.','Prison');
+            R_Debug('If your script does not have deathwalk, please set Reincarnate := False;!','Prison');
+            Exit;
+          end;
+          GameTab(Tab_Magic);
+          Mouse(575, 229, 5, 5, True); // I know this is really bad, but I don't understand how Cast() works, and I will not include magic.scar here!
+          Wait(2000+Random(2000));
+          if IsChatBoxTextAnyLine('another',0) then
+            Wait(30000+Random(30000))
+          else
+            Wait(15000+Random(10000)); // No text, less wait.
+        until (TimeFromMark(hometeleblock) > 8*60000); // 8 minutes - block lasts for 5 usually. If it takes this long something is goofed!
+        R_Debug('Prison reincarnate failed. Took too long to get home :(','Prison');
+        Result := False;
+      end;
+    end;
+  end;
 end;
