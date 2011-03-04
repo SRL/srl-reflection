@@ -504,6 +504,7 @@ begin
     Exit;
   Result := False;
   MakeCompass('n');
+  WalkToTile(Tile(2085, 4460), 0, 0);
   TP := TileToMSEx (Tile(PRISON_DOOR_EXIT_X, PRISON_DOOR_EXIT_Y), 1.0, 0.0, 300);
   Mouse (TP.X, TP.Y, 1, 3, false);
   Wait (500+random(350));
