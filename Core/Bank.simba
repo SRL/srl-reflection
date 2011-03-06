@@ -855,6 +855,14 @@ begin
     end;
   end;
 
+  if (Bank = 'veb') or (Bank = 'varrock east') then
+  begin
+    if (GetMyPos = Tile(3250, 3419)) or (GetMyPos = Tile(3257, 3419)) then
+    begin
+      WalkToTile(Tile(3253, 3421), 1, 0);
+    end;
+  end;
+
   P := TileToMS(Tiles[0], 10);
   MMouse(p.x - 5, p.y - 5, 11, 11);
   Wait(RandomRange(200, 300));
