@@ -94,7 +94,7 @@ begin
     Plane := SmartGetFieldInt(0, hook_static_LoadedPlane);
     Ground := SmartGetFieldArray3DObject(0, hook_static_GroundTiles, Plane, L.X, L.Y);
     Node := SmartGetFieldObject(Ground, hook_ground_AnimableList);
-    while(node <> 0)do
+    while(Node <> 0)do
     begin
       TempBox := NULL_BOX;
       Obj := SmartGetFieldObject(Node, hook_AnimableNode_GetAnimable);
@@ -107,14 +107,18 @@ begin
           if(ObjTemp <> 0) then
           begin
             ID := SmartGetFieldInt(ObjTemp, hook_secondlevelobject_GetID);
+            if((ID = -1) or ((ID and $FFFF) = 65535))then
+            begin
+              SmartFreeObject(ObjTemp);
+              Exit;
+            end;
             TempBox.X1 := (Base.X + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaX1));
             TempBox.Y1 := (Base.Y + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaY1));
             TempBox.X2 := (Base.X + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaX2));
             TempBox.Y2 := (Base.Y + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaY2));
             TempTile.X := (Base.X + (SmartGetFieldInt(ObjTemp, hook_animable_PixelX) / 512));
             TempTile.Y := (Base.Y + (SmartGetFieldInt(ObjTemp, hook_animable_PixelY) / 512));
-            if((ID = -1) or ((ID and $FFFF) = 65535))then
-              Exit;
+            SmartFreeObject(ObjTemp);
           end;
         end else //ID is valid, so we can use Obj
         begin
@@ -127,19 +131,29 @@ begin
         end;
 
         Result := NewObject(ID, OBJECT_TYPE_INTERACTABLE, T, TempTile, TempBox);
+        SmartFreeObject(Obj);
         Exit;
       end;
-      SmartFreeObject(obj);
-      SmartFreeObject(ObjTemp);
       SmartFreeObject(Node);
       Node := SmartGetFieldObject(Node, hook_AnimableNode_GetNext);
     end;
-
   finally
-    SmartFreeObject(Ground);
-    SmartFreeObject(Obj);
-    SmartFreeObject(ObjTemp);
-    SmartFreeObject(Node);
+    try
+      SmartFreeObject(Ground);
+    except
+    end;
+    try
+      SmartFreeObject(Obj);
+    except
+    end;
+    try
+      SmartFreeObject(ObjTemp);
+    except
+    end;
+    try
+      SmartFreeObject(Node);
+    except
+    end;
   end;
 end;
 
