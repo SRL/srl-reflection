@@ -511,9 +511,12 @@ begin
     tmpID := GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot);
     if (tmpID > 0) then
     begin
-      R_Debug('#' +ToStr(slot), 'Slot');
+      //R_Debug('#' +ToStr(slot), 'Slot');
       if (GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot) = 5) then
-        Result := tmpID;
+        begin
+          Result := tmpID;
+          break;
+        end;
     end;
   end;
 end;
