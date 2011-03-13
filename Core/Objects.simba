@@ -337,7 +337,7 @@ end;
 
 {*******************************************************************************
 function SortedCircleTPA(Center: TPoint; Radius: Integer): TPointArray;
-By: mormonman
+By: Wizzup and BenLand100
 Description: Returns an array of all TPoints inside the circle. Sorted from
             closest to the Center.
 *******************************************************************************}
@@ -345,10 +345,9 @@ function SortedCircleTPA(Center: TPoint; Radius: Integer): TPointArray;
 var
   X, Y: Integer;
 begin
-  for X := Center.x - Radius to Center.x + Radius do
-    for Y := Center.y - Radius to Center.y + Radius do
-      if Distance(X, Y, Center.x, Center.y) < Radius then
-        Result := CombineTPA(Result, [Point(X, Y)]);
+  SetLength(Result,0);
+  Result := TPAFromBox(IntToBox(Center.X - Radius, Center.Y - Radius, Center.X + Radius, Center.Y + Radius));
+  FilterPointsPie(Result, 0, 360, 0, Radius, Center.X, Center.Y);
   SortTPAFrom(Result, Center);
 end;
 

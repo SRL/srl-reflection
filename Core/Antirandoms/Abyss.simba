@@ -184,7 +184,7 @@ begin
     while (R_InAbyss and (TimeFromMark(t) < 8000)) do
       Wait(1500);
     R_Debug('Out of Abyss', 'Abyss');
-    Wait(2500);
+    Wait(2000+Random(2000));
   end;
   ClickToContinue;
   Wait(4000+Random(2000));
