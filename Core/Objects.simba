@@ -110,7 +110,7 @@ begin
             if((ID = -1) or ((ID and $FFFF) = 65535))then
             begin
               SmartFreeObject(ObjTemp);
-              Exit;
+              Break;
             end;
             TempBox.X1 := (Base.X + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaX1));
             TempBox.Y1 := (Base.Y + SmartGetFieldShort(ObjTemp, hook_animableentity_getAreaY1));
@@ -132,7 +132,7 @@ begin
 
         Result := NewObject(ID, OBJECT_TYPE_INTERACTABLE, T, TempTile, TempBox);
         SmartFreeObject(Obj);
-        Exit;
+        Break;
       end;
       SmartFreeObject(Node);
       Node := SmartGetFieldObject(Node, hook_AnimableNode_GetNext);

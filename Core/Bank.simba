@@ -1,34 +1,34 @@
 //------------------------------------------------------------------\\
-//--               Simba Reflection Library                       --||
-//--                    Bank Routines                             --||
+//-- Simba Reflection Library --||
+//-- Bank Routines --||
 //------------------------------------------------------------------//
 
-//---                   Interface Constants                      --//
+//--- Interface Constants --//
 const
-  INTERFACE_BANK                                        = 762;
-  INTERFACE_DEPOSITBOX                                  = 11;
-  INTERFACE_BANK_PIN                                    = 13;
-  INTERFACE_BANK_BUTTON_CLOSE                           = 42;
-  INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY         = 36;
-  INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS           = 32;
-  INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS              = 34;
-  INTERFACE_BANK_BUTTON_HELP                            = 43;
-  INTERFACE_BANK_BUTTON_INSERT                          = 15;
-  INTERFACE_BANK_BUTTON_ITEM                            = 19;
-  INTERFACE_BANK_BUTTON_NOTE                            = 19;
-  INTERFACE_BANK_BUTTON_SEARCH                          = 17;
-  INTERFACE_BANK_BUTTON_SWAP                            = 15;
-  INTERFACE_BANK_INVENTORY                              = 92;
-  INTERFACE_BANK_ITEM_FREE_COUNT                        = 23;
-  INTERFACE_BANK_ITEM_FREE_MAX                          = 24;
-  INTERFACE_BANK_ITEM_MEMBERS_COUNT                     = 25;
-  INTERFACE_BANK_ITEM_MEMBERS_MAX                       = 26;
-  INTERFACE_BANK_SCROLLBAR                              = 114;
-  INTERFACE_BANK_TAB_ACTIVE                             = 1419;
-  INTERFACE_BANK_TAB_ADD_TEXTURE                        = 1435;
-  INTERFACE_BANK_MAXSLOTS                               = 515;
-  INTERFACE_BANK_SLOTS                                  = 93;
-//---                 Bank Constants                            --//
+  INTERFACE_BANK = 762;
+  INTERFACE_DEPOSITBOX = 11;
+  INTERFACE_BANK_PIN = 13;
+  INTERFACE_BANK_BUTTON_CLOSE = 42;
+  INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY = 36;
+  INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS = 32;
+  INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS = 34;
+  INTERFACE_BANK_BUTTON_HELP = 43;
+  INTERFACE_BANK_BUTTON_INSERT = 15;
+  INTERFACE_BANK_BUTTON_ITEM = 19;
+  INTERFACE_BANK_BUTTON_NOTE = 19;
+  INTERFACE_BANK_BUTTON_SEARCH = 17;
+  INTERFACE_BANK_BUTTON_SWAP = 15;
+  INTERFACE_BANK_INVENTORY = 92;
+  INTERFACE_BANK_ITEM_FREE_COUNT = 23;
+  INTERFACE_BANK_ITEM_FREE_MAX = 24;
+  INTERFACE_BANK_ITEM_MEMBERS_COUNT = 25;
+  INTERFACE_BANK_ITEM_MEMBERS_MAX = 26;
+  INTERFACE_BANK_SCROLLBAR = 114;
+  INTERFACE_BANK_TAB_ACTIVE = 1419;
+  INTERFACE_BANK_TAB_ADD_TEXTURE = 1435;
+  INTERFACE_BANK_MAXSLOTS = 515;
+  INTERFACE_BANK_SLOTS = 93;
+//--- Bank Constants --//
   const
   RBank_FE = 'feb'; // (Falador East Bank)
   RBank_FW = 'fwb'; // (Falador West Bank)
@@ -511,9 +511,12 @@ begin
     tmpID := GetChildComponentID(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot);
     if (tmpID > 0) then
     begin
-      R_Debug('#' +ToStr(slot), 'Slot');
+      //R_Debug('#' +ToStr(slot), 'Slot');
       if (GetChildComponentRelativeY(INTERFACE_BANK, INTERFACE_BANK_SLOTS, slot) = 5) then
-        Result := tmpID;
+        begin
+          Result := tmpID;
+          break;
+        end;
     end;
   end;
 end;
@@ -575,7 +578,7 @@ end;
 function R_WithdrawItemEx(TheVar: Variant; Amount: Integer; var Index: Integer; FirstTab: Boolean): Boolean;
 By: Bad Boy JH/mormonman
 Description: Withdraws amount of item. Returns the bankslot to Index.
-      * 0  = withdraw all
+      * 0 = withdraw all
       * -1 = Withdraw all but one
 *******************************************************************************}
 function R_WithdrawItemEx(TheVar: Variant; Amount: Integer; var Index: Integer; FirstTab: Boolean): Boolean;
@@ -691,7 +694,7 @@ end;
 function R_WithdrawItem(TheVar: Variant; Amount: Integer): Boolean;
 By: Bad Boy JH/mormonman
 Description: Withdraws amount of item.
-      * 0  = withdraw all
+      * 0 = withdraw all
       * -1 = Withdraw all but one
 *******************************************************************************}
 function R_WithdrawItem(TheVar: Variant; Amount: Integer): Boolean;
@@ -912,9 +915,9 @@ begin
   for i := 0 to High(Items)do
   begin
     Writeln('Slot: '+ToStr(Items[i].Slot));
-    Writeln('   Name: '+Items[i].Name);
-    Writeln('   ID: '+ToStr(Items[i].ID));
-    Writeln('   Stack Size: '+ToStr(Items[i].StackSize));
+    Writeln(' Name: '+Items[i].Name);
+    Writeln(' ID: '+ToStr(Items[i].ID));
+    Writeln(' Stack Size: '+ToStr(Items[i].StackSize));
   end;
 end;
 
