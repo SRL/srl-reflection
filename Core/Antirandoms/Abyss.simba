@@ -117,12 +117,12 @@ begin
     end else
       R_Debug('Desired lever is on mainscreen', 'Abyss');
 
-    case LeverNumber of // I'll turn this into one line of code later on
+    {case LeverNumber of // note by Harry: this is worthless, and actually BREAKS the solver in my experence.
         R_ABYSS_LEVER_N: MakeCompass ('s');
         R_ABYSS_LEVER_S: MakeCompass ('n');
         R_ABYSS_LEVER_E: MakeCompass ('w');
         R_ABYSS_LEVER_W: MakeCompass ('e');
-    end;
+    end;}
 
     R_Flag;
 
@@ -188,6 +188,5 @@ begin
   end;
   ClickToContinue;
   Wait(4000+Random(2000));
-  MakeCompass('N'); // Really should get the current compass angle and set back to that, but this is better than nothing.
   Result := not R_InAbyss;
 end;
