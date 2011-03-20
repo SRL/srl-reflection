@@ -8,6 +8,7 @@ const
   INTERFACE_BANK = 762;
   INTERFACE_DEPOSITBOX = 11;
   INTERFACE_BANK_PIN = 13;
+  INTERFACE_BANK_PENDING = 14;
   INTERFACE_BANK_BUTTON_CLOSE = 42;
   INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY = 36;
   INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS = 32;
@@ -105,7 +106,12 @@ Description: Checks to see if the pin screen is up.
 *******************************************************************************}
 function R_PinScreen: Boolean;
 begin
-  Result := ValidInterface(INTERFACE_BANK_PIN);
+  Result := ValidInterface(INTERFACE_BANK_PIN) or ValidInterface(INTERFACE_BANK_PENDING);
+  if ValidInterface(INTERFACE_BANK_PENDING) then
+  begin
+    MouseBox(112, 159, 210, 196, 1); // "I want pin" button - do this better later.
+    Wait(2000+Random(4000));
+  end;
 end;
 
 {*******************************************************************************
