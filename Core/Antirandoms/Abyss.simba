@@ -1,5 +1,5 @@
 // Thank you to RSBot for the lever numbers, without them this would have been impossible
-// By Cstrike
+// By Cstrike - Fixed 21 March 2011 by Harry
 // DONT BE DUMB LIKE ME (Cstrike), DO NOT SOLVE A P2P ACCOUNT ON F2P. BAD IDEA.
 
 const
@@ -46,7 +46,7 @@ begin
   LeverN := [135172, 101443, 33793, 33889, 67778, 32, 169061, 135236, 34017, 135332, 202982, 67682, 33953, 192, 64, 67714, 169093, 101603, 168997, 101539, 67586, 236743, 128, 101411];
   LeverE := [169121, 101473, 101474, 1, 236774, 2, 202951, 67648, 169123, 33827, 67652, 169124, 67654, 4, 101479, 135301, 67651, 33829, 135296, 6, 33824, 33831, 101477, 135298];
   LeverS := [198722, 68707, 32768, 235718, 164897, 65536, 69764, 4228, 35939, 167011, 204007, 38053, 1057, 100418, 168068, 103589, 131072, 196608, 230433, 99361, 133186, 2114, 136357, 232547];
-  LeverW := [0, 235751, 1024, 99427, 32801, 4096, 131204, 203974, 68674, 37921, 69698, 167077, 65602, 65602, 133252, 168101, 136324, 35873, 100451, 2048, 71746, 165029, 103523];
+  LeverW := [6144, 0, 235751, 1024, 99427, 32801, 4096, 131204, 203974, 68674, 37921, 69698, 167077, 65602, 65602, 133252, 168101, 136324, 35873, 100451, 2048, 71746, 165029, 103523];
   for i:=1 to 3 do
   begin
     Setting531 := GetSetting(531);
@@ -84,14 +84,15 @@ function R_AbyssPullLever(LeverNumber: Integer): Boolean;
 var
   i, x, y: Integer;
   LeverObj: TRSObject;
-  TP: TPoint;
-  AbyssCenter, LeverTile: TTile;
+  PP: TPoint;
+  LeverCenter, LeverTile: TTile;
 begin
   Result := False;
   if not LoggedIn then
     Exit;
 
   SetAngle(True);
+  MakeCompass('N');
 
   for I:=0 to 3 do // Try 4x
   begin
@@ -100,34 +101,70 @@ begin
     LeverTile := R_AbyssGetLeverTile(LeverNumber, LeverObj.Tile);
     R_Debug('LeverTile: ' + ToStr(LeverTile), 'Abyss');
 
-    if Not TileOnMS(LeverTile, 300) then //If Object not on screen then
+    case LeverNumber of
+      R_ABYSS_LEVER_N:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.4,0.9,400);
+      end;
+      R_ABYSS_LEVER_S:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.4,0.9,400);
+      end;
+      R_ABYSS_LEVER_E:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.8,1.0,400);
+      end;
+      R_ABYSS_LEVER_W:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.3,1.0,400);
+      end;
+    end;
+
+    writeln(tostr(PP.X)+','+tostr(PP.Y));
+    if (toStr(PP.X) = '-1') or (toStr(PP.Y) = '-1') or Not TileOnMS(LeverCenter, 400) then
     begin
       R_Debug('Tile not found on MS, moving near it', 'Abyss');
-      case LeverNumber of
-        R_ABYSS_LEVER_N: AbyssCenter := Tile(LeverTile.x, LeverTile.y - 1);
-        R_ABYSS_LEVER_S: AbyssCenter := Tile(LeverTile.x, LeverTile.y + 1);
-        R_ABYSS_LEVER_E: AbyssCenter := Tile(LeverTile.x - 1, LeverTile.y);
-        R_ABYSS_LEVER_W: AbyssCenter := Tile(LeverTile.x + 1, LeverTile.y);
-      end;
 
-      if not WalkToTile(AbyssCenter, 0, 0)then //Walk to center!
+      if not WalkToTile(LeverCenter, 0, 0)then //Walk to center!
         R_Debug('Failed to walk near appendage', 'Abyss')
           else R_Debug('Walked to appendage', 'Abyss');
 
     end else
       R_Debug('Desired lever is on mainscreen', 'Abyss');
 
-    {case LeverNumber of // note by Harry: this is worthless, and actually BREAKS the solver in my experence.
-        R_ABYSS_LEVER_N: MakeCompass ('s');
-        R_ABYSS_LEVER_S: MakeCompass ('n');
-        R_ABYSS_LEVER_E: MakeCompass ('w');
-        R_ABYSS_LEVER_W: MakeCompass ('e');
-    end;}
-
     R_Flag;
 
-    TP := TileToMS(LeverTile, 150);
-    MMouse(TP.x, TP.y, 10, 10);
+    LeverObj := GetObjectByID(LeverNumber, OBJECT_TYPE_INTERACTABLE, 20);
+    LeverTile := R_AbyssGetLeverTile(LeverNumber, LeverObj.Tile);
+
+    case LeverNumber of
+      R_ABYSS_LEVER_N:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.4,0.9,400);
+      end;
+      R_ABYSS_LEVER_S:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.4,0.9,400);
+      end;
+      R_ABYSS_LEVER_E:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.8,1.0,400);
+      end;
+      R_ABYSS_LEVER_W:
+      begin
+        LeverCenter := Tile(LeverTile.x, LeverTile.y);
+        PP := TileToMSEx(LeverCenter,0.3,1.0,400);
+      end;
+    end;
+
+    MMouse(PP.x, PP.y, 10, 10);
 
     if r_WaitUpTextMulti(['Operate', 'ppendage'], 1000) then
     begin
@@ -166,7 +203,6 @@ begin
       Exit;
     end;
     R_AbyssDetermineLever (Direction);
-
     if Direction = '' then
       R_Debug('Failed getting proper appendage in Abyssal random. Please report this to reflection developers!', 'Abyss')
     else
