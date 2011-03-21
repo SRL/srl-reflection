@@ -411,6 +411,7 @@ var
    TileObject: TRSObject;
    TPA: TPointArray;
 begin
+  Result := NULL_RSOBJECT;
   TP := GetMyPos;
   TPA := SortedCircleTPA(TileToPoint(TP), MaxDist);
   if length(TPA) < 1 then Exit;
