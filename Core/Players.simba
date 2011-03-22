@@ -90,6 +90,32 @@ begin
 end;
 
 {*******************************************************************************
+Function R_IsPlayerInCombat: boolean;
+By: pyroryan
+Description: Returns true if the player is in combat. A few seconds slow on determining combat status.
+*******************************************************************************}
+function R_IsPlayerInCombat: boolean;
+var
+  MyPlayer, LoopCycle, LoopCycleStatus : integer;
+  isLogged : boolean;
+begin
+  Result := false;
+  LoginIndex := SmartGetFieldInt(0, hook_static_LoginIndex); //Update LoginIndex
+  if (LoginIndex = -1) then
+    Exit;
+  isLogged := (LoginIndex = 10) or (LoginIndex = 11);
+  if (isLogged) then
+  begin
+    MyPlayer := SmartGetFieldObject(0, hook_static_MyPlayer);
+    LoopCycleStatus := SmartGetFieldInt(MyPlayer, hook_character_LoopCycleStatus);
+    LoopCycle := SmartGetFieldInt(0, hook_static_LoopCycle);
+    if (LoopCycle < LoopCycleStatus) then
+      Result := true;
+    SmartFreeObject(MyPlayer);
+  end;
+end;
+
+{*******************************************************************************
 Function GetSpeed : integer;
 By: Drags111
 Description: Returns the character speed. 0 = not moving. > 0 = moving.
