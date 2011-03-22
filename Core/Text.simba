@@ -674,10 +674,18 @@ Description: Returns true if any instance of the UpText is found.
 *******************************************************************************}
 function R_IsUpTextMulti(UpText: TStringArray): Boolean;
 var
-  i: integer;
+  i,t: integer;
   UT: String;
 begin
+  t := 0;
   UT := R_GetUpText;
+  if (Length(UT) = 0) then
+  repeat
+    R_Debug('Text length is 0, something is wrong. Retrying.','R_IsUpTextMulti');
+    Wait(1+Random(10));
+    UT := R_GetUpText;
+    Inc(t);
+  until (Length(UT) > 0) or (t > 9);
   for I := 0 to High(UpText) do
   begin
     Result := Pos(Lowercase(UpText[I]), Lowercase(UT)) > 0;
