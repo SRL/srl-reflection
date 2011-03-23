@@ -96,20 +96,20 @@ Description: Returns true if the player is in combat. A few seconds slow on dete
 *******************************************************************************}
 function R_IsPlayerInCombat: boolean;
 var
-  MyPlayer, LoopCycle, LoopCycleStatus : integer;
+  MyPlayer, LoopCycle, CombatEndCycle, lIndex : integer;
   isLogged : boolean;
 begin
   Result := false;
-  LoginIndex := SmartGetFieldInt(0, hook_static_LoginIndex); //Update LoginIndex
-  if (LoginIndex = -1) then
+  lIndex := SmartGetFieldInt(0, hook_static_LoginIndex); //Update LoginIndex
+  if (lIndex = -1) then
     Exit;
-  isLogged := (LoginIndex = 10) or (LoginIndex = 11);
+  isLogged := (lIndex = 10) or (lIndex = 11);
   if (isLogged) then
   begin
     MyPlayer := SmartGetFieldObject(0, hook_static_MyPlayer);
-    LoopCycleStatus := SmartGetFieldInt(MyPlayer, hook_character_LoopCycleStatus);
+    CombatEndCycle := SmartGetFieldInt(MyPlayer, hook_character_LoopCycleStatus);
     LoopCycle := SmartGetFieldInt(0, hook_static_LoopCycle);
-    if (LoopCycle < LoopCycleStatus) then
+    if (LoopCycle < CombatEndCycle) then
       Result := true;
     SmartFreeObject(MyPlayer);
   end;
