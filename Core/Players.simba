@@ -66,9 +66,9 @@ end;
 Function LoginIndex: Integer;
 By:
 Description: Uses the LoginIndex hook.
-             2 = Logged Out, 4 = Logging Into Lobby, 6 = Lobbby,
-             8 = logging into game, 9 = Logged In. Reaches 10 at
-             some points, but with no significance.
+             Old info: 2 = Logged Out, 4 = Logging Into Lobby, 6 = Lobbby,
+               8 = logging into game, 9 = Logged In. Reaches 10 at
+               some points, but with no significance.
 ********************************************************************}
 function LoginIndex : Integer;
 begin
@@ -90,20 +90,27 @@ begin
 end;
 
 {*******************************************************************************
+function R_LoggedIn: Boolean;
+By: Method / Drags111 / Zyt3x
+Description: Returns true if you're logged in.
+*******************************************************************************}
+function R_LoggedIn: Boolean;
+begin
+  Result := (LoginIndex = 10) or (LoginIndex = 11);
+end;
+
+{*******************************************************************************
 Function R_IsPlayerInCombat: boolean;
 By: pyroryan
 Description: Returns true if the player is in combat. A few seconds slow on determining combat status.
 *******************************************************************************}
 function R_IsPlayerInCombat: boolean;
 var
-  MyPlayer, LoopCycle, CombatEndCycle, lIndex : integer;
+  MyPlayer, LoopCycle, CombatEndCycle : integer;
   isLogged : boolean;
 begin
   Result := false;
-  lIndex := SmartGetFieldInt(0, hook_static_LoginIndex); //Update LoginIndex
-  if (lIndex = -1) then
-    Exit;
-  isLogged := (lIndex = 10) or (lIndex = 11);
+  isLogged := (R_LoggedIn);
   if (isLogged) then
   begin
     MyPlayer := SmartGetFieldObject(0, hook_static_MyPlayer);

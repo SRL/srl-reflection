@@ -126,16 +126,6 @@ begin
 end;
 
 {*******************************************************************************
-function R_LoggedIn: Boolean;
-By: Method / Drags111 / Zyt3x
-Description: Returns true if you're logged in.
-*******************************************************************************}
-function R_LoggedIn: Boolean;
-begin
-  Result := (LoginIndex = 10) or (LoginIndex = 11);
-end;
-
-{*******************************************************************************
 function R_LoginScreen: Boolean;
 By: Cstrike
 Description: Returns true if the login screen interface is present.
