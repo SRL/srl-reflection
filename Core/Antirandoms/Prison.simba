@@ -550,9 +550,9 @@ begin
     begin
       if not (NPCs[i].Moving) then
         continue;
-      if (HeightsToPop[0] <= NPCs[i].Height) then
+      if (HeightsToPop[0] >= NPCs[i].Height) then //Switched signs because of absolute value
       begin
-        if (HeightsToPop[1] >= NPCs[i].Height) then
+        if (HeightsToPop[1] <= NPCs[i].Height) then
         begin
           if not TileInBox(IntToBox(PRISON_PETE_TILE_X - 3, PRISON_PETE_TILE_Y - 1, PRISON_PETE_TILE_Y + 6, PRISON_PETE_TILE_Y - 3), NPCs[i].Tile) then
           begin
