@@ -970,6 +970,7 @@ begin
     'falador west', 'fwd' : T := Tile(2943, 3369);
     'falador east', 'fed' : T := Tile(3017, 3358);
     'lumbridge', 'ld' : T := Tile(3210, 3216);
+    'port khazard', 'pkz' : T := Tile(2664, 3159);
     'seers', 'sed' : T := Tile(2730, 3492);
     'yanille', 'yd' : T := Tile(2611, 3088);
   else
