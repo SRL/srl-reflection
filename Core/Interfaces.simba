@@ -157,19 +157,23 @@ Description: Inheritance.
 *******************************************************************************}
 function GetValidInterfaceComponents(ParentI : Integer): TIntegerArray;
 var
-  Interfaces, IL, c: integer; //Children, i, iface,
+  Interfaces, IL, c, path: integer; //Children, i, iface,
 begin
   try
     Interfaces := SmartGetFieldObject(0, hook_static_GetInterfaces);
     IL := SmartGetFieldArraySize(Interfaces, '', 1);
     SmartFreeObject(Interfaces);
     c := 0;
-    while not (SmartIsNull(GetInterface(ParentI, c))) do
+    path := GetInterface(ParentI, c);
+    while not (SmartIsNull(path)) do
     begin
       SetArrayLength (Result, c+1);
       Result[c] := c;
       Inc(c);
+      SmartFreeObject(path);
+      path := GetInterface(ParentI, c);
     end;
+    SmartFreeObject(path);
     SetLength(Result, c);
   finally
   end;
@@ -182,22 +186,32 @@ Description: Returns all the components in the parent-->child interface.
 *******************************************************************************}
 function GetValidChildrenComponents(ParentI, ChildI: Integer): TIntegerArray;
 var
-  I, CL, c: Integer;
+  I, CL, c, path: Integer;
 begin
   try
-    if SmartIsNull(GetInterface(ParentI, ChildI)) then Exit;
+    path := GetInterface(ParentI, ChildI)
+    if SmartIsNull(path) then
+    begin
+      SmartFreeObject(path);
+      Exit;
+    end;
+    SmartFreeObject(path);
     I := SmartGetFieldArray2DObject(0, hook_static_GetInterfaces, ParentI, ChildI);
     CL := SmartGetFieldArraySize(I, hook_interface_GetChildren, 1);
     c := 0;
-    while not (SmartIsNull(SmartGetFieldArrayObject(I, hook_interface_GetChildren, c))) do
+    path := SmartGetFieldArrayObject(I, hook_interface_GetChildren, c);
+    while not (SmartIsNull(path)) do
     begin
       SetArrayLength (Result, c+1);
       Result[c] := c;
       Inc(c);
+      SmartFreeObject(path);
+      path := SmartGetFieldArrayObject(I, hook_interface_GetChildren, c);
     end;
+    SmartFreeObject(path);
+    SmartFreeObject(I);
     SetLength(Result, c);
   finally
-    SmartFreeObject(I);
   end;
 end;
 
