@@ -1,6 +1,6 @@
 const
 ClientVersion = 641;
-HookRev = 1;
+HookRev = 2;
 
 
 {Static Hooks}
@@ -272,7 +272,7 @@ hook_WallDecorationData_GetOrientation = 'hb';
 class_FloorDecorationData = 'ra';
 hook_FloorDecorationData_GetID = 'hb';
 hook_FloorDecorationData_GetModel = 'X';
-hook_FloorDecorationData_GetOrientation = 'ra.V';
+hook_FloorDecorationData_GetOrientation = 'V';
 
 {Class InteractiveObject}
 class_InteractiveObject = 'gj';
