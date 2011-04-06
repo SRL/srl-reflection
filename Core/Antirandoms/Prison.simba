@@ -917,6 +917,9 @@ begin
         R_Debug('We can teleport home soon due to Reincarnate := True in SRL!','Prison');
         MarkTime(hometeleblock);
         repeat
+          GameTab(Tab_Magic);
+          Mouse(575, 229, 5, 5, True); // I know this is really bad, but I don't understand how Cast() works, and I will not include magic.scar here!
+          Wait(10000+Random(20000));
           if (DistanceFrom(Tile(3222, 3219)) < 15) then // Back at Lumby courtyard.
           begin
             Result := True;
@@ -924,13 +927,6 @@ begin
             R_Debug('If your script does not have deathwalk, please set Reincarnate := False;!','Prison');
             Exit;
           end;
-          GameTab(Tab_Magic);
-          Mouse(575, 229, 5, 5, True); // I know this is really bad, but I don't understand how Cast() works, and I will not include magic.scar here!
-          Wait(2000+Random(2000));
-          if IsChatBoxTextAnyLine('another',0) then
-            Wait(30000+Random(30000))
-          else
-            Wait(15000+Random(10000)); // No text, less wait.
         until (TimeFromMark(hometeleblock) > 8*60000); // 8 minutes - block lasts for 5 usually. If it takes this long something is goofed!
         R_Debug('Prison reincarnate failed. Took too long to get home :(','Prison');
         Result := False;
