@@ -552,6 +552,7 @@ Description: Weeeeee
 function R_SolveMordaut: boolean;
 var
   QT: String;
+  MorTmt: integer;
 begin
   if not R_InMordaut then
     Exit;
@@ -562,10 +563,17 @@ begin
     if not R_InMordaut then
       Break;
 
-    while (QT = '') do
+    MarkTime(MorTmt);
+    while (QT = '') and (TimeFromMark(MorTmt) < 900000) and LoggedIn do
     begin
       R_MTalkWait;
       QT := R_MGetQuestion;
+    end;
+    if (TimeFromMark(MorTmt) > 900000) then
+    begin
+      R_Debug('Failed - time ran out!','Mordaut');
+      Result := False;
+      Exit;
     end;
     R_Debug('QT := '+ QT, 'Mordaut');
     wait(2000+Random(1000));
