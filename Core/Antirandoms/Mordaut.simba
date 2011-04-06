@@ -522,19 +522,23 @@ begin
     Exit;
   end;
 
+  C := 0;
   for I:= 42 to 56 do
+  begin
     if (R_MIDToClass(GetComponentID(559, I)) = Cat) then
     begin
       RS_MouseCardSlot(I-41);
       Inc(C);
     end;
+    if (C = 3) then
+    begin
+      R_Debug('Got enough cards (3).','Mordaut');
+      Break;
+    end;
+  end;
 
   if not ValidInterface(559) then
     Exit;
-
-  If (C < 3)then
-  begin
-  end;
 
   MouseBox(422, 262, 436, 276, 1);
 
