@@ -910,6 +910,9 @@ begin
 
   if not Result then
   begin
+    Wait(10000+Random(10000));
+    ClickToContinue;
+    Wait(1000+Random(5000));
     if Reincarnate then // SRL setting, default false - for scripts with deathwalk. Might be an issue if people misuse the var!
     begin
       if TabExists(Tab_Magic) then
@@ -919,7 +922,7 @@ begin
         repeat
           GameTab(Tab_Magic);
           Mouse(575, 229, 5, 5, True); // I know this is really bad, but I don't understand how Cast() works, and I will not include magic.scar here!
-          Wait(10000+Random(20000));
+          Wait(15000+Random(20000));
           if (DistanceFrom(Tile(3222, 3219)) < 15) then // Back at Lumby courtyard.
           begin
             Result := True;
@@ -930,7 +933,9 @@ begin
         until (TimeFromMark(hometeleblock) > 8*60000); // 8 minutes - block lasts for 5 usually. If it takes this long something is goofed!
         R_Debug('Prison reincarnate failed. Took too long to get home :(','Prison');
         Result := False;
-      end;
-    end;
+      end else
+        R_Debug('Player Disabled - no Magic Tab.','Prison');
+    end else
+      R_Debug('Player Disabled - no Reincarnation.','Prison');
   end;
 end;
