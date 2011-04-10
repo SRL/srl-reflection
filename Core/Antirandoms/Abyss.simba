@@ -1,5 +1,5 @@
 // Thank you to RSBot for the lever numbers, without them this would have been impossible
-// By Cstrike - Fixed 21 March 2011 by Harry
+// By Cstrike - Fixed up by Harry
 // DONT BE DUMB LIKE ME (Cstrike), DO NOT SOLVE A P2P ACCOUNT ON F2P. BAD IDEA.
 
 const
@@ -59,7 +59,7 @@ begin
         begin
           if not R_AbyssSearchLever (Setting531, Leverw) then
           begin
-            R_Debug('Warning, had trouble getting direction to press [attempt '+inttostr(i)+' of 3], PLEASE REPORT THIS NUMBER TO REFLECTION DEVS ASAP!', 'Abyss');
+            R_Debug('Warning, had trouble getting direction to press [attempt '+inttostr(i)+' of 3]!', 'Abyss');
             Wait (1000+random(500));
           end else Direction := 'w';
         end else Direction := 's';
@@ -138,9 +138,10 @@ begin
     begin
       R_Debug('Tile not found on MS, moving near it', 'Abyss');
 
-      if not WalkToTile(LeverCenter, 0, 0)then //Walk to center!
+      if not WalkToTile(LeverCenter, 0, 0)then
         R_Debug('Failed to walk near appendage', 'Abyss')
-          else R_Debug('Walked to appendage', 'Abyss');
+      else
+        R_Debug('Walked to appendage', 'Abyss');
 
     end else
       R_Debug('Desired lever is on mainscreen', 'Abyss');
@@ -221,16 +222,18 @@ begin
       'e': Result := R_AbyssPullLever(R_ABYSS_LEVER_E);
       'w': Result := R_AbyssPullLever(R_ABYSS_LEVER_W);
     end;
-    if Result then Break;
+    if Result then
+    begin
+      MarkTime(t);
+      while (R_InAbyss and (TimeFromMark(t) < 8000)) do
+        Wait(1000+Random(500));
+      if not R_InAbyss then
+        Break;
+      R_Debug('Lever failed, still in random. Retrying.','Abyss');
+    end;
   end;
-  MarkTime(t);
-  if Result then
-  begin
-    while (R_InAbyss and (TimeFromMark(t) < 8000)) do
-      Wait(1500);
-    R_Debug('Out of Abyss', 'Abyss');
-    Wait(2000+Random(2000));
-  end;
+  R_Debug('Out of Abyss!', 'Abyss');
+  Wait(4000+Random(2000));
   ClickToContinue;
   Wait(4000+Random(2000));
   Result := not R_InAbyss;
