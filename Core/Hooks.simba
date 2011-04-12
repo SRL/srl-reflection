@@ -1,6 +1,6 @@
 const
 ClientVersion = 643;
-HookRev = 4;
+HookRev = 5;
 
 
 {Static Hooks}
@@ -127,7 +127,7 @@ hook_itemdefloader_getMRUNodes = 'j';
 class_ItemDef = 'ts';
 hook_itemdef_getLoader = 'o';
 hook_itemdef_getGroundActions = 'Eb';
-hook_itemdef_getActions = '';
+hook_itemdef_getActions = 'a';
 
 {Class MRUNodes}
 class_MRUNodes = 'aq';
@@ -275,25 +275,25 @@ hook_ground_FloorDecoration = 'i';
 class_WallObjectData = 'vl';
 hook_WallObjectData_GetID = 'ab';
 hook_WallObjectData_GetModel = 'T';
-hook_WallObjectData_GetOrientation = '';
+hook_WallObjectData_GetOrientation = 'R';
 
 {Class WallDecorationData}
 class_WallDecorationData = 'be';
 hook_WallDecorationData_GetID = 'ob';
 hook_WallDecorationData_GetModel = 'sb';
-hook_WallDecorationData_GetOrientation = '';
+hook_WallDecorationData_GetOrientation = 'kb';
 
 {Class FloorDecorationData}
 class_FloorDecorationData = 'paa';
 hook_FloorDecorationData_GetID = 'X';
 hook_FloorDecorationData_GetModel = 'cb';
-hook_FloorDecorationData_GetOrientation = '';
+hook_FloorDecorationData_GetOrientation = 'xb';
 
 {Class InteractiveObject}
 class_InteractiveObject = 'kb';
 hook_interactiveobject_GetID = 'W';
 hook_interactiveobject_GetModel = 'Z';
-hook_interactiveobject_GetOrientation = '';
+hook_interactiveobject_GetOrientation = 'gb';
 
 {Class InteractiveObject2}
 class_InteractiveObject2 = 'g';
@@ -303,7 +303,7 @@ hook_interactiveobject2_GetObjectData = 'rb';
 class_SecondLevelObject = 'nb';
 hook_secondlevelobject_GetID = 'x';
 hook_secondlevelobject_GetModel = 'N';
-hook_secondlevelobject_GetOrientation = '';
+hook_secondlevelobject_GetOrientation = 'j';
 
 {Class WallObjectSub2}
 class_WallObjectSub2 = 'fi';
