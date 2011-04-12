@@ -7,18 +7,22 @@ HookRev = 1;
 hook_static_LoginIndex = 'tl.n';
 hook_static_getFriendsWorlds = 'te.Eb';
 hook_static_getFriendsList = 'op.u';
-hook_static_CameraYaw = 'pu.m';
+hook_static_CameraYaw = 'fc.Ng';
 hook_static_MyPlayer = 'hba.n';
 hook_static_BaseX = 'vm.D';
 hook_static_BaseY = 'qi.e';
 hook_static_NPCIndexArray = 'cl.d';
 hook_static_LoopCycle = 'bu.c';
+hook_static_getNPCNC = 'vfa.F';
+hook_static_getItemDefLoader = 'mha.q';
+hook_static_getObjectDefLoader = 'ih.b';
 hook_static_NPCNodes = 'jca.p';
 hook_static_NPCCount = 'saa.c';
 hook_static_GroundSettingsArray = 'dc.M';
 hook_static_LoadedPlane = 'sia.x';
 hook_static_PlaneArray = 'ida.db';
 hook_static_Toolkit = 'uja.Q';
+hook_static_getCollapsedMenuItems = 'dp.f';
 hook_static_MenuOptionCount = 'jd.d';
 hook_static_MenuCollapsedOptionsCount = 'qh.H';
 hook_static_MenuX = 'sd.h';
@@ -34,11 +38,7 @@ hook_static_MenuOpen = 'gd.H';
 hook_static_GetInterfaces = 'dn.g';
 hook_static_ValidInterfaces = 'rba.d';
 hook_static_IsMenuTabbed = 'wv.B';
-hook_static_getCollapsedMenuItems = 'dp.f';
-hook_static_getNPCNC = 'vfa.F';
-hook_static_getItemDefLoader = 'mha.q';
 hook_static_GetSettings = 'dq.H';
-hook_static_getObjectDefLoader = 'ih.b';
 hook_static_GroundItemCache = 'aia.l';
 hook_static_GetSkillExperiences = 'wl.e';
 hook_static_GetSkillLevels = 'laa.e';
@@ -52,6 +52,15 @@ hook_static_CamPosX = 'oja.b';
 hook_static_CamPosY = 'ai.p';
 hook_static_GroundTiles = 'gia.z';
 hook_static_GetCrossHairColor = 'qda.U';
+
+{Class SDModel}
+class_SDModel = 'aha';
+hook_sdmodel_getIndices1 = 't';
+hook_sdmodel_getIndices2 = 'E';
+hook_sdmodel_getIndices3 = 'U';
+hook_sdmodel_getPointsX = 'ob';
+hook_sdmodel_getPointsY = 'I';
+hook_sdmodel_getPointsZ = 'Vb';
 
 {Class Animable}
 class_Animable = 'nfa';
@@ -95,6 +104,33 @@ hook_animableentity_getAreaY2 = 'Q';
 class_PlayerDef = 'ae';
 hook_playerdef_GetEquipment = 'f';
 
+{Class NodeCache}
+class_NodeCache = 'si';
+hook_nodecache_GetNodes = 'i';
+
+{Class Item}
+class_Item = 'nba';
+hook_item_GetID = 'r';
+hook_item_GetStack = 't';
+
+{Class ItemDefLoader}
+class_ItemDefLoader = 'tb';
+hook_itemdefloader_getMRUNodes = 'j';
+
+{Class ItemDef}
+class_ItemDef = 'ts';
+hook_itemdef_getLoader = 'o';
+hook_itemdef_getGroundActions = 'Eb';
+hook_itemdef_getActions = '';
+
+{Class MRUNodes}
+class_MRUNodes = 'aq';
+hook_mrunodes_getNodeCache = 'w';
+
+{Class ObjectDefLoader}
+class_ObjectDefLoader = 'sc';
+hook_objectdefloader_getMRUNodes = 'a';
+
 {Class NPC}
 class_NPC = 'gh';
 hook_npc_NPCDef = 'vd';
@@ -110,20 +146,17 @@ hook_npcdef_GetID = '';
 class_NPCNode = 'baa';
 hook_npcnode_GetNPC = 's';
 
-{Class GroundTile}
-class_GroundTile = '';
-
 {Class Plane}
-class_Plane = '';
+class_Plane = 's';
 
 {Class RSInteractable}
-class_RSInteractable = '';
+class_RSInteractable = 'jda';
 
 {Class Toolkit}
-class_Toolkit = '';
+class_Toolkit = 'ha';
 
 {Class Viewport}
-class_Viewport = '';
+class_Viewport = 'dm';
 
 {Class SDViewport}
 class_SDViewport = 'wga';
@@ -155,15 +188,6 @@ hook_sdtoolkit_yScale = 'P';
 {Class SDPlane}
 class_SDPlane = 's';
 hook_sdplane_TileHeights = 'a';
-
-{Class SDModel}
-class_SDModel = 'aha';
-hook_sdmodel_getIndices1 = 't';
-hook_sdmodel_getIndices2 = 'E';
-hook_sdmodel_getIndices3 = 'U';
-hook_sdmodel_getPointsX = 'ob';
-hook_sdmodel_getPointsY = 'I';
-hook_sdmodel_getPointsZ = 'Vb';
 
 {Class NodeListCache}
 class_NodeListCache = 'sg';
@@ -208,7 +232,7 @@ hook_interface_GetText = 'gb';
 hook_interface_GetTextureID = 'tc';
 hook_interface_GetTextColor = 'I';
 hook_interface_GetModelID = 'Kb';
-hook_interface_GetModelZoom = '';
+hook_interface_GetModelZoom = 'Nc';
 hook_interface_GetName = 'a';
 hook_interface_GetChildren = 'V';
 hook_interface_GetID = 'g';
@@ -216,36 +240,9 @@ hook_interface_GetStack = 'j';
 hook_interface_GetParentID = 'Wb';
 hook_interface_IsHidden = 'Lc';
 
-{Class NodeCache}
-class_NodeCache = 'si';
-hook_nodecache_GetNodes = 'i';
-
-{Class Item}
-class_Item = 'nba';
-hook_item_GetID = 'r';
-hook_item_GetStack = 't';
-
-{Class ItemDefLoader}
-class_ItemDefLoader = 'tb';
-hook_itemdefloader_getMRUNodes = 'j';
-
-{Class ItemDef}
-class_ItemDef = 'ts';
-hook_itemdef_getLoader = 'o';
-hook_itemdef_getGroundActions = 'Eb';
-hook_itemdef_getActions = '';
-
-{Class MRUNodes}
-class_MRUNodes = 'aq';
-hook_mrunodes_getNodeCache = 'w';
-
 {Class SettingArray}
 class_SettingArray = 'ph';
 hook_settingarray_GetData = 'm';
-
-{Class ObjectDefLoader}
-class_ObjectDefLoader = 'sc';
-hook_objectdefloader_getMRUNodes = 'a';
 
 {Class Ground}
 class_Ground = 'q';
