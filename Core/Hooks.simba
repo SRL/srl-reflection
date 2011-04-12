@@ -1,12 +1,13 @@
 const
 ClientVersion = 643;
-HookRev = 3;
+HookRev = 4;
 
 
 {Static Hooks}
 hook_static_LoginIndex = 'tl.n';
 hook_static_getFriendsWorlds = 'te.Eb';
 hook_static_getFriendsList = 'op.u';
+hook_static_getChatLines = 'pu.m';
 hook_static_CameraYaw = 'fc.Ng';
 hook_static_MyPlayer = 'hba.n';
 hook_static_BaseX = 'vm.D';
@@ -61,6 +62,11 @@ hook_sdmodel_getIndices3 = 'U';
 hook_sdmodel_getPointsX = 'ob';
 hook_sdmodel_getPointsY = 'I';
 hook_sdmodel_getPointsZ = 'Vb';
+
+{Class ChatLine}
+class_ChatLine = 'rc';
+hook_chatline_getName = 'q';
+hook_chatline_getMessage = 'a';
 
 {Class Animable}
 class_Animable = 'nfa';
@@ -247,6 +253,14 @@ hook_interface_IsHidden = 'Lc';
 {Class SettingArray}
 class_SettingArray = 'ph';
 hook_settingarray_GetData = 'm';
+
+{Class SoftReference}
+class_SoftReference = 'nja';
+hook_softreference_getReference = 'H';
+
+{Class HardReference}
+class_HardReference = 'or';
+hook_hardreference_getObject = 'K';
 
 {Class Ground}
 class_Ground = 'q';
