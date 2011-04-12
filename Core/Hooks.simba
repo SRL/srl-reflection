@@ -1,6 +1,6 @@
 const
 ClientVersion = 643;
-HookRev = 1;
+HookRev = 2;
 
 
 {Static Hooks}
@@ -80,8 +80,8 @@ class_Character = 'fm';
 hook_character_GetHitDamges = '';
 hook_character_Animation = 'rb';
 hook_character_Motion = '';
-hook_character_WalkQueueX = 'Lc';
-hook_character_WalkQueueY = 'Rc';
+hook_character_WalkQueueX = 'Rc';
+hook_character_WalkQueueY = 'Lc';
 hook_character_GetHeight = 'X';
 hook_character_LoopCycleStatus = 'Dc';
 hook_character_HPRatio = 'Y';
