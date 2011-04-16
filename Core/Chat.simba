@@ -49,7 +49,7 @@ begin
     end;
   end;
   SetArrayLength(Result, 102);
-  for I := 282 downto 180 do
+  for I := 279 downto 180 do
   begin
     s := GetInterfaceText(137, I);
     if (s <> '') and ((Pos(FindStr, s) <> 0) or (FindStr = 'blk') or (FindStr = 'all')) then
