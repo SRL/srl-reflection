@@ -805,6 +805,48 @@ begin
   end;
 end;
 
+{*******************************************************************************
+procedure ClickInterface(parentIndex, childIndex, randomX, randomY: Integer; left: Boolean);
+By: Echo_
+Description: Finds the x and y coordinates of an interface and clicks them.
+*******************************************************************************}
+procedure ClickInterface(parentIndex, childIndex, randomX, randomY: Integer; left: Boolean);
+var
+  ch, x, y, w, h: Integer;
+begin
+  ch := GetInterface(parentIndex, childIndex);
+  x  := SmartGetFieldInt(ch, hook_interface_GetX);
+  y  := SmartGetFieldInt(ch, hook_interface_GetY);
+  w  := SmartGetFieldInt(ch, hook_interface_GetWidth);
+  h  := SmartGetFieldInt(ch, hook_interface_GetHeight);
+  MMouse(x+(w/2), y+(h/2), RandomRange(-randomX, randomX), RandomRange(-randomY, randomY));
+  GetMousePos(x, y);
+  Mouse(x, y, 0, 0, left);
+  SmartFreeObject(ch);
+end;
+
+{*******************************************************************************
+procedure ClickComponent(parentIndex, childIndex, randomX, randomY: Integer; left: Boolean);
+By: Echo_
+Description: Finds the x and y coordinates of a component and clicks them.
+*******************************************************************************}
+procedure R_ClickComponent(parentIndex, childIndex, component, randomX, randomY: Integer; left: Boolean);
+var
+  ch, co, x, y, w, h: Integer;
+begin
+  ch := GetInterface(parentIndex, childIndex);
+  co := SmartGetFieldArrayObject(ch, hook_interface_GetChildren, component);
+  x  := SmartGetFieldInt(co, hook_interface_GetX);
+  y  := SmartGetFieldInt(co, hook_interface_GetY);
+  w  := SmartGetFieldInt(co, hook_interface_GetWidth);
+  h  := SmartGetFieldInt(co, hook_interface_GetHeight);
+  MMouse(x+(w/2), y+(h/2), RandomRange(-randomX, randomX), RandomRange(-randomY, randomY));
+  GetMousePos(x, y);
+  Mouse(x, y, 0, 0, left);
+  SmartFreeObject(co);
+  SmartFreeObject(ch);
+end;
+
 ////////////////////////////////////////////////////////////////////////////////
 //                        Common outdated names                               //
 ////////////////////////////////////////////////////////////////////////////////
