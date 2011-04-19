@@ -1,12 +1,10 @@
 const
 ClientVersion = 644;
-HookRev = 1;
+HookRev = 2;
 
 
 {Static Hooks}
 hook_static_LoginIndex = 'sha.j';
-hook_static_getFriendsWorlds = '';
-hook_static_getFriendsList = '';
 hook_static_getChatLines = 'cea.J';
 hook_static_CameraYaw = 'ra.p';
 hook_static_MyPlayer = 'eia.d';
@@ -33,7 +31,7 @@ hook_static_MenuHeight = 'tm.b';
 hook_static_MenuX2 = 'rfa.b';
 hook_static_MenuY2 = 'hc.W';
 hook_static_MenuWidth2 = 'qca.K';
-hook_static_MenuHeight2 = '';
+hook_static_MenuHeight2 = 'me.o';
 hook_static_MenuNodeList = 'fd.j';
 hook_static_MenuOpen = 'oh.g';
 hook_static_GetInterfaces = 'cea.N';
@@ -275,25 +273,25 @@ hook_ground_FloorDecoration = 'q';
 class_WallObjectData = 'ul';
 hook_WallObjectData_GetID = 'mb';
 hook_WallObjectData_GetModel = 'U';
-hook_WallObjectData_GetOrientation = '';
+hook_WallObjectData_GetOrientation = 'ib';
 
 {Class WallDecorationData}
 class_WallDecorationData = 'hc';
 hook_WallDecorationData_GetID = 'T';
 hook_WallDecorationData_GetModel = 'X';
-hook_WallDecorationData_GetOrientation = '';
+hook_WallDecorationData_GetOrientation = 'ab';
 
 {Class FloorDecorationData}
 class_FloorDecorationData = 'ns';
 hook_FloorDecorationData_GetID = 'qb';
 hook_FloorDecorationData_GetModel = 'L';
-hook_FloorDecorationData_GetOrientation = '';
+hook_FloorDecorationData_GetOrientation = 'pb';
 
 {Class InteractiveObject}
 class_InteractiveObject = 'bka';
 hook_interactiveobject_GetID = 'X';
 hook_interactiveobject_GetModel = 'gb';
-hook_interactiveobject_GetOrientation = '';
+hook_interactiveobject_GetOrientation = 'bb';
 
 {Class InteractiveObject2}
 class_InteractiveObject2 = 'qs';
@@ -303,7 +301,7 @@ hook_interactiveobject2_GetObjectData = 'qb';
 class_SecondLevelObject = 'km';
 hook_secondlevelobject_GetID = 'I';
 hook_secondlevelobject_GetModel = 'l';
-hook_secondlevelobject_GetOrientation = '';
+hook_secondlevelobject_GetOrientation = 't';
 
 {Class WallObjectSub2}
 class_WallObjectSub2 = 'wj';
