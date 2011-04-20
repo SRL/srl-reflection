@@ -56,7 +56,7 @@ begin
   case whatKind of
     'clientversion':
     begin
-      S := GetPage('http://harry.lu/srl/Hooks.txt');
+      S := GetPage('http://cloud.github.com/downloads/SRL/srl-reflection/Hooks.simba');
       I := Pos('ClientVersion', S);
       Delete(S, 1, I+15);
       S := Copy(S, 1, Pos(';', S)-1);
@@ -67,7 +67,7 @@ begin
 
     'hookrevision':
     begin
-      S := GetPage('http://harry.lu/srl/Hooks.txt');
+      S := GetPage('http://cloud.github.com/downloads/SRL/srl-reflection/Hooks.simba');
       I := Pos('HookRev', S);
       Delete(S, 1, I+9);
       S := Copy(S, 1, Pos(';', S)-1);
@@ -91,17 +91,23 @@ var
 begin
   ClientRev := r_GetCurrentGit('clientversion');
   RevHook := r_GetCurrentGit('hookrevision');
-  If (ClientRev = ClientVersion) and (RevHook = HookRev) then
+  If (ClientRev <= ClientVersion) and (RevHook <= HookRev) then
   begin
-    Writeln('[Reflection] No new hooks have been uploaded yet; please be patient!');
+    if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
+    begin
+      Writeln('[Reflection] No new hooks have been uploaded yet; please be patient!');
+      TerminateScript;
+    end;
+  end else
+  begin
+    Writeln('[Reflection] You''re using outdated hooks (version ' + ToStr(ClientVersion) + '.' + ToStr(HookRev) + '); updating you to version' + ToStr(ClientRev) + '.' + ToStr(RevHook) + '!');
+    Writeln('[Reflection] If you manually fixed your hooks, please make sure hookrevision values are greater than or equal to the online hooks to prevent overwriting.');
+    myFile := RewriteFile(AppPath + 'includes\reflection\core\hooks.simba', False);
+    WriteFileString(myFile, GetPage('http://cloud.github.com/downloads/SRL/srl-reflection/Hooks.simba'));
+    CloseFile(myFile);
+    Writeln('[Reflection] Updated you to ' + ToStr(ClientRev) + '.' + ToStr(RevHook) + '; please restart your script!');
     TerminateScript;
   end;
-  Writeln('[Reflection] You''re using outdated hooks (version ' + ToStr(ClientVersion) + '.' + ToStr(HookRev) + '); updating you to version' + ToStr(ClientRev) + '.' + ToStr(RevHook) + '!');
-  myFile := RewriteFile(AppPath + 'includes\reflection\core\hooks.simba', False);
-  WriteFileString(myFile, GetPage('http://harry.lu/srl/Hooks.txt'));
-  CloseFile(myFile);
-  Writeln('[Reflection] Updated you to ' + ToStr(ClientRev) + '.' + ToStr(RevHook) + '; please restart your script!');
-  TerminateScript;
 end;
 
 {*******************************************************************************
@@ -113,13 +119,15 @@ Will try to update if outdated.
 Procedure SetupReflectionEx(Update: Boolean);
 begin
   SetupConstants;
-  if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
+  If Update then
+    UpdateHooks
+  else
   begin
-    Writeln('[Reflection] Hooks outdated!');
-    If Update then
-      UpdateHooks
-    else
+    if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
+    begin
+      Writeln('[Reflection] Hooks outdated!');
       TerminateScript;
+    end;
   end;
 end;
 
