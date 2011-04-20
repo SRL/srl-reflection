@@ -140,14 +140,14 @@ hook_objectdefloader_getMRUNodes = 'd';
 
 {Class NPC}
 class_NPC = 'ub';
-hook_npc_NPCDef = 'c';
+hook_npc_NPCDef = 'cd';
 hook_npc_getLevel = 'nd';
 
 {Class NPCDef}
 class_NPCDef = 'oaa';
 hook_npcdef_GetActions = 'mb';
 hook_npcdef_GetName = 't';
-hook_npcdef_GetLevel = 'nb';
+hook_npcdef_GetLevel = 'db';
 hook_npcdef_GetID = 'n';
 
 {Class NPCNode}
