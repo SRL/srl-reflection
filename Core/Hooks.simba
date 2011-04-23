@@ -1,6 +1,6 @@
 const
 ClientVersion = 645;
-HookRev = 2;
+HookRev = 3;
 
 
 {Static Hooks}
@@ -122,10 +122,10 @@ class_ItemDefLoader = 'kka';
 hook_itemdefloader_getMRUNodes = 'f';
 
 {Class ItemDef}
-class_ItemDef = '';
-hook_itemdef_getLoader = '';
-hook_itemdef_getGroundActions = '';
-hook_itemdef_getActions = '';
+class_ItemDef = 'ak';
+hook_itemdef_getLoader = 'Db';
+hook_itemdef_getGroundActions = 'bb';
+hook_itemdef_getActions = 'V';
 
 {Class MRUNodes}
 class_MRUNodes = 'qj';
