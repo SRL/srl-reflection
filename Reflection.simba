@@ -56,7 +56,7 @@ begin
   case whatKind of
     'clientversion':
     begin
-      S := GetPage('http://cloud.github.com/downloads/SRL/srl-reflection/Hooks.simba');
+      S := GetPage('http://pyroryan.net46.net/reflection/Hooks.simba');
       I := Pos('ClientVersion', S);
       Delete(S, 1, I+15);
       S := Copy(S, 1, Pos(';', S)-1);
@@ -67,7 +67,7 @@ begin
 
     'hookrevision':
     begin
-      S := GetPage('http://cloud.github.com/downloads/SRL/srl-reflection/Hooks.simba');
+      S := GetPage('http://pyroryan.net46.net/reflection/Hooks.simba');
       I := Pos('HookRev', S);
       Delete(S, 1, I+9);
       S := Copy(S, 1, Pos(';', S)-1);
@@ -103,7 +103,7 @@ begin
     Writeln('[Reflection] You''re using outdated hooks (version ' + ToStr(ClientVersion) + '.' + ToStr(HookRev) + '); updating you to version' + ToStr(ClientRev) + '.' + ToStr(RevHook) + '!');
     Writeln('[Reflection] If you manually fixed your hooks, please make sure hookrevision values are greater than or equal to the online hooks to prevent overwriting.');
     myFile := RewriteFile(AppPath + 'includes\reflection\core\hooks.simba', False);
-    WriteFileString(myFile, GetPage('http://cloud.github.com/downloads/SRL/srl-reflection/Hooks.simba'));
+    WriteFileString(myFile, GetPage('http://pyroryan.net46.net/reflection/Hooks.simba'));
     CloseFile(myFile);
     Writeln('[Reflection] Updated you to ' + ToStr(ClientRev) + '.' + ToStr(RevHook) + '; please restart your script!');
     TerminateScript;
