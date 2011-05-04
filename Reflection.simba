@@ -81,11 +81,11 @@ begin
 end;
 
 {*******************************************************************************
-Procedure UpdateHooks;
+Procedure UpdateHooks(terminate: boolean);
 By: Naike, cleaned up a bit by Harry
 Description: Tries to update to new hooks!
 *******************************************************************************}
-Procedure UpdateHooks;
+Procedure UpdateHooks(terminate: boolean);
 var
   myFile, ClientRev, RevHook: Integer;
 begin
@@ -96,7 +96,8 @@ begin
     if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
     begin
       Writeln('[Reflection] No new hooks have been uploaded yet; please be patient!');
-      TerminateScript;
+      if (terminate) then
+        TerminateScript;
     end;
   end else
   begin
@@ -106,27 +107,29 @@ begin
     WriteFileString(myFile, GetPage('http://pyroryan.net46.net/reflection/Hooks.simba'));
     CloseFile(myFile);
     Writeln('[Reflection] Updated you to ' + ToStr(ClientRev) + '.' + ToStr(RevHook) + '; please restart your script!');
-    TerminateScript;
+    if (terminate) then
+      TerminateScript;
   end;
 end;
 
 {*******************************************************************************
-Procedure SetupReflectionEx(B: Boolean);
+Procedure SetupReflectionEx(Update, terminate: Boolean);
 By: Reflection development team
 Description: Sets up reflection constants, and checks if hooks are outdated.
 Will try to update if outdated.
 *******************************************************************************}
-Procedure SetupReflectionEx(Update: Boolean);
+Procedure SetupReflectionEx(Update, terminate: Boolean);
 begin
   SetupConstants;
   If Update then
-    UpdateHooks
+    UpdateHooks(terminate)
   else
   begin
     if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
     begin
       Writeln('[Reflection] Hooks outdated!');
-      TerminateScript;
+      if (terminate) then
+        TerminateScript;
     end;
   end;
 end;
@@ -139,5 +142,5 @@ Will try to update if outdated.
 *******************************************************************************}
 Procedure SetupReflection;
 begin
-  SetupReflectionEx(True);
+  SetupReflectionEx(True, true);
 end;
