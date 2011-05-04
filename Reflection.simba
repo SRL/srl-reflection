@@ -41,6 +41,7 @@
 {$i ./Core/Antirandoms\Rewards.simba}
 {$i ./Core/Antirandoms\Antirandoms.simba}
 
+var R_UpdateKill: boolean;
 
 {*******************************************************************************
 function r_GetCurrentGit(whatKind: string): Integer;
@@ -113,22 +114,22 @@ begin
 end;
 
 {*******************************************************************************
-Procedure SetupReflectionEx(Update, terminate: Boolean);
+Procedure SetupReflectionEx(Update: Boolean);
 By: Reflection development team
 Description: Sets up reflection constants, and checks if hooks are outdated.
 Will try to update if outdated.
 *******************************************************************************}
-Procedure SetupReflectionEx(Update, terminate: Boolean);
+Procedure SetupReflectionEx(Update: Boolean);
 begin
   SetupConstants;
   If Update then
-    UpdateHooks(terminate)
+    UpdateHooks(R_UpdateKill)
   else
   begin
     if(SmartGetFieldInt(0, hook_static_LoginIndex) = -1) then
     begin
       Writeln('[Reflection] Hooks outdated!');
-      if (terminate) then
+      if (R_UpdateKill) then
         TerminateScript;
     end;
   end;
@@ -142,5 +143,5 @@ Will try to update if outdated.
 *******************************************************************************}
 Procedure SetupReflection;
 begin
-  SetupReflectionEx(True, true);
+  SetupReflectionEx(True);
 end;
