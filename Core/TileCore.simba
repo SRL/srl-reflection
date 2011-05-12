@@ -269,6 +269,50 @@ begin
 end;
 
 {*******************************************************************************
+function TPAtoTTA(TPA: TPointArray): TTileArray;
+By: Echo_
+Description: Converts a TPointArray to a TTileArray.
+*******************************************************************************}
+function TPAtoTTA(TPA: TPointArray): TTileArray;
+var
+  i: Integer;
+  TTA: TTileArray;
+begin
+  SetArrayLength(TTA, GetArrayLength(TPA));
+  for i := 0 to High(TPA) do TTA[i] := PointToTile(TPA[i]);
+  Result := TTA;
+end;
+
+{*******************************************************************************
+function TTAtoTPA(TTA: TTileArray): TPointArray;
+By: Echo_
+Description: Converts a TTileArray to a TPointArray.
+*******************************************************************************}
+function TTAtoTPA(TTA: TTileArray): TPointArray;
+var
+  i: Integer;
+  TPA: TPointArray;
+begin
+  SetArrayLength(TPA, GetArrayLength(TTA));
+  for i := 0 to High(TTA) do TPA[i] := TileToPoint(TTA[i]);
+  Result := TPA;
+end;
+
+{*******************************************************************************
+function InvertTTA(TTA: TTileArray): TTileArray;
+By: Echo_
+Description: Inverts the Tile values in a TTileArray.
+*******************************************************************************}
+function InvertTTA(TTA: TTileArray): TTileArray;
+var
+  TPA: TPointArray;
+begin
+  TPA := TTAtoTPA(TTA);
+  InvertTPA(TPA);
+  Result := TPAtoTTA(TPA);
+end;
+
+{*******************************************************************************
 function World3DToScreen(xx, yy, zz: Extended): TPoint;
 By: Benland100/mormonman
 Description: Converts a RS 3D point to a coordinate on the screen.
