@@ -203,7 +203,7 @@ begin
   Equipment := GetEquipment;
   for i := High(IDs) downto 0 do
     for ii := 10 downto 0 do
-      if (IDs[i] = Equipment.Items[i].ID) then
+      if (IDs[i] = Equipment.Items[ii].ID) then
       begin
         Result := True;
         Exit;
