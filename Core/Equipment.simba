@@ -76,15 +76,15 @@ begin
     inter := SmartGetFieldArrayObject(0, hook_static_GetInterfaces, INTERFACE_EQUIPMENT);
     child := SmartGetFieldArrayObject(inter, '', (slot*3)+8);
 
-    ID := SmartGetFieldInt(child, hook_interface_GetID);
-    textbytes := SmartGetFieldObject(child, hook_interface_GetName);
+    ID := SmartGetFieldInt(child, hook_interface_GetComponentID);
+    textbytes := SmartGetFieldObject(child, hook_interface_GetComponentName);
     acts := SmartGetFieldObject(child, hook_interface_GetActions);
 
     if(ID >0)then
     begin
       Result.Id := ID;
       Result.Name := TrimItemName(GetJavaString(textbytes, 255));
-      Result.Count := SmartGetFieldInt(child, hook_interface_GetStack);
+      Result.Count := SmartGetFieldInt(child, hook_interface_GetComponentStackSize);
       Result.Actions := GetActionList(child, acts);
       Result.IsAmmo := (Result.Count > 1);
     end;
@@ -117,11 +117,11 @@ begin
       Result.Items[i] := NULL_EQUIPMENT;
 
       child := SmartGetFieldArrayObject(inter, '', (i*3)+8);
-      textbytes := SmartGetFieldObject(child, hook_interface_GetName);
+      textbytes := SmartGetFieldObject(child, hook_interface_GetComponentName);
 
-      Result.Items[i].ID  := SmartGetFieldInt(child, hook_interface_GetID);
+      Result.Items[i].ID  := SmartGetFieldInt(child, hook_interface_GetComponentID);
       Result.Items[i].Name := TrimItemName(GetJavaString(textbytes, 255));
-      Result.Items[i].Count := SmartGetFieldInt(child, hook_interface_GetStack);
+      Result.Items[i].Count := SmartGetFieldInt(child, hook_interface_GetComponentStackSize);
       Result.Items[i].isAmmo := (Result.Items[i].Count > 1);
 
       if (Result.Items[i].isAmmo) then
@@ -154,7 +154,7 @@ begin
                                       INTERFACE_EQUIPMENT);
     child := SmartGetFieldArrayObject(inter, '', (spot*3)+8);
 
-    Result := SmartGetFieldInt(child, hook_interface_GetID);
+    Result := SmartGetFieldInt(child, hook_interface_GetComponentID);
   finally
     SmartFreeObject(child);
     SmartFreeObject(inter);

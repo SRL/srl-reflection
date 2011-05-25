@@ -252,8 +252,7 @@ var
   Child: Integer;
 begin
   Child := GetInterface(ParentI, ChildI);
-  //Result := SmartGetFieldInt(Child, hook_interface_GetComponentID);
-  Result := SmartGetFieldInt(Child, hook_interface_GetID);
+  Result := SmartGetFieldInt(Child, hook_interface_GetComponentID);
   SmartFreeObject(Child);
 end;
 
@@ -267,7 +266,7 @@ var
    Child: Integer;
 begin
   Child := GetInterface(ParentI, ChildI);
-  Result := SmartGetFieldInt(Child, hook_interface_GetStack);
+  Result := SmartGetFieldInt(Child, hook_interface_GetComponentStackSize);
   SmartFreeObject(Child);
 end;
 
@@ -291,7 +290,7 @@ var
    Text, Child: Integer;
 begin
   Child := GetInterface(ParentI, ChildI);
-  Text := SmartGetFieldObject(Child, hook_interface_GetName);
+  Text := SmartGetFieldObject(Child, hook_interface_GetComponentName);
   Result := GetJavaString(Text, 255);
   SmartFreeObject(Text);
   SmartFreeObject(Child);
@@ -434,7 +433,7 @@ var
 begin
   Child := GetInterface(ParentI, ChildI);
   Comp := SmartGetFieldArrayObject(Child, hook_interface_GetChildren, compI);
-  Result := SmartGetFieldInt(Comp, hook_interface_GetID);
+  Result := SmartGetFieldInt(Comp, hook_interface_GetComponentID);
   SmartFreeObject(Comp);
   SmartFreeObject(Child);
 end;
@@ -450,7 +449,7 @@ var
 begin
   Child := GetInterface(ParentI, ChildI);
   Comp := SmartGetFieldArrayObject(Child, hook_interface_GetChildren, compI);
-  Result := SmartGetFieldInt(Comp, hook_interface_GetStack);
+  Result := SmartGetFieldInt(Comp, hook_interface_GetComponentStackSize);
   SmartFreeObject(Comp);
   SmartFreeObject(Child);
 end;
@@ -484,7 +483,7 @@ var
 begin
   Child := GetInterface(ParentI, ChildI);
   Comp := SmartGetFieldArrayObject(Child, hook_interface_GetChildren, compI);
-  Text := SmartGetFieldObject(Comp, hook_interface_GetName);
+  Text := SmartGetFieldObject(Comp, hook_interface_GetComponentName);
   Result := GetJavaString(Text, 255);
   SmartFreeObject(Text);
   SmartFreeObject(Comp);
