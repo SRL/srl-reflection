@@ -1,7 +1,6 @@
-
 const
 ClientVersion = 653;
-HookRev = 1;
+HookRev = 2;
 
 
 {Static Hooks}
@@ -23,8 +22,8 @@ hook_static_LoadedPlane = 'dd.k';
 hook_static_PlaneArray = 'sda.s';
 hook_static_Toolkit = 'ad.e';
 hook_static_GetCollapsedMenuItems = 'nc.s';
-hook_static_MenuOptionCount = 'kk.Lb';
-hook_static_MenuCollapsedOptionsCount = 'aw.a';
+hook_static_MenuOptionCount = 'pia.j';
+hook_static_MenuCollapsedOptionsCount = 'ig.h';
 hook_static_MenuX = 'po.B';
 hook_static_MenuY = 'si.v';
 hook_static_MenuWidth = 'pw.s';
