@@ -1,6 +1,6 @@
 const
 ClientVersion = 655;
-HookRev = 1;
+HookRev = 3;
 
 
 {Static Hooks}
