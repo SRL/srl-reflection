@@ -5,7 +5,7 @@
 
 //---                               Constants                               --//
 const
-  INTERFACE_INVENTORY                                   = 149;
+  INTERFACE_INVENTORY                                   = 679;
   INTERFACE_INVENTORY_BANKOPEN                          = 763;
 
 
