@@ -28,20 +28,6 @@ const
   LEO_STONE_FLOWERPOTID = 7618;
 
 {*******************************************************************************
-function R_LeoComponentID (ParentI, ChildI : Integer) : Integer;
-By: Cstrike
-Description: This function wasn't in the core, so I made my own.
-*******************************************************************************}
-function R_LeoComponentID (ParentI, ChildI : Integer): Integer;
-var
-  Child: Integer;
-begin
-  Child := GetInterface(ParentI, ChildI);
-  Result := SmartGetFieldInt(Child, hook_interface_GetID);
-  SmartFreeObject(Child);
-end;
-
-{*******************************************************************************
 procedure R_LeoInvDecrease (amount, timeout : Integer);
 By: Cstrike
 Description: Function used mainly for seeing when we have put the casket in the
@@ -384,7 +370,7 @@ begin
     for j:=3 to 11 do // Search interfaces for ID to find
     begin
       Wait(50+random(50)); // More human like waiting
-      if (R_LeoComponentID (141, j) = IDToFind) then // 141 is the ID
+      if (GetInterfaceComponentID(141, j) = IDToFind) then // 141 is the ID
       begin
         R_Debug('Found: ' + name + ' in Casket[' + ToStr(i) + ']', 'Leo');
         Result := i;
@@ -465,7 +451,7 @@ begin
       begin
         for j:=0 to 3 do // Search the 3x3 item square
         begin
-          texID := R_LeoComponentID(143, j);
+          texID := GetInterfaceComponentID(143, j);
           texName := '';
           case texID of
             LEO_STONE_HATCHETID:   texName := 'hatchet';
