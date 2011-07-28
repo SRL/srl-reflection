@@ -57,10 +57,9 @@ begin
   if not LoggedIn then
     Exit;
 
-  if not TileOnMS(Tile, 100) then
-    Exit;
-
   P := TileToMS(Tile, 50);
+  if not PointInBox(Point(P.x,P.y), IntToBox(MSX1, MSY1, MSX2, MSY2)) then
+    Exit;
   MMouse(P.x, P.y, 5, 5);
   GetMousePos(x, y);
   if WaitUptext('alk here', 300) then
@@ -144,11 +143,18 @@ function R_SolvePinball : Boolean;
 var
   LastPole, CurrPole: TRSObject;
   P: TPoint;
-  x, y, t, lastscore, currscore: integer;
+  x, y, t, lastscore, currscore,PBallFailsafe: integer;
 begin
   if not R_InPinball then Exit;
+  MarkTime(PBallFailsafe);
   while R_InPinball do
   begin
+    if (TimeFromMark(PBallFailsafe) > 60000*6) then // if it takes more than 6 minutes, something is FUBAR
+    begin
+      R_Debug('Hit Pinball failsafe(1) - failing random and logging out!','Pinball');
+      Result := False;
+      Exit;
+    end;
     lastscore := Pinball_GetScore;
     currscore := Pinball_GetScore;
     if(currscore >= 10)then
@@ -166,13 +172,21 @@ begin
       CurrPole := Pinball_GetPillar;
     if (CurrPole <> NULL_RSOBJECT)then
     begin
+      MarkTime(t);
       repeat
         x := GetCamPosX;
         y := GetCamPosY;
         P := TileToMS(CurrPole.Tile, 400);
-        Mouse(P.x, P.y, 3, 3, false);
+        if PointInBox(Point(P.x,P.y), IntToBox(MSX1, MSY1, MSX2, MSY2)) then
+          Mouse(P.x, P.y, 3, 3, false);
         wait (5+random(15));
-      until not R_PinballAngleDrasticChange(X, Y, 100, 100);
+      until not R_PinballAngleDrasticChange(X, Y, 100, 100) or (TimeFromMark(t) > 60000);
+      if (TimeFromMark(t) > 60000) then
+      begin
+        R_Debug('Hit Pinball failsafe(2) - failing random and logging out!','Pinball');
+        Result := False;
+        Exit;
+      end;
       if R_ChooseOption('tag')then
       begin
         R_Debug('Tagged!', 'Pinball');
@@ -189,4 +203,5 @@ begin
   R_ClickToContinue;
   Result := not R_InPinball;
   SetAngle(True);
+  MakeCompass('N');
 end;

@@ -13,7 +13,8 @@ type
 
 var
   r_RandomArr: Array [0..17] of r_Random;
-  r_RandomVarSet: Boolean;
+  r_RandomVarSet, r_LogoutOnRandom: Boolean;
+
 
 Procedure r_SetupRandoms;
 begin
@@ -212,6 +213,16 @@ begin
     if (InRand) then
     begin
       Players[CurrentPlayer].Rand := r_RandomArr[I].RandName;
+
+      if r_LogoutOnRandom then
+      begin
+        R_Debug('Found random: ' + r_RandomArr[I].RandName, '');
+        R_Debug('Logging player out and setting false', '');
+        Logout;
+        Players[CurrentPlayer].Active := False;
+        Exit;
+      end;
+
       R_Debug('Trying to solve: ' + r_RandomArr[I].RandName, '');
       T := GetMyPos;
       RandomBox := IntToBox(T.X-70, T.Y-70, T.X+70, T.Y+70);
