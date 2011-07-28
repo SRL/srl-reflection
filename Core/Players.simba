@@ -82,10 +82,10 @@ Description: Gets character animation
 *******************************************************************************}
 function GetAnimation: Integer;
 var
-  MyPlayer : Integer;
+  MyPlayer, temp1, temp2 : Integer;
 begin
   MyPlayer := SmartGetFieldObject(0, hook_static_MyPlayer);
-  Result := SmartGetFieldInt(MyPlayer, hook_character_Animation);
+  Result := GetCharAnimations(MyPlayer);
   SmartFreeObject(MyPlayer);
 end;
 
@@ -209,7 +209,7 @@ begin
     Result[L].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) / 512));
     Result[L].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) / 512));
     Result[L].Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight));
-    Result[L].Animation := SmartGetFieldInt(Player, hook_character_Animation);
+    Result[L].Animation := GetCharAnimations(Player);
     Result[L].Fighting := (SmartGetFieldInt(Player, hook_character_LoopCycleStatus) >
                               SmartGetFieldInt(0, hook_static_LoopCycle));
     Result[L].Moving := (SmartGetFieldInt(Player, hook_character_Motion)>0);
@@ -450,7 +450,7 @@ begin
     Result.Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(Player, hook_animable_PixelX) / 512));
     Result.Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(Player, hook_animable_PixelY) / 512));
     Result.Height := iabs(SmartGetFieldInt(Player, hook_character_GetHeight)) / 4;
-    Result.Animation := SmartGetFieldInt(Player, hook_character_Animation);
+    Result.Animation := GetCharAnimations(Player);
     Result.Speed := SmartGetFieldInt(Player, hook_character_Motion);
     Result.HPRatio := SmartGetFieldInt(Player, hook_character_HPRatio) * 100 / $FF;
     Result.Level := SmartGetFieldInt(Player, hook_player_GetLevel);

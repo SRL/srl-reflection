@@ -127,7 +127,7 @@ begin
     Result[c].Pixel.X := SmartGetFieldInt(TheNPC, hook_animable_PixelX) mod 512;
     Result[c].Pixel.Y := SmartGetFieldInt(TheNPC, hook_animable_PixelY) mod 512;
     Result[c].Moving := (SmartGetFieldInt(TheNPC, hook_character_Motion)>0);
-    Result[c].Animation := SmartGetFieldInt(TheNPC, hook_character_Animation);
+    Result[c].Animation := GetCharAnimations(TheNPC);
     Result[c].Height := iabs(SmartGetFieldInt(TheNPC, hook_character_GetHeight));
     Result[c].HPRatio := SmartGetFieldInt(TheNPC, hook_character_HPRatio) * 100 / $FF;
     Result[c].Fighting := (SmartGetFieldInt(TheNPC, hook_character_LoopCycleStatus) >
@@ -330,7 +330,7 @@ begin
       Result[c].Tile.X := (SmartGetFieldInt(0, hook_static_BaseX) + (SmartGetFieldInt(TheNPC, hook_animable_PixelX) / 512));
       Result[c].Tile.Y := (SmartGetFieldInt(0, hook_static_BaseY) + (SmartGetFieldInt(TheNPC, hook_animable_PixelY) / 512));
       Result[c].Moving := (SmartGetFieldInt(TheNPC, hook_character_Motion)>0);
-      Result[c].Animation := SmartGetFieldInt(TheNPC, hook_character_Animation);
+      Result[c].Animation := GetCharAnimations(TheNPC);
       Result[c].Height := iabs(SmartGetFieldInt(TheNPC, hook_character_GetHeight));
       Result[c].HPRatio := SmartGetFieldInt(TheNPC, hook_character_HPRatio) * 100 / $FF;
       Result[c].Fighting := (SmartGetFieldInt(TheNPC, hook_character_LoopCycleStatus) >
